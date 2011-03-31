@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		593731ED1345313800154D42 /* emd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593731DA1345313800154D42 /* emd.cpp */; };
+		593731F01345313800154D42 /* GA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593731DE1345313800154D42 /* GA.cpp */; };
+		593731F11345313800154D42 /* Generator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593731E01345313800154D42 /* Generator.cpp */; };
+		593731F21345313800154D42 /* Histogram2D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593731E21345313800154D42 /* Histogram2D.cpp */; };
+		593731F41345313800154D42 /* Network.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593731E51345313800154D42 /* Network.cpp */; };
+		593731F51345313800154D42 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593731E71345313800154D42 /* Node.cpp */; };
+		593731F61345313800154D42 /* Params.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593731E91345313800154D42 /* Params.cpp */; };
 		59FB745E13452E00005079AB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59FB745D13452E00005079AB /* Cocoa.framework */; };
 		59FB746813452E00005079AB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59FB746613452E00005079AB /* InfoPlist.strings */; };
 		59FB746B13452E00005079AB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59FB746A13452E00005079AB /* main.m */; };
@@ -16,6 +23,21 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		593731DA1345313800154D42 /* emd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = emd.cpp; sourceTree = "<group>"; };
+		593731DB1345313800154D42 /* emd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = emd.h; sourceTree = "<group>"; };
+		593731DE1345313800154D42 /* GA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GA.cpp; sourceTree = "<group>"; };
+		593731DF1345313800154D42 /* GA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GA.h; sourceTree = "<group>"; };
+		593731E01345313800154D42 /* Generator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Generator.cpp; sourceTree = "<group>"; };
+		593731E11345313800154D42 /* Generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Generator.h; sourceTree = "<group>"; };
+		593731E21345313800154D42 /* Histogram2D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Histogram2D.cpp; sourceTree = "<group>"; };
+		593731E31345313800154D42 /* Histogram2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Histogram2D.h; sourceTree = "<group>"; };
+		593731E51345313800154D42 /* Network.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Network.cpp; sourceTree = "<group>"; };
+		593731E61345313800154D42 /* Network.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Network.h; sourceTree = "<group>"; };
+		593731E71345313800154D42 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
+		593731E81345313800154D42 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Node.h; sourceTree = "<group>"; };
+		593731E91345313800154D42 /* Params.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Params.cpp; sourceTree = "<group>"; };
+		593731EA1345313800154D42 /* Params.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Params.h; sourceTree = "<group>"; };
+		593731EB1345313800154D42 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
 		59FB745913452E00005079AB /* synthetic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = synthetic.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59FB745D13452E00005079AB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		59FB746013452E00005079AB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -43,9 +65,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		593731D71345313800154D42 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				593731DA1345313800154D42 /* emd.cpp */,
+				593731DB1345313800154D42 /* emd.h */,
+				593731DE1345313800154D42 /* GA.cpp */,
+				593731DF1345313800154D42 /* GA.h */,
+				593731E01345313800154D42 /* Generator.cpp */,
+				593731E11345313800154D42 /* Generator.h */,
+				593731E21345313800154D42 /* Histogram2D.cpp */,
+				593731E31345313800154D42 /* Histogram2D.h */,
+				593731E51345313800154D42 /* Network.cpp */,
+				593731E61345313800154D42 /* Network.h */,
+				593731E71345313800154D42 /* Node.cpp */,
+				593731E81345313800154D42 /* Node.h */,
+				593731E91345313800154D42 /* Params.cpp */,
+				593731EA1345313800154D42 /* Params.h */,
+				593731EB1345313800154D42 /* utils.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		59FB744E13452E00005079AB = {
 			isa = PBXGroup;
 			children = (
+				593731D71345313800154D42 /* src */,
 				59FB746313452E00005079AB /* synthetic */,
 				59FB745C13452E00005079AB /* Frameworks */,
 				59FB745A13452E00005079AB /* Products */,
@@ -164,6 +209,13 @@
 			files = (
 				59FB746B13452E00005079AB /* main.m in Sources */,
 				59FB747113452E00005079AB /* syntheticAppDelegate.m in Sources */,
+				593731ED1345313800154D42 /* emd.cpp in Sources */,
+				593731F01345313800154D42 /* GA.cpp in Sources */,
+				593731F11345313800154D42 /* Generator.cpp in Sources */,
+				593731F21345313800154D42 /* Histogram2D.cpp in Sources */,
+				593731F41345313800154D42 /* Network.cpp in Sources */,
+				593731F51345313800154D42 /* Node.cpp in Sources */,
+				593731F61345313800154D42 /* Params.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,6 +330,7 @@
 				59FB747913452E01005079AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -193,7 +193,7 @@ double emd(signature_t *Signature1, signature_t *Signature2,
 	}
     }
   if (Flow != NULL)
-    *FlowSize = FlowP-Flow;
+    *FlowSize = (int)(FlowP-Flow);
 
 #if DEBUG_LEVEL > 0
   printf("\n*** OPTIMAL SOLUTION (%d ITERATIONS): %f ***\n", itr, totalCost);
