@@ -52,4 +52,3 @@ private:
     double affinity(unsigned int origType, unsigned int targType);
     void calcAffMatrix();
 };
-

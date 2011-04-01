@@ -14,6 +14,7 @@
 		593731F41345313800154D42 /* Network.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593731E51345313800154D42 /* Network.cpp */; };
 		593731F51345313800154D42 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593731E71345313800154D42 /* Node.cpp */; };
 		593731F61345313800154D42 /* Params.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 593731E91345313800154D42 /* Params.cpp */; };
+		593731FA1345EC8300154D42 /* SynNetworkView.m in Sources */ = {isa = PBXBuildFile; fileRef = 593731F91345EC8300154D42 /* SynNetworkView.m */; };
 		59FB745E13452E00005079AB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59FB745D13452E00005079AB /* Cocoa.framework */; };
 		59FB746813452E00005079AB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 59FB746613452E00005079AB /* InfoPlist.strings */; };
 		59FB746B13452E00005079AB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59FB746A13452E00005079AB /* main.m */; };
@@ -38,6 +39,8 @@
 		593731E91345313800154D42 /* Params.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Params.cpp; sourceTree = "<group>"; };
 		593731EA1345313800154D42 /* Params.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Params.h; sourceTree = "<group>"; };
 		593731EB1345313800154D42 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
+		593731F81345EC8300154D42 /* SynNetworkView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynNetworkView.h; sourceTree = "<group>"; };
+		593731F91345EC8300154D42 /* SynNetworkView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SynNetworkView.m; sourceTree = "<group>"; };
 		59FB745913452E00005079AB /* synthetic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = synthetic.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59FB745D13452E00005079AB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		59FB746013452E00005079AB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -129,6 +132,8 @@
 			children = (
 				59FB746F13452E00005079AB /* syntheticAppDelegate.h */,
 				59FB747013452E00005079AB /* syntheticAppDelegate.m */,
+				593731F81345EC8300154D42 /* SynNetworkView.h */,
+				593731F91345EC8300154D42 /* SynNetworkView.m */,
 				59FB747213452E01005079AB /* MainMenu.xib */,
 				59FB746413452E00005079AB /* Supporting Files */,
 			);
@@ -216,6 +221,7 @@
 				593731F41345313800154D42 /* Network.cpp in Sources */,
 				593731F51345313800154D42 /* Node.cpp in Sources */,
 				593731F61345313800154D42 /* Params.cpp in Sources */,
+				593731FA1345EC8300154D42 /* SynNetworkView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,6 +294,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "synthetic/synthetic-Prefix.pch";
 				INFOPLIST_FILE = "synthetic/synthetic-Info.plist";
@@ -303,6 +310,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_INPUT_FILETYPE = sourcecode.cpp.objcpp;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "synthetic/synthetic-Prefix.pch";
 				INFOPLIST_FILE = "synthetic/synthetic-Info.plist";

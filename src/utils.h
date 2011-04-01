@@ -12,8 +12,8 @@
 #include <math.h>
 
 // MAX & MIN
-#define MAX(x,y) ((x) > (y) ? (x) : (y))
-#define MIN(x,y) ((x) < (y) ? (x) : (y))
+#define MAXIM(x,y) ((x) > (y) ? (x) : (y))
+#define MINIM(x,y) ((x) < (y) ? (x) : (y))
 
 // Random numbers
 #define RANDOM_SEED srandom(time(NULL))
