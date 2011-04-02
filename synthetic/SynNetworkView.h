@@ -7,11 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#include "Network.h"
 
 
 @interface SynNetworkView : NSView {
 @private
-    
+    Network* net;
 }
 
 @end

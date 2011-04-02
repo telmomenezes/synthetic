@@ -7,7 +7,6 @@
 //
 
 #import "syntheticAppDelegate.h"
-#import "Network.h"
 
 @implementation syntheticAppDelegate
 
@@ -16,8 +15,6 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     // Insert code here to initialize your application
-    Network* net = new Network();
-    delete net;
 }
 
 @end

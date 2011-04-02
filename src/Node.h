@@ -35,6 +35,10 @@ public:
 
     unsigned int walk(unsigned long walkId);
 
+    // drawing position
+    double x;
+    double y;
+    
     // eigenvector centrality
     double _evcIn;
     double _evcInLast;
