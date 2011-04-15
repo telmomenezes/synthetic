@@ -289,7 +289,6 @@ void Network::computeEigenvectorCentr()
         node->_evcOut = log(node->_evcOut);
     }
 
-
     // compute max EVC in and out
     _minEVCIn = 0;
     _minEVCOut = 0;

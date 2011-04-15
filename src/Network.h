@@ -55,4 +55,3 @@ private:
 
     Histogram2D* _lastHistogram;
 };
-
