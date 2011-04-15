@@ -5,55 +5,32 @@
 
 
 #pragma once
-#include <vector>
-#include <map>
 
-
-using std::vector;
-using std::map;
-
-
-class Node {
-public:
-    Node(unsigned int type, unsigned int id);
-    virtual ~Node();
-
-    bool addEdge(Node* target);
-    bool edgeExists(Node* target);
-
-    unsigned int getType() {return _type;}
-    unsigned int getId() {return _id;}
-    void setVisiting(Node* node) {_visiting = node;}
-    Node* getVisiting() {return _visiting;}
-    unsigned int getInDegree() {return _inDegree;}
-    unsigned int getOutDegree() {return _outDegree;}
-    Node* getRandomTarget();
-    vector<Node*>* getTargets() {return &_targets;}
-    vector<Node*>* getOrigins() {return &_origins;}
-    void setMarked(bool value) {_marked = value;}
-    bool isMarked() {return _marked;}
-
-    unsigned int walk(unsigned long walkId);
-
-    // drawing position
-    double x;
-    double y;
+typedef struct {
+    unsigned int type;
+    unsigned int id;
+    vector<Node*> targets;
+    vector<Node*> origins;
+    unsigned int in_degree;
+    unsigned int out_degree;
+    Node* visiting;
+    int marked;
+    unsigned long last_walk_id;
     
     // eigenvector centrality
-    double _evcIn;
-    double _evcInLast;
-    double _evcOut;
-    double _evcOutLast;
+    double evc_in;
+    double evc_in_last;
+    double evc_out;
+    double evc_out_last;
+} syn_node;
 
-private:
-    unsigned int _type;
-    unsigned int _id;
-    vector<Node*> _targets;
-    vector<Node*> _origins;
-    unsigned int _inDegree;
-    unsigned int _outDegree;
-    Node* _visiting;
-    bool _marked;
-    unsigned long _lastWalkId;
-};
+
+struct syn_node *syn_create_node(unsigned int type, unsigned int id);
+void syn_destroy_node(struct syn_node *node);
+
+int syn_add_edge(struct syn_node *origin, struct syn_node *target);
+int syn_edge_exists(struct syn_node *target);
+
+struct syn_node *syn_get_random_target(struct syn_node *origin);
+unsigned int syn_walk(unsigned long walk_id);
 

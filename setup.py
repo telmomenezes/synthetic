@@ -13,7 +13,8 @@ module1 = Extension('syn',
                     define_macros = [('MAJOR_VERSION', '1'),
                                      ('MINOR_VERSION', '0')],
                     libraries = ['m'],
-                    sources = ['src/synpython.c'])
+                    include_dirs = ['src'],
+                    sources = ['src/synpython.c', 'src/edge.c'])
 
 setup (name = 'syn',
        version = '1.0',

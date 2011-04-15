@@ -1,4 +1,5 @@
 #include <Python.h>
+#include "edge.h"
 
 static PyObject *MyCommand(PyObject *self, PyObject *args)
 {
@@ -21,4 +22,3 @@ PyMODINIT_FUNC initsyn(void)
 {
     Py_InitModule("syn", methods);
 }
-  

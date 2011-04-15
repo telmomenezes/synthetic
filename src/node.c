@@ -4,12 +4,12 @@
  */
 
 
-#include "Node.h"
+#include "node.h"
 #include "utils.h"
 #include <math.h>
 
 
-Node::Node(unsigned int type, unsigned int id)
+struct syn_node *syn_create_node(unsigned int type, unsigned int id)
 {
     _type = type;
     _id = id;
@@ -21,12 +21,12 @@ Node::Node(unsigned int type, unsigned int id)
 }
 
 
-Node::~Node()
+void syn_destroy_node(struct syn_node *node)
 {
 }
 
 
-bool Node::addEdge(Node* target)
+int syn_add_edge(struct syn_node *origin, struct syn_node *target)
 {
     if (edgeExists(target))
         return false;
@@ -42,7 +42,7 @@ bool Node::addEdge(Node* target)
 }
 
 
-bool Node::edgeExists(Node* target)
+int syn_edge_exists(struct syn_node *target)
 {
     for (vector<Node*>::iterator iterNode = _targets.begin();
             iterNode != _targets.end();
@@ -56,7 +56,7 @@ bool Node::edgeExists(Node* target)
 }
 
 
-Node* Node::getRandomTarget()
+struct syn_node *syn_get_random_target(struct syn_node *origin)
 {
     if (_outDegree == 0)
         return NULL;

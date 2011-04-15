@@ -401,4 +401,3 @@ void Network::printInfo()
     cout << "log(evc_in): [" << _minEVCIn << ", " << _maxEVCIn << "]" << endl;
     cout << "log(evc_out): [" << _minEVCOut << ", " << _maxEVCOut << "]" << endl;
 }
-
