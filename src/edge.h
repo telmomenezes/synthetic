@@ -6,13 +6,13 @@
 
 #pragma once
 
-struct syn_node;
+struct syn_node_s;
 
-typedef struct {
-    struct syn_node *orig;
-    struct syn_node *targ;
-    struct syn_edge *next_orig;
-    struct syn_edge *next_targ;
+typedef struct syn_edge_s {
+    struct syn_node_s *orig;
+    struct syn_node_s *targ;
+    struct syn_edge_s *next_orig;
+    struct syn_edge_s *next_targ;
 } syn_edge;
 
-struct syn_edge *syn_edge_create(void);
+syn_edge *syn_edge_create(void);

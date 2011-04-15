@@ -1,5 +1,6 @@
 #include <Python.h>
 #include "edge.h"
+#include "node.h"
 
 static PyObject *MyCommand(PyObject *self, PyObject *args)
 {

@@ -9,63 +9,71 @@
 #include <math.h>
 
 
-struct syn_node *syn_create_node(unsigned int type, unsigned int id)
+syn_node *syn_create_node(unsigned int type, unsigned int id)
 {
-    _type = type;
-    _id = id;
-    _visiting = NULL;
-    _inDegree = 0;
-    _outDegree = 0;
-    _marked = false;
-    _lastWalkId = 0;
-}
-
-
-void syn_destroy_node(struct syn_node *node)
-{
-}
-
-
-int syn_add_edge(struct syn_node *origin, struct syn_node *target)
-{
-    if (edgeExists(target))
-        return false;
-    if (target == this)
-        return false;
-
-    _targets.push_back(target);
-    _outDegree++;
-    target->_origins.push_back(this);
-    target->_inDegree++;
-
-    return true;
-}
-
-
-int syn_edge_exists(struct syn_node *target)
-{
-    for (vector<Node*>::iterator iterNode = _targets.begin();
-            iterNode != _targets.end();
-            iterNode++) {
+    syn_node *node = (syn_node *)malloc(sizeof(syn_node));
+    node->type = type;
+    node->id = id;
+    node->visiting = NULL;
+    node->in_degree = 0;
+    node->out_degree = 0;
+    node->marked = 0;
+    node->last_walk_id = 0;
     
-        if ((*iterNode) == target)
-            return true;
+    return node;
+}
+
+
+int syn_add_edge(syn_node *origin, syn_node *target)
+{
+    if (origin == target)
+        return 0;
+        
+    if (syn_edge_exists(origin, target))
+        return 0;
+
+    syn_edge *edge = syn_edge_create();
+    edge->orig = origin;
+    edge->targ = target;
+    edge->next_orig = origin->targets;
+    origin->targets = edge;
+    origin->out_degree++;
+    edge->next_targ = target->origins;
+    target->origins = edge;
+    target->in_degree++;
+
+    return 1;
+}
+
+
+int syn_edge_exists(syn_node *origin, syn_node *target)
+{
+    syn_edge *edge = origin->origins;
+    
+    while (edge) {
+        if (edge->targ == target) {
+            return 1;
+        }
+        edge = edge->next_orig;
     }
 
-    return false;
+    return 0;
 }
 
 
-struct syn_node *syn_get_random_target(struct syn_node *origin)
+syn_node *syn_get_random_target(syn_node *origin)
 {
-    if (_outDegree == 0)
+    if (origin->out_degree == 0) {
         return NULL;
+    }
 
-    unsigned int index = 0;
+    unsigned int index = RANDOM_UINT(origin->out_degree);
+
+    syn_edge *edge = origin->origins;
+    unsigned int i;
+    for (i = 0; i < index; i++) {
+        edge = edge->next_orig;
+    }
     
-    if (_outDegree > 0)
-        index = RANDOM_UINT(_outDegree);
-
-    return _targets[index];
+    return edge->targ;
 }
-

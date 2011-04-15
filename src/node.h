@@ -6,14 +6,16 @@
 
 #pragma once
 
-typedef struct {
+#include "edge.h"
+
+typedef struct syn_node_s {
     unsigned int type;
     unsigned int id;
-    vector<Node*> targets;
-    vector<Node*> origins;
+    syn_edge *targets;
+    syn_edge *origins;
     unsigned int in_degree;
     unsigned int out_degree;
-    Node* visiting;
+    struct syn_node_s *visiting;
     int marked;
     unsigned long last_walk_id;
     
@@ -25,12 +27,9 @@ typedef struct {
 } syn_node;
 
 
-struct syn_node *syn_create_node(unsigned int type, unsigned int id);
-void syn_destroy_node(struct syn_node *node);
+syn_node *syn_create_node(unsigned int type, unsigned int id);
 
-int syn_add_edge(struct syn_node *origin, struct syn_node *target);
-int syn_edge_exists(struct syn_node *target);
+int syn_add_edge(syn_node *origin, syn_node *target);
+int syn_edge_exists(syn_node *origin, syn_node *target);
 
-struct syn_node *syn_get_random_target(struct syn_node *origin);
-unsigned int syn_walk(unsigned long walk_id);
-
+syn_node *syn_get_random_target(syn_node *origin);
