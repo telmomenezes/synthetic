@@ -10,39 +10,29 @@
 #include "emd.h"
 
 
-class Histogram2D {
-public:
-    Histogram2D(unsigned int binNumber, double minValHor, double maxValHor,
-        double minValVer, double maxValVer);
-    virtual ~Histogram2D();
+typedef struct syn_histogram2d_s {
+    double *data;
+    unsigned int bin_number;
+    double min_val_hor;
+    double max_val_hor;
+    double min_val_ver;
+    double max_val_ver;
+} syn_histogram2d;
 
-    unsigned int getBinNumber() {return _binNumber;}
-    double getMinValHor() {return _minValHor;}
-    double getMaxValHor() {return _maxValHor;}
-    double getMinValVer() {return _minValVer;}
-    double getMaxValVer() {return _maxValVer;}
+syn_histogram2d *syn_histogram2d_create(unsigned int bin_number, double min_val_hor, double max_val_hor,
+    double min_val_ver, double max_val_ver);
+void syn_histogram2d_destroy(syn_histogram2d *hist);
 
-    void clear();
-    void setValue(unsigned int x, unsigned int y, double val);
-    void incValue(unsigned int x, unsigned int y);
-    double getValue(unsigned int x, unsigned int y);
-    double* getData() {return _data;}
+void syn_histogram2d_clear(syn_histogram2d *hist);
+void syn_histogram2d_set_value(syn_histogram2d *hist, unsigned int x, unsigned int y, double val);
+void syn_historgram2d_inc_value(syn_histogram2d *hist, unsigned int x, unsigned int y);
+double syn_histogram2d_get_value(syn_histogram2d *hist, unsigned int x, unsigned int y);
 
-    void logScale();
+void syn_histogram2d_log_scale(syn_histogram2d *hist);
 
-    double simpleDist(Histogram2D* hist);
-    double emdDist(Histogram2D* hist);
+double syn_histogram2d_simple_dist(syn_histogram2d *hist1, syn_histogram2d *hist2);
+double syn_histogram2d_emd_dist(syn_histogram2d *hist1, syn_histogram2d *hist2);
 
-    void print();
+void syn_histogram2d_print(syn_histogram2d *hist);
 
-private:
-    double* _data;
-    unsigned int _binNumber;
-    double _minValHor;
-    double _maxValHor;
-    double _minValVer;
-    double _maxValVer;
-
-    signature_t* getEMDSignature();
-};
-
+signature_t* syn_histogram2d_get_emd_signature(syn_histogram2d *hist);

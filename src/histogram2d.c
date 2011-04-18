@@ -4,91 +4,93 @@
  */
 
 
-#include "Histogram2D.h"
+#include "histogram2D.h"
 #include "utils.h"
 #include <stdlib.h>
 #include <strings.h>
 #include <stdio.h>
-#include <iostream>
 
 
-using std::cout;
-using std::endl;
-
-
-Histogram2D::Histogram2D(unsigned int binNumber, double minValHor, double maxValHor,
-        double minValVer, double maxValVer)
+syn_histogram2d *syn_histogram2d_create(unsigned int bin_number, double min_val_hor, double max_val_hor,
+     double min_val_ver, double max_val_ver)
 {
-    _binNumber = binNumber;
-    _minValHor = minValHor;
-    _maxValHor = maxValHor;
-    _minValVer = minValVer;
-    _maxValVer = maxValVer;
-    _data = (double*)malloc(_binNumber * _binNumber * sizeof(double));
+    syn_histogram2d *hist = (syn_histogram2d *)malloc(sizeof(syn_histogram2d));
+    hist->bin_number = bin_number;
+    hist->min_val_hor = min_val_hor;
+    hist->max_val_hor = max_val_hor;
+    hist->min_val_ver = min_val_ver;
+    hist->max_val_ver = max_val_ver;
+    hist->data = (double *)malloc(bin_number * bin_number * sizeof(double));
 
-    clear();
+    syn_histogram2d_clear(hist);
+    
+    return hist;
 }
 
 
-Histogram2D::~Histogram2D()
+void syn_histogram2d_destroy(syn_histogram2d *hist)
 {
-    free(_data);
+    free(hist->data);
+    free(hist);
 }
 
 
-void Histogram2D::clear()
+void syn_histogram2d_clear(syn_histogram2d *hist)
 {
-    bzero(_data, _binNumber * _binNumber * sizeof(double));
+    bzero(hist->data, hist->bin_number * hist->bin_number * sizeof(double));
 }
 
 
-void Histogram2D::setValue(unsigned int x, unsigned int y, double val)
+void syn_histogram2d_set_value(syn_histogram2d *hist, unsigned int x, unsigned int y, double val)
 {
-    _data[(y * _binNumber) + x] = val;
+    hist->data[(y * hist->bin_number) + x] = val;
 }
 
 
-void Histogram2D::incValue(unsigned int x, unsigned int y)
+void syn_historgram2d_inc_value(syn_histogram2d *hist, unsigned int x, unsigned int y)
 {
-    _data[(y * _binNumber) + x] += 1;
+    hist->data[(y * hist->bin_number) + x] += 1;
 }
 
 
-double Histogram2D::getValue(unsigned int x, unsigned int y)
+double syn_histogram2d_get_value(syn_histogram2d *hist, unsigned int x, unsigned int y)
 {
-    return _data[(y * _binNumber) + x];
+    return hist->data[(y * hist->bin_number) + x];
 }
 
     
-void Histogram2D::logScale()
+void syn_histogram2d_log_scale(syn_histogram2d *hist)
 {
-    for (unsigned int x = 0; x < _binNumber; x++)
-        for (unsigned int y = 0; y < _binNumber; y++)
-            if(_data[(y * _binNumber) + x] > 0) 
-                _data[(y * _binNumber) + x] = log(_data[(y * _binNumber) + x]);
+    unsigned int x, y;
+    for (x = 0; x < hist->bin_number; x++)
+        for (y = 0; y < hist->bin_number; y++)
+            if(hist->data[(y * hist->bin_number) + x] > 0) 
+                hist->data[(y * hist->bin_number) + x] = log(hist->data[(y * hist->bin_number) + x]);
 }
 
 
-double Histogram2D::simpleDist(Histogram2D* hist)
+double syn_histogram2d_simple_dist(syn_histogram2d *hist1, syn_histogram2d *hist2)
 {
     double dist = 0;
-    for (unsigned int x = 0; x < _binNumber; x++)
-        for (unsigned int y = 0; y < _binNumber; y++)
-            dist += fabs(_data[(y * _binNumber) + x] - hist->_data[(y * _binNumber) + x]);
+    unsigned int x, y;
+    for (x = 0; x < hist1->bin_number; x++)
+        for (y = 0; y < hist1->bin_number; y++)
+            dist += fabs(hist1->data[(y * hist1->bin_number) + x] - hist2->data[(y * hist2->bin_number) + x]);
     return dist;
 }
 
 
-signature_t* Histogram2D::getEMDSignature()
+signature_t* syn_histogram2d_get_emd_signature(syn_histogram2d *hist)
 {
-    double intervalHor = (_maxValHor - _minValHor) / ((double)_binNumber);
-    double intervalVer = (_maxValVer - _minValVer) / ((double)_binNumber);
+    double interval_hor = (hist->max_val_hor - hist->min_val_hor) / ((double)hist->bin_number);
+    double interval_ver = (hist->max_val_ver - hist->min_val_ver) / ((double)hist->bin_number);
     
     unsigned int n = 0;
+    unsigned int x, y;
     
-    for (unsigned int x = 0; x < _binNumber; x++) {
-        for (unsigned int y = 0; y < _binNumber; y++) {
-            if (_data[(y * _binNumber) + x] > 0)
+    for (x = 0; x < hist->bin_number; x++) {
+        for (y = 0; y < hist->bin_number; y++) {
+            if (hist->data[(y * hist->bin_number) + x] > 0)
                 n++;
         }
     }
@@ -98,12 +100,12 @@ signature_t* Histogram2D::getEMDSignature()
 
     unsigned int i = 0;
 
-    for (unsigned int x = 0; x < _binNumber; x++) {
-        for (unsigned int y = 0; y < _binNumber; y++) {
-            double val = _data[(y * _binNumber) + x];
+    for (x = 0; x < hist->bin_number; x++) {
+        for (y = 0; y < hist->bin_number; y++) {
+            double val = hist->data[(y * hist->bin_number) + x];
             if (val > 0) {
-                features[i].x = (x * intervalHor) + _minValHor;
-                features[i].y = (y * intervalVer) + _minValVer;
+                features[i].x = (x * interval_hor) + hist->min_val_hor;
+                features[i].y = (y * interval_ver) + hist->min_val_ver;
                 weights[i] = val;
                 i++;
             }
@@ -119,10 +121,10 @@ signature_t* Histogram2D::getEMDSignature()
 }
 
 
-double Histogram2D::emdDist(Histogram2D* hist)
+double syn_histogram2d_emd_dist(syn_histogram2d *hist1, syn_histogram2d *hist2)
 {
-    signature_t* sig1 = getEMDSignature();
-    signature_t* sig2 = hist->getEMDSignature();
+    signature_t* sig1 = syn_histogram2d_get_emd_signature(hist1);
+    signature_t* sig2 = syn_histogram2d_get_emd_signature(hist2);
     
     double dist = emd(sig1, sig2, groundDist, NULL, NULL);
     
@@ -137,18 +139,14 @@ double Histogram2D::emdDist(Histogram2D* hist)
 }
 
 
-void Histogram2D::print()
+void syn_histogram2d_print(syn_histogram2d *hist)
 {
-    unsigned int count = 0;
+    unsigned int x, y;
 
-    for (unsigned int y = 0; y < _binNumber; y++) {
-        for (unsigned int x = 0; x < _binNumber; x++) {
-            cout << getValue(x, y) << "\t";
-            count += getValue(x, y);
+    for (y = 0; y < hist->bin_number; y++) {
+        for (x = 0; x < hist->bin_number; x++) {
+            printf("%f\t", syn_histogram2d_get_value(hist, x, y));
         }
-        cout << endl;
+        printf("\n");
     }
-
-    cout << "count: " << count << endl;
 }
-

@@ -7,15 +7,11 @@
 #pragma once
 
 
-#include "Node.h"
-#include "Histogram2D.h"
-#include <vector>
-#include <string>
+#include "node.h"
+#include "histogram2D.h"
 
 
-using std::vector;
-using std::string;
-
+typedef struct 
 
 class Network {
 public:

@@ -14,7 +14,7 @@ module1 = Extension('syn',
                                      ('MINOR_VERSION', '0')],
                     libraries = ['m'],
                     include_dirs = ['src'],
-                    sources = ['src/synpython.c', 'src/edge.c', 'src/node.c', 'src/emd.c'])
+                    sources = ['src/synpython.c', 'src/edge.c', 'src/node.c', 'src/emd.c', 'src/histogram2d.c'])
 
 setup (name = 'syn',
        version = '1.0',
