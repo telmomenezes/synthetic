@@ -26,7 +26,7 @@ syn_node *syn_create_node(unsigned int type, unsigned int id)
 }
 
 
-syn_node *syn_destroy_node(syn_node *node)
+void syn_destroy_node(syn_node *node)
 {
     free(node);
 }

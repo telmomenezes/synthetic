@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdio.h>
 
+static unsigned int SYN_CURID = 0;
 
 syn_net *syn_create_net()
 {
@@ -37,7 +38,7 @@ void syn_destroy_net(syn_net *net)
 syn_node *syn_add_node(syn_net *net, unsigned int type)
 {
     net->node_count++;
-    syn_node *node = syn_create_node(type, _CURID++);
+    syn_node *node = syn_create_node(type, SYN_CURID++);
     node->next = net->nodes;
     net->nodes = node;
     return node;

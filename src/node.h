@@ -31,7 +31,7 @@ typedef struct syn_node_s {
 
 
 syn_node *syn_create_node(unsigned int type, unsigned int id);
-syn_node *syn_destroy_node(syn_node *node);
+void syn_destroy_node(syn_node *node);
 
 int syn_add_edge(syn_node *origin, syn_node *target);
 int syn_edge_exists(syn_node *origin, syn_node *target);

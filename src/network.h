@@ -10,8 +10,6 @@
 #include "node.h"
 #include "histogram2d.h"
 
-static unsigned int _CURID = 0;
-
 typedef struct syn_net_s {
     double min_evc_in;
     double min_evc_out;
