@@ -19,8 +19,16 @@ syn_node *syn_create_node(unsigned int type, unsigned int id)
     node->out_degree = 0;
     node->marked = 0;
     node->last_walk_id = 0;
+    node->targets = NULL;
+    node->origins = NULL;
     
     return node;
+}
+
+
+syn_node *syn_destroy_node(syn_node *node)
+{
+    free(node);
 }
 
 

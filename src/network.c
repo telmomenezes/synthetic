@@ -4,274 +4,236 @@
  */
 
 
-#include "Network.h"
+#include "network.h"
 #include "utils.h"
-#include <iostream>
-#include <fstream>
-#include <map>
 #include <math.h>
 #include <string.h>
-#include <time.h>
+#include <stdio.h>
 
 
-using std::ofstream;
-using std::ifstream;
-using std::cout;
-using std::endl;
-using std::ios;
-using std::map;
-
-
-unsigned int Network::_CURID = 0;
-
-
-Network::Network()
+syn_net *syn_create_net()
 {
-    _nodeCount = 0;
-    _edgeCount = 0;
+    syn_net *net = (syn_net *)malloc(sizeof(syn_net));
+    net->node_count = 0;
+    net->edge_count = 0;
+    net->nodes = NULL;
+    return net;
 }
 
 
-Network::~Network()
+void syn_destroy_net(syn_net *net)
 {
-    for (vector<Node*>::iterator iterNode = _nodes.begin();
-            iterNode != _nodes.end();
-            iterNode++) {
-
-        delete (*iterNode);
+    syn_node *node = net->nodes;
+    syn_node *next_node;
+    while (node) {
+        next_node = node->next;
+        syn_destroy_node(node);
+        node = next_node;
     }
+    free(net);
 }
 
 
-Node* Network::addNode(unsigned int type)
+syn_node *syn_add_node(syn_net *net, unsigned int type)
 {
-    _nodeCount++;
-    Node* node = new Node(type, _CURID++);
-    _nodes.push_back(node);
+    net->node_count++;
+    syn_node *node = syn_create_node(type, _CURID++);
+    node->next = net->nodes;
+    net->nodes = node;
     return node;
 }
 
 
-bool Network::addEdge(Node* orig, Node* targ)
+int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ)
 {
-    if (orig->addEdge(targ)) {
-        _edgeCount++;
-        return true;
+    if (syn_add_edge(orig, targ)) {
+        net->edge_count++;
+        return 1;
     }
-    return false;
+    return 0;
 }
 
 
-void Network::write(const char* filePath)
+void syn_write_net(syn_net *net, const char *file_path)
 {
-    ofstream f;
-    f.open(filePath);
+    FILE *f;
+    f = fopen(file_path, "w");
 
-    for (vector<Node*>::iterator iterNode = _nodes.begin();
-            iterNode != _nodes.end();
-            iterNode++) {
+    syn_node *orig_node = net->nodes;
+    syn_edge *edge;
 
-        Node* origNode = (*iterNode);
-        vector<Node*>* targets = origNode->getTargets();
-        
-        for (vector<Node*>::iterator iterConn = targets->begin();
-                iterConn != targets->end();
-                iterConn++) {
+    while (orig_node) {
+        edge = orig_node->targets;
 
-            Node* targNode = (*iterConn);
-            f << origNode->getId() << "," << targNode->getId() << endl;
+        while(edge) {
+            fprintf(f, "%d,%d\n", orig_node->id, edge->targ->id);
+            edge = edge->next_targ;
         }
+        
+        orig_node = orig_node->next;
     }
 
-    f.close();
+    fclose(f);
 }
 
 
-void Network::writeGEXF(const char* filePath)
+void syn_write_gexf(syn_net *net, const char *file_path)
 {
-    ofstream f;
-    f.open(filePath);
+    FILE *f;
+    f = fopen(file_path, "w");
 
     // start file
-    f << "<gexf xmlns=\"http://www.gexf.net/1.1draft\" version=\"1.1\">" << endl;
-    f << "<graph mode=\"static\" defaultedgetype=\"directed\">" << endl;
+    fprintf(f, "<gexf xmlns=\"http://www.gexf.net/1.1draft\" version=\"1.1\">\n");
+    fprintf(f, "<graph mode=\"static\" defaultedgetype=\"directed\">\n");
 
     // write nodes
-    f << "<nodes>" << endl;
-    for (vector<Node*>::iterator iterNode = _nodes.begin();
-            iterNode != _nodes.end();
-            iterNode++) {
-
-        Node* node = (*iterNode);
-        f << "<node id=\"" << node->getId() << "\">" << endl;
-
-        /*
-        unsigned int red = (unsigned int )(((node->getInEntropy() - _minInEntropy) / (_maxInEntropy - _minInEntropy)) * 255.0);
-        unsigned int green = (unsigned int )(((node->getOutEntropy() - _minOutEntropy) / (_maxOutEntropy - _minOutEntropy)) * 255.0);
-        
-        unsigned int blue = 0;
-        //f << "<viz:color r=\"" << red << "\" g=\"" << green << "\" b=\"" << blue << "\"/>" << endl;
-        */
-
-        /*
-        if ((*iterNode)->getType() == 0)
-            f << "<viz:color r=\"255\" g=\"0\" b=\"0\"/>" << endl;
-        else if ((*iterNode)->getType() == 1)
-            f << "<viz:color r=\"0\" g=\"0\" b=\"255\"/>" << endl;
-        else if ((*iterNode)->getType() == 2)
-            f << "<viz:color r=\"0\" g=\"255\" b=\"0\"/>" << endl;
-        else if ((*iterNode)->getType() == 3)
-            f << "<viz:color r=\"0\" g=\"0\" b=\"0\"/>" << endl;
-        */
-        f << "</node>" << endl;
+    fprintf(f, "<nodes>\n");
+    syn_node *node = net->nodes;
+    while (node) {
+        fprintf(f, "<node id=\"%d\">\n", node->id);
+        fprintf(f, "</node>\n");
+        node = node->next;
     }
-    f << "</nodes>" << endl;
+    fprintf(f, "</nodes>\n");
 
     // write edges
-    unsigned int edgeId = 0;
-    f << "<edges>" << endl;
-    for (vector<Node*>::iterator iterNode = _nodes.begin();
-            iterNode != _nodes.end();
-            iterNode++) {
-
-        Node* origNode = (*iterNode);
-        vector<Node*>* targets = origNode->getTargets();
-        
-        for (vector<Node*>::iterator iterConn = targets->begin();
-                iterConn != targets->end();
-                iterConn++) {
-
-            Node* targNode = (*iterConn);
-            f << "<edge id=\"" << edgeId++ << "\" source=\"" << origNode->getId()
-                << "\" target=\"" << targNode->getId() << "\" />" << endl;
+    unsigned int edge_id = 0;
+    fprintf(f, "<edges>\n");
+    node = net->nodes;
+    syn_edge *edge;
+    while (node) {
+        edge = node->targets;
+        while (edge) {
+            fprintf(f, "<edge id=\"%d\" source=\"%d\" target=\"%d\" />\n", edge_id++, node->id, edge->targ->id);
+            edge = edge->next_targ;
         }
+        
+        node = node->next;
     }
-    f << "</edges>" << endl;
+    fprintf(f, "</edges>\n");
 
     // end file
-    f << "</graph>" << endl;
-    f << "</gexf>" << endl;
+    fprintf(f, "</graph>\n");
+    fprintf(f, "</gexf>\n");
 
-    f.close();
+    fclose(f);
 }
 
 
-Histogram2D* Network::getEVCHistogram(unsigned int binNumber, double minValHor,
-    double maxValHor, double minValVer, double maxValVer)
+syn_histogram2d *syn_get_evc_histogram(syn_net *net, unsigned int bin_number, double min_val_hor,
+                                        double max_val_hor, double min_val_ver, double max_val_ver)
 {
-    double intervalHor = (maxValHor - minValHor) / ((double)binNumber);
-    double intervalVer = (maxValVer - minValVer) / ((double)binNumber);
+    double interval_hor = (max_val_hor - min_val_hor) / ((double)bin_number);
+    double interval_ver = (max_val_ver - min_val_ver) / ((double)bin_number);
 
-    Histogram2D* hist = new Histogram2D(binNumber + 1, minValHor - intervalHor,
-        maxValHor, minValVer - intervalVer, maxValVer);
+    syn_histogram2d *hist = syn_histogram2d_create(bin_number + 1, min_val_hor - interval_hor,
+        max_val_hor, min_val_ver - interval_ver, max_val_ver);
 
-    for (vector<Node*>::iterator iterNode = _nodes.begin();
-            iterNode != _nodes.end();
-            iterNode++) {
-
-        Node* node = (*iterNode);
-       
+    syn_node *node = net->nodes;
+    while (node) {
         int x = 0;
         int y = 0;
 
-        if (isfinite(node->_evcIn))
-            if (node->_evcIn < minValHor)
+        if (isfinite(node->evc_in)) {
+            if (node->evc_in < min_val_hor) {
                 x = -1;
-            else if (node->_evcIn > maxValHor)
+            }
+            else if (node->evc_in > max_val_hor) {
                 x = -1;
-            else
-                x = (unsigned int)ceil((node->_evcIn - minValHor) / intervalHor);
-        if (isfinite(node->_evcOut))
-            if (node->_evcOut < minValVer)
+            }
+            else {
+                x = (unsigned int)ceil((node->evc_in - min_val_hor) / interval_hor);
+            }
+        }
+        if (isfinite(node->evc_out)) {
+            if (node->evc_out < min_val_ver) {
                 y = -1;
-            else if (node->_evcOut > maxValVer)
+            }
+            else if (node->evc_out > max_val_ver) {
                 y = -1;
-            else
-                y = (unsigned int)ceil((node->_evcOut - minValVer) / intervalVer);
+            }
+            else {
+                y = (unsigned int)ceil((node->evc_out - min_val_ver) / interval_ver);
+            }
+        }
 
-        if ((x >= 0) && (y >= 0))
-            hist->incValue(x, y);
+        if ((x >= 0) && (y >= 0)) {
+            syn_historgram2d_inc_value(hist, x, y);
+        }
+        
+        node = node->next;
     }
 
     return hist;
 }
 
 
-void Network::computeEigenvectorCentr()
+void syn_compute_evc(syn_net *net)
 {
     // TODO: config
-    unsigned int maxIter = 100;
+    unsigned int max_iter = 100;
 
-    for (vector<Node*>::iterator iterNode = _nodes.begin();
-            iterNode != _nodes.end();
-            iterNode++) {
-
-        Node* node = (*iterNode);
-        node->_evcInLast = 1;
-        node->_evcOutLast = 1;
+    syn_node *node = net->nodes;
+    while (node) {
+        node->evc_in_last = 1;
+        node->evc_out_last = 1;
+        node = node->next;
     }
 
     unsigned int i = 0;
 
-    double deltaEVCIn = 999;
-    double deltaEVCOut = 999;
+    double delta_evc_in = 999;
+    double delta_evc_out = 999;
     
-    double zeroTest = 0.0001;
+    double zero_test = 0.0001;
 
-    while (((deltaEVCIn > zeroTest) || (deltaEVCOut > zeroTest)) && (i < maxIter)) {
-        double accEVCIn = 0;
-        double accEVCOut = 0;
+    while (((delta_evc_in > zero_test) || (delta_evc_out > zero_test)) && (i < max_iter)) {
+        double acc_evc_in = 0;
+        double acc_evc_out = 0;
 
-        for (vector<Node*>::iterator iterNode = _nodes.begin();
-                iterNode != _nodes.end();
-                iterNode++) {
-
-            Node* node = (*iterNode);
-
-            node->_evcIn = 0;
-            vector<Node*>* origins = node->getOrigins();
-            for (vector<Node*>::iterator iterOrigin = origins->begin();
-                    iterOrigin != origins->end();
-                    iterOrigin++) {
-                Node* origin = (*iterOrigin);
+        node = net->nodes;
+        while(node) {
+            node->evc_in = 0;
+            syn_edge *origin = node->origins;
+            while (origin) {
                 //node->_evcIn += origin->_evcInLast / ((double)origin->getOutDegree());
-                node->_evcIn += origin->_evcInLast;
+                node->evc_in += origin->orig->evc_in_last;
+                origin = origin->next_orig;
             }
             //node->_evcIn *= 0.85;
             //node->_evcIn += (1 - 0.85) / ((double)_nodes.size());
             //node->_evcIn += (1.0 - 0.85);
-            accEVCIn += node->_evcIn;
+            acc_evc_in += node->evc_in;
 
-            node->_evcOut = 0;
-            vector<Node*>* targets = node->getTargets();
-            for (vector<Node*>::iterator iterTarget = targets->begin();
-                    iterTarget != targets->end();
-                    iterTarget++) {
-                Node* target = (*iterTarget);
-                node->_evcOut += target->_evcOutLast;
+            node->evc_out = 0;
+            syn_edge *target = node->targets;
+            while (target) {
+                node->evc_out += target->targ->evc_out_last;
+                target = target->next_targ;
             }
             //node->_evcOut *= 0.85;
             //node->_evcIn += (1 - 0.85) / ((double)_nodes.size());
             //node->_evcOut += (1.0 - 0.85);
-            accEVCOut += node->_evcOut;
+            acc_evc_out += node->evc_out;
+            
+            node = node->next;
         }
 
-        deltaEVCIn = 0;
-        deltaEVCOut = 0;
+        delta_evc_in = 0;
+        delta_evc_out = 0;
 
-        for (vector<Node*>::iterator iterNode = _nodes.begin();
-                iterNode != _nodes.end();
-                iterNode++) {
-
-            Node* node = (*iterNode);
-            node->_evcIn /= accEVCIn;
-            node->_evcOut /= accEVCOut;
-            deltaEVCIn += fabs(node->_evcIn - node->_evcInLast);
-            deltaEVCOut += fabs(node->_evcOut - node->_evcOutLast);
+        node = net->nodes;
+        while (node) {
+            node->evc_in /= acc_evc_in;
+            node->evc_out /= acc_evc_out;
+            delta_evc_in += fabs(node->evc_in - node->evc_in_last);
+            delta_evc_out += fabs(node->evc_out - node->evc_out_last);
             //cout << "evcin: " << node->_evcIn << "; evcin_last: " << node->_evcInLast
                 //<< "; delta: " << deltaEVCIn << endl;
-            node->_evcInLast = node->_evcIn;
-            node->_evcOutLast = node->_evcOut;
+            node->evc_in_last = node->evc_in;
+            node->evc_out_last = node->evc_out;
+            
+            node = node->next;
         }
 
         //cout << "#" << i << " delta in: " << deltaEVCIn
@@ -280,124 +242,121 @@ void Network::computeEigenvectorCentr()
     }
 
     // use log scale
-    for (vector<Node*>::iterator iterNode = _nodes.begin();
-            iterNode != _nodes.end();
-            iterNode++) {
-
-        Node* node = (*iterNode);
-        node->_evcIn = log(node->_evcIn);
-        node->_evcOut = log(node->_evcOut);
+    node = net->nodes;
+    while (node) {
+        node->evc_in = log(node->evc_in);
+        node->evc_out = log(node->evc_out);
+        node = node->next;
     }
 
     // compute max EVC in and out
-    _minEVCIn = 0;
-    _minEVCOut = 0;
-    _maxEVCIn = 0;
-    _maxEVCOut = 0;
-    bool first = true;
-    for (vector<Node*>::iterator iterNode = _nodes.begin();
-            iterNode != _nodes.end();
-            iterNode++) {
+    net->min_evc_in = 0;
+    net->min_evc_out = 0;
+    net->max_evc_in = 0;
+    net->max_evc_out = 0;
+    int first = 1;
+    node = net->nodes;
+    while (node) {
+        if (isfinite(node->evc_in) && (first || (node->evc_in < net->min_evc_in))) {
+            net->min_evc_in = node->evc_in;
+        }
+        if (isfinite(node->evc_out) && (first || (node->evc_out < net->min_evc_out))) {
+            net->min_evc_out = node->evc_out;
+        }
+        if (isfinite(node->evc_in) && (first || (node->evc_in > net->max_evc_in))) {
+            net->max_evc_in = node->evc_in;
+        }
+        if (isfinite(node->evc_out) && (first || (node->evc_out > net->max_evc_out))) {
+            net->max_evc_out = node->evc_out;
+        }
 
-        Node* node = (*iterNode);
-        if (isfinite(node->_evcIn) && (first || (node->_evcIn < _minEVCIn)))
-            _minEVCIn = node->_evcIn;
-        if (isfinite(node->_evcOut) && (first || (node->_evcOut < _minEVCOut)))
-            _minEVCOut = node->_evcOut;
-        if (isfinite(node->_evcIn) && (first || (node->_evcIn > _maxEVCIn)))
-            _maxEVCIn = node->_evcIn;
-        if (isfinite(node->_evcOut) && (first || (node->_evcOut > _maxEVCOut)))
-            _maxEVCOut = node->_evcOut;
-
-        first = false;
+        first = 0;
+        
+        node = node->next;
     }
 }
 
 
-void Network::writeEigenvectorCentr(const char* filePath)
+void syn_write_evc(syn_net *net, const char *file_path)
 {
-    /*
-    for (vector<Node*>::iterator iterNode = _nodes.begin();
-            iterNode != _nodes.end();
-            iterNode++) {
-
-        Node* node = (*iterNode);
-        node->_evcIn = log(node->_evcIn);
-        node->_evcOut = log(node->_evcOut);
-        if (node->_evcIn < -30)
-            node->_evcIn = -30;
-        if (node->_evcOut < -30)
-            node->_evcOut = -30;
-    }
-    */
-
-    ofstream f;
-    f.open(filePath);
+    FILE *f;
+    f = fopen(file_path, "w");
    
-    f << "evc_in, evc_out" << endl;
+    fprintf(f, "evc_in, evc_out\n");
 
-    for (vector<Node*>::iterator iterNode = _nodes.begin();
-            iterNode != _nodes.end();
-            iterNode++) {
-
-        Node* node = (*iterNode);
-        f << node->_evcIn << "," << node->_evcOut << endl;
+    
+    syn_node *node = net->nodes;
+    while (node) {
+        fprintf(f, "%f,%f\n", node->evc_in, node->evc_out);
+        node = node->next;
     }
 
-    f.close();
+    fclose(f);
 }
 
 
-void Network::load(const char* filePath)
+void syn_load_net(syn_net *net, const char *file_path)
 {
-    // add nodes
-    map<string, Node*> nodes;
-    map<string, Node*>::iterator iterMap;
-
-    string line;
-    ifstream f(filePath);
-
-    char* chrLine = (char*)malloc(sizeof(char) * 1000);
+    FILE *f;
+    f = fopen(file_path, "r");
     
-    while (f.good()) {
-        getline(f, line);
-        if (line == "")
+    unsigned int MAX_LEN = 1000;
+    char line[MAX_LEN];
+    
+    int max_node = -1;
+    
+    while(fgets(line, MAX_LEN, f) != NULL) {
+        
+        if (strlen(line) == 0) {
             break;
-        chrLine = strcpy(chrLine, line.c_str());
-        string orig = string(strtok(chrLine, ","));
-        string targ = string(strtok(NULL, ","));
-        iterMap = nodes.find(orig);
-        if (iterMap == nodes.end())
-            nodes[orig] = addNode(0);
-        iterMap = nodes.find(targ);
-        if (iterMap == nodes.end())
-            nodes[targ] = addNode(0);
+        }
+        char *orig_str = strtok(line, ",");
+        char *targ_str = strtok(NULL, ",");
+        int orig = atoi(orig_str);
+        int targ = atoi(targ_str);
+        if (orig > max_node) {
+            max_node = orig;
+        }
+        if (targ > max_node) {
+            max_node = targ;
+        }
+    }
+    
+    int node_count = max_node + 1;
+    if (node_count <= 0) {
+        return;
+    }
+    
+    // create nodes
+    syn_node *nodes[node_count];
+    unsigned int i = 0;
+    for (i = 0; i < node_count; i++) {
+        nodes[i] = syn_add_node(net, 0);
     }
 
     // add links
-    f.clear();
-    f.seekg(0, ios::beg);
+    rewind(f);
 
-    while (f.good()) {
-        getline(f, line);
-        if (line == "")
+    while(fgets(line, MAX_LEN, f) != NULL) {
+        if (strlen(line) == 0) {
             break;
-        chrLine = strcpy(chrLine, line.c_str());
-        string orig = string(strtok(chrLine, ","));
-        string targ = string(strtok(NULL, ","));
+        }
+        char *orig_str = strtok(line, ",");
+        char *targ_str = strtok(NULL, ",");
+        int orig = atoi(orig_str);
+        int targ = atoi(targ_str);
 
-        addEdge(nodes[orig], nodes[targ]);
+        syn_add_edge_to_net(net, nodes[orig], nodes[targ]);
     }
 
-    free(chrLine);
-    f.close();
+    fclose(f);
 }
 
 
-void Network::printInfo()
+void syn_print_net_info(syn_net *net)
 {
-    cout << "node number: " << _nodeCount << endl;
-    cout << "edge number: " << _edgeCount << endl;
-    cout << "log(evc_in): [" << _minEVCIn << ", " << _maxEVCIn << "]" << endl;
-    cout << "log(evc_out): [" << _minEVCOut << ", " << _maxEVCOut << "]" << endl;
+    printf("node number: %d\n", net->node_count);
+    printf("edge number: %d\n", net->edge_count);
+    printf("log(evc_in): [%f, %f]\n", net->min_evc_in, net->max_evc_in);
+    printf("log(evc_out): [%f, %f]\n", net->min_evc_out, net->max_evc_out);
 }
