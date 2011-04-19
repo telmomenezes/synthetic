@@ -56,7 +56,7 @@ int syn_add_edge(syn_node *origin, syn_node *target)
 
 int syn_edge_exists(syn_node *origin, syn_node *target)
 {
-    syn_edge *edge = origin->origins;
+    syn_edge *edge = origin->targets;
     
     while (edge) {
         if (edge->targ == target) {
@@ -77,7 +77,7 @@ syn_node *syn_get_random_target(syn_node *origin)
 
     unsigned int index = RANDOM_UINT(origin->out_degree);
 
-    syn_edge *edge = origin->origins;
+    syn_edge *edge = origin->targets;
     unsigned int i;
     for (i = 0; i < index; i++) {
         edge = edge->next_orig;

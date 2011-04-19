@@ -24,7 +24,8 @@ static PyObject *pysyn_destroy_net(PyObject *self, PyObject *args)
       syn_destroy_net(net);
     }
     
-    return NULL;
+    PyObject *result = Py_BuildValue("");
+    return result;
 }
 
 static PyObject *pysyn_load_net(PyObject *self, PyObject *args)
@@ -38,7 +39,8 @@ static PyObject *pysyn_load_net(PyObject *self, PyObject *args)
       syn_load_net(net, file_path);
     }
     
-    return NULL;
+    PyObject *result = Py_BuildValue("");
+    return result;
 }
 
 static PyObject *pysyn_compute_evc(PyObject *self, PyObject *args)
@@ -51,7 +53,8 @@ static PyObject *pysyn_compute_evc(PyObject *self, PyObject *args)
       syn_compute_evc(net);
     }
     
-    return NULL;
+    PyObject *result = Py_BuildValue("");
+    return result;
 }
 
 static PyObject *pysyn_write_evc(PyObject *self, PyObject *args)
@@ -65,7 +68,37 @@ static PyObject *pysyn_write_evc(PyObject *self, PyObject *args)
       syn_write_evc(net, file_path);
     }
     
-    return NULL;
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+static PyObject *pysyn_print_net_info(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_net *net;
+
+    if (PyArg_ParseTuple(args, "i", &p)) {
+      net = (syn_net *)p;
+      syn_print_net_info(net);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+static PyObject *pysyn_write_gexf(PyObject *self, PyObject *args)
+{
+    long p;
+    char *file_path;
+    syn_net *net;
+
+    if (PyArg_ParseTuple(args, "is", &p, &file_path)) {
+      net = (syn_net *)p;
+      syn_write_gexf(net, file_path);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
 }
 
 static PyMethodDef methods[] = {
@@ -74,6 +107,8 @@ static PyMethodDef methods[] = {
     {"load_net", pysyn_load_net, METH_VARARGS, "Load network."},
     {"compute_evc", pysyn_compute_evc, METH_VARARGS, "Compute EVC."},
     {"write_evc", pysyn_write_evc, METH_VARARGS, "Write EVC."},
+    {"print_net_info", pysyn_print_net_info, METH_VARARGS, "Print net info."},
+    {"write_gexf", pysyn_write_gexf, METH_VARARGS, "Write gexf file for net."},
     {NULL, NULL, 0, NULL},
 };
 
