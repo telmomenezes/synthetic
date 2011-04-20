@@ -119,8 +119,12 @@ void syn_write_gexf(syn_net *net, const char *file_path)
     fclose(f);
 }
 
+syn_histogram2d *syn_get_evc_histogram(syn_net *net, unsigned int bin_number)
+{
+    return syn_get_evc_histogram_with_limits(net, bin_number, net->min_evc_in, net->max_evc_in, net->min_evc_out, net->max_evc_out);
+}
 
-syn_histogram2d *syn_get_evc_histogram(syn_net *net, unsigned int bin_number, double min_val_hor,
+syn_histogram2d *syn_get_evc_histogram_with_limits(syn_net *net, unsigned int bin_number, double min_val_hor,
                                         double max_val_hor, double min_val_ver, double max_val_ver)
 {
     double interval_hor = (max_val_hor - min_val_hor) / ((double)bin_number);
@@ -243,14 +247,12 @@ void syn_compute_evc(syn_net *net)
     }
 
     // use log scale
-    /*
     node = net->nodes;
     while (node) {
         node->evc_in = log(node->evc_in);
         node->evc_out = log(node->evc_out);
         node = node->next;
     }
-    */
 
     // compute max EVC in and out
     net->min_evc_in = 0;

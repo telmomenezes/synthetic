@@ -36,7 +36,8 @@ void syn_write_gexf(syn_net *net, const char *file_path);
 
 void syn_compute_evc(syn_net *net);
 void syn_write_evc(syn_net *net, const char *file_path);
-syn_histogram2d *syn_get_evc_histogram(syn_net *net, unsigned int bin_number, double min_val_hor, double max_val_hor, double min_val_ver, double max_val_ver);
+syn_histogram2d *syn_get_evc_histogram(syn_net *net, unsigned int bin_number);
+syn_histogram2d *syn_get_evc_histogram_with_limits(syn_net *net, unsigned int bin_number, double min_val_hor, double max_val_hor, double min_val_ver, double max_val_ver);
 
 void syn_load_net(syn_net *net, const char *file_path);
 

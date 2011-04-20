@@ -51,6 +51,10 @@ def main(argv=None):
     syn.print_net_info(net)
     syn.write_evc(net, args[1])
     #syn.write_gexf(net, args[1])
+    
+    hist = syn.get_evc_histogram(net, 10)
+    syn.histogram2d_print(hist)
+    
     syn.destroy_net(net)
 
 if __name__ == "__main__":
