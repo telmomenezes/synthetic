@@ -205,9 +205,9 @@ void syn_compute_evc(syn_net *net)
                 node->evc_in += origin->orig->evc_in_last;
                 origin = origin->next_targ;
             }
-            //node->_evcIn *= 0.85;
-            //node->_evcIn += (1 - 0.85) / ((double)_nodes.size());
-            //node->_evcIn += (1.0 - 0.85);
+            node->evc_in += (1.0 - 0.85) / ((double)net->node_count);
+            //node->evc_in += (1.0 - 0.85);
+            node->evc_in *= 0.85;
             acc_evc_in += node->evc_in;
 
             node->evc_out = 0;
@@ -216,9 +216,9 @@ void syn_compute_evc(syn_net *net)
                 node->evc_out += target->targ->evc_out_last;
                 target = target->next_orig;
             }
-            //node->_evcOut *= 0.85;
-            //node->_evcIn += (1 - 0.85) / ((double)_nodes.size());
-            //node->_evcOut += (1.0 - 0.85);
+            node->evc_out += (1.0 - 0.85) / ((double)net->node_count);
+            //node->evc_out += (1.0 - 0.85);
+            node->evc_out *= 0.85;
             acc_evc_out += node->evc_out;
             
             node = node->next;
@@ -247,12 +247,14 @@ void syn_compute_evc(syn_net *net)
     }
 
     // use log scale
+    /*
     node = net->nodes;
     while (node) {
         node->evc_in = log(node->evc_in);
         node->evc_out = log(node->evc_out);
         node = node->next;
     }
+    */
 
     // compute max EVC in and out
     net->min_evc_in = 0;
