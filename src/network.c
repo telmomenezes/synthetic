@@ -106,7 +106,7 @@ void syn_write_gexf(syn_net *net, const char *file_path)
         edge = node->targets;
         while (edge) {
             fprintf(f, "<edge id=\"%d\" source=\"%d\" target=\"%d\" />\n", edge_id++, node->id, edge->targ->id);
-            edge = edge->next_orig;
+            edge = edge->next_targ;
         }
         node = node->next;
     }
@@ -203,7 +203,7 @@ void syn_compute_evc(syn_net *net)
             while (origin) {
                 //node->_evcIn += origin->_evcInLast / ((double)origin->getOutDegree());
                 node->evc_in += origin->orig->evc_in_last;
-                origin = origin->next_targ;
+                origin = origin->next_orig;
             }
             node->evc_in += (1.0 - 0.85) / ((double)net->node_count);
             //node->evc_in += (1.0 - 0.85);
@@ -214,7 +214,7 @@ void syn_compute_evc(syn_net *net)
             syn_edge *target = node->targets;
             while (target) {
                 node->evc_out += target->targ->evc_out_last;
-                target = target->next_orig;
+                target = target->next_targ;
             }
             node->evc_out += (1.0 - 0.85) / ((double)net->node_count);
             //node->evc_out += (1.0 - 0.85);
@@ -236,6 +236,7 @@ void syn_compute_evc(syn_net *net)
             delta_evc_in += fabs(node->evc_in - node->evc_in_last);
             delta_evc_out += fabs(node->evc_out - node->evc_out_last);    
             //printf("evc_in: %f; evc_in_last: %f; delta_evc_in: %f\n", node->evc_in, node->evc_in_last, delta_evc_in);
+            //printf("evc_out: %f; evc_out_last: %f; delta_evc_out: %f\n", node->evc_out, node->evc_out_last, delta_evc_out);
             node->evc_in_last = node->evc_in;
             node->evc_out_last = node->evc_out;
             
@@ -246,15 +247,22 @@ void syn_compute_evc(syn_net *net)
         i++;
     }
 
+    // relative evc
+    double base_evc = 1.0 / ((double)net->node_count);
+    node = net->nodes;
+    while (node) {
+        node->evc_in = node->evc_in / base_evc;
+        node->evc_out = node->evc_out / base_evc;
+        node = node->next;
+    }
+    
     // use log scale
-    /*
     node = net->nodes;
     while (node) {
         node->evc_in = log(node->evc_in);
         node->evc_out = log(node->evc_out);
         node = node->next;
     }
-    */
 
     // compute max EVC in and out
     net->min_evc_in = 0;
@@ -289,12 +297,12 @@ void syn_write_evc(syn_net *net, const char *file_path)
     FILE *f;
     f = fopen(file_path, "w");
    
-    fprintf(f, "evc_in, evc_out\n");
+    fprintf(f, "id, evc_in, evc_out, in_degree, out_degree\n");
 
     
     syn_node *node = net->nodes;
     while (node) {
-        fprintf(f, "%.10f,%.10f,%d,%d\n", node->evc_in, node->evc_out, node->in_degree, node->out_degree);
+        fprintf(f, "%d,%.10f,%.10f,%d,%d\n", node->id, node->evc_in, node->evc_out, node->in_degree, node->out_degree);
         node = node->next;
     }
 

@@ -121,7 +121,7 @@ static PyObject *pysyn_get_evc_histogram(PyObject *self, PyObject *args)
 static PyObject *pysyn_histogram2d_print(PyObject *self, PyObject *args)
 {
     long p;
-    syn_histogram2d *hist;
+    syn_histogram2d *hist = NULL;
 
     if (PyArg_ParseTuple(args, "i", &p)) {
       hist = (syn_histogram2d *)p;
@@ -132,6 +132,34 @@ static PyObject *pysyn_histogram2d_print(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_histogram2d_bin_number(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_histogram2d *hist = NULL;
+
+    if (PyArg_ParseTuple(args, "i", &p)) {
+      hist = (syn_histogram2d *)p;
+    }
+    
+    PyObject *result = Py_BuildValue("i", hist->bin_number);
+    return result;
+}
+
+static PyObject *pysyn_histogram2d_get_value(PyObject *self, PyObject *args)
+{
+    long p;
+    int x, y;
+    syn_histogram2d *hist = NULL;
+    double value = 0.0;
+
+    if (PyArg_ParseTuple(args, "iii", &p, &x, &y)) {
+      hist = (syn_histogram2d *)p;
+      value = syn_histogram2d_get_value(hist, x, y);
+    }
+    
+    PyObject *result = Py_BuildValue("f", value);
+    return result;
+}
 
 static PyMethodDef methods[] = {
     {"create_net", pysyn_create_net, METH_VARARGS, "Create network."},
@@ -143,6 +171,8 @@ static PyMethodDef methods[] = {
     {"write_gexf", pysyn_write_gexf, METH_VARARGS, "Write gexf file for net."},
     {"get_evc_histogram", pysyn_get_evc_histogram, METH_VARARGS, "Get EVC histogram from net."},
     {"histogram2d_print", pysyn_histogram2d_print, METH_VARARGS, "Print histogram."},
+    {"histogram2d_bin_number", pysyn_histogram2d_bin_number, METH_VARARGS, "Return histogram bin number."},
+    {"histogram2d_get_value", pysyn_histogram2d_get_value, METH_VARARGS, "Return histogram bin value."},
     {NULL, NULL, 0, NULL},
 };
 

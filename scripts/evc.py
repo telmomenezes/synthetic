@@ -10,6 +10,7 @@ Copyright (c) 2011 Telmo Menezes. All rights reserved.
 import sys
 import getopt
 import syn
+import histogram2svg
 
 
 help_message = '''
@@ -50,10 +51,13 @@ def main(argv=None):
     syn.compute_evc(net)
     syn.print_net_info(net)
     syn.write_evc(net, args[1])
-    #syn.write_gexf(net, args[1])
     
-    hist = syn.get_evc_histogram(net, 10)
-    syn.histogram2d_print(hist)
+    #syn.write_gexf(net, "test.gexf")
+    
+    hist = syn.get_evc_histogram(net, 25)
+    #syn.histogram2d_print(hist)
+    
+    histogram2svg.histogram2svg(hist, "test.svg")
     
     syn.destroy_net(net)
 

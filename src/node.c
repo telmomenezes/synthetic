@@ -43,10 +43,10 @@ int syn_add_edge(syn_node *origin, syn_node *target)
     syn_edge *edge = syn_edge_create();
     edge->orig = origin;
     edge->targ = target;
-    edge->next_orig = origin->targets;
+    edge->next_targ = origin->targets;
     origin->targets = edge;
     origin->out_degree++;
-    edge->next_targ = target->origins;
+    edge->next_orig = target->origins;
     target->origins = edge;
     target->in_degree++;
 
@@ -62,7 +62,7 @@ int syn_edge_exists(syn_node *origin, syn_node *target)
         if (edge->targ == target) {
             return 1;
         }
-        edge = edge->next_orig;
+        edge = edge->next_targ;
     }
 
     return 0;
@@ -80,7 +80,7 @@ syn_node *syn_get_random_target(syn_node *origin)
     syn_edge *edge = origin->targets;
     unsigned int i;
     for (i = 0; i < index; i++) {
-        edge = edge->next_orig;
+        edge = edge->next_targ;
     }
     
     return edge->targ;
