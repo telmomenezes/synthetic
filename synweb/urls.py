@@ -5,8 +5,10 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    # Examples:
     url(r'^$', 'synapp.views.networks', name='networks'),
+    url(r'^addnet/$', 'synapp.views.addnet', name='addnet'),
+
+    # Examples:
     # url(r'^synweb/', include('synweb.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
