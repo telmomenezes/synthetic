@@ -3,4 +3,10 @@
 {% block content %}
 <h3>Networks</h3>
 Hello world!
+
+<form action="/addnet/" method="post">{% csrf_token %}
+{{ addnetform.as_p }}
+<input type="submit" value="Add" />
+</form>
+
 {% endblock %}
