@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'synweb.views.home', name='home'),
+    url(r'^$', 'synapp.views.networks', name='networks'),
     # url(r'^synweb/', include('synweb.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
