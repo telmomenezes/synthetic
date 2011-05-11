@@ -6,6 +6,14 @@ class Network(models.Model):
     nodes = models.PositiveIntegerField()
     edges = models.PositiveIntegerField()
 
+class Node(models.Model):
+    net = models.ForeignKey('Network')
+
+class Edge(models.Model):
+    net = models.ForeignKey('Network')
+    orig = models.ForeignKey('Node')
+    targ = models.ForeignKey('Edge')
+
 class Histogram(models.Model):
     net = models.ForeignKey('Network')
     bins = models.PositiveIntegerField()
