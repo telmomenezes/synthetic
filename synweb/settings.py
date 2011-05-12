@@ -12,11 +12,12 @@ ADMINS = (
 MANAGERS = ADMINS
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
+DB_DIR = os.path.join(SITE_ROOT, 'db')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(SITE_ROOT, 'db') + '/syn.db',  # Or path to database file if using sqlite3.
+        'NAME': DB_DIR + '/syn.db',                         # Or path to database file if using sqlite3.
         'USER': '',                                         # Not used with sqlite3.
         'PASSWORD': '',                                     # Not used with sqlite3.
         'HOST': '',                                         # Set to empty string for localhost. Not used with sqlite3.
