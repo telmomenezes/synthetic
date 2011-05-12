@@ -9,7 +9,7 @@ Copyright (c) 2011 Telmo Menezes. All rights reserved.
 
 from distutils.core import setup, Extension
 
-module1 = Extension('syn.core',
+core_module = Extension('core',
                     define_macros = [('MAJOR_VERSION', '1'),
                                      ('MINOR_VERSION', '0')],
                     libraries = ['m'],
@@ -22,8 +22,9 @@ setup (name = 'synthetic',
        author = 'Telmo Menezes',
        author_email = 'telmo@telmomenezes.com',
        url = 'http://telmomenezes.com',
-       packages = ['syn'],
+       package_dir = {'syn': 'pysrc'},
        long_description = '''
 TBD.
 ''',
-       ext_modules = [module1])
+       ext_package = 'syn',
+       ext_modules = [core_module])

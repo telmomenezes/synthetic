@@ -176,7 +176,7 @@ static PyMethodDef methods[] = {
     {NULL, NULL, 0, NULL},
 };
 
-PyMODINIT_FUNC initsyn(void)
+PyMODINIT_FUNC initcore(void)
 {
-    Py_InitModule("syn", methods);
+    Py_InitModule("core", methods);
 }
