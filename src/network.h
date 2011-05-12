@@ -10,6 +10,7 @@
 #include "node.h"
 #include "histogram2d.h"
 
+
 typedef struct syn_net_s {
     double min_evc_in;
     double min_evc_out;

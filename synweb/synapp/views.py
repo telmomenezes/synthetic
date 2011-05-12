@@ -3,7 +3,6 @@ from django.template import Context, RequestContext, loader
 from django.shortcuts import render_to_response
 from synapp.forms import AddNetForm
 from synapp.models import Network
-from synweb.settings import DB_DIR
 
 
 def networks(request):
@@ -20,25 +19,11 @@ def addnet(request):
         form = AddNetForm(request.POST, request.FILES)
         if form.is_valid():
             name = form.cleaned_data['name']
-            net = Network(name=name)
+            netfile = request.FILES['netfile']
+            json = netfile.read()
+            net = Network(name=name, json=json)
             net.save()
 
-            node_dict = {}
-            link_count = 0
-            node_count = 0
-            dest_path = '%s/net_%d' % (DB_DIR, net.id)
-            dest_file = open(dest_path, 'w')
-            netfile = request.FILES['netfile']
-            for chunk in netfile.chunks():
-                lines = chunk.split('\n')
-                for line in lines:
-                    nodes = line.split(',')
-                    if len(nodes) >= 2:
-                        link_count += 1
-                        for node in nodes:
-                            if not node_dict.has_key(node):
-                                node_count += 1
-                        dest_file.write('%s,%s\n' % (nodes[0], nodes[1]))
-
+            
 
     return HttpResponseRedirect('/')
