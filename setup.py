@@ -9,19 +9,20 @@ Copyright (c) 2011 Telmo Menezes. All rights reserved.
 
 from distutils.core import setup, Extension
 
-module1 = Extension('syn',
+module1 = Extension('syn.core',
                     define_macros = [('MAJOR_VERSION', '1'),
                                      ('MINOR_VERSION', '0')],
                     libraries = ['m'],
                     include_dirs = ['src'],
                     sources = ['src/synpython.c', 'src/edge.c', 'src/node.c', 'src/emd.c', 'src/histogram2d.c', 'src/network.c'])
 
-setup (name = 'syn',
+setup (name = 'synthetic',
        version = '1.0',
        description = 'TBD',
        author = 'Telmo Menezes',
        author_email = 'telmo@telmomenezes.com',
        url = 'http://telmomenezes.com',
+       packages = ['syn'],
        long_description = '''
 TBD.
 ''',
