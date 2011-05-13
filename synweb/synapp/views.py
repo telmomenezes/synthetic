@@ -3,7 +3,8 @@ from django.template import Context, RequestContext, loader
 from django.shortcuts import render_to_response
 from synapp.forms import AddNetForm
 from synapp.models import Network
-from synweb.settings import DB_DIR
+from synweb.settings import DB_DIR, TMP_DIR
+from syn.converters import snap2syn
 
 
 def networks(request):
@@ -24,11 +25,17 @@ def addnet(request):
             net.save()
 
             netfile = request.FILES['netfile']
-            dest_path = '%s/net_%d' % (DB_DIR, net.id)
-            destination = open(dest_path, 'w+')
+            tmp_path = TMP_DIR + 'tmpnet'
+            tmp_file = open(tmp_path, 'w')
             for chunk in netfile.chunks():
-                destination.write(chunk)
-            destination.close()
+                tmp_file.write(chunk)
+            tmp_file.close()
 
+            dest_path = '%s/net_%d' % (DB_DIR, net.id)
+            node_count, edge_count = snap2syn(tmp_path, dest_path)
+
+            net.nodes = node_count
+            net.edges = edge_count
+            net.save()
 
     return HttpResponseRedirect('/')

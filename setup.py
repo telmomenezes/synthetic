@@ -22,6 +22,7 @@ setup (name = 'synthetic',
        author = 'Telmo Menezes',
        author_email = 'telmo@telmomenezes.com',
        url = 'http://telmomenezes.com',
+       packages = ['syn'],
        package_dir = {'syn': 'pysrc'},
        long_description = '''
 TBD.

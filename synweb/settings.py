@@ -13,6 +13,7 @@ MANAGERS = ADMINS
 
 SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 DB_DIR = os.path.join(SITE_ROOT, 'db')
+TMP_DIR = os.path.join(SITE_ROOT, 'tmp')
 
 DATABASES = {
     'default': {
