@@ -3,7 +3,9 @@
 {% block content %}
 
 {% for net in net_list %}
+    <a href="/net/{{ net.id }}">
     {{ net.name }} (nodes:{{ net.nodes }}; edges:{{ net.edges }})<br />
+    </a>
 {% endfor %}
 
 <form action="/addnet/" method="post" enctype="multipart/form-data">{% csrf_token %}

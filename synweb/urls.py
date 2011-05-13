@@ -7,6 +7,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', 'synapp.views.networks', name='networks'),
     url(r'^addnet/$', 'synapp.views.addnet', name='addnet'),
+    url(r'^net/(?P<net_id>\d+)/$', 'synapp.views.network'),
 
     # Examples:
     # url(r'^synweb/', include('synweb.foo.urls')),

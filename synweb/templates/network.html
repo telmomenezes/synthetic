@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}{{ net.name }}{% endblock %}
+{% block content %}
+<h3>Network: {{ net.name }}</h3>
+nodes:{{ net.nodes }}<br />
+edges:{{ net.edges }}<br />
+{% endblock %}

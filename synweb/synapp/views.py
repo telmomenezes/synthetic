@@ -39,3 +39,10 @@ def addnet(request):
             net.save()
 
     return HttpResponseRedirect('/')
+
+
+def network(request, net_id):
+    variables = Context({
+        'net': Network.objects.get(id=net_id),
+    })
+    return render_to_response('network.html', variables)
