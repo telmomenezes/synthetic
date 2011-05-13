@@ -4,7 +4,7 @@ from django.shortcuts import render_to_response
 from synapp.forms import AddNetForm
 from synapp.models import Network
 from synweb.settings import DB_DIR, TMP_DIR
-from syn.converters import snap2syn
+from syn.io import snap2syn
 
 
 def networks(request):
