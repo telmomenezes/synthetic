@@ -1,6 +1,31 @@
 import string
 
 
+def load_net(net_file):
+    fin = open(net_file)
+   
+    # 0: ?; 1: parsing nodes; 2: parsing edges
+    state = 0
+    
+    for line in fin:
+        if line == '[nodes]':
+            state = 1
+        elif line == '[edges]':
+            state = 2
+        else:
+            params = {}
+            param_strings = string.split(line)
+            for param in param_strings:
+                p = string.split(param, '=')
+                if len(p) == 2:
+                   params[p[0]] = params[p[1]] 
+
+            if state == 1:
+                pass
+            elif state == 2:
+                pass
+
+
 def snap2syn(in_file, out_file):
     fin = open(in_file)
     fout = open(out_file, 'w')
@@ -10,7 +35,7 @@ def snap2syn(in_file, out_file):
     edge_count = 0
     
     # nodes
-    fout.write("[nodes]\n")
+    fout.write('[nodes]\n')
     for line in fin:
         if (line[0] != '#'):
             strings = string.split(line)
@@ -18,17 +43,17 @@ def snap2syn(in_file, out_file):
                 for s in strings:
                     if not nodes.has_key(s):
                         nodes[s] = node_count
-                        fout.write("id=%d\n" % node_count)
+                        fout.write('id=%d\n' % node_count)
                         node_count += 1
 
     # edges
-    fout.write("[edges]\n")
+    fout.write('[edges]\n')
     fin.seek(0)
     for line in fin:
         if (line[0] != '#'):
             strings = string.split(line)
             if len(strings) == 2:
-                fout.write("orig=%d targ=%d\n" % (nodes[strings[0]], nodes[strings[1]]))
+                fout.write('orig=%d targ=%d\n' % (nodes[strings[0]], nodes[strings[1]]))
                 edge_count += 1
 
     fin.close()

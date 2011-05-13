@@ -54,71 +54,6 @@ int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ)
     return 0;
 }
 
-
-void syn_write_net(syn_net *net, const char *file_path)
-{
-    FILE *f;
-    f = fopen(file_path, "w");
-
-    syn_node *orig_node = net->nodes;
-    syn_edge *edge;
-
-    while (orig_node) {
-        edge = orig_node->targets;
-
-        while(edge) {
-            fprintf(f, "%d,%d\n", orig_node->id, edge->targ->id);
-            edge = edge->next_orig;
-        }
-        
-        orig_node = orig_node->next;
-    }
-
-    fclose(f);
-}
-
-
-void syn_write_gexf(syn_net *net, const char *file_path)
-{
-    FILE *f;
-    f = fopen(file_path, "w");
-
-    // start file
-    fprintf(f, "<gexf xmlns=\"http://www.gexf.net/1.1draft\" version=\"1.1\">\n");
-    fprintf(f, "<graph mode=\"static\" defaultedgetype=\"directed\">\n");
-
-    // write nodes
-    fprintf(f, "<nodes>\n");
-    syn_node *node = net->nodes;
-    while (node) {
-        fprintf(f, "<node id=\"%d\">\n", node->id);
-        fprintf(f, "</node>\n");
-        node = node->next;
-    }
-    fprintf(f, "</nodes>\n");
-
-    // write edges
-    unsigned int edge_id = 0;
-    fprintf(f, "<edges>\n");
-    node = net->nodes;
-    syn_edge *edge;
-    while (node) {
-        edge = node->targets;
-        while (edge) {
-            fprintf(f, "<edge id=\"%d\" source=\"%d\" target=\"%d\" />\n", edge_id++, node->id, edge->targ->id);
-            edge = edge->next_targ;
-        }
-        node = node->next;
-    }
-    fprintf(f, "</edges>\n");
-
-    // end file
-    fprintf(f, "</graph>\n");
-    fprintf(f, "</gexf>\n");
-
-    fclose(f);
-}
-
 syn_histogram2d *syn_get_evc_histogram(syn_net *net, unsigned int bin_number)
 {
     return syn_get_evc_histogram_with_limits(net, bin_number, net->min_evc_in, net->max_evc_in, net->min_evc_out, net->max_evc_out);
@@ -309,65 +244,6 @@ void syn_write_evc(syn_net *net, const char *file_path)
     fclose(f);
 }
 
-
-void syn_load_net(syn_net *net, const char *file_path)
-{   
-    FILE *f;
-    f = fopen(file_path, "r");
-    
-    unsigned int MAX_LEN = 1000;
-    char line[MAX_LEN];
-    
-    int max_node = -1;
-    
-    while(fgets(line, MAX_LEN, f) != NULL) {
-        
-        if (strlen(line) == 0) {
-            break;
-        }
-        char *orig_str = strtok(line, ",");
-        char *targ_str = strtok(NULL, ",");
-        int orig = atoi(orig_str);
-        int targ = atoi(targ_str);
-        if (orig > max_node) {
-            max_node = orig;
-        }
-        if (targ > max_node) {
-            max_node = targ;
-        }
-    }
-    
-    int node_count = max_node + 1;
-    if (node_count <= 0) {
-        return;
-    }
-    
-    // create nodes
-    syn_node *nodes[node_count];
-    unsigned int i = 0;
-    for (i = 0; i < node_count; i++) {
-        nodes[i] = syn_add_node(net, 0);
-    }
-
-    // add links
-    rewind(f);
-
-    while(fgets(line, MAX_LEN, f) != NULL) {
-        if (strlen(line) == 0) {
-            break;
-        }
-        char *orig_str = strtok(line, ",");
-        char *targ_str = strtok(NULL, ",");
-        int orig = atoi(orig_str);
-        int targ = atoi(targ_str);
-
-        syn_add_edge_to_net(net, nodes[orig], nodes[targ]);
-    }
-
-    fclose(f);
-}
-
-
 void syn_print_net_info(syn_net *net)
 {
     printf("node number: %d\n", net->node_count);
@@ -375,3 +251,4 @@ void syn_print_net_info(syn_net *net)
     printf("log(evc_in): [%f, %f]\n", net->min_evc_in, net->max_evc_in);
     printf("log(evc_out): [%f, %f]\n", net->min_evc_out, net->max_evc_out);
 }
+
