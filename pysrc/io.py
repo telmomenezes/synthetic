@@ -9,22 +9,25 @@ def load_net(net_file):
 
     # 0: ?; 1: parsing nodes; 2: parsing edges
     state = 0
+
+    nodes = {}
     
     for line in fin:
+        line = line.strip()
         if line == '[nodes]':
             state = 1
         elif line == '[edges]':
             state = 2
         else:
             params = {}
-            param_strings = string.split(line)
+            param_strings = line.split()
             for param in param_strings:
-                p = string.split(param, '=')
+                p = param.split('=')
                 if len(p) == 2:
-                   params[p[0]] = params[p[1]] 
+                   params[p[0]] = p[1]
 
             if state == 1:
-                node = add_node(net)
+                node = add_node(net, 0)
                 nodes[params['id']] = node
             elif state == 2:
                 orig = nodes[params['orig']]

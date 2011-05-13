@@ -5,6 +5,7 @@ from synapp.forms import AddNetForm
 from synapp.models import Network
 from synweb.settings import DB_DIR, TMP_DIR
 from syn.io import snap2syn
+from syn.core import compute_evc, get_evc_histogram, destroy_net, histogram2d_bin_number, histogram2d_get_value
 
 
 def networks(request):
@@ -46,3 +47,25 @@ def network(request, net_id):
         'net': Network.objects.get(id=net_id),
     })
     return render_to_response('network.html', variables)
+
+
+def genhist(request, net_id):
+
+    hist_data = ''
+
+    net = Network.objects.get(id=net_id)
+    syn_net = net.getnet()
+    compute_evc(syn_net)
+    hist = get_evc_histogram(syn_net, 25)
+
+
+    bin_number = histogram2d_bin_number(hist)
+    for x in range(bin_number):
+        for y in range(bin_number):
+            val = histogram2d_get_value(hist, x, y)
+            hist_data += '%f ' % val
+
+    destroy_net(syn_net)
+
+    return HttpResponse(hist_data)
+    #return HttpResponseRedirect('/net/' + net_id)

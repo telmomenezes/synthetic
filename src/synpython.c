@@ -8,7 +8,7 @@
 static PyObject *pysyn_create_net(PyObject *self, PyObject *args)
 {
     syn_net *net = syn_create_net();
-    PyObject *result = Py_BuildValue("i", (long)net);
+    PyObject *result = Py_BuildValue("l", (long)net);
     
     return result;
 }
@@ -18,7 +18,7 @@ static PyObject *pysyn_destroy_net(PyObject *self, PyObject *args)
     long p;
     syn_net *net;
 
-    if (PyArg_ParseTuple(args, "i", &p)) {
+    if (PyArg_ParseTuple(args, "l", &p)) {
       net = (syn_net *)p;
       syn_destroy_net(net);
     }
@@ -30,16 +30,16 @@ static PyObject *pysyn_destroy_net(PyObject *self, PyObject *args)
 static PyObject *pysyn_add_node(PyObject *self, PyObject *args)
 {
     long p;
-    unsigned int type;
+    int type;
     syn_net *net;
     syn_node *node = NULL;
 
-    if (PyArg_ParseTuple(args, "ii", &p, &type)) {
-      net = (syn_net *)p;
-      node = syn_add_node(net, type);
+    if (PyArg_ParseTuple(args, "li", &p, &type)) {
+        net = (syn_net *)p;
+        node = syn_add_node(net, type);
     }
 
-    PyObject *result = Py_BuildValue("i", (long)node);
+    PyObject *result = Py_BuildValue("l", (long)node);
     return result;
 }
 
@@ -50,14 +50,14 @@ static PyObject *pysyn_add_edge_to_net(PyObject *self, PyObject *args)
     syn_node *orig, *targ;
     int res = 0;
 
-    if (PyArg_ParseTuple(args, "iii", &p1, &p2, &p3)) {
+    if (PyArg_ParseTuple(args, "lll", &p1, &p2, &p3)) {
       net = (syn_net *)p1;
       orig = (syn_node *)p2;
       targ = (syn_node *)p3;
       res = syn_add_edge_to_net(net, orig, targ);
     }
 
-    PyObject *result = Py_BuildValue("b", res);
+    PyObject *result = Py_BuildValue("i", res);
     return result;
 }
 
@@ -66,7 +66,7 @@ static PyObject *pysyn_compute_evc(PyObject *self, PyObject *args)
     long p;
     syn_net *net;
 
-    if (PyArg_ParseTuple(args, "i", &p)) {
+    if (PyArg_ParseTuple(args, "l", &p)) {
       net = (syn_net *)p;
       syn_compute_evc(net);
     }
@@ -81,7 +81,7 @@ static PyObject *pysyn_write_evc(PyObject *self, PyObject *args)
     char *file_path;
     syn_net *net;
 
-    if (PyArg_ParseTuple(args, "is", &p, &file_path)) {
+    if (PyArg_ParseTuple(args, "ls", &p, &file_path)) {
       net = (syn_net *)p;
       syn_write_evc(net, file_path);
     }
@@ -95,7 +95,7 @@ static PyObject *pysyn_print_net_info(PyObject *self, PyObject *args)
     long p;
     syn_net *net;
 
-    if (PyArg_ParseTuple(args, "i", &p)) {
+    if (PyArg_ParseTuple(args, "l", &p)) {
       net = (syn_net *)p;
       syn_print_net_info(net);
     }
@@ -111,12 +111,12 @@ static PyObject *pysyn_get_evc_histogram(PyObject *self, PyObject *args)
     syn_net *net;
     syn_histogram2d *hist = NULL;
 
-    if (PyArg_ParseTuple(args, "ii", &p, &bin_number)) {
+    if (PyArg_ParseTuple(args, "li", &p, &bin_number)) {
       net = (syn_net *)p;
       hist = syn_get_evc_histogram(net, bin_number);
     }
     
-    PyObject *result = Py_BuildValue("i", (long)hist);
+    PyObject *result = Py_BuildValue("l", (long)hist);
     return result;
 }
 
@@ -125,7 +125,7 @@ static PyObject *pysyn_histogram2d_print(PyObject *self, PyObject *args)
     long p;
     syn_histogram2d *hist = NULL;
 
-    if (PyArg_ParseTuple(args, "i", &p)) {
+    if (PyArg_ParseTuple(args, "l", &p)) {
       hist = (syn_histogram2d *)p;
       syn_histogram2d_print(hist);
     }
@@ -139,7 +139,7 @@ static PyObject *pysyn_histogram2d_bin_number(PyObject *self, PyObject *args)
     long p;
     syn_histogram2d *hist = NULL;
 
-    if (PyArg_ParseTuple(args, "i", &p)) {
+    if (PyArg_ParseTuple(args, "l", &p)) {
       hist = (syn_histogram2d *)p;
     }
     
@@ -154,7 +154,7 @@ static PyObject *pysyn_histogram2d_get_value(PyObject *self, PyObject *args)
     syn_histogram2d *hist = NULL;
     double value = 0.0;
 
-    if (PyArg_ParseTuple(args, "iii", &p, &x, &y)) {
+    if (PyArg_ParseTuple(args, "lii", &p, &x, &y)) {
       hist = (syn_histogram2d *)p;
       value = syn_histogram2d_get_value(hist, x, y);
     }
