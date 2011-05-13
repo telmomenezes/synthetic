@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Histogram{% endblock %}
+{% block content %}
+
+
+<canvas id="myCanvas" width="500" height="500">
+Sorry, your browser does not support canvas.
+</canvas>
+
+<script language="javascript">
+
+var vals = [{{ hist.data }}];
+var bins = {{ hist.bins }};
+
+var maxval = 0;
+for each (var val in vals) {
+    var lval = Math.log(val);
+    if (lval > maxval) {
+        maxval = lval;
+    }
+}
+
+var elem = document.getElementById('myCanvas');
+
+var side = 500.0 / bins;
+
+if (elem && elem.getContext) {
+    var context = elem.getContext('2d');
+    if (context) {
+        var i = 0;
+        for (x = 0; x < bins; x++) {
+            for (y = 0; y < bins; y++) {
+                if (vals[i] == 0) {
+                    context.fillStyle = 'rgba(0, 0, 255, 1)';
+                }
+                else {
+                    context.fillStyle = 'rgba(' + Math.floor((Math.log(vals[i]) / maxval) * 255) + ', 0, 0, 1)';
+                }
+                context.fillRect(x * side, y * side, side, side);
+                i++;
+            }
+        }
+    }
+}
+
+</script>
+
+{% endblock %}

@@ -9,6 +9,7 @@ urlpatterns = patterns('',
     url(r'^addnet/$', 'synapp.views.addnet'),
     url(r'^net/(?P<net_id>\d+)/$', 'synapp.views.network'),
     url(r'^genhist/(?P<net_id>\d+)/$', 'synapp.views.genhist'),
+    url(r'^hist/(?P<hist_id>\d+)/$', 'synapp.views.histogram'),
 
     # Examples:
     # url(r'^synweb/', include('synweb.foo.urls')),

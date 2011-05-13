@@ -7,4 +7,14 @@ edges:{{ net.edges }}<br />
 
 <br />
 <a href="/genhist/{{ net.id }}">Generate Histogram</a>
+
+<br /><br />
+
+{% for hist in hist_list %}
+    <a href="/hist/{{ hist.id }}">
+    histogram {{ hist.id }}
+    </a>
+    <br />
+{% endfor %}
+
 {% endblock %}
