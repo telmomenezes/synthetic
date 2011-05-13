@@ -1,9 +1,12 @@
 import string
+from syn.core import create_net, add_node, add_edge_to_net
 
 
 def load_net(net_file):
     fin = open(net_file)
-   
+  
+    net = create_net()
+
     # 0: ?; 1: parsing nodes; 2: parsing edges
     state = 0
     
@@ -21,9 +24,14 @@ def load_net(net_file):
                    params[p[0]] = params[p[1]] 
 
             if state == 1:
-                pass
+                node = add_node(net)
+                nodes[params['id']] = node
             elif state == 2:
-                pass
+                orig = nodes[params['orig']]
+                targ = nodes[params['targ']]
+                add_edge_to_net(net, orig, targ)
+
+    return net
 
 
 def snap2syn(in_file, out_file):
