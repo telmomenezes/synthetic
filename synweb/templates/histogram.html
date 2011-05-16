@@ -3,7 +3,7 @@
 {% block content %}
 
 
-<canvas id="myCanvas" width="500" height="500">
+<canvas id="myCanvas" width="300" height="300">
 Sorry, your browser does not support canvas.
 </canvas>
 
@@ -22,11 +22,12 @@ for each (var val in vals) {
 
 var elem = document.getElementById('myCanvas');
 
-var side = 500.0 / bins;
 
 if (elem && elem.getContext) {
     var context = elem.getContext('2d');
     if (context) {
+        var side = elem.width / bins;
+
         var i = 0;
         for (x = 0; x < bins; x++) {
             for (y = 0; y < bins; y++) {
