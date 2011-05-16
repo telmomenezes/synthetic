@@ -12,8 +12,8 @@ em{color: red;}
 
 
 #header{
-background: #DDD;
 height: 90px;
+font-family: Sans-Serif;
 }
 
 #header h1{
@@ -27,20 +27,33 @@ width: 100%;
 }
 
 #content{
-margin-left: 200px; /*Set left margin to LeftColumnWidth*/
+margin-left: 200px;
+font-family: Sans-Serif;
 }
 
 #sidebar{
 float: left;
 width: 200px;
 margin-left: -100%;
+font-family: Sans-Serif;
+}
+
+#sidebar a{
+text-decoration: none;
+font-size: 1.1em;
+line-height: 1.4;
+color: #4169E1;
+padding:5px;
+}
+
+#sidebar a:hover{
+color: #FFF;
+background: #4169E1;
 }
 
 #footer{
 clear: left;
 width: 100%;
-background: #DDD;
-color: #FFF;
 text-align: center;
 padding: 4px 0;
 }
