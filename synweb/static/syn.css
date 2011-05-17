@@ -1,71 +1,132 @@
 <style type="text/css">
 <!--
 
-body{
-margin:0;
-padding:0;
-line-height: 1.5em;
+body
+{
+    margin:0;
+    padding:0;
+    line-height: 1.5em;
 }
 
-b{font-size: 110%;}
-em{color: red;}
-
-
-#header{
-height: 90px;
-font-family: Sans-Serif;
+b
+{
+    font-size: 110%;
 }
 
-#header h1{
-margin: 0;
-padding-top: 15px;
+em
+{
+    color: red;
 }
 
-#contentwrapper{
-float: left;
-width: 100%;
+#header
+{
+    height: 90px;
+    font-family: Sans-Serif;
 }
 
-#content{
-margin-left: 200px;
-font-family: Sans-Serif;
+#header h1
+{
+    margin: 0;
+    padding-top: 15px;
 }
 
-#sidebar{
-float: left;
-width: 200px;
-margin-left: -100%;
-font-family: Sans-Serif;
+#contentwrapper
+{
+    float: left;
+    width: 100%;
 }
 
-#sidebar a{
-text-decoration: none;
-font-size: 1.1em;
-line-height: 1.4;
-color: #4169E1;
-padding:5px;
+#content
+{
+    margin-left: 200px;
+    font-family: Sans-Serif;
 }
 
-#sidebar a:hover{
-color: #FFF;
-background: #4169E1;
+#sidebar
+{
+    float: left;
+    width: 200px;
+    margin-left: -100%;
+    font-family: Sans-Serif;
 }
 
-#footer{
-clear: left;
-width: 100%;
-text-align: center;
-padding: 4px 0;
+#sidebar a
+{
+    text-decoration: none;
+    font-size: 1.0em;
+    line-height: 1.4;
+    color: #039;
+    padding:5px 5px 3px 5px;
 }
 
-#footer a{
-color: #000;
+#sidebar a:hover
+{
+    color: #FFF;
+    background: #039;
 }
 
-.inside{
-margin: 10px;
-margin-top: 0;
+#footer
+{
+    clear: left;
+    width: 100%;
+    text-align: center;
+    padding: 4px 0;
 }
 
+#footer a
+{
+    color: #000;
+}
+
+.inside
+{
+    margin: 10px;
+    margin-top: 0;
+}
+
+#rounded-corner
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	margin: 45px;
+	width: 480px;
+	text-align: left;
+	border-collapse: collapse;
+}
+#rounded-corner thead th.rounded-company
+{
+	background: #b9c9fe url('table-images/left.png') left -1px no-repeat;
+}
+#rounded-corner thead th.rounded-q4
+{
+	background: #b9c9fe url('table-images/right.png') right -1px no-repeat;
+}
+#rounded-corner th
+{
+	padding: 8px;
+	font-weight: normal;
+	font-size: 13px;
+	color: #039;
+	background: #b9c9fe;
+}
+#rounded-corner td
+{
+	padding: 8px;
+	background: #e8edff;
+	border-top: 1px solid #fff;
+	color: #669;
+}
+#rounded-corner tfoot td.rounded-foot-left
+{
+	background: #e8edff url('table-images/botleft.png') left bottom no-repeat;
+}
+#rounded-corner tfoot td.rounded-foot-right
+{
+	background: #e8edff url('table-images/botright.png') right bottom no-repeat;
+}
+#rounded-corner tbody tr:hover td
+{
+	background: #d0dafd;
+}
 -->
 </style>

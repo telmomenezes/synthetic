@@ -1,13 +1,32 @@
 {% extends "base.html" %}
 {% block title %}Networks{% endblock %}
 {% block content %}
-
+<table id="rounded-corner">
+    <thead>
+    	<tr>
+        	<th scope="col" class="rounded-company">&nbsp;</th>
+            <th scope="col" class="rounded-q1">Network Name</th>
+            <th scope="col" class="rounded-q2">Nodes</th>
+            <th scope="col" class="rounded-q4">Edges</th>
+        </tr>
+    </thead>
+    <tfoot>
+    	<tr>
+        	<td colspan="3" class="rounded-foot-left">&nbsp;</td>
+        	<td class="rounded-foot-right">&nbsp;</td>
+        </tr>
+    </tfoot>
+    <tbody>
 {% for net in net_list %}
-    <a href="/net/{{ net.id }}">
-    {{ net.name }} (nodes:{{ net.nodes }}; edges:{{ net.edges }})
-    </a>
-    <br />
+    <tr>
+     	<td>&nbsp;</td>
+        <td><a href="/net/{{ net.id }}">{{ net.name }}</a></td>
+        <td>{{ net.nodes }}</td>
+        <td>{{ net.edges }}</td>
+    </tr>
 {% endfor %}
+</tbody>
+</table>
 
 <form action="/addnet/" method="post" enctype="multipart/form-data">{% csrf_token %}
 {{ addnetform.as_p }}
