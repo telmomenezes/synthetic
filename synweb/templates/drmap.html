@@ -48,6 +48,17 @@ if (elem && elem.getContext) {
                 i++;
             }
         }
+        
+        context.strokeStyle = '#0F0';
+        context.lineWidth = 1.0;
+        context.beginPath();
+        context.moveTo(0, elem.height / 2);
+        context.lineTo(elem.width, elem.height / 2);
+        context.stroke();
+        context.beginPath();
+        context.moveTo(elem.width / 2, 0);
+        context.lineTo(elem.width / 2, elem.height);
+        context.stroke();
     }
 }
 
