@@ -9,13 +9,37 @@ edges:{{ net.edges }}<br />
 <br />
 <a href="/gendrmap/{{ net.id }}">Generate DRMap</a>
 
-<br /><br />
-
+<table class="rounded-corner-table">
+    <thead>
+    	<tr>
+        	<th scope="col" class="rounded-head-left">&nbsp;</th>
+            <th scope="col">ID</th>
+            <th scope="col">Bins</th>
+            <th scope="col">Min. Hor.</th>
+            <th scope="col">Max. Hor.</th>
+            <th scope="col">Min. Ver.</th>
+            <th scope="col" class="rounded-head-right">Max. Ver.</th>
+        </tr>
+    </thead>
+    <tfoot>
+    	<tr>
+        	<td colspan="6" class="rounded-foot-left">&nbsp;</td>
+        	<td class="rounded-foot-right">&nbsp;</td>
+        </tr>
+    </tfoot>
+    <tbody>
 {% for map in map_list %}
-    <a href="/drmap/{{ map.id }}">
-    DRMap {{ map.id }}
-    </a>
-    <br />
+    <tr>
+     	<td>&nbsp;</td>
+        <td><a href="/drmap/{{ map.id }}">DRMap {{ map.id }}</a></td>
+        <td>{{ map.bins }}</td>
+        <td>{{ map.min_hor }}</td>
+        <td>{{ map.max_hor }}</td>
+        <td>{{ map.min_ver }}</td>
+        <td>{{ map.max_ver }}</td>
+    </tr>
 {% endfor %}
+</tbody>
+</table>
 
 {% endblock %}
