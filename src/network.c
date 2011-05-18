@@ -199,7 +199,7 @@ void syn_compute_evc(syn_net *net)
         node = node->next;
     }
 
-    // compute max EVC in and out
+    // compute min/max EVC in and out
     net->min_evc_in = 0;
     net->min_evc_out = 0;
     net->max_evc_in = 0;

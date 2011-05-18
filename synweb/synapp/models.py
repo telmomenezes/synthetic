@@ -7,6 +7,7 @@ class Network(models.Model):
     name = models.CharField(max_length=200)
     nodes = models.PositiveIntegerField(default=0)
     edges = models.PositiveIntegerField(default=0)
+    notes = models.TextField()
 
     def getnet(self):
         net_path = '%s/net_%d' % (DB_DIR, self.id)
@@ -19,3 +20,7 @@ class DRMap(models.Model):
     bins = models.PositiveIntegerField()
     data = models.TextField()
     image = models.TextField()
+    min_hor = models.FloatField()
+    max_hor = models.FloatField()
+    min_ver = models.FloatField()
+    max_ver = models.FloatField()

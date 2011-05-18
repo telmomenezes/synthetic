@@ -5,7 +5,7 @@ from synapp.forms import AddNetForm
 from synapp.models import Network, DRMap
 from synweb.settings import DB_DIR, TMP_DIR
 from syn.io import snap2syn
-from syn.core import compute_evc, get_drmap, destroy_net, drmap_bin_number, drmap_get_value
+from syn.core import compute_evc, get_drmap, destroy_net, drmap_bin_number, drmap_get_value, drmap_get_limits
 
 
 def networks(request):
@@ -59,23 +59,25 @@ def gendrmap(request, net_id):
     net = Network.objects.get(id=net_id)
     syn_net = net.getnet()
     compute_evc(syn_net)
-    hist = get_drmap(syn_net, bins)
+    drmap = get_drmap(syn_net, bins)
 
 
-    bin_number = drmap_bin_number(hist)
-    for x in range(bin_number):
-        for y in range(bin_number):
-            val = drmap_get_value(hist, x, y)
+    for x in range(bins):
+        for y in range(bins):
+            val = drmap_get_value(drmap, x, y)
             if (x > 0) or (y > 0):
                 map_data += ','
             map_data += '%f' % val
 
     destroy_net(syn_net)
 
-    map = DRMap(net=net, bins=bins, data=map_data)
+    limits = drmap_get_limits(drmap)
+
+    map = DRMap(net=net, bins=bins, data=map_data, min_hor=limits[0], max_hor=limits[1],
+        min_ver=limits[2], max_ver=limits[3])
     map.save()
 
-    return HttpResponseRedirect('/net/' + net_id)
+    return HttpResponseRedirect('/drmap/%d' % map.id)
 
 
 def drmap(request, map_id):
