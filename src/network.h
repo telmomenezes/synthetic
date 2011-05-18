@@ -8,7 +8,7 @@
 
 
 #include "node.h"
-#include "histogram2d.h"
+#include "drmap.h"
 
 
 typedef struct syn_net_s {
@@ -22,7 +22,7 @@ typedef struct syn_net_s {
     unsigned int node_count;
     unsigned int edge_count;
 
-    syn_histogram2d* last_histogram;
+    syn_drmap *last_map;
 } syn_net;
 
 
@@ -34,7 +34,7 @@ int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ);
 
 void syn_compute_evc(syn_net *net);
 void syn_write_evc(syn_net *net, const char *file_path);
-syn_histogram2d *syn_get_evc_histogram(syn_net *net, unsigned int bin_number);
-syn_histogram2d *syn_get_evc_histogram_with_limits(syn_net *net, unsigned int bin_number, double min_val_hor, double max_val_hor, double min_val_ver, double max_val_ver);
+syn_drmap *syn_get_drmap(syn_net *net, unsigned int bin_number);
+syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, double min_val_hor, double max_val_hor, double min_val_ver, double max_val_ver);
 
 void syn_print_net_info(syn_net *net);

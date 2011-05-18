@@ -4,17 +4,17 @@
  */
 
 
-#include "histogram2D.h"
+#include "drmap.h"
 #include "utils.h"
 #include <stdlib.h>
 #include <strings.h>
 #include <stdio.h>
 
 
-syn_histogram2d *syn_histogram2d_create(unsigned int bin_number, double min_val_hor, double max_val_hor,
+syn_drmap *syn_drmap_create(unsigned int bin_number, double min_val_hor, double max_val_hor,
      double min_val_ver, double max_val_ver)
 {
-    syn_histogram2d *hist = (syn_histogram2d *)malloc(sizeof(syn_histogram2d));
+    syn_drmap *hist = (syn_drmap *)malloc(sizeof(syn_drmap));
     hist->bin_number = bin_number;
     hist->min_val_hor = min_val_hor;
     hist->max_val_hor = max_val_hor;
@@ -22,44 +22,44 @@ syn_histogram2d *syn_histogram2d_create(unsigned int bin_number, double min_val_
     hist->max_val_ver = max_val_ver;
     hist->data = (double *)malloc(bin_number * bin_number * sizeof(double));
 
-    syn_histogram2d_clear(hist);
+    syn_drmap_clear(hist);
     
     return hist;
 }
 
 
-void syn_histogram2d_destroy(syn_histogram2d *hist)
+void syn_drmap_destroy(syn_drmap *hist)
 {
     free(hist->data);
     free(hist);
 }
 
 
-void syn_histogram2d_clear(syn_histogram2d *hist)
+void syn_drmap_clear(syn_drmap *hist)
 {
     bzero(hist->data, hist->bin_number * hist->bin_number * sizeof(double));
 }
 
 
-void syn_histogram2d_set_value(syn_histogram2d *hist, unsigned int x, unsigned int y, double val)
+void syn_drmap_set_value(syn_drmap *hist, unsigned int x, unsigned int y, double val)
 {
     hist->data[(y * hist->bin_number) + x] = val;
 }
 
 
-void syn_historgram2d_inc_value(syn_histogram2d *hist, unsigned int x, unsigned int y)
+void syn_drmap_inc_value(syn_drmap *hist, unsigned int x, unsigned int y)
 {
     hist->data[(y * hist->bin_number) + x] += 1;
 }
 
 
-double syn_histogram2d_get_value(syn_histogram2d *hist, unsigned int x, unsigned int y)
+double syn_drmap_get_value(syn_drmap *hist, unsigned int x, unsigned int y)
 {
     return hist->data[(y * hist->bin_number) + x];
 }
 
     
-void syn_histogram2d_log_scale(syn_histogram2d *hist)
+void syn_drmap_log_scale(syn_drmap *hist)
 {
     unsigned int x, y;
     for (x = 0; x < hist->bin_number; x++)
@@ -69,7 +69,7 @@ void syn_histogram2d_log_scale(syn_histogram2d *hist)
 }
 
 
-double syn_histogram2d_simple_dist(syn_histogram2d *hist1, syn_histogram2d *hist2)
+double syn_drmap_simple_dist(syn_drmap *hist1, syn_drmap *hist2)
 {
     double dist = 0;
     unsigned int x, y;
@@ -80,7 +80,7 @@ double syn_histogram2d_simple_dist(syn_histogram2d *hist1, syn_histogram2d *hist
 }
 
 
-signature_t* syn_histogram2d_get_emd_signature(syn_histogram2d *hist)
+signature_t* syn_drmap_get_emd_signature(syn_drmap *hist)
 {
     double interval_hor = (hist->max_val_hor - hist->min_val_hor) / ((double)hist->bin_number);
     double interval_ver = (hist->max_val_ver - hist->min_val_ver) / ((double)hist->bin_number);
@@ -121,10 +121,10 @@ signature_t* syn_histogram2d_get_emd_signature(syn_histogram2d *hist)
 }
 
 
-double syn_histogram2d_emd_dist(syn_histogram2d *hist1, syn_histogram2d *hist2)
+double syn_drmap_emd_dist(syn_drmap *hist1, syn_drmap *hist2)
 {
-    signature_t* sig1 = syn_histogram2d_get_emd_signature(hist1);
-    signature_t* sig2 = syn_histogram2d_get_emd_signature(hist2);
+    signature_t* sig1 = syn_drmap_get_emd_signature(hist1);
+    signature_t* sig2 = syn_drmap_get_emd_signature(hist2);
     
     double dist = emd(sig1, sig2, groundDist, NULL, NULL);
     
@@ -139,13 +139,13 @@ double syn_histogram2d_emd_dist(syn_histogram2d *hist1, syn_histogram2d *hist2)
 }
 
 
-void syn_histogram2d_print(syn_histogram2d *hist)
+void syn_drmap_print(syn_drmap *hist)
 {
     unsigned int x, y;
 
     for (y = 0; y < hist->bin_number; y++) {
         for (x = 0; x < hist->bin_number; x++) {
-            printf("%f\t", syn_histogram2d_get_value(hist, x, y));
+            printf("%f\t", syn_drmap_get_value(hist, x, y));
         }
         printf("\n");
     }

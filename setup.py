@@ -14,7 +14,7 @@ core_module = Extension('core',
                                      ('MINOR_VERSION', '0')],
                     libraries = ['m'],
                     include_dirs = ['src'],
-                    sources = ['src/synpython.c', 'src/edge.c', 'src/node.c', 'src/emd.c', 'src/histogram2d.c', 'src/network.c'])
+                    sources = ['src/synpython.c', 'src/edge.c', 'src/node.c', 'src/emd.c', 'src/drmap.c', 'src/network.c'])
 
 setup (name = 'synthetic',
        version = '1.0',

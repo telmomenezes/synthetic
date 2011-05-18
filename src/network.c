@@ -54,18 +54,18 @@ int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ)
     return 0;
 }
 
-syn_histogram2d *syn_get_evc_histogram(syn_net *net, unsigned int bin_number)
+syn_drmap *syn_get_drmap(syn_net *net, unsigned int bin_number)
 {
-    return syn_get_evc_histogram_with_limits(net, bin_number, net->min_evc_in, net->max_evc_in, net->min_evc_out, net->max_evc_out);
+    return syn_get_drmap_with_limits(net, bin_number, net->min_evc_in, net->max_evc_in, net->min_evc_out, net->max_evc_out);
 }
 
-syn_histogram2d *syn_get_evc_histogram_with_limits(syn_net *net, unsigned int bin_number, double min_val_hor,
+syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, double min_val_hor,
                                         double max_val_hor, double min_val_ver, double max_val_ver)
 {
     double interval_hor = (max_val_hor - min_val_hor) / ((double)bin_number);
     double interval_ver = (max_val_ver - min_val_ver) / ((double)bin_number);
 
-    syn_histogram2d *hist = syn_histogram2d_create(bin_number + 1, min_val_hor - interval_hor,
+    syn_drmap *hist = syn_drmap_create(bin_number + 1, min_val_hor - interval_hor,
         max_val_hor, min_val_ver - interval_ver, max_val_ver);
 
     syn_node *node = net->nodes;
@@ -97,7 +97,7 @@ syn_histogram2d *syn_get_evc_histogram_with_limits(syn_net *net, unsigned int bi
         }
 
         if ((x >= 0) && (y >= 0)) {
-            syn_historgram2d_inc_value(hist, x, y);
+            syn_drmap_inc_value(hist, x, y);
         }
         
         node = node->next;

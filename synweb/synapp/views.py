@@ -5,7 +5,7 @@ from synapp.forms import AddNetForm
 from synapp.models import Network, DRMap
 from synweb.settings import DB_DIR, TMP_DIR
 from syn.io import snap2syn
-from syn.core import compute_evc, get_evc_histogram, destroy_net, histogram2d_bin_number, histogram2d_get_value
+from syn.core import compute_evc, get_drmap, destroy_net, drmap_bin_number, drmap_get_value
 
 
 def networks(request):
@@ -59,13 +59,13 @@ def gendrmap(request, net_id):
     net = Network.objects.get(id=net_id)
     syn_net = net.getnet()
     compute_evc(syn_net)
-    hist = get_evc_histogram(syn_net, bins)
+    hist = get_drmap(syn_net, bins)
 
 
-    bin_number = histogram2d_bin_number(hist)
+    bin_number = drmap_bin_number(hist)
     for x in range(bin_number):
         for y in range(bin_number):
-            val = histogram2d_get_value(hist, x, y)
+            val = drmap_get_value(hist, x, y)
             if (x > 0) or (y > 0):
                 map_data += ','
             map_data += '%f' % val
