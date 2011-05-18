@@ -8,8 +8,8 @@ urlpatterns = patterns('',
     url(r'^$', 'synapp.views.networks'),
     url(r'^addnet/$', 'synapp.views.addnet'),
     url(r'^net/(?P<net_id>\d+)/$', 'synapp.views.network'),
-    url(r'^genhist/(?P<net_id>\d+)/$', 'synapp.views.genhist'),
-    url(r'^hist/(?P<hist_id>\d+)/$', 'synapp.views.histogram'),
+    url(r'^gendrmap/(?P<net_id>\d+)/$', 'synapp.views.gendrmap'),
+    url(r'^drmap/(?P<map_id>\d+)/$', 'synapp.views.drmap'),
 
     # Examples:
     # url(r'^synweb/', include('synweb.foo.urls')),

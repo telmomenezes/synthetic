@@ -1,6 +1,6 @@
 from synapp.models import Network
-from synapp.models import Histogram
+from synapp.models import DRMap
 from django.contrib import admin
 
 admin.site.register(Network)
-admin.site.register(Histogram)
+admin.site.register(DRMap)

@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Histogram{% endblock %}
+{% block title %}DRMap{% endblock %}
 {% block content %}
 
 
-<canvas id="myCanvas" width="300" height="300">
+<canvas id="drmap_canvas" width="300" height="300">
 Sorry, your browser does not support canvas.
 </canvas>
 
 <script language="javascript">
 
-var vals = [{{ hist.data }}];
-var bins = {{ hist.bins }};
+var vals = [{{ map.data }}];
+var bins = {{ map.bins }};
 
 var maxval = 0;
 for each (var val in vals) {
@@ -20,7 +20,7 @@ for each (var val in vals) {
     }
 }
 
-var elem = document.getElementById('myCanvas');
+var elem = document.getElementById('drmap_canvas');
 
 
 if (elem && elem.getContext) {

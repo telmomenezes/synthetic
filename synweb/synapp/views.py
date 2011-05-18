@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context, RequestContext, loader
 from django.shortcuts import render_to_response
 from synapp.forms import AddNetForm
-from synapp.models import Network, Histogram
+from synapp.models import Network, DRMap
 from synweb.settings import DB_DIR, TMP_DIR
 from syn.io import snap2syn
 from syn.core import compute_evc, get_evc_histogram, destroy_net, histogram2d_bin_number, histogram2d_get_value
@@ -45,16 +45,16 @@ def addnet(request):
 def network(request, net_id):
     variables = Context({
         'net': Network.objects.get(id=net_id),
-        'hist_list': Histogram.objects.filter(net=net_id),
+        'map_list': DRMap.objects.filter(net=net_id),
     })
     return render_to_response('network.html', variables)
 
 
-def genhist(request, net_id):
+def gendrmap(request, net_id):
 
     bins = 25
 
-    hist_data = ''
+    map_data = ''
 
     net = Network.objects.get(id=net_id)
     syn_net = net.getnet()
@@ -67,19 +67,19 @@ def genhist(request, net_id):
         for y in range(bin_number):
             val = histogram2d_get_value(hist, x, y)
             if (x > 0) or (y > 0):
-                hist_data += ','
-            hist_data += '%f' % val
+                map_data += ','
+            map_data += '%f' % val
 
     destroy_net(syn_net)
 
-    hist = Histogram(net=net, bins=bins, data=hist_data)
-    hist.save()
+    map = DRMap(net=net, bins=bins, data=map_data)
+    map.save()
 
     return HttpResponseRedirect('/net/' + net_id)
 
 
-def histogram(request, hist_id):
+def drmap(request, map_id):
     variables = Context({
-        'hist': Histogram.objects.get(id=hist_id),
+        'map': DRMap.objects.get(id=map_id),
     })
-    return render_to_response('histogram.html', variables)
+    return render_to_response('drmap.html', variables)

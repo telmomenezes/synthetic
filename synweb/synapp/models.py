@@ -14,7 +14,8 @@ class Network(models.Model):
         return net
 
 
-class Histogram(models.Model):
+class DRMap(models.Model):
     net = models.ForeignKey('Network')
     bins = models.PositiveIntegerField()
     data = models.TextField()
+    image = models.TextField()
