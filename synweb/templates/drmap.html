@@ -42,7 +42,7 @@ if (elem && elem.getContext) {
                     context.fillStyle = 'rgba(0, 0, 255, 1)';
                 }
                 else {
-                    context.fillStyle = 'rgba(' + Math.floor((Math.log(vals[i]) / maxval) * 255) + ', 0, 0, 1)';
+                    context.fillStyle = 'rgba(' + Math.floor(vals[i] * 255.0) + ', 0, 0, 1)';
                 }
                 context.fillRect(x * side, y * side, side, side);
                 i++;

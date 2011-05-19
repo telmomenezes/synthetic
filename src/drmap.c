@@ -59,13 +59,30 @@ double syn_drmap_get_value(syn_drmap *hist, unsigned int x, unsigned int y)
 }
 
     
-void syn_drmap_log_scale(syn_drmap *hist)
+void syn_drmap_log_scale(syn_drmap *map)
 {
     unsigned int x, y;
-    for (x = 0; x < hist->bin_number; x++)
-        for (y = 0; y < hist->bin_number; y++)
-            if(hist->data[(y * hist->bin_number) + x] > 0) 
-                hist->data[(y * hist->bin_number) + x] = log(hist->data[(y * hist->bin_number) + x]);
+    for (x = 0; x < map->bin_number; x++)
+        for (y = 0; y < map->bin_number; y++)
+            if(map->data[(y * map->bin_number) + x] > 0) 
+                map->data[(y * map->bin_number) + x] = log(map->data[(y * map->bin_number) + x]);
+}
+
+void syn_drmap_normalize(syn_drmap *map)
+{
+    unsigned int x, y;
+
+    // find max value
+    double max = 0;
+    for (x = 0; x < map->bin_number; x++)
+        for (y = 0; y < map->bin_number; y++)
+            if(map->data[(y * map->bin_number) + x] > max) 
+                max = map->data[(y * map->bin_number) + x];
+
+    // normalize by max
+    for (x = 0; x < map->bin_number; x++)
+        for (y = 0; y < map->bin_number; y++)
+            map->data[(y * map->bin_number) + x] = map->data[(y * map->bin_number) + x] / max;
 }
 
 

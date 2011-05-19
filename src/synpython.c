@@ -104,6 +104,20 @@ static PyObject *pysyn_print_net_info(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_destroy_drmap(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_drmap *map = NULL;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        map = (syn_drmap *)p;
+        syn_drmap_destroy(map);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
 static PyObject *pysyn_get_drmap(PyObject *self, PyObject *args)
 {
     long p;
@@ -196,6 +210,34 @@ static PyObject *pysyn_drmap_get_limits(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_drmap_log_scale(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_drmap *map = NULL;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        map = (syn_drmap *)p;
+        syn_drmap_log_scale(map);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+static PyObject *pysyn_drmap_normalize(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_drmap *map = NULL;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        map = (syn_drmap *)p;
+        syn_drmap_normalize(map);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
 static PyMethodDef methods[] = {
     {"create_net", pysyn_create_net, METH_VARARGS, "Create network."},
     {"destroy_net", pysyn_destroy_net, METH_VARARGS, "Destroy network."},
@@ -204,12 +246,15 @@ static PyMethodDef methods[] = {
     {"compute_evc", pysyn_compute_evc, METH_VARARGS, "Compute EVC."},
     {"write_evc", pysyn_write_evc, METH_VARARGS, "Write EVC."},
     {"print_net_info", pysyn_print_net_info, METH_VARARGS, "Print net info."},
+    {"destroy_drmap", pysyn_destroy_drmap, METH_VARARGS, "Destroy DRMap."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},
     {"get_drmap_with_limits", pysyn_get_drmap_with_limits, METH_VARARGS, "Get DRMap from net with limits."},
     {"drmap_print", pysyn_drmap_print, METH_VARARGS, "Print DRMap."},
     {"drmap_bin_number", pysyn_drmap_bin_number, METH_VARARGS, "Return DRmap bin number."},
     {"drmap_get_value", pysyn_drmap_get_value, METH_VARARGS, "Return DRMap bin value."},
     {"drmap_get_limits", pysyn_drmap_get_limits, METH_VARARGS, "Return DRMap limit values."},
+    {"drmap_log_scale", pysyn_drmap_log_scale, METH_VARARGS, "Apply log scale to drmap bin values."},
+    {"drmap_normalize", pysyn_drmap_normalize, METH_VARARGS, "Normalize drmap bin values by max value."},
     {NULL, NULL, 0, NULL},
 };
 

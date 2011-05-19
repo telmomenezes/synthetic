@@ -28,7 +28,8 @@ void syn_drmap_set_value(syn_drmap *hist, unsigned int x, unsigned int y, double
 void syn_drmap_inc_value(syn_drmap *hist, unsigned int x, unsigned int y);
 double syn_drmap_get_value(syn_drmap *hist, unsigned int x, unsigned int y);
 
-void syn_drmap_log_scale(syn_drmap *hist);
+void syn_drmap_log_scale(syn_drmap *map);
+void syn_drmap_normalize(syn_drmap *map);
 
 double syn_drmap_simple_dist(syn_drmap *hist1, syn_drmap *hist2);
 double syn_drmap_emd_dist(syn_drmap *hist1, syn_drmap *hist2);
