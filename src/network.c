@@ -65,7 +65,7 @@ syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, doub
     double interval_hor = (max_val_hor - min_val_hor) / ((double)bin_number);
     double interval_ver = (max_val_ver - min_val_ver) / ((double)bin_number);
 
-    syn_drmap *hist = syn_drmap_create(bin_number + 1, min_val_hor - interval_hor,
+    syn_drmap *map = syn_drmap_create(bin_number, min_val_hor - interval_hor,
         max_val_hor, min_val_ver - interval_ver, max_val_ver);
 
     syn_node *node = net->nodes;
@@ -75,10 +75,10 @@ syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, doub
 
         if (isfinite(node->evc_in)) {
             if (node->evc_in < min_val_hor) {
-                x = -1;
+                x = 0;
             }
             else if (node->evc_in > max_val_hor) {
-                x = -1;
+                x = bin_number - 1;
             }
             else {
                 x = (unsigned int)ceil((node->evc_in - min_val_hor) / interval_hor);
@@ -86,10 +86,10 @@ syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, doub
         }
         if (isfinite(node->evc_out)) {
             if (node->evc_out < min_val_ver) {
-                y = -1;
+                y = 0;
             }
             else if (node->evc_out > max_val_ver) {
-                y = -1;
+                y = bin_number - 1;
             }
             else {
                 y = (unsigned int)ceil((node->evc_out - min_val_ver) / interval_ver);
@@ -97,13 +97,13 @@ syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, doub
         }
 
         if ((x >= 0) && (y >= 0)) {
-            syn_drmap_inc_value(hist, x, y);
+            syn_drmap_inc_value(map, x, y);
         }
         
         node = node->next;
     }
 
-    return hist;
+    return map;
 }
 
 
