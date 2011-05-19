@@ -14,17 +14,17 @@
 syn_drmap *syn_drmap_create(unsigned int bin_number, double min_val_hor, double max_val_hor,
      double min_val_ver, double max_val_ver)
 {
-    syn_drmap *hist = (syn_drmap *)malloc(sizeof(syn_drmap));
-    hist->bin_number = bin_number;
-    hist->min_val_hor = min_val_hor;
-    hist->max_val_hor = max_val_hor;
-    hist->min_val_ver = min_val_ver;
-    hist->max_val_ver = max_val_ver;
-    hist->data = (double *)malloc(bin_number * bin_number * sizeof(double));
+    syn_drmap *map = (syn_drmap *)malloc(sizeof(syn_drmap));
+    map->bin_number = bin_number;
+    map->min_val_hor = min_val_hor;
+    map->max_val_hor = max_val_hor;
+    map->min_val_ver = min_val_ver;
+    map->max_val_ver = max_val_ver;
+    map->data = (double *)malloc(bin_number * bin_number * sizeof(double));
 
-    syn_drmap_clear(hist);
+    syn_drmap_clear(map);
     
-    return hist;
+    return map;
 }
 
 

@@ -109,14 +109,34 @@ static PyObject *pysyn_get_drmap(PyObject *self, PyObject *args)
     long p;
     int bin_number;
     syn_net *net;
-    syn_drmap *hist = NULL;
+    syn_drmap *map = NULL;
 
     if (PyArg_ParseTuple(args, "li", &p, &bin_number)) {
         net = (syn_net *)p;
-        hist = syn_get_drmap(net, bin_number);
+        map = syn_get_drmap(net, bin_number);
     }
     
-    PyObject *result = Py_BuildValue("l", (long)hist);
+    PyObject *result = Py_BuildValue("l", (long)map);
+    return result;
+}
+
+static PyObject *pysyn_get_drmap_with_limits(PyObject *self, PyObject *args)
+{
+    long p;
+    int bin_number;
+    syn_net *net;
+    syn_drmap *map = NULL;
+    double min_val_hor;
+    double max_val_hor;
+    double min_val_ver;
+    double max_val_ver;
+
+    if (PyArg_ParseTuple(args, "lidddd", &p, &bin_number, &min_val_hor, &max_val_hor, &min_val_ver, &max_val_ver)) {
+        net = (syn_net *)p;
+        map = syn_get_drmap_with_limits(net, bin_number, min_val_hor, max_val_hor, min_val_ver, max_val_ver);
+    }
+    
+    PyObject *result = Py_BuildValue("l", (long)map);
     return result;
 }
 
@@ -172,7 +192,7 @@ static PyObject *pysyn_drmap_get_limits(PyObject *self, PyObject *args)
         map = (syn_drmap *)p;
     }
     
-    PyObject *result = Py_BuildValue("(ffff)", map->min_val_hor, map->max_val_hor, map->min_val_ver, map->max_val_ver);
+    PyObject *result = Py_BuildValue("(dddd)", map->min_val_hor, map->max_val_hor, map->min_val_ver, map->max_val_ver);
     return result;
 }
 
@@ -185,6 +205,7 @@ static PyMethodDef methods[] = {
     {"write_evc", pysyn_write_evc, METH_VARARGS, "Write EVC."},
     {"print_net_info", pysyn_print_net_info, METH_VARARGS, "Print net info."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},
+    {"get_drmap_with_limits", pysyn_get_drmap_with_limits, METH_VARARGS, "Get DRMap from net with limits."},
     {"drmap_print", pysyn_drmap_print, METH_VARARGS, "Print DRMap."},
     {"drmap_bin_number", pysyn_drmap_bin_number, METH_VARARGS, "Return DRmap bin number."},
     {"drmap_get_value", pysyn_drmap_get_value, METH_VARARGS, "Return DRMap bin value."},
