@@ -37,7 +37,7 @@ if (elem && elem.getContext) {
 
         var i = 0;
         for (x = 0; x < bins; x++) {
-            for (y = 0; y < bins; y++) {
+            for (y = bins - 1; y >= 0; y--) {
                 if (vals[i] == 0) {
                     context.fillStyle = 'rgba(0, 0, 255, 1)';
                 }

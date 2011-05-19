@@ -74,25 +74,25 @@ syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, doub
         int y = 0;
 
         if (isfinite(node->evc_in)) {
-            if (node->evc_in < min_val_hor) {
+            if (node->evc_in <= min_val_hor) {
                 x = 0;
             }
-            else if (node->evc_in > max_val_hor) {
+            else if (node->evc_in >= max_val_hor) {
                 x = bin_number - 1;
             }
             else {
-                x = (unsigned int)ceil((node->evc_in - min_val_hor) / interval_hor);
+                x = (unsigned int)floor((node->evc_in - min_val_hor) / interval_hor);
             }
         }
         if (isfinite(node->evc_out)) {
-            if (node->evc_out < min_val_ver) {
+            if (node->evc_out <= min_val_ver) {
                 y = 0;
             }
-            else if (node->evc_out > max_val_ver) {
+            else if (node->evc_out >= max_val_ver) {
                 y = bin_number - 1;
             }
             else {
-                y = (unsigned int)ceil((node->evc_out - min_val_ver) / interval_ver);
+                y = (unsigned int)floor((node->evc_out - min_val_ver) / interval_ver);
             }
         }
 
