@@ -51,7 +51,7 @@ def network(request, net_id):
 
 
 def gendrmap(request, net_id):
-    bins = 25
+    bins = 50
 
     map_data = ''
 
