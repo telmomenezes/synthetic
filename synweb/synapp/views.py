@@ -84,3 +84,9 @@ def drmap(request, map_id):
         'map': DRMap.objects.get(id=map_id),
     })
     return render_to_response('drmap.html', variables)
+
+
+def tbd(request):
+    variables = Context({
+    })
+    return render_to_response('tbd.html', variables)

@@ -1,4 +1,3 @@
-* Create "not implemented yet" page
 * Protect with user accounts
 * More info on DRMap page
 * Show deafult DRMap on network pages

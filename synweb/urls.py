@@ -6,6 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'synapp.views.networks'),
+    url(r'^tbd/$', 'synapp.views.tbd'),
     url(r'^addnet/$', 'synapp.views.addnet'),
     url(r'^net/(?P<net_id>\d+)/$', 'synapp.views.network'),
     url(r'^gendrmap/(?P<net_id>\d+)/$', 'synapp.views.gendrmap'),
