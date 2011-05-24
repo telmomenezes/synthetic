@@ -1,6 +1,8 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import Context, RequestContext, loader
 from django.shortcuts import render_to_response
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from synapp.forms import AddNetForm
 from synapp.models import Network, DRMap
 from synweb.settings import DB_DIR, TMP_DIR
@@ -8,6 +10,7 @@ from syn.io import snap2syn
 from syn.core import *
 
 
+@login_required
 def networks(request):
     addnetform = AddNetForm()
     variables = RequestContext(request, {
@@ -17,6 +20,7 @@ def networks(request):
     return render_to_response('networks.html', variables)
 
 
+@login_required
 def addnet(request):
     if request.method == 'POST':
         form = AddNetForm(request.POST, request.FILES)
@@ -42,14 +46,16 @@ def addnet(request):
     return HttpResponseRedirect('/')
 
 
+@login_required
 def network(request, net_id):
-    variables = Context({
+    variables = RequestContext(request, {
         'net': Network.objects.get(id=net_id),
         'map_list': DRMap.objects.filter(net=net_id),
     })
     return render_to_response('network.html', variables)
 
 
+@login_required
 def gendrmap(request, net_id):
     bins = 50
 
@@ -79,14 +85,21 @@ def gendrmap(request, net_id):
     return HttpResponseRedirect('/drmap/%d' % map.id)
 
 
+@login_required
 def drmap(request, map_id):
-    variables = Context({
+    variables = RequestContext(request, {
         'map': DRMap.objects.get(id=map_id),
     })
     return render_to_response('drmap.html', variables)
 
 
+@login_required
 def tbd(request):
-    variables = Context({
+    variables = RequestContext(request, {
     })
     return render_to_response('tbd.html', variables)
+
+
+def logout_page(request):
+    logout(request)
+    return HttpResponseRedirect('/')

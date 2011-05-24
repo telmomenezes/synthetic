@@ -10,7 +10,14 @@
 <div id="header"><div class="inside">
 <h1>SYNTHETIC</h1>
 Analysis and Modeling of Complex Networks
-</div></div>
+</div>
+<div style="text-align:right">
+{% if user.username %}
+Welcome {{ user.username }} | <a href="/logout">logout</a>
+{% endif %}
+</div>
+</div>
+
 
 <div id="contentwrapper">
 <div id="content">

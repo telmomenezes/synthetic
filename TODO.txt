@@ -8,3 +8,4 @@ FEATURES
 * Evolution interface
 * Various user roles
 * Import more network formats
+* Temporal DRMaps

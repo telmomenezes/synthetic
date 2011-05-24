@@ -12,12 +12,9 @@ urlpatterns = patterns('',
     url(r'^gendrmap/(?P<net_id>\d+)/$', 'synapp.views.gendrmap'),
     url(r'^drmap/(?P<map_id>\d+)/$', 'synapp.views.drmap'),
 
-    # Examples:
-    # url(r'^synweb/', include('synweb.foo.urls')),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    url(r'^logout/$', 'synapp.views.logout_page'),
 
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
+    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 )
