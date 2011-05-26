@@ -4,43 +4,43 @@
  */
 
 
-#include "Generator.h"
+#include "generator.c"
 #include "Params.h"
 #include "utils.h"
 #include <stdlib.h>
 #include <math.h>
-#include <iostream>
-#include <fstream>
 #include <string.h>
 
 
-using std::endl;
-using std::cout;
-using std::ofstream;
+#define SYN_GEN_TYPE_SIZE(x) ((x * 2) + 5)
 
 
-Generator::Generator()
+syn_gen *syn_create_generator(unsigned int max_node_types, unsigned int tags_size)
 {
-    unsigned int maxNodeTypes = Params::inst().getMaxNodeTypes();
-    _dataSize = Params::inst().getTypeSize();
-    _dataSize *= maxNodeTypes;
-    data = (double *)malloc(sizeof(double) * _dataSize);
-    affMatrix = (double *)malloc(sizeof(double) * maxNodeTypes * maxNodeTypes);
-}
-
-
-Generator::~Generator()
-{
-    free(data);
-    free(affMatrix);
-}
-
-
-Generator* Generator::clone()
-{
-    Generator* gen = new Generator();
-    memcpy(gen->data, data, sizeof(double) * _dataSize);
+    syn_gen *gen = (syn_gen *)malloc(sizeof(syn_gen));
+    gen->max_node_types = max_node_types;
+    gen->tags_size = tags_size;
+    get->data_size = SYN_GEN_TYPE_SIZE(tags_size);
+    gen->data_size *= max_node_types;
+    gen->data = (double *)malloc(sizeof(double) * get->data_size);
+    gen->aff_matrix = (double *)malloc(sizeof(double) * max_node_types * max_node_types);
     return gen;
+}
+
+
+void syn_destroy_generator(syn_gen *gen)
+{
+    free(gen->data);
+    free(gen->aff_matrix);
+    free(gen);
+}
+
+
+syn_gen *syn_clone_generator(syn_gen *gen)
+{
+    syn_gen *gen_clone = syn_create_generator(gen->max_node_types, gen->tags_size);
+    memcpy(gen->data, gen_clone->data, sizeof(double) * gen->data_size);
+    return gen_clone;
 }
 
 
