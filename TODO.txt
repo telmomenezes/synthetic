@@ -1,8 +1,5 @@
-* Protect with user accounts
 * More info on DRMap page
 * Show deafult DRMap on network pages
-
-FEATURES
 * Language parser
 * DRMap distance interface
 * Evolution interface

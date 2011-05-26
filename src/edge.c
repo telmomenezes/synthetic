@@ -7,8 +7,15 @@
 #include <stdlib.h>
 
 
-syn_edge *syn_edge_create(void)
+syn_edge *syn_create_edge(void)
 {
     syn_edge *edge = (syn_edge *)malloc(sizeof(syn_edge));
     return edge;
 }
+
+
+void syn_destroy_edge(syn_edge *edge)
+{
+    free(edge);
+}
+

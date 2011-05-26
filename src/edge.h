@@ -15,4 +15,5 @@ typedef struct syn_edge_s {
     struct syn_edge_s *next_targ;
 } syn_edge;
 
-syn_edge *syn_edge_create(void);
+syn_edge *syn_create_edge(void);
+void syn_destroy_edge(syn_edge *edge);

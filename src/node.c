@@ -28,6 +28,15 @@ syn_node *syn_create_node(unsigned int type, unsigned int id)
 
 void syn_destroy_node(syn_node *node)
 {
+    // we destroy the outgoing edges of every node
+    syn_edge *edge = node->targets;
+    syn_edge *next_edge;
+    while (edge) {
+        next_edge = edge->next_targ;
+        syn_destroy_edge(edge);
+        edge = next_edge;
+    }
+
     free(node);
 }
 
@@ -40,7 +49,7 @@ int syn_add_edge(syn_node *origin, syn_node *target)
     if (syn_edge_exists(origin, target))
         return 0;
 
-    syn_edge *edge = syn_edge_create();
+    syn_edge *edge = syn_create_edge();
     edge->orig = origin;
     edge->targ = target;
     edge->next_targ = origin->targets;
