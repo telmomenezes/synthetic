@@ -3,7 +3,10 @@
 #include "node.h"
 #include "network.h"
 #include "drmap.h"
+#include "mgenerator.h"
 
+
+// NET API
 
 static PyObject *pysyn_create_net(PyObject *self, PyObject *args)
 {
@@ -61,6 +64,7 @@ static PyObject *pysyn_add_edge_to_net(PyObject *self, PyObject *args)
     return result;
 }
 
+
 static PyObject *pysyn_compute_evc(PyObject *self, PyObject *args)
 {
     long p;
@@ -103,6 +107,8 @@ static PyObject *pysyn_print_net_info(PyObject *self, PyObject *args)
     PyObject *result = Py_BuildValue("");
     return result;
 }
+
+// DRMAP API
 
 static PyObject *pysyn_destroy_drmap(PyObject *self, PyObject *args)
 {
@@ -238,6 +244,52 @@ static PyObject *pysyn_drmap_normalize(PyObject *self, PyObject *args)
     return result;
 }
 
+// GENERATOR API
+
+static PyObject *pysyn_create_generator(PyObject *self, PyObject *args)
+{
+    unsigned int types_count;
+    syn_gen *gen = NULL;
+
+    if (PyArg_ParseTuple(args, "i", &types_count)) {
+        gen = syn_create_generator(types_count);
+    }
+
+    PyObject *result = Py_BuildValue("l", (long)gen);
+    return result;
+}
+
+static PyObject *pysyn_destroy_generator(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+      gen = (syn_gen *)p;
+      syn_destroy_generator(gen);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+static PyObject *pysyn_generate_network(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    syn_net *net = NULL;
+    unsigned int node_count, edge_count, max_cycles, max_walk_length;
+
+    if (PyArg_ParseTuple(args, "liiii", &p, &node_count, &edge_count, &max_cycles, &max_walk_length)) {
+      gen = (syn_gen *)p;
+      net = syn_generate_network(gen, node_count, edge_count, max_cycles, max_walk_length);
+    }
+    
+    PyObject *result = Py_BuildValue("l", (long)net);
+    return result;
+}
+
+
 static PyMethodDef methods[] = {
     {"create_net", pysyn_create_net, METH_VARARGS, "Create network."},
     {"destroy_net", pysyn_destroy_net, METH_VARARGS, "Destroy network."},
@@ -255,6 +307,9 @@ static PyMethodDef methods[] = {
     {"drmap_get_limits", pysyn_drmap_get_limits, METH_VARARGS, "Return DRMap limit values."},
     {"drmap_log_scale", pysyn_drmap_log_scale, METH_VARARGS, "Apply log scale to drmap bin values."},
     {"drmap_normalize", pysyn_drmap_normalize, METH_VARARGS, "Normalize drmap bin values by max value."},
+    {"create_generator", pysyn_create_generator, METH_VARARGS, "Create generator."},
+    {"destroy_generator", pysyn_destroy_generator, METH_VARARGS, "Destroy generator."},
+    {"generate_network", pysyn_generate_network, METH_VARARGS, "Generate network."},
     {NULL, NULL, 0, NULL},
 };
 
