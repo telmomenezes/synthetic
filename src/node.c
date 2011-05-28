@@ -14,7 +14,6 @@ syn_node *syn_create_node(unsigned int type, unsigned int id)
     syn_node *node = (syn_node *)malloc(sizeof(syn_node));
     node->type = type;
     node->id = id;
-    node->visiting = NULL;
     node->in_degree = 0;
     node->out_degree = 0;
     node->marked = 0;
@@ -77,20 +76,3 @@ int syn_edge_exists(syn_node *origin, syn_node *target)
     return 0;
 }
 
-
-syn_node *syn_get_random_target(syn_node *origin)
-{
-    if (origin->out_degree == 0) {
-        return NULL;
-    }
-
-    unsigned int index = RANDOM_UINT(origin->out_degree);
-
-    syn_edge *edge = origin->targets;
-    unsigned int i;
-    for (i = 0; i < index; i++) {
-        edge = edge->next_targ;
-    }
-    
-    return edge->targ;
-}

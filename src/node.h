@@ -15,7 +15,6 @@ typedef struct syn_node_s {
     syn_edge *origins;
     unsigned int in_degree;
     unsigned int out_degree;
-    struct syn_node_s *visiting;
     int marked;
     unsigned long last_walk_id;
     
@@ -36,4 +35,3 @@ void syn_destroy_node(syn_node *node);
 int syn_add_edge(syn_node *origin, syn_node *target);
 int syn_edge_exists(syn_node *origin, syn_node *target);
 
-syn_node *syn_get_random_target(syn_node *origin);

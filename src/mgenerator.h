@@ -10,43 +10,34 @@
 #include "network.h"
 
 
-static const unsigned int ACTIVE = 0;
-static const unsigned int WEIGHT = 1;
-static const unsigned int PROB_CONN = 2;
-static const unsigned int PROB_RAND = 3;
-static const unsigned int PROB_STOP = 4;
-static const unsigned int TAGS = 5;
-
-
 typedef struct syn_gen_s {
-    unsigned int max_node_types;
-    unsigned int tags_size;
-    double *data;
-    unsigned int data_size;
-    double *aff_matrix;
+    unsigned int types_count;
+    double *m_link;
+    double *m_follow;
+    double *m_rfollow;
+    double *m_random;
+    double *m_weight;
+    double *m_stop;
+    double *m_active;
     double fitness;
 } syn_gen;
 
 
-syn_gen *syn_create_generator(unsigned int max_node_types, unsigned int tags_size);
+syn_gen *syn_create_generator(unsigned int types_count);
 void syn_destroy_generator(syn_gen *gen);
 
 syn_gen *syn_clone_generator(syn_gen *gen);
 
-void setType(unsigned int pos, double weight, double probConn,
-                    double probRand, double probStop, const char* tags, const char* mask);
+void syn_generate_nodes(syn_gen *gen, syn_net *net, unsigned int node_count);
 
-void write(const char* filePath);
+syn_node *syn_get_random_target(syn_gen *gen, syn_node *origin);
 
-Network* generateNetwork(unsigned int nodes, unsigned int edges,
-                                unsigned int maxCycles);
+syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned int edge_count,
+                                unsigned int max_cycles, unsigned int max_walk_length);
 
+/*
 void initRandom();
 void mutate();
 Generator* recombine(Generator* parent2);
-
-void generateNodes(Network* net, unsigned int nodes);
-double typeDistance(unsigned int origType, unsigned int targType);
-double affinity(unsigned int origType, unsigned int targType);
-void calcAffMatrix();
+*/
 

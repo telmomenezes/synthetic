@@ -4,292 +4,231 @@
  */
 
 
-#include "generator.c"
-#include "Params.h"
+#include "mgenerator.h"
 #include "utils.h"
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
 
 
-#define SYN_GEN_TYPE_SIZE(x) ((x * 2) + 5)
-
-
-syn_gen *syn_create_generator(unsigned int max_node_types, unsigned int tags_size)
+syn_gen *syn_create_generator(unsigned int types_count)
 {
+    unsigned int sqsize = types_count * types_count;
     syn_gen *gen = (syn_gen *)malloc(sizeof(syn_gen));
-    gen->max_node_types = max_node_types;
-    gen->tags_size = tags_size;
-    get->data_size = SYN_GEN_TYPE_SIZE(tags_size);
-    gen->data_size *= max_node_types;
-    gen->data = (double *)malloc(sizeof(double) * get->data_size);
-    gen->aff_matrix = (double *)malloc(sizeof(double) * max_node_types * max_node_types);
+    gen->types_count = types_count;
+
+    gen->m_link = (double *)malloc(sizeof(double) * sqsize);
+    gen->m_follow = (double *)malloc(sizeof(double) * sqsize);
+    gen->m_rfollow = (double *)malloc(sizeof(double) * sqsize);
+    gen->m_random = (double *)malloc(sizeof(double) * sqsize);
+    gen->m_weight = (double *)malloc(sizeof(double) * types_count);
+    gen->m_stop = (double *)malloc(sizeof(double) * types_count);
+    gen->m_active = (double *)malloc(sizeof(double) * types_count);
+
+    bzero(gen->m_link, sizeof(double) * sqsize);
+    bzero(gen->m_follow, sizeof(double) * sqsize);
+    bzero(gen->m_rfollow, sizeof(double) * sqsize);
+    bzero(gen->m_random, sizeof(double) * sqsize);
+    bzero(gen->m_weight, sizeof(double) * types_count);
+    bzero(gen->m_stop, sizeof(double) * types_count);
+    bzero(gen->m_active, sizeof(double) * types_count);
+
     return gen;
 }
 
 
 void syn_destroy_generator(syn_gen *gen)
 {
-    free(gen->data);
-    free(gen->aff_matrix);
+    free(gen->m_link);
+    free(gen->m_follow);
+    free(gen->m_rfollow);
+    free(gen->m_random);
+    free(gen->m_weight);
+    free(gen->m_stop);
+    free(gen->m_active);
     free(gen);
 }
 
 
 syn_gen *syn_clone_generator(syn_gen *gen)
 {
-    syn_gen *gen_clone = syn_create_generator(gen->max_node_types, gen->tags_size);
-    memcpy(gen->data, gen_clone->data, sizeof(double) * gen->data_size);
+    unsigned int sqsize = gen->types_count * gen->types_count;
+    syn_gen *gen_clone = syn_create_generator(gen->types_count);
+    memcpy(gen->m_link, gen_clone->m_link, sizeof(double) * sqsize);
+    memcpy(gen->m_follow, gen_clone->m_follow, sizeof(double) * sqsize);
+    memcpy(gen->m_rfollow, gen_clone->m_rfollow, sizeof(double) * sqsize);
+    memcpy(gen->m_random, gen_clone->m_random, sizeof(double) * sqsize);
+    memcpy(gen->m_weight, gen_clone->m_weight, sizeof(double) * gen->types_count);
+    memcpy(gen->m_stop, gen_clone->m_stop, sizeof(double) * gen->types_count);
+    memcpy(gen->m_active, gen_clone->m_active, sizeof(double) * gen->types_count);
     return gen_clone;
 }
 
 
-void Generator::setType(unsigned int pos, double weight, double probConn,
-                    double probRand, double probStop, const char* tags, const char* mask)
+void syn_generate_nodes(syn_gen *gen, syn_net *net, unsigned int node_count)
 {
-    unsigned int offset = Params::inst().getTypeSize() * pos;
+    unsigned int types_count = gen->types_count;
+    double total_weight = 0.0;
+    unsigned int i, type;
+    double targ_weight, cur_weight;
 
-    data[offset + ACTIVE] = 1.0;
-    data[offset + WEIGHT] = weight;
-    data[offset + PROB_CONN] = probConn;
-    data[offset + PROB_RAND] = probRand;
-    data[offset + PROB_STOP] = probStop;
-
-    unsigned int tagsSize = Params::inst().getTagsSize();
-
-    for (unsigned int i = 0; i < tagsSize; i++) {
-        if (tags[i] == '0')
-            data[offset + TAGS + i] = 0.0;
-        else
-            data[offset + TAGS + i] = 1.0;
-
-        if (mask[i] == '0')
-            data[offset + TAGS + tagsSize + i] = 0.0;
-        else if (mask[i] == '*')
-            data[offset + TAGS + tagsSize + i] = 0.5;
-        else
-            data[offset + TAGS + tagsSize + i] = 1.0;
-    }
-}
-
-
-void Generator::write(const char* filePath)
-{
-    ofstream out;
-    out.open(filePath);
-
-    unsigned int tagsSize = Params::inst().getTagsSize();
-
-    for (unsigned int pos = 0; pos < Params::inst().getMaxNodeTypes(); pos++) {
-        unsigned int offset = Params::inst().getTypeSize() * pos;
-        if (data[offset + ACTIVE] > 0.5) {
-            out << "[Type " << pos << "] ";
-
-            for (unsigned int i = 0; i < tagsSize; i++) {
-                if (data[offset + TAGS + i] > 0.5)
-                    out << "1";
-                else
-                    out << "0";
-            }
-
-            out << " ";
-
-            for (unsigned int i = 0; i < tagsSize; i++) {
-                if (data[offset + TAGS + tagsSize + i] < (1.0 / 3.0))
-                    out << "0";
-                else if (data[offset + TAGS + tagsSize + i] < (2.0 / 3.0))
-                    out << "*";
-                else
-                    out << "1";
-            }
-
-            out << " weight: " << data[offset + WEIGHT];
-            out << " p_conn: " << data[offset + PROB_CONN];
-            out << " p_rand: " << data[offset + PROB_RAND];
-            out << " p_stop: " << data[offset + PROB_STOP];
-            out << endl;
-        }
+    for (i = 0; i < types_count; i++) {
+        total_weight += gen->m_weight[i];
     }
 
-    out.close();
-}
-
-
-double Generator::typeDistance(unsigned int origType, unsigned int targType)
-{
-    unsigned int offsetOrig = Params::inst().getTypeSize() * origType;
-    unsigned int offsetTarg = Params::inst().getTypeSize() * targType;
-    unsigned int tagsSize = Params::inst().getTagsSize();
-    unsigned int distance = 0;
-    unsigned int maxDistance = 0;
-
-    for (unsigned int i = 0; i < tagsSize; i++) {
-        bool mask = ((data[offsetOrig + TAGS + tagsSize + i] < (1.0 / 3.0)) ||
-                    (data[offsetOrig + TAGS + tagsSize + i] >= (2.0 / 3.0)));
-        bool tagOrig = data[offsetOrig + TAGS + tagsSize + i] > 0.5;
-        bool tagTarg = data[offsetTarg + TAGS + i] > 0.5;
-
-        if (mask && (tagOrig != tagTarg))
-            distance++;
-
-        if (mask)
-            maxDistance++;
-    }
-
-    if (maxDistance == 0)
-        return 0;
-    else
-        return (double)distance / (double)maxDistance;
-}
-
-
-double Generator::affinity(unsigned int origType, unsigned int targType)
-{
-    // TODO: config
-
-    double prox = 1.0 - typeDistance(origType, targType);
-    // sigmoid
-    //double thres = 0.8;
-    //double steep = 10;
-    //double aff = 1 / (1 + exp(-((prox - thres) * steep)));
-    // threshold - linear
-    double aff = 0;
-    if (prox > 0.5) {
-        aff = (prox - 0.5) * 2.0;
-    }
-
-    //cout << "orig: " << origType << "; targ:" << targType << "; prox: "
-    //    << prox << "; aff: " << aff << endl;
-
-    return aff;
-}
-
-
-void Generator::calcAffMatrix()
-{
-    unsigned int maxNodeTypes = Params::inst().getMaxNodeTypes();
-    unsigned int typeSize = Params::inst().getTypeSize();
-    for (unsigned int i = 0; i < maxNodeTypes; i++) {
-        for (unsigned int j = 0; j < maxNodeTypes; j++) {
-            unsigned int offset = typeSize * i;
-            double prob = data[offset + PROB_CONN];
-            prob *= affinity(i, j);
-            affMatrix[(i * maxNodeTypes) + j] = prob;
-        }
-    }
-}
-
-
-void Generator::generateNodes(Network* net, unsigned int nodes)
-{
-    unsigned int nTypes = Params::inst().getMaxNodeTypes();
-    double totalWeight = 0.0;
-
-    for (unsigned int pos = 0; pos < nTypes; pos++) {
-        unsigned int offset = Params::inst().getTypeSize() * pos;
-        if (data[offset + ACTIVE] > 0.5)
-            totalWeight += data[offset + WEIGHT];
-    }
-
-    for (unsigned int i = 0; i < nodes; i++) {
-        double targWeight = RANDOM_UNIFORM * totalWeight;
-        double curWeight = 0;
+    for (i = 0; i < node_count; i++) {
+        targ_weight = RANDOM_UNIFORM * total_weight;
+        cur_weight = 0;
        
-        unsigned int type;
-        for (type = 0; type < nTypes; type++) {
-            unsigned int offset = Params::inst().getTypeSize() * type;
-            if (data[offset + ACTIVE] > 0.5) {
-                curWeight += data[offset + WEIGHT];
+        for (type = 0; type < types_count; type++) {
+            if (gen->m_active[type] > 0.5) {
+                cur_weight += gen->m_weight[type];
 
-                if (curWeight >= targWeight)
+                if (cur_weight >= targ_weight) {
                     break;
+                }
             }
         }
 
-        net->addNode(type);
+        syn_add_node(net, type);
     }
 }
 
 
-Network* Generator::generateNetwork(unsigned int nodes, unsigned int edges,
-                                        unsigned int maxCycles)
+syn_node *syn_get_random_target(syn_gen *gen, syn_node *origin)
 {
-    unsigned int maxNodeTypes = Params::inst().getMaxNodeTypes();
- 
-    Network* net = new Network();
+    double total_weight = 0;
+    double targ_weight;
+    syn_node *target;
+    unsigned int types_count = gen->types_count;
+    syn_edge *edge;
 
-    calcAffMatrix();
+    if ((origin->out_degree == 0) && (origin->in_degree == 0)) {
+        return NULL;
+    }
 
-    generateNodes(net, nodes); 
+    edge = origin->targets;
+    while (edge != NULL) {
+        target = edge->targ;
+        total_weight += gen->m_follow[(target->type * types_count) + origin->type];
+        edge = edge->next_targ;
+    }
 
-    unsigned int curEdges = 0;
-    unsigned int cycle = 0;
+    edge = origin->origins;
+    while (edge != NULL) {
+        target = edge->orig;
+        total_weight += gen->m_rfollow[(target->type * types_count) + origin->type];
+        edge = edge->next_orig;
+    }
 
-    while ((curEdges < edges) && (cycle < maxCycles)) {
-        vector<Node*>& nodevec = net->getNodes();
-        for (vector<Node*>::iterator iterNode = nodevec.begin();
-                iterNode != nodevec.end();
-                iterNode++) {
-
-            Node* node = (*iterNode);
-            unsigned int type = node->getType();
-            unsigned int offset = Params::inst().getTypeSize() * type;
-            double probRand = data[offset + PROB_RAND];
-            double probStop = data[offset + PROB_STOP];
-            Node* visiting = node->getVisiting();
-
-            // Navigation
-            bool restart = false;
-            if (visiting) {
-                if ((visiting->getOutDegree() == 0) || 
-                    (RANDOM_TESTPROB(probStop))) {
-                    
-                    restart = true;
-                }
-            }
-            else {
-                restart = true;
-            }
-
-            bool rand = false;
-            if ((node->getOutDegree() == 0)
-                || (RANDOM_TESTPROB(probRand))) {
-
-                rand = true;
-            }   
-
-            if (restart) {
-                if (rand) {
-                    unsigned int targIndex = RANDOM_UINT(nodes);
-                    visiting = nodevec[targIndex];
-                }
-                else {
-                    visiting = node->getRandomTarget();
-                }
-            }
-            else {
-                visiting = visiting->getRandomTarget();
-            }
-
-            node->setVisiting(visiting);
-
-            // New connection?
-            unsigned int origType = node->getType();
-            unsigned int targType = visiting->getType();
-            double probConn = affMatrix[(origType * maxNodeTypes) + targType];
-
-            if (RANDOM_TESTPROB(probConn))
-                if (net->addEdge(node, visiting))
-                    curEdges++;
-
-            cycle++;
+    targ_weight = RANDOM_UNIFORM * total_weight;
+   
+    total_weight = 0;
+    edge = origin->targets;
+    while (edge != NULL) {
+        target = edge->targ;
+        total_weight += gen->m_follow[(target->type * types_count) + origin->type];
+        if (total_weight >= targ_weight) {
+            return edge->targ;
         }
+        edge = edge->next_targ;
+    }
+
+    edge = origin->origins;
+    while (edge != NULL) {
+        target = edge->orig;
+        total_weight += gen->m_rfollow[(target->type * types_count) + origin->type];
+        if (total_weight >= targ_weight) {
+            return edge->orig;
+        }
+        edge = edge->next_orig;
+    }
+
+    // should never be reached
+    return NULL;
+}
+
+
+syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned int edge_count,
+                                unsigned int max_cycles, unsigned int max_walk_length)
+{
+    unsigned int types_count = gen->types_count;
+ 
+    syn_net *net = syn_create_net();
+
+    syn_generate_nodes(gen, net, node_count); 
+
+    unsigned int cur_edges = 0;
+    unsigned int cycle = 0;
+    unsigned int walkid = 1;
+    unsigned int orig_type, targ_type;
+    syn_node *orig_node, *targ_node;
+    double prob;
+    int stop;
+    unsigned int walk_length;
+
+    // initial exogenous netowrk
+    orig_node = net->nodes;
+    while (orig_node != NULL) {
+        orig_type = orig_node->type;
+        targ_node = net->nodes;
+        while (targ_node != NULL) {
+            targ_type = targ_node->type;
+            prob = gen->m_random[(targ_type * types_count) + orig_type];
+            if (RANDOM_TESTPROB(prob)) {
+                syn_add_edge(orig_node, targ_node);
+                cur_edges++;
+            }
+
+            targ_node = targ_node->next;
+        }
+        orig_node = orig_node->next;
+    }
+
+    // random walk based simulation
+    while ((cur_edges < edge_count) && (cycle < max_cycles)) {
+        orig_node = net->nodes;
+        while (orig_node != NULL) {
+            // random walk
+            walkid++;
+            orig_type = orig_node->type;
+            targ_node = orig_node;
+            walk_length = 0;
+
+            stop = 0;
+            while ((!stop) && (walk_length <= max_walk_length)) {
+                targ_node = syn_get_random_target(gen, targ_node);
+                if (targ_node == NULL) {
+                    stop = 1;
+                    break;
+                }
+                targ_type = targ_node->type;
+                
+                // create link?
+                if ((orig_node != targ_node) && (targ_node->last_walk_id != walkid)) {
+                    targ_node->last_walk_id = walkid;
+                    prob = gen->m_link[(targ_type * types_count) + orig_type];
+                    if (RANDOM_TESTPROB(prob)) {
+                        syn_add_edge(orig_node, targ_node);
+                        cur_edges++;
+                    }
+                }
+
+                // stop?
+                prob = gen->m_stop[orig_type];
+                if (RANDOM_TESTPROB(prob)) {
+                    stop = 1;
+                }
+            }
+            orig_node = orig_node->next;
+        }
+        cycle++;
     }
 
     return net;
 }
 
-
+/*
 void Generator::initRandom()
 {
     for (unsigned int i = 0; i < _dataSize; i++)
@@ -318,3 +257,5 @@ Generator* Generator::recombine(Generator* parent2)
 
     return gen;
 }
+*/
+
