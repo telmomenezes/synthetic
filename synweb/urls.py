@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     url(r'^net/(?P<net_id>\d+)/$', 'synapp.views.network'),
     url(r'^gendrmap/(?P<net_id>\d+)/$', 'synapp.views.gendrmap'),
     url(r'^drmap/(?P<map_id>\d+)/$', 'synapp.views.drmap'),
+    url(r'^lab/$', 'synapp.views.lab'),
 
     url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
     url(r'^logout/$', 'synapp.views.logout_page'),

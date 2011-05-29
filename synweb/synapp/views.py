@@ -94,6 +94,40 @@ def drmap(request, map_id):
 
 
 @login_required
+def lab(request):
+    gen = create_generator(1)
+    node_count = 1000
+    edge_count = 10000
+    max_cycles = 1000
+    max_walk_length = 20
+    bins = 50
+
+    net = generate_network(gen, node_count, edge_count, max_cycles, max_walk_length)
+    compute_evc(net)
+    drmap = get_drmap_with_limits(net, bins, -7.0, 7.0, -7.0, 7.0)
+    drmap_log_scale(drmap)
+    drmap_normalize(drmap)
+
+    map_data = ''
+    for x in range(bins):
+        for y in range(bins):
+            val = drmap_get_value(drmap, x, y)
+            if (x > 0) or (y > 0):
+                map_data += ','
+            map_data += '%f' % val
+
+    destroy_net(net)
+    destroy_drmap(drmap)
+    destroy_generator(gen)
+
+    variables = RequestContext(request, {
+        'map_data': map_data,
+        'bins': bins,
+    })
+    return render_to_response('lab.html', variables)
+
+
+@login_required
 def tbd(request):
     variables = RequestContext(request, {
     })

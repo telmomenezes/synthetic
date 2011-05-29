@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
 
 
 syn_gen *syn_create_generator(unsigned int types_count)
@@ -32,6 +33,15 @@ syn_gen *syn_create_generator(unsigned int types_count)
     bzero(gen->m_weight, sizeof(double) * types_count);
     bzero(gen->m_stop, sizeof(double) * types_count);
     bzero(gen->m_active, sizeof(double) * types_count);
+
+    // temp, just to test...
+    gen->m_link[0] = 0.1;
+    gen->m_follow[0] = 1;
+    gen->m_rfollow[0] = 1;
+    gen->m_random[0] = 0.01;
+    gen->m_weight[0] = 1;
+    gen->m_stop[0] = 0.01;
+    gen->m_active[0] = 1;
 
     return gen;
 }

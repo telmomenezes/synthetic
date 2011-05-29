@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}DRMap{% endblock %}
+{% block js %}<script src="/static/drmap.js" type="text/javascript" ></script>{% endblock %}
+{% block content %}
+
+<canvas id="drmap_canvas" width="300" height="300">
+Sorry, your browser does not support canvas.
+</canvas>
+
+<br /><br />
+
+<script language="javascript">
+
+var vals = [{{ map_data }}];
+var bins = {{ bins }};
+
+drawDRMap(vals, bins, 'drmap_canvas');
+
+</script>
+
+{% endblock %}
