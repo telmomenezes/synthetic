@@ -4,7 +4,9 @@
 {% block content %}
 
 <div style="float:left">
-<form action="/addnet/" method="post" enctype="multipart/form-data">
+<form action="/lab/" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+<input type="submit" value="Run Simulation" />
 
 <h3>Link Probability Matrix</h3>
 <table>
@@ -21,12 +23,127 @@
     <tr>
      	<td>{{ col }}</td>
     {% for row in type_list %}
-        <td><input name="x" type="text" size="4" /></td>
+        <td><input name="link_cell_{{ row }}_{{ col }}" type="text" size="4" value="0" /></td>
     {% endfor %}
     </tr>
 {% endfor %}
 </tbody>
 </table>
+
+<br />
+<h3>Random Probability Matrix</h3>
+<table>
+    <thead>
+    	<tr>
+        	<th scope="col">&nbsp;</th>
+        {% for col in type_list %}
+            <th scope="col">{{ col }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+{% for col in type_list %}
+    <tr>
+     	<td>{{ col }}</td>
+    {% for row in type_list %}
+        <td><input name="random_cell_{{ row }}_{{ col }}" type="text" size="4" value="0" /></td>
+    {% endfor %}
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+
+<br />
+<h3>Follow Probability Matrix</h3>
+<table>
+    <thead>
+    	<tr>
+        	<th scope="col">&nbsp;</th>
+        {% for col in type_list %}
+            <th scope="col">{{ col }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+{% for col in type_list %}
+    <tr>
+     	<td>{{ col }}</td>
+    {% for row in type_list %}
+        <td><input name="follow_cell_{{ row }}_{{ col }}" type="text" size="4" value="0" /></td>
+    {% endfor %}
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+
+<br />
+<h3>Reverse Follow Probability Matrix</h3>
+<table>
+    <thead>
+    	<tr>
+        	<th scope="col">&nbsp;</th>
+        {% for col in type_list %}
+            <th scope="col">{{ col }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+{% for col in type_list %}
+    <tr>
+     	<td>{{ col }}</td>
+    {% for row in type_list %}
+        <td><input name="rfollow_cell_{{ row }}_{{ col }}" type="text" size="4" value="0" /></td>
+    {% endfor %}
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+
+<br />
+<h3>Weight Matrix</h3>
+<table>
+    <thead>
+    	<tr>
+        	<th scope="col">&nbsp;</th>
+        {% for col in type_list %}
+            <th scope="col">{{ col }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+     	<td>&nbsp;</td>
+    {% for row in type_list %}
+        <td><input name="weight_cell_{{ row }}" type="text" size="4" value="0" /></td>
+    {% endfor %}
+    </tr>
+</tbody>
+</table>
+
+<br />
+<h3>Stop Matrix</h3>
+<table>
+    <thead>
+    	<tr>
+        	<th scope="col">&nbsp;</th>
+        {% for col in type_list %}
+            <th scope="col">{{ col }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+     	<td>&nbsp;</td>
+    {% for row in type_list %}
+        <td><input name="stop_cell_{{ row }}" type="text" size="4" value="0" /></td>
+    {% endfor %}
+    </tr>
+</tbody>
+</table>
+
+<br />
+<input type="submit" value="Run Simulation" />
+
 </form>
 </div>
 
