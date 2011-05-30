@@ -392,6 +392,70 @@ static PyObject *pysyn_generator_set_stop(PyObject *self, PyObject *args)
 }
 
 
+static PyObject *pysyn_generator_get_r_edges(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    unsigned int r_edges = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        gen = (syn_gen *)p;
+        r_edges = gen->r_edges;
+    }
+    
+    PyObject *result = Py_BuildValue("i", r_edges);
+    return result;
+}
+
+
+static PyObject *pysyn_generator_get_l_edges(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    unsigned int l_edges = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        gen = (syn_gen *)p;
+        l_edges = gen->l_edges;
+    }
+    
+    PyObject *result = Py_BuildValue("i", l_edges);
+    return result;
+}
+
+
+static PyObject *pysyn_generator_get_total_edges(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    unsigned int total_edges = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        gen = (syn_gen *)p;
+        total_edges = gen->total_edges;
+    }
+    
+    PyObject *result = Py_BuildValue("i", total_edges);
+    return result;
+}
+
+
+static PyObject *pysyn_generator_get_cycles(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    unsigned int cycles = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        gen = (syn_gen *)p;
+        cycles = gen->cycles;
+    }
+    
+    PyObject *result = Py_BuildValue("i", cycles);
+    return result;
+}
+
+
 static PyMethodDef methods[] = {
     {"create_net", pysyn_create_net, METH_VARARGS, "Create network."},
     {"destroy_net", pysyn_destroy_net, METH_VARARGS, "Destroy network."},
@@ -418,6 +482,10 @@ static PyMethodDef methods[] = {
     {"generator_set_rfollow", pysyn_generator_set_rfollow, METH_VARARGS, "Set value at a position of the generator rfollow matrix."},
     {"generator_set_weight", pysyn_generator_set_weight, METH_VARARGS, "Set value at a position of the generator weight matrix."},
     {"generator_set_stop", pysyn_generator_set_stop, METH_VARARGS, "Set value at a position of the generator stop matrix."},
+    {"generator_get_r_edges", pysyn_generator_get_r_edges, METH_VARARGS, "Get number of random edges generated."},
+    {"generator_get_l_edges", pysyn_generator_get_l_edges, METH_VARARGS, "Get number of random walk edges generated."},
+    {"generator_get_total_edges", pysyn_generator_get_total_edges, METH_VARARGS, "Get total number edges generated."},
+    {"generator_get_cycles", pysyn_generator_get_cycles, METH_VARARGS, "Get number of cycles taken by the simulation."},
     {NULL, NULL, 0, NULL},
 };
 

@@ -32,6 +32,11 @@ syn_gen *syn_create_generator(unsigned int types_count)
     bzero(gen->m_weight, sizeof(double) * types_count);
     bzero(gen->m_stop, sizeof(double) * types_count);
 
+    gen->r_edges = 0;
+    gen->l_edges = 0;
+    gen->total_edges = 0;
+    gen->cycles = 0;
+
     return gen;
 }
 
@@ -153,8 +158,6 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
 
     syn_generate_nodes(gen, net, node_count); 
 
-    unsigned int cur_edges = 0;
-    unsigned int cycle = 0;
     unsigned int walkid = 1;
     unsigned int orig_type, targ_type;
     syn_node *orig_node, *targ_node;
@@ -172,7 +175,8 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
             prob = gen->m_random[(targ_type * types_count) + orig_type];
             if (RANDOM_TESTPROB(prob)) {
                 syn_add_edge(orig_node, targ_node);
-                cur_edges++;
+                gen->total_edges++;
+                gen->r_edges++;
             }
 
             targ_node = targ_node->next;
@@ -181,7 +185,7 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
     }
 
     // random walk based simulation
-    while ((cur_edges < edge_count) && (cycle < max_cycles)) {
+    while ((gen->total_edges < edge_count) && (gen->cycles < max_cycles)) {
         orig_node = net->nodes;
         while (orig_node != NULL) {
             // random walk
@@ -205,7 +209,8 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
                     prob = gen->m_link[(targ_type * types_count) + orig_type];
                     if (RANDOM_TESTPROB(prob)) {
                         syn_add_edge(orig_node, targ_node);
-                        cur_edges++;
+                        gen->l_edges++;
+                        gen->total_edges++;
                     }
                 }
 
@@ -217,7 +222,7 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
             }
             orig_node = orig_node->next;
         }
-        cycle++;
+        gen->cycles++;
     }
 
     return net;

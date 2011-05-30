@@ -19,6 +19,11 @@ typedef struct syn_gen_s {
     double *m_weight;
     double *m_stop;
     double fitness;
+
+    unsigned int r_edges;
+    unsigned int l_edges;
+    unsigned int total_edges;
+    unsigned int cycles;
 } syn_gen;
 
 
