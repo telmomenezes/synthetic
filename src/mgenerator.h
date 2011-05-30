@@ -13,9 +13,9 @@
 typedef struct syn_gen_s {
     unsigned int types_count;
     double *m_link;
+    double *m_random;
     double *m_follow;
     double *m_rfollow;
-    double *m_random;
     double *m_weight;
     double *m_stop;
     double *m_active;

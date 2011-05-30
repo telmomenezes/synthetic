@@ -96,8 +96,8 @@ def drmap(request, map_id):
 @login_required
 def lab(request):
     gen = create_generator(1)
-    node_count = 1000
-    edge_count = 10000
+    node_count = 100
+    edge_count = 1000
     max_cycles = 1000
     max_walk_length = 20
     bins = 50
@@ -123,6 +123,7 @@ def lab(request):
     variables = RequestContext(request, {
         'map_data': map_data,
         'bins': bins,
+        'type_list': range(5),
     })
     return render_to_response('lab.html', variables)
 
