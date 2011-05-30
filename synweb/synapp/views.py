@@ -107,6 +107,11 @@ def lab(request):
     m_weight = ''
     m_stop = ''
 
+    node_count = 0
+    edge_count = 0
+    max_cycles = 0
+    max_walk_length = 0
+
     if request.method == 'POST':
         previous_values = True
         gen = create_generator(type_count)
