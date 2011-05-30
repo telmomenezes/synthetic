@@ -3,11 +3,38 @@
 {% block js %}<script src="/static/drmap.js" type="text/javascript" ></script>{% endblock %}
 {% block content %}
 
-<div style="float:left">
 <form name="generator_form" action="/lab/" method="post" enctype="multipart/form-data">{% csrf_token %}
 
+<div>
 <input type="submit" value="Run Simulation" />
+<label for="id_nodes">Nodes:</label> <input type="text" name="nodes" id="id_nodes" size="5" value="1000" />
+<label for="id_edges">Edges:</label> <input type="text" name="edges" id="id_edges" size="5" value="10000" />
+<label for="id_cycles">Cycles:</label> <input type="text" name="cycles" id="id_cycles" size="5" value="10000" />
+<label for="id_walk">Max Walk:</label> <input type="text" name="max_walk" id="id_max_walk" size="3" value="20" />
+</div>
 
+<div style="float:left">
+<h3>Weight Matrix</h3>
+<table>
+    <thead>
+    	<tr>
+        	<th scope="col">&nbsp;</th>
+        {% for col in type_list %}
+            <th scope="col">{{ col }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+     	<td>&nbsp;</td>
+    {% for row in type_list %}
+        <td><input name="weight_cell_{{ row }}" type="text" size="4" value="0" /></td>
+    {% endfor %}
+    </tr>
+</tbody>
+</table>
+
+<br />
 <h3>Link Probability Matrix</h3>
 <table>
     <thead>
@@ -31,29 +58,6 @@
 </table>
 
 <br />
-<h3>Random Probability Matrix</h3>
-<table>
-    <thead>
-    	<tr>
-        	<th scope="col">&nbsp;</th>
-        {% for col in type_list %}
-            <th scope="col">{{ col }}</th>
-        {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-{% for col in type_list %}
-    <tr>
-     	<td>{{ col }}</td>
-    {% for row in type_list %}
-        <td><input name="random_cell_{{ row }}_{{ col }}" type="text" size="4" value="0" /></td>
-    {% endfor %}
-    </tr>
-{% endfor %}
-</tbody>
-</table>
-
-<br />
 <h3>Follow Probability Matrix</h3>
 <table>
     <thead>
@@ -70,6 +74,51 @@
      	<td>{{ col }}</td>
     {% for row in type_list %}
         <td><input name="follow_cell_{{ row }}_{{ col }}" type="text" size="4" value="0" /></td>
+    {% endfor %}
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+<div style="float:left; margin-left:50px">
+<h3>Stop Matrix</h3>
+<table>
+    <thead>
+    	<tr>
+        	<th scope="col">&nbsp;</th>
+        {% for col in type_list %}
+            <th scope="col">{{ col }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+     	<td>&nbsp;</td>
+    {% for row in type_list %}
+        <td><input name="stop_cell_{{ row }}" type="text" size="4" value="0" /></td>
+    {% endfor %}
+    </tr>
+</tbody>
+</table>
+
+<br />
+<h3>Random Probability Matrix</h3>
+<table>
+    <thead>
+    	<tr>
+        	<th scope="col">&nbsp;</th>
+        {% for col in type_list %}
+            <th scope="col">{{ col }}</th>
+        {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+{% for col in type_list %}
+    <tr>
+     	<td>{{ col }}</td>
+    {% for row in type_list %}
+        <td><input name="random_cell_{{ row }}_{{ col }}" type="text" size="4" value="0" /></td>
     {% endfor %}
     </tr>
 {% endfor %}
@@ -99,61 +148,16 @@
 </tbody>
 </table>
 
-<br />
-<h3>Weight Matrix</h3>
-<table>
-    <thead>
-    	<tr>
-        	<th scope="col">&nbsp;</th>
-        {% for col in type_list %}
-            <th scope="col">{{ col }}</th>
-        {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-    <tr>
-     	<td>&nbsp;</td>
-    {% for row in type_list %}
-        <td><input name="weight_cell_{{ row }}" type="text" size="4" value="0" /></td>
-    {% endfor %}
-    </tr>
-</tbody>
-</table>
-
-<br />
-<h3>Stop Matrix</h3>
-<table>
-    <thead>
-    	<tr>
-        	<th scope="col">&nbsp;</th>
-        {% for col in type_list %}
-            <th scope="col">{{ col }}</th>
-        {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-    <tr>
-     	<td>&nbsp;</td>
-    {% for row in type_list %}
-        <td><input name="stop_cell_{{ row }}" type="text" size="4" value="0" /></td>
-    {% endfor %}
-    </tr>
-</tbody>
-</table>
-
-<br />
-<input type="submit" value="Run Simulation" />
-
-</form>
 </div>
 
+</form>
 
-<div style="float:right; width:300px;">
+<h3>DRMap</h3>
+<div style="float:left; width:300px;">
 <canvas id="drmap_canvas" width="300" height="300">
 Sorry, your browser does not support canvas.
 </canvas>
 </div>
-
 
 <script language="javascript">
 
@@ -162,6 +166,10 @@ var bins = {{ bins }};
 {% if previous_values %}
 var type_count = {{ type_count }};
 
+var nodes = {{ nodes }};
+var edges = {{ edges }};
+var cycles = {{ cycles }};
+var max_walk = {{ max_walk }};
 var m_links = [{{ m_links }}];
 var m_random = [{{ m_random }}];
 var m_follow = [{{ m_follow }}];
@@ -170,6 +178,11 @@ var m_weight = [{{ m_weight }}];
 var m_stop = [{{ m_stop }}];
 
 var formObject = document.forms['generator_form'];
+
+formObject.elements['nodes'].value = nodes;
+formObject.elements['edges'].value = edges;
+formObject.elements['cycles'].value = cycles;
+formObject.elements['max_walk'].value = max_walk;
 
 var x;
 var y;
@@ -189,6 +202,7 @@ for (pos = 0; pos < type_count; pos++) {
     formObject.elements['weight_cell_' + pos].value = m_weight[pos];
     formObject.elements['stop_cell_' + pos].value = m_stop[pos];
 }
+
 {% endif %}
 
 var vals = [{{ map_data }}];

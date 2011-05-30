@@ -150,10 +150,10 @@ def lab(request):
                 m_stop += ','
             m_stop = '%s%f' % (m_stop, val)
 
-        node_count = 100
-        edge_count = 1000
-        max_cycles = 1000
-        max_walk_length = 20
+        node_count = int(request.POST['nodes'])
+        edge_count = int(request.POST['edges'])
+        max_cycles = int(request.POST['cycles'])
+        max_walk_length = int(request.POST['max_walk'])
 
         net = generate_network(gen, node_count, edge_count, max_cycles, max_walk_length)
         compute_evc(net)
@@ -178,6 +178,10 @@ def lab(request):
         'type_count': type_count,
         'previous_values': previous_values,
         'type_list': range(type_count),
+        'nodes': node_count,
+        'edges': edge_count,
+        'cycles': max_cycles,
+        'max_walk': max_walk_length,
         'm_links': m_links,
         'm_random': m_random,
         'm_follow': m_follow,
