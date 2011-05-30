@@ -18,7 +18,6 @@ typedef struct syn_gen_s {
     double *m_rfollow;
     double *m_weight;
     double *m_stop;
-    double *m_active;
     double fitness;
 } syn_gen;
 

@@ -24,7 +24,6 @@ syn_gen *syn_create_generator(unsigned int types_count)
     gen->m_random = (double *)malloc(sizeof(double) * sqsize);
     gen->m_weight = (double *)malloc(sizeof(double) * types_count);
     gen->m_stop = (double *)malloc(sizeof(double) * types_count);
-    gen->m_active = (double *)malloc(sizeof(double) * types_count);
 
     bzero(gen->m_link, sizeof(double) * sqsize);
     bzero(gen->m_follow, sizeof(double) * sqsize);
@@ -32,7 +31,6 @@ syn_gen *syn_create_generator(unsigned int types_count)
     bzero(gen->m_random, sizeof(double) * sqsize);
     bzero(gen->m_weight, sizeof(double) * types_count);
     bzero(gen->m_stop, sizeof(double) * types_count);
-    bzero(gen->m_active, sizeof(double) * types_count);
 
     // temp, just to test...
     gen->m_link[0] = 0.1;
@@ -41,7 +39,6 @@ syn_gen *syn_create_generator(unsigned int types_count)
     gen->m_random[0] = 0.001;
     gen->m_weight[0] = 1;
     gen->m_stop[0] = 0.01;
-    gen->m_active[0] = 1;
 
     return gen;
 }
@@ -55,7 +52,6 @@ void syn_destroy_generator(syn_gen *gen)
     free(gen->m_random);
     free(gen->m_weight);
     free(gen->m_stop);
-    free(gen->m_active);
     free(gen);
 }
 
@@ -70,7 +66,6 @@ syn_gen *syn_clone_generator(syn_gen *gen)
     memcpy(gen->m_random, gen_clone->m_random, sizeof(double) * sqsize);
     memcpy(gen->m_weight, gen_clone->m_weight, sizeof(double) * gen->types_count);
     memcpy(gen->m_stop, gen_clone->m_stop, sizeof(double) * gen->types_count);
-    memcpy(gen->m_active, gen_clone->m_active, sizeof(double) * gen->types_count);
     return gen_clone;
 }
 
@@ -91,12 +86,10 @@ void syn_generate_nodes(syn_gen *gen, syn_net *net, unsigned int node_count)
         cur_weight = 0;
        
         for (type = 0; type < types_count; type++) {
-            if (gen->m_active[type] > 0.5) {
-                cur_weight += gen->m_weight[type];
+            cur_weight += gen->m_weight[type];
 
-                if (cur_weight >= targ_weight) {
-                    break;
-                }
+            if (cur_weight >= targ_weight) {
+                break;
             }
         }
 
