@@ -22,8 +22,8 @@ static PyObject *pysyn_destroy_net(PyObject *self, PyObject *args)
     syn_net *net;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-      net = (syn_net *)p;
-      syn_destroy_net(net);
+        net = (syn_net *)p;
+        syn_destroy_net(net);
     }
     
     PyObject *result = Py_BuildValue("");
@@ -290,6 +290,108 @@ static PyObject *pysyn_generate_network(PyObject *self, PyObject *args)
 }
 
 
+static PyObject *pysyn_generator_set_link(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    unsigned int x, y;
+    double val;
+
+    if (PyArg_ParseTuple(args, "liid", &p, &x, &y, &val)) {
+      gen = (syn_gen *)p;
+      gen->m_link[(y * gen->types_count) + x] = val;
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+
+static PyObject *pysyn_generator_set_random(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    unsigned int x, y;
+    double val;
+
+    if (PyArg_ParseTuple(args, "liid", &p, &x, &y, &val)) {
+      gen = (syn_gen *)p;
+      gen->m_random[(y * gen->types_count) + x] = val;
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+
+static PyObject *pysyn_generator_set_follow(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    unsigned int x, y;
+    double val;
+
+    if (PyArg_ParseTuple(args, "liid", &p, &x, &y, &val)) {
+      gen = (syn_gen *)p;
+      gen->m_follow[(y * gen->types_count) + x] = val;
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+
+static PyObject *pysyn_generator_set_rfollow(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    unsigned int x, y;
+    double val;
+
+    if (PyArg_ParseTuple(args, "liid", &p, &x, &y, &val)) {
+      gen = (syn_gen *)p;
+      gen->m_rfollow[(y * gen->types_count) + x] = val;
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+
+static PyObject *pysyn_generator_set_weight(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    unsigned int pos;
+    double val;
+
+    if (PyArg_ParseTuple(args, "lid", &p, &pos, &val)) {
+      gen = (syn_gen *)p;
+      gen->m_weight[pos] = val;
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+
+static PyObject *pysyn_generator_set_stop(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    unsigned int pos;
+    double val;
+
+    if (PyArg_ParseTuple(args, "lid", &p, &pos, &val)) {
+      gen = (syn_gen *)p;
+      gen->m_stop[pos] = val;
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+
 static PyMethodDef methods[] = {
     {"create_net", pysyn_create_net, METH_VARARGS, "Create network."},
     {"destroy_net", pysyn_destroy_net, METH_VARARGS, "Destroy network."},
@@ -310,8 +412,15 @@ static PyMethodDef methods[] = {
     {"create_generator", pysyn_create_generator, METH_VARARGS, "Create generator."},
     {"destroy_generator", pysyn_destroy_generator, METH_VARARGS, "Destroy generator."},
     {"generate_network", pysyn_generate_network, METH_VARARGS, "Generate network."},
+    {"generator_set_link", pysyn_generator_set_link, METH_VARARGS, "Set value at a position of the generator link matrix."},
+    {"generator_set_random", pysyn_generator_set_random, METH_VARARGS, "Set value at a position of the generator random matrix."},
+    {"generator_set_follow", pysyn_generator_set_follow, METH_VARARGS, "Set value at a position of the generator follow matrix."},
+    {"generator_set_rfollow", pysyn_generator_set_rfollow, METH_VARARGS, "Set value at a position of the generator rfollow matrix."},
+    {"generator_set_weight", pysyn_generator_set_weight, METH_VARARGS, "Set value at a position of the generator weight matrix."},
+    {"generator_set_stop", pysyn_generator_set_stop, METH_VARARGS, "Set value at a position of the generator stop matrix."},
     {NULL, NULL, 0, NULL},
 };
+
 
 PyMODINIT_FUNC initcore(void)
 {
