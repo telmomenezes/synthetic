@@ -4,7 +4,7 @@
 {% block content %}
 
 <div style="float:left">
-<form action="/lab/" method="post" enctype="multipart/form-data">{% csrf_token %}
+<form name="generator_form" action="/lab/" method="post" enctype="multipart/form-data">{% csrf_token %}
 
 <input type="submit" value="Run Simulation" />
 
@@ -157,8 +157,41 @@ Sorry, your browser does not support canvas.
 
 <script language="javascript">
 
-var vals = [{{ map_data }}];
 var bins = {{ bins }};
+
+{% if previous_values %}
+var type_count = {{ type_count }};
+
+var m_links = [{{ m_links }}];
+var m_random = [{{ m_random }}];
+var m_follow = [{{ m_follow }}];
+var m_rfollow = [{{ m_rfollow }}];
+var m_weight = [{{ m_weight }}];
+var m_stop = [{{ m_stop }}];
+
+var formObject = document.forms['generator_form'];
+
+var x;
+var y;
+var pos = 0;
+
+for (y = 0; y < type_count; y++) {
+    for (x = 0; x < type_count; x++) {
+        formObject.elements['link_cell_' + x + '_' + y].value = m_links[pos];
+        formObject.elements['random_cell_' + x + '_' + y].value = m_random[pos];
+        formObject.elements['follow_cell_' + x + '_' + y].value = m_follow[pos];
+        formObject.elements['rfollow_cell_' + x + '_' + y].value = m_rfollow[pos];
+        pos++;
+    }
+}
+
+for (pos = 0; pos < type_count; pos++) {
+    formObject.elements['weight_cell_' + pos].value = m_weight[pos];
+    formObject.elements['stop_cell_' + pos].value = m_stop[pos];
+}
+{% endif %}
+
+var vals = [{{ map_data }}];
 
 drawDRMap(vals, bins, 'drmap_canvas');
 

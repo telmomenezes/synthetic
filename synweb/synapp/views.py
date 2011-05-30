@@ -98,21 +98,57 @@ def lab(request):
     map_data = ''
     bins = 50
     type_count = 5
-    
+    previous_values = False
+
+    m_links = ''
+    m_random = ''
+    m_follow = ''
+    m_rfollow = ''
+    m_weight = ''
+    m_stop = ''
+
     if request.method == 'POST':
-        print request.POST['link_cell_0_0']
+        previous_values = True
         gen = create_generator(type_count)
 
-        for x in range(type_count):
-            for y in range(type_count):
-                generator_set_link(gen, x, y, float(request.POST['link_cell_%d_%d' % (x, y)])) 
-                generator_set_random(gen, x, y, float(request.POST['random_cell_%d_%d' % (x, y)])) 
-                generator_set_follow(gen, x, y, float(request.POST['follow_cell_%d_%d' % (x, y)])) 
-                generator_set_rfollow(gen, x, y, float(request.POST['rfollow_cell_%d_%d' % (x, y)])) 
+        for y in range(type_count):
+            for x in range(type_count):
+                val = float(request.POST['link_cell_%d_%d' % (x, y)])
+                generator_set_link(gen, x, y, val) 
+                if m_links != '':
+                    m_links += ','
+                m_links = '%s%f' % (m_links, val)
+
+                val = float(request.POST['random_cell_%d_%d' % (x, y)])
+                generator_set_random(gen, x, y, val) 
+                if m_random != '':
+                    m_random += ','
+                m_random = '%s%f' % (m_random, val)
+
+                val = float(request.POST['follow_cell_%d_%d' % (x, y)])
+                generator_set_follow(gen, x, y, val) 
+                if m_follow != '':
+                    m_follow += ','
+                m_follow = '%s%f' % (m_follow, val)
+
+                val = float(request.POST['rfollow_cell_%d_%d' % (x, y)])
+                generator_set_rfollow(gen, x, y, val) 
+                if m_rfollow != '':
+                    m_rfollow += ','
+                m_rfollow = '%s%f' % (m_rfollow, val)
 
         for pos in range(type_count):
-            generator_set_weight(gen, pos, float(request.POST['weight_cell_%d' % pos]))
-            generator_set_stop(gen, pos, float(request.POST['stop_cell_%d' % pos]))
+            val = float(request.POST['weight_cell_%d' % pos])
+            generator_set_weight(gen, pos, val)
+            if m_weight != '':
+                m_weight += ','
+            m_weight = '%s%f' % (m_weight, val)
+
+            val = float(request.POST['stop_cell_%d' % pos])
+            generator_set_stop(gen, pos, val)
+            if m_stop != '':
+                m_stop += ','
+            m_stop = '%s%f' % (m_stop, val)
 
         node_count = 100
         edge_count = 1000
@@ -139,7 +175,15 @@ def lab(request):
     variables = RequestContext(request, {
         'map_data': map_data,
         'bins': bins,
+        'type_count': type_count,
+        'previous_values': previous_values,
         'type_list': range(type_count),
+        'm_links': m_links,
+        'm_random': m_random,
+        'm_follow': m_follow,
+        'm_rfollow': m_rfollow,
+        'm_weight': m_weight,
+        'm_stop': m_stop,
     })
     return render_to_response('lab.html', variables)
 
