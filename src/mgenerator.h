@@ -39,9 +39,8 @@ syn_node *syn_get_random_target(syn_gen *gen, syn_node *origin);
 syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned int edge_count,
                                 unsigned int max_cycles, unsigned int max_walk_length);
 
-/*
-void initRandom();
-void mutate();
-Generator* recombine(Generator* parent2);
-*/
+
+void syn_gen_initrandom(syn_gen* gen);
+
+void syn_gen_mutate(syn_gen* gen, double mrate);
 

@@ -223,39 +223,52 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
             orig_node = orig_node->next;
         }
         gen->cycles++;
+        printf("%d\n", gen->cycles);
     }
 
     return net;
 }
 
-/*
-void Generator::initRandom()
+
+void syn_gen_initrandom(syn_gen* gen)
 {
-    for (unsigned int i = 0; i < _dataSize; i++)
-        data[i] = RANDOM_UNIFORM;
+    unsigned int sqsize = gen->types_count * gen->types_count;
+    unsigned int i;
+
+    for (i = 0; i < sqsize; i++) {
+        gen->m_link[i] = RANDOM_UNIFORM;
+        gen->m_random[i] = RANDOM_UNIFORM;
+        gen->m_follow[i] = RANDOM_UNIFORM;
+        gen->m_rfollow[i] = RANDOM_UNIFORM;
+    }
+
+    for (i = 0; i < gen->types_count; i++) {
+        gen->m_weight[i] = RANDOM_UNIFORM;
+        gen->m_stop[i] = RANDOM_UNIFORM;
+    }
 }
 
 
-void Generator::mutate()
+void syn_gen_point_mutation(double *val, double mrate)
 {
-    unsigned int index = RANDOM_UINT(_dataSize);
-    data[index] += RANDOM_NORMAL;
-
-    if (data[index] < 0)
-        data[index] = 0;
-    else if (data[index] > 1.0)
-        data[index] = 1.0;
 }
 
 
-Generator* Generator::recombine(Generator* parent2)
+void syn_gen_mutate(syn_gen* gen, double mrate)
 {
-    Generator* gen = clone();
-    unsigned int index = RANDOM_UINT(_dataSize);
+    unsigned int sqsize = gen->types_count * gen->types_count;
+    unsigned int i;
 
-    memcpy(gen->data + index, data + index, sizeof(double) * (_dataSize - index));
+    for (i = 0; i < sqsize; i++) {
+        syn_gen_point_mutation(&gen->m_link[i], mrate);
+        syn_gen_point_mutation(&gen->m_random[i], mrate);
+        syn_gen_point_mutation(&gen->m_follow[i], mrate);
+        syn_gen_point_mutation(&gen->m_rfollow[i], mrate);
+    }
 
-    return gen;
+    for (i = 0; i < gen->types_count; i++) {
+        syn_gen_point_mutation(&gen->m_weight[i], mrate);
+        syn_gen_point_mutation(&gen->m_stop[i], mrate);
+    }
 }
-*/
 
