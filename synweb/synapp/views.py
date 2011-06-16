@@ -87,14 +87,6 @@ def gendrmap(request, net_id):
 
 
 @login_required
-def drmap(request, map_id):
-    variables = RequestContext(request, {
-        'map': DRMap.objects.get(id=map_id),
-    })
-    return render_to_response('drmap.html', variables)
-
-
-@login_required
 def lab(request):
     map_data = ''
     bins = 50
