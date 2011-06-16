@@ -1,45 +1,29 @@
 {% extends "base.html" %}
 
 {% block title %}{{ net.name }}{% endblock %}
+{% block js %}<script src="/static/drmap.js" type="text/javascript" ></script>{% endblock %}
 {% block content %}
 <h3>Network: {{ net.name }}</h3>
 nodes:{{ net.nodes }}<br />
 edges:{{ net.edges }}<br />
 
 <br />
-<a href="/gendrmap/{{ net.id }}">Generate DRMap</a>
 
-<table class="rounded-corner-table">
-    <thead>
-    	<tr>
-        	<th scope="col" class="rounded-head-left">&nbsp;</th>
-            <th scope="col">ID</th>
-            <th scope="col">Bins</th>
-            <th scope="col">Min. Hor.</th>
-            <th scope="col">Max. Hor.</th>
-            <th scope="col">Min. Ver.</th>
-            <th scope="col" class="rounded-head-right">Max. Ver.</th>
-        </tr>
-    </thead>
-    <tfoot>
-    	<tr>
-        	<td colspan="6" class="rounded-foot-left">&nbsp;</td>
-        	<td class="rounded-foot-right">&nbsp;</td>
-        </tr>
-    </tfoot>
-    <tbody>
-{% for map in map_list %}
-    <tr>
-     	<td>&nbsp;</td>
-        <td><a href="/drmap/{{ map.id }}">DRMap {{ map.id }}</a></td>
-        <td>{{ map.bins }}</td>
-        <td>{{ map.min_hor }}</td>
-        <td>{{ map.max_hor }}</td>
-        <td>{{ map.min_ver }}</td>
-        <td>{{ map.max_ver }}</td>
-    </tr>
-{% endfor %}
-</tbody>
-</table>
+{% if net.drmap == None %}
+<a href="/gendrmap/{{ net.id }}">Generate DRMap</a>
+{% else %}
+<canvas id="drmap_canvas" width="300" height="300">
+Sorry, your browser does not support canvas.
+</canvas>
+
+<script language="javascript">
+
+var vals = [{{ net.drmap.data }}];
+var bins = {{ net.drmap.bins }};
+
+drawDRMap(vals, bins, 'drmap_canvas');
+
+</script>
+{% endif %}
 
 {% endblock %}

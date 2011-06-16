@@ -50,7 +50,6 @@ def addnet(request):
 def network(request, net_id):
     variables = RequestContext(request, {
         'net': Network.objects.get(id=net_id),
-        'map_list': DRMap.objects.filter(net=net_id),
     })
     return render_to_response('network.html', variables)
 
@@ -78,11 +77,13 @@ def gendrmap(request, net_id):
     destroy_net(syn_net)
     destroy_drmap(drmap)
 
-    map = DRMap(net=net, bins=bins, data=map_data, min_hor=-7.0, max_hor=7.0,
+    map = DRMap(net=net, bins=bins, steps=1, data=map_data, min_hor=-7.0, max_hor=7.0,
         min_ver=-7.0, max_ver=7.0)
     map.save()
 
-    return HttpResponseRedirect('/drmap/%d' % map.id)
+    Network.objects.filter(id=net_id).update(drmap=map.id)
+
+    return HttpResponseRedirect('/net/%s' % net_id)
 
 
 @login_required
