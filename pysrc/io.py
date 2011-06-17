@@ -32,7 +32,7 @@ def load_net(net_file):
             elif state == 2:
                 orig = nodes[params['orig']]
                 targ = nodes[params['targ']]
-                add_edge_to_net(net, orig, targ)
+                add_edge_to_net(net, orig, targ, 0)
 
     return net
 

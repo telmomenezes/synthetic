@@ -13,6 +13,7 @@ typedef struct syn_edge_s {
     struct syn_node_s *targ;
     struct syn_edge_s *next_orig;
     struct syn_edge_s *next_targ;
+    unsigned long timestamp;
 } syn_edge;
 
 syn_edge *syn_create_edge(void);

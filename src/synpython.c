@@ -49,15 +49,16 @@ static PyObject *pysyn_add_node(PyObject *self, PyObject *args)
 static PyObject *pysyn_add_edge_to_net(PyObject *self, PyObject *args)
 {
     long p1, p2, p3;
+    unsigned long ts = 0;
     syn_net *net;
     syn_node *orig, *targ;
     int res = 0;
 
-    if (PyArg_ParseTuple(args, "lll", &p1, &p2, &p3)) {
+    if (PyArg_ParseTuple(args, "llll", &p1, &p2, &p3, ts)) {
       net = (syn_net *)p1;
       orig = (syn_node *)p2;
       targ = (syn_node *)p3;
-      res = syn_add_edge_to_net(net, orig, targ);
+      res = syn_add_edge_to_net(net, orig, targ, ts);
     }
 
     PyObject *result = Py_BuildValue("i", res);

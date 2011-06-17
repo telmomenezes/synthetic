@@ -40,7 +40,7 @@ void syn_destroy_node(syn_node *node)
 }
 
 
-int syn_add_edge(syn_node *origin, syn_node *target)
+int syn_add_edge(syn_node *origin, syn_node *target, unsigned long timestamp)
 {
     if (origin == target)
         return 0;
@@ -51,6 +51,7 @@ int syn_add_edge(syn_node *origin, syn_node *target)
     syn_edge *edge = syn_create_edge();
     edge->orig = origin;
     edge->targ = target;
+    edge->timestamp = timestamp;
     edge->next_targ = origin->targets;
     origin->targets = edge;
     origin->out_degree++;

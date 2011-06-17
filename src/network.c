@@ -45,9 +45,9 @@ syn_node *syn_add_node(syn_net *net, unsigned int type)
 }
 
 
-int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ)
+int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ, unsigned long timestamp)
 {
-    if (syn_add_edge(orig, targ)) {
+    if (syn_add_edge(orig, targ, timestamp)) {
         net->edge_count++;
         return 1;
     }

@@ -174,7 +174,7 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
             targ_type = targ_node->type;
             prob = gen->m_random[(targ_type * types_count) + orig_type];
             if (RANDOM_TESTPROB(prob)) {
-                syn_add_edge(orig_node, targ_node);
+                syn_add_edge(orig_node, targ_node, gen->cycles);
                 gen->total_edges++;
                 gen->r_edges++;
             }
@@ -208,7 +208,7 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
                     targ_node->last_walk_id = walkid;
                     prob = gen->m_link[(targ_type * types_count) + orig_type];
                     if (RANDOM_TESTPROB(prob)) {
-                        syn_add_edge(orig_node, targ_node);
+                        syn_add_edge(orig_node, targ_node, gen->cycles);
                         gen->l_edges++;
                         gen->total_edges++;
                     }
