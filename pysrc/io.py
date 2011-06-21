@@ -2,7 +2,7 @@ import string
 from syn.core import create_net, add_node, add_edge_to_net
 
 
-def load_net(net_file):
+def load_net(net_file, min_ts=-1, max_ts=-1):
     fin = open(net_file)
     
     net = create_net()
@@ -36,7 +36,8 @@ def load_net(net_file):
                 if 'ts' in params:
                     ts = nodes[params['ts']]
 
-                add_edge_to_net(net, orig, targ, ts)
+                if ((min_ts < 0) or (ts >= min_ts)) and ((max_ts < 0) or (ts < max_ts)):
+                    add_edge_to_net(net, orig, targ, ts)
 
     return net
 
