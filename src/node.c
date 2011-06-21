@@ -7,6 +7,7 @@
 #include "node.h"
 #include "utils.h"
 #include <math.h>
+#include <stdio.h>
 
 
 syn_node *syn_create_node(unsigned int type, unsigned int id)

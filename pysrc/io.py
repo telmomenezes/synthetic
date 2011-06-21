@@ -4,7 +4,7 @@ from syn.core import create_net, add_node, add_edge_to_net
 
 def load_net(net_file):
     fin = open(net_file)
-  
+    
     net = create_net()
 
     # 0: ?; 1: parsing nodes; 2: parsing edges
@@ -32,7 +32,11 @@ def load_net(net_file):
             elif state == 2:
                 orig = nodes[params['orig']]
                 targ = nodes[params['targ']]
-                add_edge_to_net(net, orig, targ, 0)
+                ts = 0
+                if 'ts' in params:
+                    ts = nodes[params['ts']]
+
+                add_edge_to_net(net, orig, targ, ts)
 
     return net
 

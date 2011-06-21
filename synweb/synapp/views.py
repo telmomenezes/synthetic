@@ -8,6 +8,7 @@ from synapp.models import Network, DRMap
 from synweb.settings import DB_DIR, TMP_DIR
 from syn.io import snap2syn
 from syn.core import *
+from shutil import copyfile
 
 
 @login_required
@@ -26,6 +27,7 @@ def addnet(request):
         form = AddNetForm(request.POST, request.FILES)
         if form.is_valid():
             name = form.cleaned_data['name']
+            fileformat = form.cleaned_data['fileformat']
             net = Network(name=name)
             net.save()
 
@@ -37,8 +39,19 @@ def addnet(request):
             tmp_file.close()
 
             dest_path = '%s/net_%d' % (DB_DIR, net.id)
-            node_count, edge_count = snap2syn(tmp_path, dest_path)
 
+            node_count = 0
+            edge_count = 0
+
+            if fileformat == 'synthetic':
+                copyfile(tmp_path, dest_path)
+
+            elif fileformat == 'snap':
+                node_count, edge_count = snap2syn(tmp_path, dest_path)
+            else:
+                # TODO: error message
+                return HttpResponseRedirect('/')
+        
             net.nodes = node_count
             net.edges = edge_count
             net.save()
