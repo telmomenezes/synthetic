@@ -10,9 +10,9 @@ class Network(models.Model):
     notes = models.TextField()
     drmap = models.ForeignKey('DRMap', related_name='+', null=True, blank=True)
 
-    def getnet(self):
+    def getnet(self, min_ts=-1, max_ts=-1):
         net_path = '%s/net_%d' % (DB_DIR, self.id)
-        net = load_net(net_path)
+        net = load_net(net_path, min_ts, max_ts)
         return net
 
 

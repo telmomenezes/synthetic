@@ -78,7 +78,7 @@ def gendrmap(request, net_id):
     map_data = ''
 
     net = Network.objects.get(id=net_id)
-    syn_net = net.getnet()
+    syn_net = net.getnet(0, 796755600)
     compute_evc(syn_net)
     drmap = get_drmap_with_limits(syn_net, bins, -7.0, 7.0, -7.0, 7.0)
     drmap_log_scale(drmap)
