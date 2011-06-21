@@ -35,7 +35,7 @@ def load_net(net_file, min_ts=-1, max_ts=-1):
                     targ = nodes[params['targ']]
                     ts = 0
                     if 'ts' in params:
-                        ts = nodes[params['ts']]
+                        ts = params['ts']
 
                     if ((min_ts < 0) or (ts >= min_ts)) and ((max_ts < 0) or (ts < max_ts)):
                         add_edge_to_net(net, orig, targ, ts)
