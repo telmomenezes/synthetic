@@ -30,14 +30,15 @@ def load_net(net_file, min_ts=-1, max_ts=-1):
                 node = add_node(net, 0)
                 nodes[params['id']] = node
             elif state == 2:
-                orig = nodes[params['orig']]
-                targ = nodes[params['targ']]
-                ts = 0
-                if 'ts' in params:
-                    ts = nodes[params['ts']]
+                if (params['orig'] in nodes) and (params['targ'] in nodes):
+                    orig = nodes[params['orig']]
+                    targ = nodes[params['targ']]
+                    ts = 0
+                    if 'ts' in params:
+                        ts = nodes[params['ts']]
 
-                if ((min_ts < 0) or (ts >= min_ts)) and ((max_ts < 0) or (ts < max_ts)):
-                    add_edge_to_net(net, orig, targ, ts)
+                    if ((min_ts < 0) or (ts >= min_ts)) and ((max_ts < 0) or (ts < max_ts)):
+                        add_edge_to_net(net, orig, targ, ts)
 
     return net
 
