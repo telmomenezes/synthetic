@@ -45,6 +45,10 @@ def addnet(request):
 
             if fileformat == 'synthetic':
                 copyfile(tmp_path, dest_path)
+                syn_net = net.getnet()
+                node_count = net_node_count(syn_net)
+                edge_count = net_edge_count(syn_net)
+                destroy_net(syn_net)
 
             elif fileformat == 'snap':
                 node_count, edge_count = snap2syn(tmp_path, dest_path)

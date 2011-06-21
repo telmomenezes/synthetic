@@ -497,7 +497,7 @@ static PyMethodDef methods[] = {
     {"write_evc", pysyn_write_evc, METH_VARARGS, "Write EVC."},
     {"print_net_info", pysyn_print_net_info, METH_VARARGS, "Print net info."},
     {"net_node_count", pysyn_net_node_count, METH_VARARGS, "Net node count."},
-    {"net_edge_count", pysyn_net_node_count, METH_VARARGS, "Net edge count."},
+    {"net_edge_count", pysyn_net_edge_count, METH_VARARGS, "Net edge count."},
     {"destroy_drmap", pysyn_destroy_drmap, METH_VARARGS, "Destroy DRMap."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},
     {"get_drmap_with_limits", pysyn_get_drmap_with_limits, METH_VARARGS, "Get DRMap from net with limits."},
