@@ -110,6 +110,36 @@ static PyObject *pysyn_print_net_info(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_net_node_count(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_net *net;
+    unsigned int node_count = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+      net = (syn_net *)p;
+      node_count = net->node_count;
+    }
+    
+    PyObject *result = Py_BuildValue("i", node_count);
+    return result;
+}
+
+static PyObject *pysyn_net_edge_count(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_net *net;
+    unsigned int edge_count = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+      net = (syn_net *)p;
+      edge_count = net->edge_count;
+    }
+    
+    PyObject *result = Py_BuildValue("i", edge_count);
+    return result;
+}
+
 // DRMAP API
 
 static PyObject *pysyn_destroy_drmap(PyObject *self, PyObject *args)
@@ -466,6 +496,8 @@ static PyMethodDef methods[] = {
     {"compute_evc", pysyn_compute_evc, METH_VARARGS, "Compute EVC."},
     {"write_evc", pysyn_write_evc, METH_VARARGS, "Write EVC."},
     {"print_net_info", pysyn_print_net_info, METH_VARARGS, "Print net info."},
+    {"net_node_count", pysyn_net_node_count, METH_VARARGS, "Net node count."},
+    {"net_edge_count", pysyn_net_node_count, METH_VARARGS, "Net edge count."},
     {"destroy_drmap", pysyn_destroy_drmap, METH_VARARGS, "Destroy DRMap."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},
     {"get_drmap_with_limits", pysyn_get_drmap_with_limits, METH_VARARGS, "Get DRMap from net with limits."},
