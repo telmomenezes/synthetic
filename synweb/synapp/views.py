@@ -9,6 +9,7 @@ from synweb.settings import DB_DIR, TMP_DIR
 from syn.io import snap2syn
 from syn.core import *
 from shutil import copyfile
+from string import *
 
 
 @login_required
@@ -78,8 +79,11 @@ def network(request, net_id):
     steps = 1
     if net.temporal == 1:
         steps = 10
+
+    drmap_data = join(split(net.drmap.data,','),',\n')
     variables = RequestContext(request, {
         'net': net,
+        'drmap_data': drmap_data,
         'steps': range(steps),
     })
     return render_to_response('network.html', variables)
