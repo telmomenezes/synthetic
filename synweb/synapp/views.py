@@ -101,14 +101,14 @@ def gendrmap(request, net_id):
     if net.temporal == 1:
         steps = 10
         interval = (net.max_ts - net.min_ts) / 10
-        cur_ts = net.min_ts
+        cur_ts = net.min_ts + interval
 
     for step in range(steps):
         min_ts = -1
         max_ts = -1
         if interval > 0:
-            min_ts = cur_ts
-            max_ts = cur_ts + interval
+            min_ts = net.min_ts
+            max_ts = cur_ts
         syn_net = net.getnet(min_ts, max_ts)
         compute_evc(syn_net)
         drmap = get_drmap_with_limits(syn_net, bins, -7.0, 7.0, -7.0, 7.0)
