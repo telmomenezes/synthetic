@@ -18,6 +18,9 @@ syn_net *syn_create_net()
     net->node_count = 0;
     net->edge_count = 0;
     net->nodes = NULL;
+    net->temporal = 0;
+    net->min_ts = 0;
+    net->max_ts = 0;
     return net;
 }
 
@@ -49,6 +52,17 @@ int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ, unsigned l
 {
     if (syn_add_edge(orig, targ, timestamp)) {
         net->edge_count++;
+
+        if (timestamp > 0) {
+            net->temporal = 1;
+            if ((net->min_ts == 0) || (timestamp < net->min_ts)) {
+                net->min_ts = timestamp;
+            }
+            if ((net->max_ts == 0) || (timestamp > net->max_ts)) {
+                net->max_ts = timestamp;
+            }
+        }
+
         return 1;
     }
     return 0;

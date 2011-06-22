@@ -22,6 +22,10 @@ typedef struct syn_net_s {
     unsigned int node_count;
     unsigned int edge_count;
 
+    unsigned int temporal;
+    unsigned long min_ts;
+    unsigned long max_ts;
+
     syn_drmap *last_map;
 } syn_net;
 
