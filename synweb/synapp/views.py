@@ -78,7 +78,7 @@ def network(request, net_id):
     net = Network.objects.get(id=net_id)
     steps = 1
     if net.temporal == 1:
-        steps = 10
+        steps = 100
 
     variables = RequestContext(request, {
         'net': net,
@@ -99,7 +99,7 @@ def gendrmap(request, net_id):
     net = Network.objects.get(id=net_id)
 
     if net.temporal == 1:
-        steps = 10
+        steps = 100
         interval = (net.max_ts - net.min_ts) / 10
         cur_ts = net.min_ts + interval
 
