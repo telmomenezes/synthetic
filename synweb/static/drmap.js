@@ -16,7 +16,7 @@ var drawDRMap = function(vals, bins, context_id, step)
         if (context) {
             var side = elem.width / bins;
 
-            var i = bins * step;
+            var i = bins * bins * step;
             for (x = 0; x < bins; x++) {
                 for (y = bins - 1; y >= 0; y--) {
                     if (vals[i] == 0) {
