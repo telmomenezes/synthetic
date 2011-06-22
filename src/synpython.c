@@ -140,6 +140,52 @@ static PyObject *pysyn_net_edge_count(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_net_temporal(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_net *net;
+    unsigned int temporal = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        net = (syn_net *)p;
+        temporal = net->temporal;
+    }
+    
+    PyObject *result = Py_BuildValue("i", temporal);
+    return result;
+}
+
+static PyObject *pysyn_net_min_ts(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_net *net;
+    unsigned int min_ts = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        net = (syn_net *)p;
+        min_ts = net->min_ts;
+    }
+    
+    PyObject *result = Py_BuildValue("i", min_ts);
+    return result;
+}
+
+static PyObject *pysyn_net_max_ts(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_net *net;
+    unsigned int max_ts = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        net = (syn_net *)p;
+        max_ts = net->max_ts;
+    }
+    
+    PyObject *result = Py_BuildValue("i", max_ts);
+    return result;
+}
+
+
 // DRMAP API
 
 static PyObject *pysyn_destroy_drmap(PyObject *self, PyObject *args)
@@ -498,6 +544,9 @@ static PyMethodDef methods[] = {
     {"print_net_info", pysyn_print_net_info, METH_VARARGS, "Print net info."},
     {"net_node_count", pysyn_net_node_count, METH_VARARGS, "Net node count."},
     {"net_edge_count", pysyn_net_edge_count, METH_VARARGS, "Net edge count."},
+    {"net_temporal", pysyn_net_temporal, METH_VARARGS, "Does the net contain temporal information?"},
+    {"net_min_ts", pysyn_net_min_ts, METH_VARARGS, "Net min timestamp."},
+    {"net_max_ts", pysyn_net_max_ts, METH_VARARGS, "Net max timestamp."},
     {"destroy_drmap", pysyn_destroy_drmap, METH_VARARGS, "Destroy DRMap."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},
     {"get_drmap_with_limits", pysyn_get_drmap_with_limits, METH_VARARGS, "Get DRMap from net with limits."},
