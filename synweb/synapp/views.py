@@ -80,10 +80,8 @@ def network(request, net_id):
     if net.temporal == 1:
         steps = 10
 
-    drmap_data = join(split(net.drmap.data,','),',\n')
     variables = RequestContext(request, {
         'net': net,
-        'drmap_data': drmap_data,
         'steps': range(steps),
     })
     return render_to_response('network.html', variables)
@@ -105,7 +103,7 @@ def gendrmap(request, net_id):
         interval = (net.max_ts - net.min_ts) / 10
         cur_ts = net.min_ts
 
-    for i in range(steps):
+    for step in range(steps):
         min_ts = -1
         max_ts = -1
         if interval > 0:
@@ -120,7 +118,7 @@ def gendrmap(request, net_id):
         for x in range(bins):
             for y in range(bins):
                 val = drmap_get_value(drmap, x, y)
-                if (x > 0) or (y > 0):
+                if (x > 0) or (y > 0) or (step > 0):
                     map_data += ','
                 map_data += '%f' % val
 
