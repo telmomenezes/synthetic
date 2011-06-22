@@ -83,25 +83,42 @@ def network(request, net_id):
 @login_required
 def gendrmap(request, net_id):
     bins = 50
+    steps = 1
+    cur_ts = 0
+    interval = -1
 
     map_data = ''
 
     net = Network.objects.get(id=net_id)
-    syn_net = net.getnet()
-    compute_evc(syn_net)
-    drmap = get_drmap_with_limits(syn_net, bins, -7.0, 7.0, -7.0, 7.0)
-    drmap_log_scale(drmap)
-    drmap_normalize(drmap)
 
-    for x in range(bins):
-        for y in range(bins):
-            val = drmap_get_value(drmap, x, y)
-            if (x > 0) or (y > 0):
-                map_data += ','
-            map_data += '%f' % val
+    if net.temporal == 1:
+        steps = 10
+        interval = (net.max_ts - net.min_ts) / 10
+        cur_ts = net.min_ts
 
-    destroy_net(syn_net)
-    destroy_drmap(drmap)
+    for i in range(steps):
+        min_ts = -1
+        max_ts = -1
+        if interval > 0:
+            min_ts = cur_ts
+            max_ts = cur_ts + interval
+        syn_net = net.getnet(min_ts, max_ts)
+        compute_evc(syn_net)
+        drmap = get_drmap_with_limits(syn_net, bins, -7.0, 7.0, -7.0, 7.0)
+        drmap_log_scale(drmap)
+        drmap_normalize(drmap)
+
+        for x in range(bins):
+            for y in range(bins):
+                val = drmap_get_value(drmap, x, y)
+                if (x > 0) or (y > 0):
+                    map_data += ','
+                map_data += '%f' % val
+
+        destroy_net(syn_net)
+        destroy_drmap(drmap)
+
+        cur_ts += interval
 
     map = DRMap(net=net, bins=bins, steps=1, data=map_data, min_hor=-7.0, max_hor=7.0,
         min_ver=-7.0, max_ver=7.0)

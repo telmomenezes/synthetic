@@ -1,4 +1,4 @@
-var drawDRMap = function(vals, bins, context_id)
+var drawDRMap = function(vals, bins, context_id, step)
 {
     var maxval = 0;
     for each (var val in vals) {
@@ -16,7 +16,7 @@ var drawDRMap = function(vals, bins, context_id)
         if (context) {
             var side = elem.width / bins;
 
-            var i = 0;
+            var i = bins * step;
             for (x = 0; x < bins; x++) {
                 for (y = bins - 1; y >= 0; y--) {
                     if (vals[i] == 0) {

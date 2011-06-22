@@ -21,7 +21,12 @@ Sorry, your browser does not support canvas.
 var vals = [{{ net.drmap.data }}];
 var bins = {{ net.drmap.bins }};
 
-drawDRMap(vals, bins, 'drmap_canvas');
+drawDRMap(vals, bins, 'drmap_canvas', 0);
+
+{% for step in steps %}
+    <a href="" onCLick="drawDRMAP(vals, bins, 'drmap_canvas', {{ step }})">{{ step }}</a> | 
+{% endfor %}
+
 
 </script>
 {% endif %}
