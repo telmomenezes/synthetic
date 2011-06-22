@@ -64,7 +64,7 @@ def addnet(request):
         
             net.nodes = node_count
             net.edges = edge_count
-            net.temproal = temporal
+            net.temporal = temporal
             net.min_ts = min_ts
             net.max_ts = max_ts
             net.save()
