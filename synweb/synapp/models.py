@@ -7,6 +7,9 @@ class Network(models.Model):
     name = models.CharField(max_length=200)
     nodes = models.PositiveIntegerField(default=0)
     edges = models.PositiveIntegerField(default=0)
+    temporal = models.PositiveIntegerField(default=0)
+    min_ts = models.PositiveIntegerField(default=0)
+    max_ts = models.PositiveIntegerField(default=0)
     notes = models.TextField()
     drmap = models.ForeignKey('DRMap', related_name='+', null=True, blank=True)
 

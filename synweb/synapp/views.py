@@ -42,12 +42,18 @@ def addnet(request):
 
             node_count = 0
             edge_count = 0
+            temporal = 0
+            min_ts = 0
+            max_ts = 0
 
             if fileformat == 'synthetic':
                 copyfile(tmp_path, dest_path)
                 syn_net = net.getnet()
                 node_count = net_node_count(syn_net)
                 edge_count = net_edge_count(syn_net)
+                temporal = net_temporal(syn_net)
+                min_ts = net_min_ts(syn_net)
+                max_ts = net_max_ts(syn_net)
                 destroy_net(syn_net)
 
             elif fileformat == 'snap':
@@ -58,6 +64,9 @@ def addnet(request):
         
             net.nodes = node_count
             net.edges = edge_count
+            net.temproal = temporal
+            net.min_ts = min_ts
+            net.max_ts = max_ts
             net.save()
 
     return HttpResponseRedirect('/')
