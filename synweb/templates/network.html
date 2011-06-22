@@ -16,10 +16,8 @@ edges:{{ net.edges }}<br />
 Sorry, your browser does not support canvas.
 </canvas>
 
-{% for step in steps %}
-    <a href="" onCLick="drawDRMAP(vals, bins, 'drmap_canvas', {{ step }})">{{ step }}</a> | 
-{% endfor %}
-[{{ net.drmap.data }}];
+
+
 <script language="javascript">
 
 var vals = [{{ net.drmap.data }}];
