@@ -110,7 +110,7 @@ syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, doub
             }
         }
 
-        if ((x >= 0) && (y >= 0)) {
+        if ((x >= 0) && (y >= 0) && ((node->in_degree != 0) || (node->out_degree != 0))) {
             syn_drmap_inc_value(map, x, y);
         }
         
