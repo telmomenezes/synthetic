@@ -75,9 +75,12 @@ def addnet(request):
 @login_required
 def network(request, net_id):
     net = Network.objects.get(id=net_id)
+    steps = 1
+    if net.temporal == 1:
+        steps = 10
     variables = RequestContext(request, {
         'net': net,
-        'steps': range(net.drmap.steps),
+        'steps': range(steps),
     })
     return render_to_response('network.html', variables)
 
