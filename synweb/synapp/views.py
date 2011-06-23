@@ -100,7 +100,7 @@ def gendrmap(request, net_id):
 
     if net.temporal == 1:
         steps = 100
-        interval = (net.max_ts - net.min_ts) / 10
+        interval = (net.max_ts - net.min_ts) / steps
         cur_ts = net.min_ts + interval
 
     for step in range(steps):
