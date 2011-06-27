@@ -25,6 +25,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import sys
 from syn.net import Net
+from syn.core import *
 
 
 def drmap_positions(netfile, outpath):
