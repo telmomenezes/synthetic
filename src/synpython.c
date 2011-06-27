@@ -185,6 +185,113 @@ static PyObject *pysyn_net_max_ts(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_net_first_node(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_net *net;
+    syn_node *node = NULL;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        net = (syn_net *)p;
+        node = net->nodes;
+    }
+
+    PyObject *result = Py_BuildValue("l", (long)node);
+    return result;
+}
+
+
+// NODE API
+
+static PyObject *pysyn_node_next_node(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_node *node;
+    syn_node *next_node = NULL;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        node = (syn_node *)p;
+        next_node = node->next;
+    }
+
+    PyObject *result = Py_BuildValue("l", (long)next_node);
+    return result;
+}
+
+static PyObject *pysyn_node_id(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_node *node;
+    unsigned int value = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        node = (syn_node *)p;
+        value = node->id;
+    }
+
+    PyObject *result = Py_BuildValue("d", value);
+    return result;
+}
+
+static PyObject *pysyn_node_in_degree(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_node *node;
+    unsigned int value = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        node = (syn_node *)p;
+        value = node->in_degree;
+    }
+
+    PyObject *result = Py_BuildValue("d", value);
+    return result;
+}
+
+static PyObject *pysyn_node_out_degree(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_node *node;
+    unsigned int value = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        node = (syn_node *)p;
+        value = node->out_degree;
+    }
+
+    PyObject *result = Py_BuildValue("d", value);
+    return result;
+}
+
+static PyObject *pysyn_node_evc_in(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_node *node;
+    double value = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        node = (syn_node *)p;
+        value = node->evc_in;
+    }
+
+    PyObject *result = Py_BuildValue("f", value);
+    return result;
+}
+
+static PyObject *pysyn_node_evc_out(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_node *node;
+    double value = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        node = (syn_node *)p;
+        value = node->evc_out;
+    }
+
+    PyObject *result = Py_BuildValue("f", value);
+    return result;
+}
 
 // DRMAP API
 
@@ -547,6 +654,13 @@ static PyMethodDef methods[] = {
     {"net_temporal", pysyn_net_temporal, METH_VARARGS, "Does the net contain temporal information?"},
     {"net_min_ts", pysyn_net_min_ts, METH_VARARGS, "Net min timestamp."},
     {"net_max_ts", pysyn_net_max_ts, METH_VARARGS, "Net max timestamp."},
+    {"net_first_node", pysyn_net_first_node, METH_VARARGS, "First node in net."},
+    {"node_next_node", pysyn_node_next_node, METH_VARARGS, "Get next node from a node."},
+    {"node_id", pysyn_node_id, METH_VARARGS, "Get node id."},
+    {"node_in_degree", pysyn_node_in_degree, METH_VARARGS, "Get node in degree."},
+    {"node_out_degree", pysyn_node_out_degree, METH_VARARGS, "Get node out degree."},
+    {"node_evc_in", pysyn_node_evc_in, METH_VARARGS, "Get node evc in."},
+    {"node_evc_out", pysyn_node_evc_out, METH_VARARGS, "Get node evc out."},
     {"destroy_drmap", pysyn_destroy_drmap, METH_VARARGS, "Destroy DRMap."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},
     {"get_drmap_with_limits", pysyn_get_drmap_with_limits, METH_VARARGS, "Get DRMap from net with limits."},
