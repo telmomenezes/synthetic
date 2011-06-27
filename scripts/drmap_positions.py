@@ -72,7 +72,7 @@ def drmap_positions(netfile, outpath):
                 nodes_x[id].append(evc_in)
                 nodes_y[id].append(evc_out)
                 nodes_d[id].append(degree);
-            else
+            else:
                 nodes_x[id] = [evc_in,]
                 nodes_y[id] = [evc_out,]
                 nodes_d[id] = [degree,]
