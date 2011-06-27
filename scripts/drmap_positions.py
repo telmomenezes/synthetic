@@ -52,7 +52,10 @@ def drmap_positions(netfile, outpath):
         compute_evc(syn_net)
 
         node = net_first_node(syn_net)
+        count = 0
         while node != 0:
+            print count
+            count += 1
             id = node_id(node)
             in_degree = node_in_degree(node)
             out_degree = node_out_degree(node)
