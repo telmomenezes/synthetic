@@ -27,7 +27,7 @@ import sys
 from syn.net import Net
 
 
-def gendrmap(netfile):
+def drmap_positions(netfile, outpath):
     bins = 50
     steps = 100
     cur_ts = 0
@@ -37,6 +37,10 @@ def gendrmap(netfile):
     interval = (net.max_ts - net.min_ts) / steps
     cur_ts = net.min_ts + interval
 
+    nodes_x = {}
+    nodes_y = {}
+    nodes_d = {}
+
     for step in range(steps):
         min_ts = net.min_ts
         max_ts = cur_ts
@@ -45,48 +49,49 @@ def gendrmap(netfile):
 
         node = net_first_node(syn_net)
         while node != 0:
-            
+            id = node_id(node)
+            in_degree = node_in_degree(node)
+            out_degree = node_out_degree(node)
+            degree = in_degree + out_degree
+            evc_in = node_evc_in(node)
+            evc_out = node_evc_out(node)
+
+            if evc_in < -7.0:
+                evc_in = -7.0
+            if evc_in > 7.0:
+                evc_in = 7.0
+            if evc_out < -7.0:
+                evc_out = -7.0
+            if evc_out > 7.0:
+                evc_out = 7.0
+
+            if id in nodes_x:
+                nodes_x[id].append(evc_in)
+                nodes_y[id].append(evc_out)
+                nodes_d[id].append(degree);
+            else
+                nodes_x[id] = [evc_in,]
+                nodes_y[id] = [evc_out,]
+                nodes_d[id] = [degree,]
+
             node = node_next_node(node)
 
         destroy_net(syn_net)
 
         cur_ts += interval
 
-    map = DRMap(net=net, bins=bins, steps=1, data=map_data, min_hor=-7.0, max_hor=7.0,
-        min_ver=-7.0, max_ver=7.0)
-    map.save()
-
-    Network.objects.filter(id=net_id).update(drmap=map.id)
-
-    return HttpResponseRedirect('/net/%s' % net_id)
-
-
-def drmap_positions(dbpath, outpath):
-
-    net = Net(outpath)
     f = open(outpath, 'w')
-    net.create_db()
-
-    conn = sqlite3.connect(dbpath)
-    cur = conn.cursor()
-    
-    nodes = {}
-    cur.execute("SELECT id FROM authors")
-    for row in cur:
-        nodes[row[0]] = net.add_node()
-
-    cur.execute("SELECT orig_id, targ_id, timestamp FROM author_citations")
-    for row in cur:
-        net.add_edge(nodes[row[0]], nodes[row[1]], row[2])
-
-    cur.close()
-    conn.close()
-
-    print('Done.')
-
-
-    
+    for nodeid in nodes_x.keys():
+        line = '%d'
+        for i in len(nodes_x):
+            if nodes_d[i] > 0:
+                line = '%s; %f, %f' % (line, nodes_x[i], nodes_y[i])
+            else:
+                line = '%s; ' % line
+        line = '%s\n' % line
+        f.write(line)
+    f.close()
 
 
 if __name__ == '__main__':
- 
+    drmap_positions(sys.argv[1], sys.argv[2])
