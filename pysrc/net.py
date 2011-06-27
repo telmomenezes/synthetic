@@ -59,9 +59,9 @@ class Net:
 
         if min_ts >= 0:
             if max_ts >= 0:
-                self.cur.execute("SELECT orig, targ FROM edge WHERE ts>=%f AND ts<%f" % (min_ts, max_ts))
+                self.cur.execute("SELECT orig, targ, ts FROM edge WHERE ts>=%f AND ts<%f" % (min_ts, max_ts))
             else:
-                self.cur.execute("SELECT orig, targ FROM edge WHERE ts>=%f" % (min_ts))
+                self.cur.execute("SELECT orig, targ, ts FROM edge WHERE ts>=%f" % (min_ts))
         else:
             self.cur.execute("SELECT orig, targ, ts FROM edge")
 
