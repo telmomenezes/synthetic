@@ -79,3 +79,13 @@ class Net:
     def add_edge(self, orig, targ, timestamp):
         self.cur.execute("INSERT INTO edge (orig, targ, ts) VALUES (%d, %d, %f)" % (orig, targ, timestamp))    
         return self.cur.lastrowid
+
+    def min_edge_ts(self):
+        self.cur.execute("SELECT min(ts) FROM edge WHERE ts > 0")
+        row = self.cur.fetchone()
+        return row[0]
+
+    def max_edge_ts(self):
+        self.cur.execute("SELECT max(ts) FROM edge WHERE ts > 0")
+        row = self.cur.fetchone()
+        return row[0]
