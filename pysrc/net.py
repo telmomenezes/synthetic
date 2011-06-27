@@ -12,7 +12,7 @@ class Net:
         self.cur.close()
         self.conn.close()
 
-    def safe_execute(self, cur, query):
+    def safe_execute(self, query):
         try:
             self.cur.execute(query)
             print('Executed query: %s' % query)
