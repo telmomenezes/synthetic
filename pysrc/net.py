@@ -17,7 +17,7 @@ class Net:
             self.cur.execute(query)
             print('Executed query: %s' % query)
         except sqlite3.OperationalError:
-            self.cur.close()
+            print('Failed query: %s' % query)
 
     def create_db(self):
         # create node table
