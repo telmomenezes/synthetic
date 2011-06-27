@@ -54,7 +54,7 @@ class Net:
         self.cur.execute("SELECT id FROM node")
         
         nodes = {}
-        for row in cur:
+        for row in self.cur:
             nodes[row[0]] = add_node(net, 0)
 
         if min_ts >= 0:
