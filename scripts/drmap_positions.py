@@ -41,7 +41,10 @@ def drmap_positions(netfile, outpath):
     nodes_y = {}
     nodes_d = {}
 
+    print steps, 'time steps'
+
     for step in range(steps):
+        print 'step #%d' % step
         min_ts = net.min_ts
         max_ts = cur_ts
         syn_net = net.load_net(min_ts, max_ts)
@@ -80,6 +83,8 @@ def drmap_positions(netfile, outpath):
 
         cur_ts += interval
 
+    print 'writing output file'
+
     f = open(outpath, 'w')
     for nodeid in nodes_x.keys():
         line = '%d'
@@ -91,6 +96,8 @@ def drmap_positions(netfile, outpath):
         line = '%s\n' % line
         f.write(line)
     f.close()
+
+    print 'done.'
 
 
 if __name__ == '__main__':
