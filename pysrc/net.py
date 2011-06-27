@@ -1,25 +1,25 @@
 import sqlite3
+from syn.core import *
 
 
 class Net:
     def __init__(self, dbpath):
         self.conn = sqlite3.connect(dbpath)
+        self.cur = self.conn.cursor()
 
     def __del__(self):
+        self.conn.commit()
+        self.cur.close()
         self.conn.close()
 
     def safe_execute(self, cur, query):
-        cur = self.conn.cursor()
         try:
-            cur.execute(query)
+            self.cur.execute(query)
             print('Executed query: %s' % query)
         except sqlite3.OperationalError:
-            cur.close()
+            self.cur.close()
 
-        self.conn.commit()
-        cur.close()
-
-    def create_db(self, dbpath):
+    def create_db(self):
         # create node table
         self.safe_execute("CREATE TABLE node (id INTEGER PRIMARY KEY)")
         self.safe_execute("ALTER TABLE node ADD COLUMN label TEXT")
@@ -40,12 +40,18 @@ class Net:
         self.safe_execute("ALTER TABLE edge ADD COLUMN targ INTEGER")
         self.safe_execute("ALTER TABLE node ADD COLUMN ts REAL")
 
+        # create indexes
+        self.safe_execute("CREATE INDEX node_id ON node (id)")
+        self.safe_execute("CREATE INDEX node_super_node ON node (super_node)")
+        self.safe_execute("CREATE INDEX edge_id ON edge (id)")
+        self.safe_execute("CREATE INDEX edge_orig ON edge (orig)")
+        self.safe_execute("CREATE INDEX edge_orig_targ ON edge (orig, targ)")
+        self.safe_execute("CREATE INDEX edge_ts ON edge (ts)")
+
     def load_net(self, min_ts=-1, max_ts=-1):
-        cur = self.conn.cursor()
-    
         net = create_net()
 
-        cur.execute("SELECT id FROM node")
+        self.cur.execute("SELECT id FROM node")
         
         nodes = {}
         for row in cur:
@@ -53,11 +59,11 @@ class Net:
 
         if min_ts >= 0:
             if max_ts >= 0:
-                cur.execute("SELECT orig, targ FROM node WHERE ts>=%f AND ts<%f" % (min_ts, max_ts))
+                self.cur.execute("SELECT orig, targ FROM node WHERE ts>=%f AND ts<%f" % (min_ts, max_ts))
             else:
-                cur.execute("SELECT orig, targ FROM node WHERE ts>=%f" % (min_ts))
+                self.cur.execute("SELECT orig, targ FROM node WHERE ts>=%f" % (min_ts))
         else:
-            cur.execute("SELECT orig, targ, ts FROM node")
+            self.cur.execute("SELECT orig, targ, ts FROM node")
 
         for row in cur:
             add_edge_to_net(net, nodes[row[0]], nodes[row[1]], row[2])
@@ -65,3 +71,11 @@ class Net:
         cur.close()
 
         return net
+
+    def add_node(self, super_node=-1, label=''):
+        self.cur.execute("INSERT INTO node (super_node, label) VALUES (%d, %s)" % (super_node, label))    
+        return self.cur.lastrowid
+
+    def add_edge(self, orig, targ, timestamp):
+        self.cur.execute("INSERT INTO edge (orig, targ, ts) VALUES (%d, %d, %f)" % (orig, targ, timestamp))    
+        return self.cur.lastrowid
