@@ -65,10 +65,8 @@ class Net:
         else:
             self.cur.execute("SELECT orig, targ, ts FROM edge")
 
-        for row in cur:
+        for row in self.cur:
             add_edge_to_net(net, nodes[row[0]], nodes[row[1]], row[2])
-
-        cur.close()
 
         return net
 
