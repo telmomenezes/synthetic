@@ -38,7 +38,7 @@ class Net:
         self.safe_execute("CREATE TABLE edge (id INTEGER PRIMARY KEY)")
         self.safe_execute("ALTER TABLE edge ADD COLUMN orig INTEGER")
         self.safe_execute("ALTER TABLE edge ADD COLUMN targ INTEGER")
-        self.safe_execute("ALTER TABLE node ADD COLUMN ts REAL")
+        self.safe_execute("ALTER TABLE edge ADD COLUMN ts REAL")
 
         # create indexes
         self.safe_execute("CREATE INDEX node_id ON node (id)")
