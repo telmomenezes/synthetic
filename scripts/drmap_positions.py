@@ -34,8 +34,9 @@ def drmap_positions(netfile, outpath):
 
     net = Net(netfile)
 
-    interval = (net.max_ts - net.min_ts) / steps
-    cur_ts = net.min_ts + interval
+    min_ts = net.min_edge_ts()
+    interval = (net.max_edge_ts() - min_ts) / steps
+    cur_ts = min_ts + interval
 
     nodes_x = {}
     nodes_y = {}
@@ -45,7 +46,6 @@ def drmap_positions(netfile, outpath):
 
     for step in range(steps):
         print 'step #%d' % step
-        min_ts = net.min_ts
         max_ts = cur_ts
         syn_net = net.load_net(min_ts, max_ts)
         compute_evc(syn_net)
