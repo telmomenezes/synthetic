@@ -59,11 +59,11 @@ class Net:
 
         if min_ts >= 0:
             if max_ts >= 0:
-                self.cur.execute("SELECT orig, targ FROM node WHERE ts>=%f AND ts<%f" % (min_ts, max_ts))
+                self.cur.execute("SELECT orig, targ FROM edge WHERE ts>=%f AND ts<%f" % (min_ts, max_ts))
             else:
-                self.cur.execute("SELECT orig, targ FROM node WHERE ts>=%f" % (min_ts))
+                self.cur.execute("SELECT orig, targ FROM edge WHERE ts>=%f" % (min_ts))
         else:
-            self.cur.execute("SELECT orig, targ, ts FROM node")
+            self.cur.execute("SELECT orig, targ, ts FROM edge")
 
         for row in cur:
             add_edge_to_net(net, nodes[row[0]], nodes[row[1]], row[2])
