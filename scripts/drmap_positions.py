@@ -56,7 +56,7 @@ def drmap_positions(netfile, outpath):
 
         node = net_first_node(syn_net)
         while node != 0:
-            id = node_id(node)
+            nid = node_id(node)
             in_degree = node_in_degree(node)
             out_degree = node_out_degree(node)
             degree = in_degree + out_degree
@@ -72,14 +72,14 @@ def drmap_positions(netfile, outpath):
             if evc_out > 7.0:
                 evc_out = 7.0
 
-            if id in nodes_x:
-                nodes_x[id].append(evc_in)
-                nodes_y[id].append(evc_out)
-                nodes_d[id].append(degree);
+            if nid in nodes_x:
+                nodes_x[nid].append(evc_in)
+                nodes_y[nid].append(evc_out)
+                nodes_d[nid].append(degree);
             else:
-                nodes_x[id] = [evc_in,]
-                nodes_y[id] = [evc_out,]
-                nodes_d[id] = [degree,]
+                nodes_x[nid] = [evc_in,]
+                nodes_y[nid] = [evc_out,]
+                nodes_d[nid] = [degree,]
 
             node = node_next_node(node)
 
