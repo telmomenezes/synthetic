@@ -30,8 +30,7 @@ from syn.core import *
 
 def drmap_positions(netfile, outpath):
     bins = 50
-    #steps = 100
-    steps = 10
+    steps = 100
     cur_ts = 0
 
     net = Net(netfile)
@@ -47,6 +46,8 @@ def drmap_positions(netfile, outpath):
     print steps, 'time steps'
 
     for step in range(steps):
+        if step > 10:
+            break
         print 'step #%d' % step
         sys.stdout.flush()
         max_ts = cur_ts
@@ -54,10 +55,7 @@ def drmap_positions(netfile, outpath):
         compute_evc(syn_net)
 
         node = net_first_node(syn_net)
-        count = 0
         while node != 0:
-            print count
-            count += 1
             id = node_id(node)
             in_degree = node_in_degree(node)
             out_degree = node_out_degree(node)
