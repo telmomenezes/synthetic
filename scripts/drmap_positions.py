@@ -46,7 +46,7 @@ def drmap_positions(netfile, outpath):
     print steps, 'time steps'
 
     for step in range(steps):
-        if step > 10:
+        if step > 4:
             break
         print 'step #%d' % step
         sys.stdout.flush()
