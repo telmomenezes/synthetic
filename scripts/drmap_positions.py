@@ -30,7 +30,8 @@ from syn.core import *
 
 def drmap_positions(netfile, outpath):
     bins = 50
-    steps = 100
+    #steps = 100
+    steps = 2
     cur_ts = 0
 
     net = Net(netfile)
@@ -91,8 +92,8 @@ def drmap_positions(netfile, outpath):
 
     f = open(outpath, 'w')
     for nodeid in nodes_x.keys():
-        line = '%d'
-        for i in range(len(nodes_x)):
+        line = '%d' % nodeid
+        for i in range(len(nodes_x[nodeid])):
             if nodes_d[nodeid][i] > 0:
                 line = '%s; %f, %f' % (line, nodes_x[nodeid][i], nodes_y[nodeid][i])
             else:
