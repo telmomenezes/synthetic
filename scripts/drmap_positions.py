@@ -48,6 +48,7 @@ def drmap_positions(netfile, outpath):
 
     for step in range(steps):
         print 'step #%d' % step
+        sys.stdout.flush()
         max_ts = cur_ts
         syn_net = net.load_net(min_ts, max_ts)
         compute_evc(syn_net)
@@ -89,6 +90,7 @@ def drmap_positions(netfile, outpath):
         cur_ts += interval
 
     print 'writing output file'
+    sys.stdout.flush()
 
     f = open(outpath, 'w')
     for nodeid in nodes_x.keys():
