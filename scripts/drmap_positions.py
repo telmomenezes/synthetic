@@ -73,10 +73,12 @@ def drmap_positions(netfile, outpath):
                 evc_out = 7.0
 
             if nid in nodes_x:
+                print 'A'
                 nodes_x[nid].append(evc_in)
                 nodes_y[nid].append(evc_out)
                 nodes_d[nid].append(degree);
             else:
+                print 'B'
                 nodes_x[nid] = [evc_in,]
                 nodes_y[nid] = [evc_out,]
                 nodes_d[nid] = [degree,]
@@ -92,8 +94,6 @@ def drmap_positions(netfile, outpath):
 
     f = open(outpath, 'w')
     for nodeid in nodes_x.keys():
-        print nodes_d[nodeid]
-        print nodes_x[nodeid]
         line = '%d' % nodeid
         for i in range(len(nodes_x[nodeid])):
             if nodes_d[nodeid][i] > 0:
