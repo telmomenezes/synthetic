@@ -92,6 +92,8 @@ def drmap_positions(netfile, outpath):
 
     f = open(outpath, 'w')
     for nodeid in nodes_x.keys():
+        print nodes_d[nodeid]
+        print nodes_x[nodeid]
         line = '%d' % nodeid
         for i in range(len(nodes_x[nodeid])):
             if nodes_d[nodeid][i] > 0:
