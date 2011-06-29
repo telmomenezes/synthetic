@@ -55,7 +55,8 @@ class Net:
         
         nodes = {}
         for row in self.cur:
-            nodes[row[0]] = add_node(net, 0)
+            nid = row[0]
+            nodes[nid] = add_node_with_id(net, nid, 0)
 
         if min_ts >= 0:
             if max_ts >= 0:
