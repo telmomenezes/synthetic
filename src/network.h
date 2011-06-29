@@ -34,6 +34,7 @@ syn_net *syn_create_net(void);
 void syn_destroy_net(syn_net *net);
 
 syn_node *syn_add_node(syn_net *net, unsigned int type);
+syn_node *syn_add_node_with_id(syn_net *net, unsigned int nid, unsigned int type);
 int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ, unsigned long timestamp);
 
 void syn_compute_evc(syn_net *net);

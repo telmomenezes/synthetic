@@ -46,6 +46,23 @@ static PyObject *pysyn_add_node(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_add_node_with_id(PyObject *self, PyObject *args)
+{
+    long p;
+    unsigned int nid;
+    int type;
+    syn_net *net;
+    syn_node *node = NULL;
+
+    if (PyArg_ParseTuple(args, "lii", &p, &nid, &type)) {
+        net = (syn_net *)p;
+        node = syn_add_node_with_id(net, nid, type);
+    }
+
+    PyObject *result = Py_BuildValue("l", (long)node);
+    return result;
+}
+
 static PyObject *pysyn_add_edge_to_net(PyObject *self, PyObject *args)
 {
     long p1, p2, p3;
@@ -645,6 +662,7 @@ static PyMethodDef methods[] = {
     {"create_net", pysyn_create_net, METH_VARARGS, "Create network."},
     {"destroy_net", pysyn_destroy_net, METH_VARARGS, "Destroy network."},
     {"add_node", pysyn_add_node, METH_VARARGS, "Add node to network."},
+    {"add_node_with_id", pysyn_add_node_with_id, METH_VARARGS, "Add node to network, specify id."},
     {"add_edge_to_net", pysyn_add_edge_to_net, METH_VARARGS, "Add edge to network."},
     {"compute_evc", pysyn_compute_evc, METH_VARARGS, "Compute EVC."},
     {"write_evc", pysyn_write_evc, METH_VARARGS, "Write EVC."},

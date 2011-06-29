@@ -47,6 +47,17 @@ syn_node *syn_add_node(syn_net *net, unsigned int type)
     return node;
 }
 
+syn_node *syn_add_node_with_id(syn_net *net, unsigned int nid, unsigned int type)
+{
+    net->node_count++;
+    if (nid >= SYN_CURID) {
+        SYN_CURID = nid + 1;
+    }
+    syn_node *node = syn_create_node(type, nid);
+    node->next = net->nodes;
+    net->nodes = node;
+    return node;
+}
 
 int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ, unsigned long timestamp)
 {
