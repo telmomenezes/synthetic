@@ -57,7 +57,6 @@ def drmap_positions(netfile, outpath):
         node = net_first_node(syn_net)
         while node != 0:
             nid = node_id(node)
-            print 'nid', nid
             in_degree = node_in_degree(node)
             out_degree = node_out_degree(node)
             degree = in_degree + out_degree
