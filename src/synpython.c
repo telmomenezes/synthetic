@@ -229,7 +229,7 @@ static PyObject *pysyn_node_id(PyObject *self, PyObject *args)
         value = node->id;
     }
 
-    PyObject *result = Py_BuildValue("d", value);
+    PyObject *result = Py_BuildValue("i", value);
     return result;
 }
 
@@ -244,7 +244,7 @@ static PyObject *pysyn_node_in_degree(PyObject *self, PyObject *args)
         value = node->in_degree;
     }
 
-    PyObject *result = Py_BuildValue("d", value);
+    PyObject *result = Py_BuildValue("i", value);
     return result;
 }
 
@@ -259,7 +259,7 @@ static PyObject *pysyn_node_out_degree(PyObject *self, PyObject *args)
         value = node->out_degree;
     }
 
-    PyObject *result = Py_BuildValue("d", value);
+    PyObject *result = Py_BuildValue("i", value);
     return result;
 }
 
