@@ -133,11 +133,11 @@ class Net:
 
         return net
 
-    def add_node(self, super_node=-1, label=''):
+    def add_node(self, label='', super_node=-1):
         self.cur.execute("INSERT INTO node (super_node, label) VALUES (%d, '%s')" % (super_node, label))    
         return self.cur.lastrowid
 
-    def add_edge(self, orig, targ, timestamp):
+    def add_edge(self, orig, targ, timestamp=-1):
         self.cur.execute("INSERT INTO edge (orig, targ, ts) VALUES (%d, %d, %f)" % (orig, targ, timestamp))    
         return self.cur.lastrowid
 
@@ -163,7 +163,11 @@ class Net:
             self.log('generating interval %d' % i)
             self.cur.execute("INSERT INTO interval (pos, ts_start, ts_end) VALUES (?, ?, ?)", i, min_ts, cur_ts)
             int_id = self.cur.lastrowid
-            syn_net = self.load_net(min_ts, cur_ts)
+            syn_net = 0
+            if n_intvls > 1:
+                syn_net = self.load_net(min_ts, cur_ts)
+            else:
+                syn_net = self.load_net()
 
             node = net_first_node(syn_net)
             while node != 0:
@@ -173,7 +177,10 @@ class Net:
                 degree = in_degree + out_degree
 
                 if degree > 0:
-                    self.cur.execute("INSERT INTO node (super_node, interval, in_degree, out_degree) VALUES (?, ?, ?, ?)", nid, int_id, in_degree, out_degree)
+                    if i == (n_intvls - 1):
+                        self.cur.execute("UPDATE node SET super_node=?, interval=?, in_degree=?, out_degree=? WHERE id=?", nid, int_id, in_degree, out_degree, nid)
+                    else:
+                        self.cur.execute("INSERT INTO node (super_node, interval, in_degree, out_degree) VALUES (?, ?, ?, ?)", nid, int_id, in_degree, out_degree)
 
                 node = node_next_node(node)
 
@@ -181,13 +188,16 @@ class Net:
 
             cur_ts += interval
 
+        self.conn.commit()
+
     def get_number_intervals(self):
         self.cur.execute("SELECT count(id) FROM interval")
         return self.cur.fetchone()[0]
 
     def compute_page_ranks(self):
         n_intvls = self.get_number_intervals()
-        
+    
+        # compute interval page ranks
         for i in range(n_intvls):
             self.cur.execute("SELECT id FROM interval WHERE pos=?", i)
             int_id = self.cur.fetchone()[0]
