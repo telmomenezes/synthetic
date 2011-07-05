@@ -60,28 +60,29 @@ class Net:
         # create node table
         self.safe_execute("CREATE TABLE node (id INTEGER PRIMARY KEY)")
         self.safe_execute("ALTER TABLE node ADD COLUMN label TEXT")
-        self.safe_execute("ALTER TABLE node ADD COLUMN super_node INTEGER")
-        self.safe_execute("ALTER TABLE node ADD COLUMN interval INTEGER")
+        self.safe_execute("ALTER TABLE node ADD COLUMN super_node INTEGER DEFAULT -1")
+        self.safe_execute("ALTER TABLE node ADD COLUMN interval INTEGER DEFAULT -1")
 
-        self.safe_execute("ALTER TABLE node ADD COLUMN ts_start INTEGER")
-        self.safe_execute("ALTER TABLE node ADD COLUMN ts_end INTEGER")
+        self.safe_execute("ALTER TABLE node ADD COLUMN ts_start INTEGER DEFAULT -1")
+        self.safe_execute("ALTER TABLE node ADD COLUMN ts_end INTEGER DEFAULT -1")
         
-        self.safe_execute("ALTER TABLE node ADD COLUMN in_degree INTEGER")
-        self.safe_execute("ALTER TABLE node ADD COLUMN out_degree INTEGER")
+        self.safe_execute("ALTER TABLE node ADD COLUMN in_degree INTEGER DEFAULT 0")
+        self.safe_execute("ALTER TABLE node ADD COLUMN out_degree INTEGER DEFAULT 0")
 
-        self.safe_execute("ALTER TABLE node ADD COLUMN in_pr REAL")
-        self.safe_execute("ALTER TABLE node ADD COLUMN out_pr REAL")
+        self.safe_execute("ALTER TABLE node ADD COLUMN in_pr REAL DEFAULT 0")
+        self.safe_execute("ALTER TABLE node ADD COLUMN out_pr REAL DEFAULT 0")
 
         # create edge table
         self.safe_execute("CREATE TABLE edge (id INTEGER PRIMARY KEY)")
         self.safe_execute("ALTER TABLE edge ADD COLUMN orig INTEGER")
         self.safe_execute("ALTER TABLE edge ADD COLUMN targ INTEGER")
-        self.safe_execute("ALTER TABLE edge ADD COLUMN ts_start INTEGER")
-        self.safe_execute("ALTER TABLE edge ADD COLUMN ts_end INTEGER")
+        self.safe_execute("ALTER TABLE edge ADD COLUMN ts_start INTEGER DEFAULT -1")
+        self.safe_execute("ALTER TABLE edge ADD COLUMN ts_end INTEGER DEFAULT -1")
 
         # create indexes
         self.safe_execute("CREATE INDEX node_id ON node (id)")
         self.safe_execute("CREATE INDEX node_super_node ON node (super_node)")
+        self.safe_execute("CREATE INDEX node_super_node_int ON node (super_node, interval)")
         self.safe_execute("CREATE INDEX edge_id ON edge (id)")
         self.safe_execute("CREATE INDEX edge_orig ON edge (orig)")
         self.safe_execute("CREATE INDEX edge_orig_targ ON edge (orig, targ)")
@@ -188,7 +189,7 @@ class Net:
         n_intvls = self.get_number_intervals()
         
         for i in range(n_intvls):
-            self.cur.execite("SELECT id FROM interval WHERE pos=?", i)
+            self.cur.execute("SELECT id FROM interval WHERE pos=?", i)
             int_id = self.cur.fetchone()[0]
             syn_net = self.load_interval_net(i)
             compute_evc(syn_net)
