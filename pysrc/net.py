@@ -86,7 +86,7 @@ class Net:
         self.safe_execute("CREATE INDEX edge_id ON edge (id)")
         self.safe_execute("CREATE INDEX edge_orig ON edge (orig)")
         self.safe_execute("CREATE INDEX edge_orig_targ ON edge (orig, targ)")
-        self.safe_execute("CREATE INDEX edge_ts ON edge (ts)")
+        self.safe_execute("CREATE INDEX edge_ts_start ON edge (ts_start)")
 
     def load_net(self, min_ts=-1, max_ts=-1):
         net = create_net()
@@ -126,7 +126,7 @@ class Net:
             nid = row[0]
             nodes[nid] = add_node_with_id(net, nid, 0)
 
-        self.cur.execute("SELECT orig, targ, ts FROM edge WHERE ts>=? AND ts<?", min_ts, max_ts)
+        self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts_start>=? AND ts_start<?", min_ts, max_ts)
 
         for row in self.cur:
             add_edge_to_net(net, nodes[row[0]], nodes[row[1]], row[2])
@@ -138,7 +138,7 @@ class Net:
         return self.cur.lastrowid
 
     def add_edge(self, orig, targ, timestamp=-1):
-        self.cur.execute("INSERT INTO edge (orig, targ, ts) VALUES (%d, %d, %f)" % (orig, targ, timestamp))    
+        self.cur.execute("INSERT INTO edge (orig, targ, ts_start) VALUES (%d, %d, %f)" % (orig, targ, timestamp))    
         return self.cur.lastrowid
 
     def min_edge_ts(self):
