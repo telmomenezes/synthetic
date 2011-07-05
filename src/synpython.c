@@ -84,21 +84,21 @@ static PyObject *pysyn_add_edge_to_net(PyObject *self, PyObject *args)
 }
 
 
-static PyObject *pysyn_compute_evc(PyObject *self, PyObject *args)
+static PyObject *pysyn_compute_pageranks(PyObject *self, PyObject *args)
 {
     long p;
     syn_net *net;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
       net = (syn_net *)p;
-      syn_compute_evc(net);
+      syn_compute_pageranks(net);
     }
     
     PyObject *result = Py_BuildValue("");
     return result;
 }
 
-static PyObject *pysyn_write_evc(PyObject *self, PyObject *args)
+static PyObject *pysyn_write_pageranks(PyObject *self, PyObject *args)
 {
     long p;
     char *file_path;
@@ -106,7 +106,7 @@ static PyObject *pysyn_write_evc(PyObject *self, PyObject *args)
 
     if (PyArg_ParseTuple(args, "ls", &p, &file_path)) {
       net = (syn_net *)p;
-      syn_write_evc(net, file_path);
+      syn_write_pageranks(net, file_path);
     }
     
     PyObject *result = Py_BuildValue("");
@@ -280,7 +280,7 @@ static PyObject *pysyn_node_out_degree(PyObject *self, PyObject *args)
     return result;
 }
 
-static PyObject *pysyn_node_evc_in(PyObject *self, PyObject *args)
+static PyObject *pysyn_node_pr_in(PyObject *self, PyObject *args)
 {
     long p;
     syn_node *node;
@@ -288,14 +288,14 @@ static PyObject *pysyn_node_evc_in(PyObject *self, PyObject *args)
 
     if (PyArg_ParseTuple(args, "l", &p)) {
         node = (syn_node *)p;
-        value = node->evc_in;
+        value = node->pr_in;
     }
 
     PyObject *result = Py_BuildValue("f", value);
     return result;
 }
 
-static PyObject *pysyn_node_evc_out(PyObject *self, PyObject *args)
+static PyObject *pysyn_node_pr_out(PyObject *self, PyObject *args)
 {
     long p;
     syn_node *node;
@@ -303,7 +303,7 @@ static PyObject *pysyn_node_evc_out(PyObject *self, PyObject *args)
 
     if (PyArg_ParseTuple(args, "l", &p)) {
         node = (syn_node *)p;
-        value = node->evc_out;
+        value = node->pr_out;
     }
 
     PyObject *result = Py_BuildValue("f", value);
@@ -664,8 +664,8 @@ static PyMethodDef methods[] = {
     {"add_node", pysyn_add_node, METH_VARARGS, "Add node to network."},
     {"add_node_with_id", pysyn_add_node_with_id, METH_VARARGS, "Add node to network, specify id."},
     {"add_edge_to_net", pysyn_add_edge_to_net, METH_VARARGS, "Add edge to network."},
-    {"compute_evc", pysyn_compute_evc, METH_VARARGS, "Compute EVC."},
-    {"write_evc", pysyn_write_evc, METH_VARARGS, "Write EVC."},
+    {"compute_pageranks", pysyn_compute_pageranks, METH_VARARGS, "Compute pageranks."},
+    {"write_pageranks", pysyn_write_pageranks, METH_VARARGS, "Write pageranks."},
     {"print_net_info", pysyn_print_net_info, METH_VARARGS, "Print net info."},
     {"net_node_count", pysyn_net_node_count, METH_VARARGS, "Net node count."},
     {"net_edge_count", pysyn_net_edge_count, METH_VARARGS, "Net edge count."},
@@ -677,8 +677,8 @@ static PyMethodDef methods[] = {
     {"node_id", pysyn_node_id, METH_VARARGS, "Get node id."},
     {"node_in_degree", pysyn_node_in_degree, METH_VARARGS, "Get node in degree."},
     {"node_out_degree", pysyn_node_out_degree, METH_VARARGS, "Get node out degree."},
-    {"node_evc_in", pysyn_node_evc_in, METH_VARARGS, "Get node evc in."},
-    {"node_evc_out", pysyn_node_evc_out, METH_VARARGS, "Get node evc out."},
+    {"node_pr_in", pysyn_node_pr_in, METH_VARARGS, "Get node pr in."},
+    {"node_pr_out", pysyn_node_pr_out, METH_VARARGS, "Get node pr out."},
     {"destroy_drmap", pysyn_destroy_drmap, METH_VARARGS, "Destroy DRMap."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},
     {"get_drmap_with_limits", pysyn_get_drmap_with_limits, METH_VARARGS, "Get DRMap from net with limits."},

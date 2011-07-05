@@ -21,11 +21,11 @@ typedef struct syn_node_s {
     // node list
     struct syn_node_s *next;
     
-    // eigenvector centrality
-    double evc_in;
-    double evc_in_last;
-    double evc_out;
-    double evc_out_last;
+    // pageranks
+    double pr_in;
+    double pr_in_last;
+    double pr_out;
+    double pr_out_last;
 } syn_node;
 
 

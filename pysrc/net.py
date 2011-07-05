@@ -192,13 +192,13 @@ class Net:
             self.cur.execute("SELECT id FROM interval WHERE pos=?", i)
             int_id = self.cur.fetchone()[0]
             syn_net = self.load_interval_net(i)
-            compute_evc(syn_net)
+            compute_pageranks(syn_net)
 
             node = net_first_node(syn_net)
             while node != 0:
                 nid = node_id(node)
-                in_pr = node_evc_in(node)
-                out_pr = node_evc_out(node)
+                in_pr = node_pr_in(node)
+                out_pr = node_pr_out(node)
 
                 if in_pr < -7.0:
                     in_pr = -7.0
