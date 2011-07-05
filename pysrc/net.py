@@ -110,6 +110,28 @@ class Net:
 
         return net
 
+    def load_interval_net(self, int_number):
+        net = create_net()
+
+        self.cur.execute("SELECT id, ts_start, ts_end FROM interval WHERE pos=?", int_number)
+        row = self.cur.fetchone()
+        int_id = row[0]
+        min_ts = row[1]
+        max_ts = row[2]
+        
+        nodes = {}
+        self.cur.execute("SELECT super_node FROM node WHERE interval=?", int_id)
+        for row in self.cur:
+            nid = row[0]
+            nodes[nid] = add_node_with_id(net, nid, 0)
+
+        self.cur.execute("SELECT orig, targ, ts FROM edge WHERE ts>=? AND ts<?", min_ts, max_ts)
+
+        for row in self.cur:
+            add_edge_to_net(net, nodes[row[0]], nodes[row[1]], row[2])
+
+        return net
+
     def add_node(self, super_node=-1, label=''):
         self.cur.execute("INSERT INTO node (super_node, label) VALUES (%d, '%s')" % (super_node, label))    
         return self.cur.lastrowid
@@ -158,5 +180,36 @@ class Net:
 
             cur_ts += interval
 
+    def get_number_intervals(self):
+        self.cur.execute("SELECT count(id) FROM interval")
+        return self.cur.fetchone()[0]
+
     def compute_page_ranks(self):
-        pass
+        n_intvls = self.get_number_intervals()
+        
+        for i in range(n_intvls):
+            self.cur.execite("SELECT id FROM interval WHERE pos=?", i)
+            int_id = self.cur.fetchone()[0]
+            syn_net = self.load_interval_net(i)
+            compute_evc(syn_net)
+
+            node = net_first_node(syn_net)
+            while node != 0:
+                nid = node_id(node)
+                in_pr = node_evc_in(node)
+                out_pr = node_evc_out(node)
+
+                if in_pr < -7.0:
+                    in_pr = -7.0
+                if in_pr > 7.0:
+                    in_pr = 7.0
+                if out_pr < -7.0:
+                    out_pr = -7.0
+                if out_pr > 7.0:
+                    out_pr = 7.0
+
+                self.cur.execute("UPDATE node SET in_pr=?, out_pr=? WHERE super_node=? AND interval=?", in_pr, out_pr, nid, int_id)
+
+                node = node_next_node(node)
+
+            destroy_net(syn_net)
