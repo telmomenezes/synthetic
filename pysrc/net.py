@@ -137,11 +137,11 @@ class Net:
         return net
 
     def add_node(self, label='', super_node=-1):
-        self.cur.execute("INSERT INTO node (super_node, label) VALUES (%d, '%s')" % (super_node, label))    
+        self.cur.execute("INSERT INTO node (super_node, label) VALUES (?, ?)", (super_node, label))    
         return self.cur.lastrowid
 
     def add_edge(self, orig, targ, timestamp=-1):
-        self.cur.execute("INSERT INTO edge (orig, targ, ts_start) VALUES (%d, %d, %f)" % (orig, targ, timestamp))    
+        self.cur.execute("INSERT INTO edge (orig, targ, ts_start) VALUES (?, ?, ?)", (orig, targ, timestamp))    
         return self.cur.lastrowid
 
     def min_edge_ts(self):
