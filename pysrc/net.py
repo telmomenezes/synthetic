@@ -114,19 +114,22 @@ class Net:
     def load_interval_net(self, int_number):
         net = create_net()
 
-        self.cur.execute("SELECT id, ts_start, ts_end FROM interval WHERE pos=?", int_number)
+        self.cur.execute("SELECT id, ts_start, ts_end FROM interval WHERE pos=?", (int_number,))
         row = self.cur.fetchone()
         int_id = row[0]
         min_ts = row[1]
         max_ts = row[2]
         
         nodes = {}
-        self.cur.execute("SELECT super_node FROM node WHERE interval=?", int_id)
+        self.cur.execute("SELECT super_node FROM node WHERE interval=?", (int_id,))
         for row in self.cur:
             nid = row[0]
             nodes[nid] = add_node_with_id(net, nid, 0)
 
-        self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts_start>=? AND ts_start<?", min_ts, max_ts)
+        if max_ts == 0:
+            self.cur.execute("SELECT orig, targ, ts_start FROM edge")
+        else:
+            self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts_start>=? AND ts_start<?", (min_ts, max_ts))
 
         for row in self.cur:
             add_edge_to_net(net, nodes[row[0]], nodes[row[1]], row[2])
@@ -203,7 +206,7 @@ class Net:
     
         # compute interval page ranks
         for i in range(n_intvls):
-            self.cur.execute("SELECT id FROM interval WHERE pos=?", i)
+            self.cur.execute("SELECT id FROM interval WHERE pos=?", (i,))
             int_id = self.cur.fetchone()[0]
             syn_net = self.load_interval_net(i)
             compute_pageranks(syn_net)
@@ -223,7 +226,7 @@ class Net:
                 if out_pr > 7.0:
                     out_pr = 7.0
 
-                self.cur.execute("UPDATE node SET in_pr=?, out_pr=? WHERE super_node=? AND interval=?", in_pr, out_pr, nid, int_id)
+                self.cur.execute("UPDATE node SET in_pr=?, out_pr=? WHERE super_node=? AND interval=?", (in_pr, out_pr, nid, int_id))
 
                 node = node_next_node(node)
 
