@@ -53,6 +53,8 @@ def snap2syn(in_file, out_file):
 
     fin.close()
 
+    net.divide_in_intervals(1)
+
 
 if __name__ == '__main__':
     snap2syn(sys.argv[1], sys.argv[2])

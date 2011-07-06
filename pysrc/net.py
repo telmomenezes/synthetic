@@ -100,11 +100,11 @@ class Net:
 
         if min_ts >= 0:
             if max_ts >= 0:
-                self.cur.execute("SELECT orig, targ, ts FROM edge WHERE ts>=%f AND ts<%f" % (min_ts, max_ts))
+                self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts>=%f AND ts<%f" % (min_ts, max_ts))
             else:
-                self.cur.execute("SELECT orig, targ, ts FROM edge WHERE ts>=%f" % (min_ts))
+                self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts>=%f" % (min_ts))
         else:
-            self.cur.execute("SELECT orig, targ, ts FROM edge")
+            self.cur.execute("SELECT orig, targ, ts_start FROM edge")
 
         for row in self.cur:
             add_edge_to_net(net, nodes[row[0]], nodes[row[1]], int(row[2]))
@@ -142,13 +142,17 @@ class Net:
         return self.cur.lastrowid
 
     def min_edge_ts(self):
-        self.cur.execute("SELECT min(ts) FROM edge WHERE ts > 0")
+        self.cur.execute("SELECT min(ts_start) FROM edge WHERE ts_start > 0")
         row = self.cur.fetchone()
+        if row[0] == None:
+            return 0
         return row[0]
 
     def max_edge_ts(self):
-        self.cur.execute("SELECT max(ts) FROM edge WHERE ts > 0")
+        self.cur.execute("SELECT max(ts_start) FROM edge WHERE ts_start > 0")
         row = self.cur.fetchone()
+        if row[0] == None:
+            return 0
         return row[0]
 
     def divide_in_intervals(self, n_intvls):
@@ -161,7 +165,7 @@ class Net:
         self.log('min ts: %d; max ts: %d; interval: %d; number of intervals: %d' % (min_ts, max_ts, interval, n_intvls))
         for i in range(n_intvls):
             self.log('generating interval %d' % i)
-            self.cur.execute("INSERT INTO interval (pos, ts_start, ts_end) VALUES (?, ?, ?)", i, min_ts, cur_ts)
+            self.cur.execute("INSERT INTO interval (pos, ts_start, ts_end) VALUES (?, ?, ?)", (i, min_ts, cur_ts))
             int_id = self.cur.lastrowid
             syn_net = 0
             if n_intvls > 1:
@@ -178,9 +182,9 @@ class Net:
 
                 if degree > 0:
                     if i == (n_intvls - 1):
-                        self.cur.execute("UPDATE node SET super_node=?, interval=?, in_degree=?, out_degree=? WHERE id=?", nid, int_id, in_degree, out_degree, nid)
+                        self.cur.execute("UPDATE node SET super_node=?, interval=?, in_degree=?, out_degree=? WHERE id=?", (nid, int_id, in_degree, out_degree, nid))
                     else:
-                        self.cur.execute("INSERT INTO node (super_node, interval, in_degree, out_degree) VALUES (?, ?, ?, ?)", nid, int_id, in_degree, out_degree)
+                        self.cur.execute("INSERT INTO node (super_node, interval, in_degree, out_degree) VALUES (?, ?, ?, ?)", (nid, int_id, in_degree, out_degree))
 
                 node = node_next_node(node)
 
