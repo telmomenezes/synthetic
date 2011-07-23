@@ -60,17 +60,8 @@ class Net:
         # create node table
         self.safe_execute("CREATE TABLE node (id INTEGER PRIMARY KEY)")
         self.safe_execute("ALTER TABLE node ADD COLUMN label TEXT")
-        self.safe_execute("ALTER TABLE node ADD COLUMN super_node INTEGER DEFAULT -1")
-        self.safe_execute("ALTER TABLE node ADD COLUMN interval INTEGER DEFAULT -1")
-
         self.safe_execute("ALTER TABLE node ADD COLUMN ts_start INTEGER DEFAULT -1")
         self.safe_execute("ALTER TABLE node ADD COLUMN ts_end INTEGER DEFAULT -1")
-        
-        self.safe_execute("ALTER TABLE node ADD COLUMN in_degree INTEGER DEFAULT 0")
-        self.safe_execute("ALTER TABLE node ADD COLUMN out_degree INTEGER DEFAULT 0")
-
-        self.safe_execute("ALTER TABLE node ADD COLUMN in_pr REAL DEFAULT 0")
-        self.safe_execute("ALTER TABLE node ADD COLUMN out_pr REAL DEFAULT 0")
 
         # create edge table
         self.safe_execute("CREATE TABLE edge (id INTEGER PRIMARY KEY)")
@@ -78,6 +69,15 @@ class Net:
         self.safe_execute("ALTER TABLE edge ADD COLUMN targ INTEGER")
         self.safe_execute("ALTER TABLE edge ADD COLUMN ts_start INTEGER DEFAULT -1")
         self.safe_execute("ALTER TABLE edge ADD COLUMN ts_end INTEGER DEFAULT -1")
+
+        # create node_metrics table
+        self.safe_execute("CREATE TABLE node_metrics (id INTEGER PRIMARY KEY)")
+        self.safe_execute("ALTER TABLE node ADD COLUMN node_id INTEGER")
+        self.safe_execute("ALTER TABLE node ADD COLUMN interval INTEGER DEFAULT -1")
+        self.safe_execute("ALTER TABLE node ADD COLUMN in_degree INTEGER DEFAULT 0")
+        self.safe_execute("ALTER TABLE node ADD COLUMN out_degree INTEGER DEFAULT 0")
+        self.safe_execute("ALTER TABLE node ADD COLUMN in_pr REAL DEFAULT 0")
+        self.safe_execute("ALTER TABLE node ADD COLUMN out_pr REAL DEFAULT 0")
 
         # create indexes
         self.safe_execute("CREATE INDEX node_id ON node (id)")
@@ -87,6 +87,7 @@ class Net:
         self.safe_execute("CREATE INDEX edge_orig ON edge (orig)")
         self.safe_execute("CREATE INDEX edge_orig_targ ON edge (orig, targ)")
         self.safe_execute("CREATE INDEX edge_ts_start ON edge (ts_start)")
+        self.safe_execute("CREATE INDEX node_metrics_node_id_interval ON node_metrics (node_id, interval)")
 
     def load_net(self, min_ts=-1, max_ts=-1):
         net = create_net()
