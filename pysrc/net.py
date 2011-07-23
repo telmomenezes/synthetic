@@ -62,6 +62,7 @@ class Net:
         self.safe_execute("ALTER TABLE node ADD COLUMN label TEXT")
         self.safe_execute("ALTER TABLE node ADD COLUMN ts_start INTEGER DEFAULT -1")
         self.safe_execute("ALTER TABLE node ADD COLUMN ts_end INTEGER DEFAULT -1")
+        self.safe_execute("ALTER TABLE node ADD COLUMN selection INTEGER DEFAULT -1")
 
         # create edge table
         self.safe_execute("CREATE TABLE edge (id INTEGER PRIMARY KEY)")
@@ -122,7 +123,7 @@ class Net:
         max_ts = row[2]
         
         nodes = {}
-        self.cur.execute("SELECT super_node FROM node WHERE interval=?", (int_id,))
+        self.cur.execute("SELECT id FROM node")
         for row in self.cur:
             nid = row[0]
             nodes[nid] = add_node_with_id(net, nid, 0)
@@ -137,8 +138,8 @@ class Net:
 
         return net
 
-    def add_node(self, label='', super_node=-1):
-        self.cur.execute("INSERT INTO node (super_node, label) VALUES (?, ?)", (super_node, label))    
+    def add_node(self, label=''):
+        self.cur.execute("INSERT INTO node (label) VALUES (?)", (label,))    
         return self.cur.lastrowid
 
     def add_edge(self, orig, targ, timestamp=-1):
@@ -185,10 +186,7 @@ class Net:
                 degree = in_degree + out_degree
 
                 if degree > 0:
-                    if i == (n_intvls - 1):
-                        self.cur.execute("UPDATE node SET super_node=?, interval=?, in_degree=?, out_degree=? WHERE id=?", (nid, int_id, in_degree, out_degree, nid))
-                    else:
-                        self.cur.execute("INSERT INTO node (super_node, interval, in_degree, out_degree) VALUES (?, ?, ?, ?)", (nid, int_id, in_degree, out_degree))
+                    self.cur.execute("INSERT INTO node_metrics (node_id, interval, in_degree, out_degree) VALUES (?, ?, ?, ?)", (nid, int_id, in_degree, out_degree))
 
                 node = node_next_node(node)
 
