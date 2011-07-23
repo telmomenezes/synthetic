@@ -33,16 +33,17 @@ def gen_small_world(dbpath, nodes, edges):
     
     net = Net(dbpath)
     node_table = {}
+    node_indeg = {}
     cycle = 0
     for i in range(nodes):
-        node_table[i] = 1
-        net.add_node('%s' % i)
+        node_indeg[i] = 1
+        node_table[i] = net.add_node('%s' % i)
     cur_edges = nodes
 
     # initial connections
     for i in range(nodes):
         targ = random.randint(0, nodes - 1)
-        net.add_edge(i, targ, cycle)
+        net.add_edge(node_table[i], node_table[targ], cycle)
 
     # preferential attachement
     while cur_edges < edges:
@@ -50,14 +51,15 @@ def gen_small_world(dbpath, nodes, edges):
         targ_point = random.randint(0, cur_edges - 1)
         acc = 0
         for i in range(nodes):
-            acc += node_table[i]
+            acc += node_indeg[i]
             if acc > targ_point:
                 targ = i
                 orig = random.randint(0, nodes - 2)
                 # prevent orig == targ
                 if orig >= targ:
                     orig += 1
-                net.add_edge(orig, targ, cycle)
+                net.add_edge(node_table[orig], node_table[targ], cycle)
+                node_indeg[targ] += 1
                 cur_edges += 1
                 break
 
