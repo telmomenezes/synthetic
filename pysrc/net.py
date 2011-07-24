@@ -46,9 +46,9 @@ class Net:
     def safe_execute(self, query):
         try:
             self.cur.execute(query)
-            print('Executed query: %s' % query)
+            self.log('Executed query: %s' % query)
         except sqlite3.OperationalError:
-            print('Failed query: %s' % query)
+            self.log('Failed query: %s' % query)
 
     def create_db(self):
         #create interval table
