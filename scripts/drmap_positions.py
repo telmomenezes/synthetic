@@ -30,7 +30,7 @@ from syn.core import *
 
 def drmap_positions(netfile, outpath):
     bins = 50
-    steps = 100
+    steps = 85
     cur_ts = 0
 
     net = Net(netfile)
