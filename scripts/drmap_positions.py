@@ -50,7 +50,7 @@ def drmap_positions(netfile, outpath):
         sys.stdout.flush()
         max_ts = cur_ts
         syn_net = net.load_net(min_ts, max_ts)
-        compute_evc(syn_net)
+        compute_pageranks(syn_net)
 
         node = net_first_node(syn_net)
         while node != 0:
