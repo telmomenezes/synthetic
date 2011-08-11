@@ -13,8 +13,8 @@ core_module = Extension('core',
                     define_macros = [('MAJOR_VERSION', '1'),
                                      ('MINOR_VERSION', '0')],
                     libraries = ['m'],
-                    include_dirs = ['src'],
-                    sources = ['src/synpython.c', 'src/edge.c', 'src/node.c', 'src/emd.c', 'src/drmap.c', 'src/network.c', 'src/mgenerator.c'])
+                    include_dirs = ['src', 'src/gp'],
+                    sources = ['src/synpython.c', 'src/edge.c', 'src/node.c', 'src/emd.c', 'src/drmap.c', 'src/network.c', 'src/mgenerator.c', 'src/gp/gptree.cpp', 'src/gp/gpnode.cpp', 'src/gp/gpmempool.cpp', 'src/gp/probs.cpp'])
 
 setup (name = 'synthetic',
        version = '1.0',
