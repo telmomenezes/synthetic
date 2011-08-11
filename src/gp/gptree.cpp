@@ -113,53 +113,6 @@ gpval GPTree::eval(unsigned int active_p)
             switch (curnode->type) {
                 case FUN:
                     switch(curnode->fun) {
-                        case ON:
-                            val = curnode->vals[0];
-                            active = 1;
-                            break;
-                        case OFF:
-                            val = curnode->vals[0];
-                            active = 0;
-                            break;
-                        case AND:
-                            val = curnode->vals[0] & curnode->vals[1];
-                            break;
-                        case OR:
-                            val = curnode->vals[0] | curnode->vals[1];
-                            break;
-                        case XOR:
-                            val = curnode->vals[0] ^ curnode->vals[1];
-                            break;
-                        case NOT:
-                            val = !curnode->vals[0];
-                            break;
-                        case BNOT:
-                            val = ~curnode->vals[0];
-                            break;
-                        case SHL:
-                            if ((curnode->vals[1] &= 31) == 0)
-                                val = curnode->vals[0];
-                            else
-                                val = curnode->vals[0] << curnode->vals[1];
-                            break;
-                        case SHR:
-                            if ((curnode->vals[1] &= 31) == 0)
-                                val = curnode->vals[0];
-                            else
-                                val = curnode->vals[0] >> curnode->vals[1];
-                            break;
-                        case ROTL:
-                            if ((curnode->vals[1] &= 31) == 0)
-                                val = curnode->vals[0];
-                            else
-                                val = (curnode->vals[0] << curnode->vals[1]) | (curnode->vals[0] >> (32 - curnode->vals[1]));
-                            break;
-                        case ROTR:
-                            if ((curnode->vals[1] &= 31) == 0)
-                                val = curnode->vals[0];
-                            else
-                                val = (curnode->vals[0] >> curnode->vals[1]) | (curnode->vals[0] << (32 - curnode->vals[1]));
-                            break;
                         case SUM:
                             val = curnode->vals[0] + curnode->vals[1];
                             break;
@@ -257,7 +210,7 @@ GPNode* GPTree::create_random2(unsigned int varcount,
         if ((random() % 2) && (varcount > 0)) {
             val = random() % varcount;
             node = mempool->get_node();
-            node->init(VAR, NOT, val, parent);
+            node->init(VAR, SUM, val, parent);
         }
         else {
             long r = random() % 3;
@@ -273,7 +226,7 @@ GPNode* GPTree::create_random2(unsigned int varcount,
                     break;
             }
             node = mempool->get_node();
-            node->init(VAL, NOT, val, parent);
+            node->init(VAL, SUM, val, parent);
         }
     }
 

@@ -66,22 +66,10 @@ int GPNode::fun_condpos(gpnode_fun fun)
 unsigned int GPNode::fun_arity(gpnode_fun fun)
 {
     switch(fun) {
-        case ON:
-        case OFF:
-        case NOT:
-        case BNOT:
-            return 1;
-        case AND:
-        case OR:
-        case XOR:
         case SUM:
         case SUB:
         case MUL:
         case DIV:
-        case SHL:
-        case SHR:
-        case ROTL:
-        case ROTR:
             return 2;
         case ZER:
             return 3;
@@ -114,27 +102,6 @@ void GPNode::print()
     }
 
     switch(fun) {
-        case ON:
-            cout << "ON";
-            return;
-        case OFF:
-            cout << "OFF";
-            return;
-        case NOT:
-            cout << "NOT";
-            return;
-        case BNOT:
-            cout << "BNOT";
-            return;
-        case AND:
-            cout << "AND";
-            return;
-        case OR:
-            cout << "OR";
-            return;
-        case XOR:
-            cout << "XOR";
-            return;
         case SUM:
             cout << "+";
             return;
@@ -164,18 +131,6 @@ void GPNode::print()
             return;
         case LET:
             cout << "<=";
-            return;
-        case SHL:
-            cout << "<<";
-            return;
-        case SHR:
-            cout << ">>";
-            return;
-        case ROTL:
-            cout << "ROTL";
-            return;
-        case ROTR:
-            cout << "ROTR";
             return;
         default:
             cout << "F??";

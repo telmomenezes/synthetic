@@ -10,12 +10,12 @@
 #include "types.h"
 
 
-#define GPFUN_COUNT 21
+#define GPFUN_COUNT 10
 
 
 enum gpnode_type {FUN, VAR, VAL};
 
-enum gpnode_fun {ON=0, OFF=1, AND=2, OR=3, XOR=4, BNOT=5, NOT=6, SUM=7, SUB=8, MUL=9, DIV=10, EQ=11, GRT=12, LRT=13, GET=14, LET=15, ZER=16, SHL=17, SHR=18, ROTL=19, ROTR=20};
+enum gpnode_fun {SUM=0, SUB=1, MUL=2, DIV=3, EQ=4, GRT=5, LRT=6, GET=7, LET=8, ZER=9};
 
 
 class GPNode
