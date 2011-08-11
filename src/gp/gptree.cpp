@@ -5,7 +5,6 @@
 
 
 #include "gptree.h"
-#include "probs.h"
 #include <string.h>
 #include <iostream>
 
