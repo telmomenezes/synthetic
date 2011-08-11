@@ -7,14 +7,13 @@
 #pragma once
 
 
-#include "types.h"
 #include "gpnode.h"
 #include "gpmempool.h"
 
 
 class GPTree {
 public:
-    gpval* vars;
+    double* vars;
     unsigned int active;
 
     GPTree(unsigned int varcount, GPMemPool* mempool);

@@ -24,21 +24,27 @@ GPNode::~GPNode()
 
 
 void GPNode::init(gpnode_type nodetype,
-                    gpnode_fun fun_p,
-                    gpval val_p,
-                    GPNode* parent_p)
+                    gpnode_fun fun,
+                    gpval val,
+                    unsigned int var,
+                    GPNode* parent)
 {
     type = nodetype;
-    parent = parent_p;
+    this->parent = parent;
 
     if (nodetype == FUN) {
-        fun = fun_p;
-        arity = fun_arity(fun);
+        this->fun = fun;
+        this->arity = fun_arity(fun);
         condpos = fun_condpos(fun);
     }
+    else if (nodetype == VAR) {
+        this->var = var;
+        this->arity = 0;
+        condpos = -1;
+    }
     else {
-        val = val_p;
-        arity = 0;
+        this->val = val;
+        this->arity = 0;
         condpos = -1;
     }
 

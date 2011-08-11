@@ -7,11 +7,10 @@
 #pragma once
 
 
-#include "types.h"
-
-
 #define GPFUN_COUNT 10
 
+
+typedef double gpval;
 
 enum gpnode_type {FUN, VAR, VAL};
 
@@ -23,6 +22,7 @@ class GPNode
 public:
     gpnode_type type;
     gpval val;
+    unsigned int var;
     gpnode_fun fun;
     unsigned int arity;
     GPNode* params[4];
@@ -37,9 +37,10 @@ public:
     virtual ~GPNode();
 
     void init(gpnode_type nodetype,
-               gpnode_fun fun_p,
-               gpval val_p,
-               GPNode* parent_p);
+               gpnode_fun fun,
+               gpval val,
+               unsigned int var,
+               GPNode* parent);
 
     unsigned int fun_arity(gpnode_fun fun);
 

@@ -139,7 +139,7 @@ gpval GPTree::eval(unsigned int active_p)
                     }
                     break;
                 case VAR:
-                    val = vars[curnode->val];
+                    val = vars[curnode->var];
                     break;
                 case VAL:
                     val = curnode->val;
@@ -202,21 +202,21 @@ GPNode* GPTree::create_random2(unsigned int varcount,
     float p = ((float)(random() % 999999999)) / 999999999.0;
     if (((!grow) || (p > prob_term)) && (depth < max_depth)) {
             node = mempool->get_node();
-            node->init(FUN, (gpnode_fun)(random() % GPFUN_COUNT), 0, parent);
+            node->init(FUN, (gpnode_fun)(random() % GPFUN_COUNT), 0, 0, parent);
             for (unsigned int i = 0; i < node->arity; i++)
                 node->params[i] = create_random2(varcount, prob_term, node, max_depth, grow, depth + 1, mempool);
     }
     else {
         if ((random() % 2) && (varcount > 0)) {
-            val = random() % varcount;
+            unsigned int var = random() % varcount;
             node = mempool->get_node();
-            node->init(VAR, SUM, val, parent);
+            node->init(VAR, SUM, 0, var, parent);
         }
         else {
             long r = random() % 3;
             switch (r) {
                 case 0:
-                    val = random() % SYNWORD_MAX;
+                    val = random() % RAND_MAX;
                     break;
                 case 1:
                     val = random() % 16;
@@ -226,7 +226,7 @@ GPNode* GPTree::create_random2(unsigned int varcount,
                     break;
             }
             node = mempool->get_node();
-            node->init(VAL, SUM, val, parent);
+            node->init(VAL, SUM, val, 0, parent);
         }
     }
 
@@ -252,7 +252,7 @@ GPTree* GPTree::create_random(unsigned int varcount,
 GPNode* GPTree::clone_gpnode(GPNode* node, GPNode* parent)
 {
     GPNode* cnode = _mempool->get_node();
-    cnode->init(node->type, node->fun, node->val, parent);
+    cnode->init(node->type, node->fun, node->val, node->var, parent);
     for (unsigned int i = 0; i < node->arity; i++)
         cnode->params[i] = clone_gpnode(node->params[i], cnode);
     return cnode;
