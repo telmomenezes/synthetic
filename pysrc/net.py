@@ -160,9 +160,11 @@ class Net:
             return 0
         return row[0]
 
-    def divide_in_intervals(self, n_intvls):
+    def divide_in_intervals(self, n_intvls, min_ts=0):
+        self.remove_intervals()
+
         self.log('Dividing network in intervals.')
-        min_ts = self.min_edge_ts()
+        min_ts = max(self.min_edge_ts(), min_ts)
         max_ts = self.max_edge_ts()
         interval = (max_ts - min_ts) / n_intvls
         cur_ts = min_ts + interval
@@ -194,6 +196,12 @@ class Net:
 
             cur_ts += interval
 
+        self.conn.commit()
+
+    def remove_intervals(self):
+        self.log('Removing existing intervals.')
+        self.cur.execute("DELETE FROM interval")
+        self.cur.execute("DELETE FROM node_metrics")
         self.conn.commit()
 
     def get_number_intervals(self):

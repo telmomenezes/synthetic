@@ -22,14 +22,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 
+
 from syn.net import Net
 import sys
 
 
-def syn_intervals(dbpath, count):
+def syn_intervals(dbpath, count, min_ts=0):
     net = Net(dbpath)
-    net.divide_in_intervals(count)
+    net.divide_in_intervals(int(count), int(min_ts))
 
 
 if __name__ == '__main__':
-    syn_intervals(sys.argv[1], sys.argv[2])
+    syn_intervals(*sys.argv[1:])
