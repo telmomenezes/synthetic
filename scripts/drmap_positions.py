@@ -40,6 +40,7 @@ def drmap_positions(netfile, outpath, steps=85, min_time=0):
 
     nodes_x = {}
     nodes_y = {}
+    nodes_d = {}
 
     print steps, 'time steps'
 
@@ -53,6 +54,9 @@ def drmap_positions(netfile, outpath, steps=85, min_time=0):
         node = net_first_node(syn_net)
         while node != 0:
             nid = node_id(node)
+            in_degree = node_in_degree(node)
+            out_degree = node_out_degree(node)
+            degree = in_degree + out_degree
             pr_in = node_pr_in(node)
             pr_out = node_pr_out(node)
 
@@ -68,9 +72,11 @@ def drmap_positions(netfile, outpath, steps=85, min_time=0):
             if nid in nodes_x:
                 nodes_x[nid].append(pr_in)
                 nodes_y[nid].append(pr_out)
+                nodes_d[nid].append(degree)
             else:
                 nodes_x[nid] = [pr_in,]
                 nodes_y[nid] = [pr_out,]
+                nodes_d[nid] = [degree,]
 
             node = node_next_node(node)
 
