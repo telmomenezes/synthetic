@@ -160,11 +160,11 @@ class Net:
             return 0
         return row[0]
 
-    def divide_in_intervals(self, n_intvls, min_ts=0):
+    def divide_in_intervals(self, n_intvls, min_time=0):
         self.remove_intervals()
 
         self.log('Dividing network in intervals.')
-        min_ts = max(self.min_edge_ts(), min_ts)
+        min_ts = max(self.min_edge_ts(), min_time)
         max_ts = self.max_edge_ts()
         interval = (max_ts - min_ts) / n_intvls
         cur_ts = min_ts + interval
