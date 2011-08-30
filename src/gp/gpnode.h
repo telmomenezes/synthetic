@@ -47,6 +47,6 @@ public:
     void print();
 
 private:
-    int GPNode::fun_condpos(gpnode_fun fun);
+    int fun_condpos(gpnode_fun fun);
 };
 
