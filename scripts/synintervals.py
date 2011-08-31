@@ -28,7 +28,7 @@ import sys
 
 
 def syn_intervals(dbpath, count, min_ts=0):
-    net = Net(dbpath)
+    net = Net(dbpath, True)
     net.divide_in_intervals(int(count), int(min_ts))
 
 

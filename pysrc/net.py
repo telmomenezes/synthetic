@@ -73,12 +73,12 @@ class Net:
 
         # create node_metrics table
         self.safe_execute("CREATE TABLE node_metrics (id INTEGER PRIMARY KEY)")
-        self.safe_execute("ALTER TABLE node ADD COLUMN node_id INTEGER")
-        self.safe_execute("ALTER TABLE node ADD COLUMN interval INTEGER DEFAULT -1")
-        self.safe_execute("ALTER TABLE node ADD COLUMN in_degree INTEGER DEFAULT 0")
-        self.safe_execute("ALTER TABLE node ADD COLUMN out_degree INTEGER DEFAULT 0")
-        self.safe_execute("ALTER TABLE node ADD COLUMN in_pr REAL DEFAULT 0")
-        self.safe_execute("ALTER TABLE node ADD COLUMN out_pr REAL DEFAULT 0")
+        self.safe_execute("ALTER TABLE node_metrics ADD COLUMN node_id INTEGER")
+        self.safe_execute("ALTER TABLE node_metrics ADD COLUMN interval INTEGER DEFAULT -1")
+        self.safe_execute("ALTER TABLE node_metrics ADD COLUMN in_degree INTEGER DEFAULT 0")
+        self.safe_execute("ALTER TABLE node_metrics ADD COLUMN out_degree INTEGER DEFAULT 0")
+        self.safe_execute("ALTER TABLE node_metrics ADD COLUMN in_pr REAL DEFAULT 0")
+        self.safe_execute("ALTER TABLE node_metrics ADD COLUMN out_pr REAL DEFAULT 0")
 
         # create indexes
         self.safe_execute("CREATE INDEX node_id ON node (id)")
@@ -173,26 +173,26 @@ class Net:
         for i in range(n_intvls):
             self.log('generating interval %d' % i)
             self.cur.execute("INSERT INTO interval (pos, ts_start, ts_end) VALUES (?, ?, ?)", (i, min_ts, cur_ts))
-            int_id = self.cur.lastrowid
-            syn_net = 0
-            if n_intvls > 1:
-                syn_net = self.load_net(min_ts, cur_ts)
-            else:
-                syn_net = self.load_net()
+            #int_id = self.cur.lastrowid
+            #syn_net = 0
+            #if n_intvls > 1:
+            #    syn_net = self.load_net(min_ts, cur_ts)
+            #else:
+            #    syn_net = self.load_net()
 
-            node = net_first_node(syn_net)
-            while node != 0:
-                nid = node_id(node)
-                in_degree = node_in_degree(node)
-                out_degree = node_out_degree(node)
-                degree = in_degree + out_degree
+            #node = net_first_node(syn_net)
+            #while node != 0:
+            #    nid = node_id(node)
+            #    in_degree = node_in_degree(node)
+            #    out_degree = node_out_degree(node)
+            #    degree = in_degree + out_degree
 
-                if degree > 0:
-                    self.cur.execute("INSERT INTO node_metrics (node_id, interval, in_degree, out_degree) VALUES (?, ?, ?, ?)", (nid, int_id, in_degree, out_degree))
+            #    if degree > 0:
+            #        self.cur.execute("INSERT INTO node_metrics (node_id, interval, in_degree, out_degree) VALUES (?, ?, ?, ?)", (nid, int_id, in_degree, out_degree))
 
-                node = node_next_node(node)
+            #    node = node_next_node(node)
 
-            destroy_net(syn_net)
+            #destroy_net(syn_net)
 
             cur_ts += interval
 
