@@ -29,6 +29,8 @@ import sys
 
 
 def snap2syn(in_file, out_file):
+    print 'SNAP to syn: %s -> %s' % (in_file, out_file)
+
     fin = open(in_file)
     net = Net(out_file)
 
