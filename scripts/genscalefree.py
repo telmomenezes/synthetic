@@ -81,10 +81,12 @@ def gen_scale_free(dbpath, nodes, edges):
             net.add_edge(node_table[orig], node_table[targ], cycle)
             cur_edges += 1
 
+    net.divide_in_intervals(1)
+
 
 if __name__ == '__main__':
     nodes = int(sys.argv[2])
     edges = int(sys.argv[3])
-    print 'Generating small world network with %d nodes and %d edges...' % (nodes, edges)
+    print 'Generating scale-free network with %d nodes and %d edges...' % (nodes, edges)
     gen_scale_free(sys.argv[1], nodes, edges)
     print 'Done.'
