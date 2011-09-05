@@ -79,6 +79,8 @@ def gen_random_walks(dbpath, nodes, edges):
 
         orig = targ
 
+    net.divide_in_intervals(1)
+
 
 if __name__ == '__main__':
     nodes = int(sys.argv[2])
