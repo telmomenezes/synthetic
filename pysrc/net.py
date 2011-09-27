@@ -211,6 +211,7 @@ class Net:
     
         # compute interval page ranks
         for i in range(n_intvls):
+	    print 'computing page ranks for interval %d' % i
             self.cur.execute("SELECT id FROM interval WHERE pos=?", (i,))
             int_id = self.cur.fetchone()[0]
             syn_net = self.load_interval_net(i)
