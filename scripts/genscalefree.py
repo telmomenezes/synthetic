@@ -81,8 +81,6 @@ def gen_scale_free(dbpath, nodes, edges):
             net.add_edge(node_table[orig], node_table[targ], cycle)
             cur_edges += 1
 
-    net.divide_in_intervals(1)
-
 
 if __name__ == '__main__':
     nodes = int(sys.argv[2])
