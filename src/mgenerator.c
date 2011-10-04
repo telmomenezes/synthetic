@@ -57,12 +57,12 @@ syn_gen *syn_clone_generator(syn_gen *gen)
 {
     unsigned int sqsize = gen->types_count * gen->types_count;
     syn_gen *gen_clone = syn_create_generator(gen->types_count);
-    memcpy(gen->m_link, gen_clone->m_link, sizeof(double) * sqsize);
-    memcpy(gen->m_follow, gen_clone->m_follow, sizeof(double) * sqsize);
-    memcpy(gen->m_rfollow, gen_clone->m_rfollow, sizeof(double) * sqsize);
-    memcpy(gen->m_random, gen_clone->m_random, sizeof(double) * sqsize);
-    memcpy(gen->m_weight, gen_clone->m_weight, sizeof(double) * gen->types_count);
-    memcpy(gen->m_stop, gen_clone->m_stop, sizeof(double) * gen->types_count);
+    memcpy(gen_clone->m_link, gen->m_link, sizeof(double) * sqsize);
+    memcpy(gen_clone->m_follow, gen->m_follow, sizeof(double) * sqsize);
+    memcpy(gen_clone->m_rfollow, gen->m_rfollow, sizeof(double) * sqsize);
+    memcpy(gen_clone->m_random, gen->m_random, sizeof(double) * sqsize);
+    memcpy(gen_clone->m_weight, gen->m_weight, sizeof(double) * gen->types_count);
+    memcpy(gen_clone->m_stop, gen->m_stop, sizeof(double) * gen->types_count);
     return gen_clone;
 }
 
@@ -165,12 +165,15 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
     int stop;
     unsigned int walk_length;
 
-    // initial exogenous netowrk
-    orig_node = net->nodes;
-    while (orig_node != NULL) {
-        orig_type = orig_node->type;
-        targ_node = net->nodes;
-        while (targ_node != NULL) {
+    // random walk based simulation
+    while ((gen->total_edges < edge_count) && (gen->cycles < max_cycles)) {
+        orig_node = net->nodes;
+        while (orig_node != NULL) {
+            walkid++;
+            orig_type = orig_node->type;
+           
+            // exogenous connections
+            targ_node = syn_get_random_node(net);
             targ_type = targ_node->type;
             prob = gen->m_random[(targ_type * types_count) + orig_type];
             if (RANDOM_TESTPROB(prob)) {
@@ -178,19 +181,8 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
                 gen->total_edges++;
                 gen->r_edges++;
             }
-
-            targ_node = targ_node->next;
-        }
-        orig_node = orig_node->next;
-    }
-
-    // random walk based simulation
-    while ((gen->total_edges < edge_count) && (gen->cycles < max_cycles)) {
-        orig_node = net->nodes;
-        while (orig_node != NULL) {
+            
             // random walk
-            walkid++;
-            orig_type = orig_node->type;
             targ_node = orig_node;
             walk_length = 0;
 
@@ -223,7 +215,7 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
             orig_node = orig_node->next;
         }
         gen->cycles++;
-        printf("%d\n", gen->cycles);
+        //printf("%d\n", gen->cycles);
     }
 
     return net;

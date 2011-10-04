@@ -79,6 +79,17 @@ int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ, unsigned l
     return 0;
 }
 
+syn_node* syn_get_random_node(syn_net* net)
+{
+    unsigned int pos = RANDOM_UINT(net->node_count);
+    int i;
+    syn_node* curnode = net->nodes;
+    for (i = 0; i < pos; i++) {
+        curnode = curnode->next;
+    }
+    return curnode;
+}
+
 syn_drmap *syn_get_drmap(syn_net *net, unsigned int bin_number)
 {
     return syn_get_drmap_with_limits(net, bin_number, net->min_pr_in, net->max_pr_in, net->min_pr_out, net->max_pr_out);

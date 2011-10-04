@@ -7,10 +7,11 @@ __date__ = "Oct 2011"
 
 import random
 from syn.core import *
+from syn.drmap import drmap_distance
 
 
 class Evo:
-    def __init__(self, targ_net, mrate=0.01, pop=1000):
+    def __init__(self, targ_net, mrate=0.01, pop=10):
         self.targ_net = targ_net
         self.mrate = mrate
         self.pop = pop
@@ -19,7 +20,9 @@ class Evo:
         self.syn_net = targ_net.load_net()
         self.nodes = net_node_count(self.syn_net)
         self.edges = net_edge_count(self.syn_net)
-        self.max_cycles = self.edges * 5
+        #self.nodes = 500
+        #self.edges = 10000
+        self.max_cycles = 100
         self.max_walk_length = 100
 
     def __del__(self):
@@ -27,17 +30,25 @@ class Evo:
             destroy_generator(self.population[i])
         destroy_net(self.syn_net)
 
-    def run():
+    def run(self):
+        print 'Evolving mgenerator'
+        print 'Nodes:', self.nodes
+        print 'Edges:', self.edges
+        print 'Population:', self.pop
+        print 'Mutation rate:', self.mrate
+
         # init population
         self.population = []
         self.fitness = []
         for i in range(self.pop):
-            gen = create_generator(1)
+            gen = create_generator(5)
             generator_init_random(gen)
             self.population.append(gen)
             self.fitness.append(0)
 
-        gen = 0
+        print 'Population initialized.'
+
+        cycle = 0
         best_fit = 9999999
         # evolutionary loop
         while True:
@@ -47,12 +58,13 @@ class Evo:
                 net = generate_network(gen, self.nodes, self.edges, self.max_cycles, self.max_walk_length)
                 fit = drmap_distance(self.syn_net, net)
                 self.fitness[i] = fit
+                print fit
                 if fit < best_fit:
                     best_fit = fit
                 destroy_net(net)
 
-            print 'Generation %d => best fitness: %f' % (gen, best_fit)
-            gen += 1
+            print 'Generation %d => best fitness: %f' % (cycle, best_fit)
+            cycle += 1
 
             # next generation
             newgen = []
@@ -60,7 +72,7 @@ class Evo:
                 parent = random.randint(0, self.pop - 1)
                 pos2 = random.randint(0, self.pop - 1)
 
-                if self.fitness[pos2] < self.fintess[parent]:
+                if self.fitness[pos2] < self.fitness[parent]:
                     parent = pos2
 
                 child = clone_generator(self.population[parent])

@@ -37,6 +37,8 @@ syn_node *syn_add_node(syn_net *net, unsigned int type);
 syn_node *syn_add_node_with_id(syn_net *net, unsigned int nid, unsigned int type);
 int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ, unsigned long timestamp);
 
+syn_node* syn_get_random_node(syn_net* net);
+
 void syn_compute_pageranks(syn_net *net);
 void syn_write_pageranks(syn_net *net, const char *file_path);
 syn_drmap *syn_get_drmap(syn_net *net, unsigned int bin_number);
