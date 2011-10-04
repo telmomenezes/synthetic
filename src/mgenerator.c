@@ -215,7 +215,7 @@ syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned in
                 }
 
                 // stop?
-                prob = gen->m_stop[orig_type];
+                ;prob = gen->m_stop[orig_type];
                 if (RANDOM_TESTPROB(prob)) {
                     stop = 1;
                 }
@@ -251,6 +251,15 @@ void syn_gen_initrandom(syn_gen* gen)
 
 void syn_gen_point_mutation(double *val, double mrate)
 {
+    if (RANDOM_UNIFORM < mrate) {
+        *val += (RANDOM_UNIFORM * 2) - 1;
+        if ((*val) > 1) {
+            (*val) = 1.0;
+        }
+        else if ((*val) < 0) {
+            (*val) = 0;
+        }
+    }
 }
 
 

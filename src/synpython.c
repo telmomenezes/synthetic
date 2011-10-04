@@ -689,6 +689,21 @@ static PyObject *pysyn_generator_init_random(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_generator_mutate(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    double mrate;
+
+    if (PyArg_ParseTuple(args, "ld", &p, &mrate)) {
+        gen = (syn_gen *)p;
+        syn_gen_mutate(gen, mrate);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
 
 static PyMethodDef methods[] = {
     {"create_net", pysyn_create_net, METH_VARARGS, "Create network."},
@@ -735,6 +750,7 @@ static PyMethodDef methods[] = {
     {"generator_get_total_edges", pysyn_generator_get_total_edges, METH_VARARGS, "Get total number edges generated."},
     {"generator_get_cycles", pysyn_generator_get_cycles, METH_VARARGS, "Get number of cycles taken by the simulation."},
     {"generator_init_random", pysyn_generator_init_random, METH_VARARGS, "Initalize random generator."},
+    {"generator_mutate", pysyn_generator_mutate, METH_VARARGS, "Mutate generator."},
     {NULL, NULL, 0, NULL},
 };
 
