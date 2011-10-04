@@ -13,7 +13,7 @@ from PIL import Image, ImageDraw
 def draw_drmap(syn_net, img_file, bins=50, img_side=500):
     # TODO: use precomputed values
     compute_pageranks(syn_net)
-    
+
     bin_side = img_side / bins
 
     # colors
@@ -23,8 +23,10 @@ def draw_drmap(syn_net, img_file, bins=50, img_side=500):
     drmap_log_scale(drmap)
     drmap_normalize(drmap)
 
+
     im = Image.new('RGBA', (img_side, img_side), (0, 0, 0, 0))
     draw = ImageDraw.Draw(im)
+
 
     for x in range(bins):
         for y in range(bins):
@@ -62,3 +64,24 @@ def draw_drmap(syn_net, img_file, bins=50, img_side=500):
     draw.text((img_side - 15, center - 15), 'D', fill=grid_color)
 
     im.save(img_file)
+
+
+def drmap_distance(net1, net2, bins=50):
+    # TODO: use precomputed values
+    compute_pageranks(net1)
+    compute_pageranks(net2)
+
+    drmap1 = get_drmap_with_limits(net1, bins, -7.0, 7.0, -7.0, 7.0)
+    drmap_log_scale(drmap1)
+    drmap_normalize(drmap1)
+
+    drmap2 = get_drmap_with_limits(net2, bins, -7.0, 7.0, -7.0, 7.0)
+    drmap_log_scale(drmap2)
+    drmap_normalize(drmap2)
+
+    dist = drmap_emd_dist(drmap1, drmap2)
+
+    destroy_drmap(drmap1)
+    destroy_drmap(drmap2)
+
+    return dist
