@@ -492,6 +492,21 @@ static PyObject *pysyn_destroy_generator(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_clone_generator(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gen *gen;
+    syn_gen *cgen;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+      gen = (syn_gen *)p;
+      cgen = syn_clone_generator(gen);
+    }
+
+    PyObject *result = Py_BuildValue("l", (long)cgen);
+    return result;
+}
+
 static PyObject *pysyn_generate_network(PyObject *self, PyObject *args)
 {
     long p;
@@ -738,6 +753,7 @@ static PyMethodDef methods[] = {
     {"drmap_emd_dist", pysyn_drmap_distance, METH_VARARGS, "DRMap earth mover's distance."},
     {"create_generator", pysyn_create_generator, METH_VARARGS, "Create generator."},
     {"destroy_generator", pysyn_destroy_generator, METH_VARARGS, "Destroy generator."},
+    {"clone_generator", pysyn_clone_generator, METH_VARARGS, "Clone generator."},
     {"generate_network", pysyn_generate_network, METH_VARARGS, "Generate network."},
     {"generator_set_link", pysyn_generator_set_link, METH_VARARGS, "Set value at a position of the generator link matrix."},
     {"generator_set_random", pysyn_generator_set_random, METH_VARARGS, "Set value at a position of the generator random matrix."},

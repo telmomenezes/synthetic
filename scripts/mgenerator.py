@@ -21,12 +21,7 @@ if __name__ == '__main__':
     generator_set_weight(gen, 0, 1)
 
     gen2 = create_generator(1)
-    generator_set_follow(gen2, 0, 0, 0.1)
-    generator_set_rfollow(gen2, 0, 0, 0.2)
-    generator_set_random(gen2, 0, 0, 0.001)
-    generator_set_link(gen2, 0, 0, 0.5)
-    generator_set_stop(gen2, 0, 0.01)
-    generator_set_weight(gen2, 0, 1)
+    generator_init_random(gen2) 
 
     node_count = 1000
     edge_count = 10000
