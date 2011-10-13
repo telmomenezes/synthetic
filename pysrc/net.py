@@ -15,6 +15,7 @@ class Net:
         self.conn = sqlite3.connect(dbpath)
         self.cur = self.conn.cursor()
         self.create_db()
+        self.load_params()
 
     def __del__(self):
         self.conn.commit()
@@ -33,6 +34,10 @@ class Net:
             self.log('Failed query: %s' % query)
 
     def create_db(self):
+        #create params table
+        self.safe_execute("CREATE TABLE params (id INTEGER PRIMARY KEY)")
+        self.safe_execute("ALTER TABLE params ADD COLUMN perm_edges INTEGER")
+
         #create interval table
         self.safe_execute("CREATE TABLE interval (id INTEGER PRIMARY KEY)")
         self.safe_execute("ALTER TABLE interval ADD COLUMN pos INTEGER")
@@ -71,6 +76,29 @@ class Net:
         self.safe_execute("CREATE INDEX edge_orig_targ ON edge (orig, targ)")
         self.safe_execute("CREATE INDEX edge_ts_start ON edge (ts_start)")
         self.safe_execute("CREATE INDEX node_metrics_node_id_interval ON node_metrics (node_id, interval)")
+
+    def load_params(self):
+        self.cur.execute("SELECT perm_edges FROM params")
+        row = self.cur.fetchone()
+        
+        # no params, create default
+        self.perm_edges = True
+        if row is None:
+            self.cur.execute("INSERT INTO params (perm_edges) VALUES (1)")
+            return
+
+        if row[0] == 0:
+            self.perm_edges = False
+
+    def set_perm_edges(perm_edges):
+        if perm_edges == self.perm_edges:
+            return
+
+        self.perm_edges = perm_edges
+        if self.perm_edges:
+            self.cur.execute("UPDATE params SET perm_edges=1")
+        else:
+            self.cur.execute("UPDATE params SET perm_edges=0")
 
     def load_net(self, min_ts=-1, max_ts=-1):
         net = create_net()
