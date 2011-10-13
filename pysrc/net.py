@@ -124,8 +124,8 @@ class Net:
         self.cur.execute("INSERT INTO node (label) VALUES (?)", (label,))    
         return self.cur.lastrowid
 
-    def add_edge(self, orig, targ, timestamp=-1):
-        self.cur.execute("INSERT INTO edge (orig, targ, ts_start) VALUES (?, ?, ?)", (orig, targ, timestamp))    
+    def add_edge(self, orig, targ, timestamp=-1, ts_end=-1):
+        self.cur.execute("INSERT INTO edge (orig, targ, ts_start, ts_end) VALUES (?, ?, ?, ?)", (orig, targ, timestamp, ts_end))    
         return self.cur.lastrowid
 
     def min_edge_ts(self):

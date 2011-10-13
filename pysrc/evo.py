@@ -41,7 +41,7 @@ class Evo:
         self.population = []
         self.fitness = []
         for i in range(self.pop):
-            gen = create_generator(5)
+            gen = create_generator(1)
             generator_init_random(gen)
             self.population.append(gen)
             self.fitness.append(0)
@@ -68,13 +68,13 @@ class Evo:
 
             # next generation
             newgen = []
+            parent = -1
             for i in range(self.pop):
-                parent = random.randint(0, self.pop - 1)
-                pos2 = random.randint(0, self.pop - 1)
+                #parent = random.randint(0, self.pop - 1)
+                if (parent < 0) or (self.fitness[i] < self.fitness[parent]):
+                    parent = i
 
-                if self.fitness[pos2] < self.fitness[parent]:
-                    parent = pos2
-
+            for i in range(self.pop):
                 child = clone_generator(self.population[parent])
                 generator_mutate(child, self.mrate)
                 newgen.append(child)
