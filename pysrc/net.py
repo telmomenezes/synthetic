@@ -90,7 +90,7 @@ class Net:
         if row[0] == 0:
             self.perm_edges = False
 
-    def set_perm_edges(perm_edges):
+    def set_perm_edges(self, perm_edges):
         if perm_edges == self.perm_edges:
             return
 
@@ -110,13 +110,16 @@ class Net:
             nid = row[0]
             nodes[nid] = add_node_with_id(net, nid, 0)
 
-        if min_ts >= 0:
-            if max_ts >= 0:
-                self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts_start>=%f AND ts_start<%f" % (min_ts, max_ts))
+        if self.perm_edges:
+            if min_ts >= 0:
+                if max_ts >= 0:
+                    self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts_start>=%f AND ts_start<%f" % (min_ts, max_ts))
+                else:
+                    self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts_start>=%f" % (min_ts))
             else:
-                self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts_start>=%f" % (min_ts))
+                self.cur.execute("SELECT orig, targ, ts_start FROM edge")
         else:
-            self.cur.execute("SELECT orig, targ, ts_start FROM edge")
+            self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts_end<0")
 
         for row in self.cur:
             add_edge_to_net(net, nodes[row[0]], nodes[row[1]], int(row[2]))
