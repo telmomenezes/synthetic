@@ -8,39 +8,21 @@
 
 
 #include "network.h"
+#include "gp/gptree.h"
 
 
 typedef struct syn_gpgen_s {
-    unsigned int types_count;
-    double *m_link;
-    double *m_random;
-    double *m_follow;
-    double *m_rfollow;
-    double *m_weight;
-    double *m_stop;
-    double fitness;
-
-    unsigned int r_edges;
-    unsigned int l_edges;
-    unsigned int total_edges;
-    unsigned int cycles;
-} syn_gen;
+    gptree* prog;
+    unsigned int edges;
+    unsigned int cycle;
+} syn_gpgen;
 
 
-syn_gen *syn_create_generator(unsigned int types_count);
-void syn_destroy_generator(syn_gen *gen);
+syn_gpgen *syn_create_gpgenerator();
 
-syn_gen *syn_clone_generator(syn_gen *gen);
+void syn_destroy_gpgenerator(syn_gpgen *gen);
 
-void syn_generate_nodes(syn_gen *gen, syn_net *net, unsigned int node_count);
+syn_gpgen *syn_clone_gpgenerator(syn_gpgen *gen);
 
-syn_node *syn_get_random_target(syn_gen *gen, syn_node *origin);
-
-syn_net *syn_generate_network(syn_gen *gen, unsigned int node_count, unsigned int edge_count,
-                                unsigned int max_cycles, unsigned int max_walk_length);
-
-
-void syn_gen_initrandom(syn_gen* gen);
-
-void syn_gen_mutate(syn_gen* gen, double mrate);
+syn_net *syn_gene_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, unsigned int max_cycles);
 
