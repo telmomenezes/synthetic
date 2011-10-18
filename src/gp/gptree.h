@@ -56,5 +56,5 @@ gpnode* gpnode_by_pos2(gpnode* node,
                         unsigned int pos,
                         unsigned int *curpos);
 
-gptree* recombine_gptree(gptree* parent1, gptree* parent2);
+gptree* recombine_gptrees(gptree* parent1, gptree* parent2);
 

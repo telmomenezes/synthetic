@@ -305,7 +305,7 @@ gpnode* gpnode_by_pos2(gpnode* node,
 }
 
 
-gptree* recombine_gptree(gptree* parent1, gptree* parent2)
+gptree* recombine_gptrees(gptree* parent1, gptree* parent2)
 {
     gptree* child = clone_gptree(parent1);
     unsigned int size1 = gptree_size(parent1);

@@ -7,8 +7,6 @@
 #include "gpgenerator.h"
 #include "utils.h"
 #include <stdlib.h>
-#include <math.h>
-#include <string.h>
 #include <stdio.h>
 
 
@@ -46,6 +44,8 @@ syn_gpgen *syn_clone_gpgenerator(syn_gpgen *gen)
 syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, unsigned int max_cycles)
 {
     unsigned int i;
+    double po;
+    double pt;
 
     syn_net *net = syn_create_net();
 
@@ -66,7 +66,14 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
         while (targ_node == orig_node) {
             targ_node = syn_get_random_node(net);
         }
-        prob = 1;
+
+        po = ((double)orig_node->id) / ((double)nodes);
+        po = ((double)targ_node->id) / ((double)nodes);
+
+        gen->prog->vars[0] = po;
+        gen->prog->vars[1] = pt;
+        prob = eval_gptree(gen->prog);
+
         if (RANDOM_TESTPROB(prob)) {
             syn_add_edge(orig_node, targ_node, gen->cycle);
             gen->edges++;
@@ -77,5 +84,23 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
     }
 
     return net;
+}
+
+
+void syn_gpgen_print(syn_gpgen* gen)
+{
+    print_gptree(gen->prog);
+}
+
+
+syn_gpgen* syn_recombine_gpgens(syn_gpgen* g1, syn_gpgen* g2)
+{
+    syn_gpgen *gen = (syn_gpgen*)malloc(sizeof(syn_gpgen));
+
+    gen->edges = 0;
+    gen->cycle = 0;
+    gen->prog = recombine_gptrees(g1->prog, g2->prog);
+
+    return gen;
 }
 
