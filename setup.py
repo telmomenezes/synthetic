@@ -15,7 +15,7 @@ core_module = Extension('core',
                                      ('MINOR_VERSION', '0')],
                     libraries = ['m'],
                     include_dirs = ['src', 'src/gp'],
-                    sources = ['src/synpython.c', 'src/edge.c', 'src/node.c', 'src/emd.c', 'src/drmap.c', 'src/network.c', 'src/mgenerator.c', 'src/gp/gptree.cpp', 'src/gp/gpnode.cpp', 'src/gp/gpmempool.cpp'])
+                    sources = ['src/synpython.c', 'src/edge.c', 'src/node.c', 'src/emd.c', 'src/drmap.c', 'src/network.c', 'src/mgenerator.c', 'src/gp/gptree.c', 'src/gp/gpnode.c'])
 
 setup (name = 'synthetic',
        version = '1.0',
@@ -24,7 +24,7 @@ setup (name = 'synthetic',
        author_email = 'telmo@telmomenezes.com',
        url = 'http://telmomenezes.com',
        packages = ['syn'],
-       package_dir = {'syn': 'pysrc'},
+       package_dir = {'syn': 'syn'},
        long_description = '''
 TBD.
 ''',
