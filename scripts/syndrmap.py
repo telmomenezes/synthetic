@@ -7,7 +7,7 @@ __date__ = "Jul 2011"
 
 from syn.core import *
 from syn.net import Net
-from syn.dramp import draw_drmap
+from syn.drmap import draw_drmap
 import sys
 from PIL import Image, ImageDraw
 
@@ -22,9 +22,9 @@ def syndrmap(dbpath, img_file):
         syn_net = net.load_interval_net(i)
 
         if ints == 1:
-            draw_drmap('%s.png' % (img_file,))
+            draw_drmap(syn_net, '%s.png' % (img_file,))
         else:
-            draw_drmap('%s%d.png' % (img_file, i))
+            draw_drmap(syn_net, '%s%d.png' % (img_file, i))
 
         destroy_net(syn_net)
 

@@ -119,7 +119,7 @@ class Net:
             else:
                 self.cur.execute("SELECT orig, targ, ts_start FROM edge")
         else:
-            self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts_end<0")
+            self.cur.execute("SELECT orig, targ, ts_start FROM edge WHERE ts_end=-1")
 
         for row in self.cur:
             add_edge_to_net(net, nodes[row[0]], nodes[row[1]], int(row[2]))
