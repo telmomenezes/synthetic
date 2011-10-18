@@ -4,6 +4,7 @@
 #include "network.h"
 #include "drmap.h"
 #include "mgenerator.h"
+#include "gpgenerator.h"
 
 
 // NET API
@@ -463,7 +464,7 @@ static PyObject *pysyn_drmap_distance(PyObject *self, PyObject *args)
     return result;
 }
 
-// GENERATOR API
+// MGENERATOR API
 
 static PyObject *pysyn_create_generator(PyObject *self, PyObject *args)
 {
@@ -720,6 +721,123 @@ static PyObject *pysyn_generator_mutate(PyObject *self, PyObject *args)
 }
 
 
+// GPGENERATOR API
+
+static PyObject *pysyn_create_gpgenerator(PyObject *self, PyObject *args)
+{
+    syn_gpgen *gen = syn_create_gpgenerator();
+    PyObject *result = Py_BuildValue("l", (long)gen);
+    return result;
+}
+
+static PyObject *pysyn_destroy_gpgenerator(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gpgen *gen;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+      gen = (syn_gpgen *)p;
+      syn_destroy_gpgenerator(gen);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+static PyObject *pysyn_clone_gpgenerator(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gpgen *gen;
+    syn_gpgen *cgen;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+      gen = (syn_gpgen*)p;
+      cgen = syn_clone_gpgenerator(gen);
+    }
+
+    PyObject *result = Py_BuildValue("l", (long)cgen);
+    return result;
+}
+
+static PyObject *pysyn_gpgen_run(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gpgen *gen;
+    syn_net *net = NULL;
+    unsigned int nodes, edges, max_cycles;
+
+    if (PyArg_ParseTuple(args, "liii", &p, &nodes, &edges, &max_cycles)) {
+      gen = (syn_gpgen*)p;
+      net = syn_gpgen_run(gen, nodes, edges, max_cycles);
+    }
+    
+    PyObject *result = Py_BuildValue("l", (long)net);
+    return result;
+}
+
+static PyObject *pysyn_gpgenerator_get_edges(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gpgen *gen;
+    unsigned int edges = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        gen = (syn_gpgen*)p;
+        edges = gen->edges;
+    }
+    
+    PyObject *result = Py_BuildValue("i", edges);
+    return result;
+}
+
+static PyObject *pysyn_gpgenerator_get_cycles(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gpgen* gen;
+    unsigned int cycles = 0;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        gen = (syn_gpgen*)p;
+        cycles = gen->cycle;
+    }
+    
+    PyObject *result = Py_BuildValue("i", cycles);
+    return result;
+}
+
+static PyObject *pysyn_print_gpgenerator(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_gpgen* gen;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        gen = (syn_gpgen*)p;
+        syn_print_gpgenerator(gen);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+static PyObject *pysyn_recombine_gpgens(PyObject *self, PyObject *args)
+{
+    long p1;
+    long p2;
+    syn_gpgen* g1;
+    syn_gpgen* g2;
+    syn_gpgen* gen;
+
+    if (PyArg_ParseTuple(args, "ll", &p1, &p2)) {
+        g1 = (syn_gpgen*)p1;
+        g2 = (syn_gpgen*)p2;
+        gen = syn_recombine_gpgens(g1, g2);
+    }
+    
+    PyObject *result = Py_BuildValue("l", (long)gen);
+    return result;
+}
+
+
 static PyMethodDef methods[] = {
     {"create_net", pysyn_create_net, METH_VARARGS, "Create network."},
     {"destroy_net", pysyn_destroy_net, METH_VARARGS, "Destroy network."},
@@ -767,6 +885,14 @@ static PyMethodDef methods[] = {
     {"generator_get_cycles", pysyn_generator_get_cycles, METH_VARARGS, "Get number of cycles taken by the simulation."},
     {"generator_init_random", pysyn_generator_init_random, METH_VARARGS, "Initalize random generator."},
     {"generator_mutate", pysyn_generator_mutate, METH_VARARGS, "Mutate generator."},
+    {"create_gpgenerator", pysyn_create_gpgenerator, METH_VARARGS, "Create gpgenerator."},
+    {"destroy_gpgenerator", pysyn_destroy_gpgenerator, METH_VARARGS, "Destroy gpgenerator."},
+    {"clone_gpgenerator", pysyn_clone_gpgenerator, METH_VARARGS, "Clone gpgenerator."},
+    {"gpgen_run", pysyn_gpgen_run, METH_VARARGS, "Generate network with gp generator."},
+    {"gpgenerator_get__edges", pysyn_gpgenerator_get_edges, METH_VARARGS, "Get total number edges generated."},
+    {"gpgenerator_get_cycles", pysyn_gpgenerator_get_cycles, METH_VARARGS, "Get number of cycles taken by the simulation."},
+    {"print_gpgenerator", pysyn_print_gpgenerator, METH_VARARGS, "Print gpgenerator."},
+    {"recombine_gpgens", pysyn_recombine_gpgens, METH_VARARGS, "Recombine gpgenerators."},
     {NULL, NULL, 0, NULL},
 };
 

@@ -24,7 +24,7 @@ void syn_destroy_gpgenerator(syn_gpgen *gen);
 
 syn_gpgen *syn_clone_gpgenerator(syn_gpgen *gen);
 
-syn_net *syn_gene_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, unsigned int max_cycles);
+syn_net *syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, unsigned int max_cycles);
 
 void syn_gpgen_print(syn_gpgen* gen);
 
