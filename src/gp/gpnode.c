@@ -4,55 +4,50 @@
  */
 
 
+#include <stdlib.h>
+#include <stdio.h>
 #include "gpnode.h"
-#include <iostream>
 
 
-using std::cout;
-using std::endl;
-using std::flush;
-
-
-GPNode::GPNode()
+gpnode* create_gpnode(gpnode_type nodetype,
+                        gpnode_fun fun,
+                        gpval val,
+                        unsigned int var,
+                        gpnode* parent)
 {
-}
-
-
-GPNode::~GPNode()
-{
-}
-
-
-void GPNode::init(gpnode_type nodetype,
-                    gpnode_fun fun,
-                    gpval val,
-                    unsigned int var,
-                    GPNode* parent)
-{
-    type = nodetype;
-    this->parent = parent;
+    gpnode* node = (gpnode *)malloc(sizeof(gpnode));
+    node->type = nodetype;
+    node->parent = parent;
 
     if (nodetype == FUN) {
-        this->fun = fun;
-        this->arity = fun_arity(fun);
-        condpos = fun_condpos(fun);
+        node->fun = fun;
+        node->arity = fun_arity(fun);
+        node->condpos = fun_condpos(fun);
     }
     else if (nodetype == VAR) {
-        this->var = var;
-        this->arity = 0;
-        condpos = -1;
+        node->var = var;
+        node->arity = 0;
+        node->condpos = -1;
     }
     else {
-        this->val = val;
-        this->arity = 0;
-        condpos = -1;
+        node->val = val;
+        node->arity = 0;
+        node->condpos = -1;
     }
 
-    stoppos = arity;
+    node->stoppos = node->arity;
+
+    return node;
 }
 
 
-int GPNode::fun_condpos(gpnode_fun fun)
+void destroy_gpnode(gpnode* node)
+{
+    free(node);
+}
+
+
+int fun_condpos(gpnode_fun fun)
 {
     switch(fun) {
         case ZER:
@@ -69,7 +64,7 @@ int GPNode::fun_condpos(gpnode_fun fun)
 }
 
 
-unsigned int GPNode::fun_arity(gpnode_fun fun)
+unsigned int fun_arity(gpnode_fun fun)
 {
     switch(fun) {
         case SUM:
@@ -90,56 +85,57 @@ unsigned int GPNode::fun_arity(gpnode_fun fun)
     }
 }
 
-void GPNode::print()
+
+void print_gpnode(gpnode* node)
 {
-    if (type == VAL) {
-        cout << val;
+    if (node->type == VAL) {
+        printf("%f", node->val);
         return;
     }
 
-    if (type == VAR) {
-        cout << "$" << val;
+    if (node->type == VAR) {
+        printf("$%d", node->var);
         return;
     }
 
-    if (type != FUN) {
-        cout << "???";
+    if (node->type != FUN) {
+        printf("???");
         return;
     }
 
-    switch(fun) {
+    switch(node->fun) {
         case SUM:
-            cout << "+";
+            printf("+");
             return;
         case SUB:
-            cout << "-";
+            printf("-");
             return;
         case MUL:
-            cout << "*";
+            printf("*");
             return;
         case DIV:
-            cout << "/";
+            printf("/");
             return;
         case ZER:
-            cout << "ZER";
+            printf("ZER");
             return;
         case EQ:
-            cout << "==";
+            printf("==");
             return;
         case GRT:
-            cout << ">";
+            printf(">");
             return;
         case LRT:
-            cout << "<";
+            printf("<");
             return;
         case GET:
-            cout << ">=";
+            printf(">=");
             return;
         case LET:
-            cout << "<=";
+            printf("<=");
             return;
         default:
-            cout << "F??";
+            printf("F??");
             return;
     }
 }
