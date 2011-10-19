@@ -21,8 +21,8 @@ class Evo:
         self.syn_net = targ_net.load_net()
         self.nodes = net_node_count(self.syn_net)
         self.edges = net_edge_count(self.syn_net)
-        self.nodes = 1000
-        self.edges = 10000
+        self.nodes = 5000
+        self.edges = 50000
         self.max_cycles = self.edges * 10
 
     def __del__(self):
