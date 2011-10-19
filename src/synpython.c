@@ -311,7 +311,22 @@ static PyObject *pysyn_node_pr_out(PyObject *self, PyObject *args)
     return result;
 }
 
+
 // DRMAP API
+
+static PyObject *pysyn_create_drmap(PyObject *self, PyObject *args)
+{
+    unsigned int bin_number;
+    float min_val_hor, max_val_hor, min_val_ver, max_val_ver;
+    syn_drmap *map = NULL;
+
+    if (PyArg_ParseTuple(args, "iffff", &bin_number, &min_val_hor, &max_val_hor, &min_val_ver, &max_val_ver)) {
+        map = syn_drmap_create(bin_number, min_val_hor, max_val_hor, min_val_ver, max_val_ver);
+    }
+
+    PyObject *result = Py_BuildValue("l", (long)map);
+    return result;
+}
 
 static PyObject *pysyn_destroy_drmap(PyObject *self, PyObject *args)
 {
@@ -403,6 +418,22 @@ static PyObject *pysyn_drmap_get_value(PyObject *self, PyObject *args)
     }
     
     PyObject *result = Py_BuildValue("f", value);
+    return result;
+}
+
+static PyObject *pysyn_drmap_set_value(PyObject *self, PyObject *args)
+{
+    long p;
+    int x, y;
+    syn_drmap *hist = NULL;
+    double val;
+
+    if (PyArg_ParseTuple(args, "liif", &p, &x, &y, &val)) {
+      hist = (syn_drmap *)p;
+      syn_drmap_set_value(hist, x, y, val);
+    }
+    
+    PyObject *result = Py_BuildValue("");
     return result;
 }
 
@@ -883,12 +914,14 @@ static PyMethodDef methods[] = {
     {"node_out_degree", pysyn_node_out_degree, METH_VARARGS, "Get node out degree."},
     {"node_pr_in", pysyn_node_pr_in, METH_VARARGS, "Get node pr in."},
     {"node_pr_out", pysyn_node_pr_out, METH_VARARGS, "Get node pr out."},
+    {"create_drmap", pysyn_create_drmap, METH_VARARGS, "Create DRMap."},
     {"destroy_drmap", pysyn_destroy_drmap, METH_VARARGS, "Destroy DRMap."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},
     {"get_drmap_with_limits", pysyn_get_drmap_with_limits, METH_VARARGS, "Get DRMap from net with limits."},
     {"drmap_print", pysyn_drmap_print, METH_VARARGS, "Print DRMap."},
     {"drmap_bin_number", pysyn_drmap_bin_number, METH_VARARGS, "Return DRmap bin number."},
     {"drmap_get_value", pysyn_drmap_get_value, METH_VARARGS, "Return DRMap bin value."},
+    {"drmap_set_value", pysyn_drmap_set_value, METH_VARARGS, "Set DRMap bin value."},
     {"drmap_get_limits", pysyn_drmap_get_limits, METH_VARARGS, "Return DRMap limit values."},
     {"drmap_log_scale", pysyn_drmap_log_scale, METH_VARARGS, "Apply log scale to drmap bin values."},
     {"drmap_normalize", pysyn_drmap_normalize, METH_VARARGS, "Normalize drmap bin values by max value."},
