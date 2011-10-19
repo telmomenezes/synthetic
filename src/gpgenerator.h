@@ -26,7 +26,7 @@ syn_gpgen *syn_clone_gpgenerator(syn_gpgen *gen);
 
 syn_net *syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, unsigned int max_cycles);
 
-void syn_gpgen_print(syn_gpgen* gen);
+void syn_print_gpgen(syn_gpgen* gen);
 
 syn_gpgen* syn_recombine_gpgens(syn_gpgen* g1, syn_gpgen* g2);
 

@@ -62,7 +62,7 @@ gpnode* create_random_gptree2(unsigned int varcount,
         }
         else {
             val = ((double)random()) / ((double)RAND_MAX);
-            node = create_gpnode(VAL, SUM, 0, var, parent);
+            node = create_gpnode(VAL, SUM, val, 0, parent);
         }
     }
 
