@@ -7,14 +7,14 @@
 #pragma once
 
 
-#define GPFUN_COUNT 10
+#define GPFUN_COUNT 12
 
 
 typedef double gpval;
 
 typedef enum gpnode_type_e {FUN, VAR, VAL} gpnode_type;
 
-typedef enum gpnode_fun_e {SUM=0, SUB=1, MUL=2, DIV=3, EQ=4, GRT=5, LRT=6, GET=7, LET=8, ZER=9} gpnode_fun;
+typedef enum gpnode_fun_e {SUM=0, SUB=1, MUL=2, DIV=3, EQ=4, GRT=5, LRT=6, ZER=7, EXP=8, LOG=9, SIN=10, ABS=11} gpnode_fun;
 
 
 typedef struct gpnode_s

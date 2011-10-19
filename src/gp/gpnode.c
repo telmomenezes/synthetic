@@ -55,8 +55,6 @@ int fun_condpos(gpnode_fun fun)
         case EQ:
         case GRT:
         case LRT:
-        case GET:
-        case LET:
             return 2;
         default:
             return -1;
@@ -67,6 +65,11 @@ int fun_condpos(gpnode_fun fun)
 unsigned int fun_arity(gpnode_fun fun)
 {
     switch(fun) {
+        case EXP:
+        case LOG:
+        case SIN:
+        case ABS:
+            return 1;
         case SUM:
         case SUB:
         case MUL:
@@ -77,8 +80,6 @@ unsigned int fun_arity(gpnode_fun fun)
         case EQ:
         case GRT:
         case LRT:
-        case GET:
-        case LET:
             return 4;
         default:
             return 0;
@@ -128,11 +129,17 @@ void print_gpnode(gpnode* node)
         case LRT:
             printf("<");
             return;
-        case GET:
-            printf(">=");
+        case EXP:
+            printf("EXP");
             return;
-        case LET:
-            printf("<=");
+        case LOG:
+            printf("LOG");
+            return;
+        case SIN:
+            printf("SIN");
+            return;
+        case ABS:
+            printf("ABS");
             return;
         default:
             printf("F??");

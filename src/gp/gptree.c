@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 #include "gptree.h"
 
 
@@ -122,22 +123,6 @@ gpval eval_gptree(gptree* tree)
                                 curnode->curpos++;
                             }
                             break;
-                        case GET:
-                            if (curnode->vals[0] >= curnode->vals[1])
-                                curnode->stoppos = 3;
-                            else {
-                                curnode->stoppos = 4;
-                                curnode->curpos++;
-                            }
-                            break;
-                        case LET:
-                            if (curnode->vals[0] <= curnode->vals[1])
-                                curnode->stoppos = 3;
-                            else {
-                                curnode->stoppos = 4;
-                                curnode->curpos++;
-                            }
-                            break;
                         case ZER:
                             if (curnode->vals[0] == 0)
                                 curnode->stoppos = 2;
@@ -173,11 +158,26 @@ gpval eval_gptree(gptree* tree)
                             else
                                 val = curnode->vals[0] / curnode->vals[1];
                             break;
+                        case EXP:
+                            val = exp(curnode->vals[0]);
+                            break;
+                        case LOG:
+                            if (curnode->vals[0] <= 0)
+                                val = 0;
+                            else
+                                val = log(curnode->vals[0]);
+                            break;
+                        case SIN:
+                            val = sin(curnode->vals[0]);
+                            break;
+                        case ABS:
+                            val = curnode->vals[0];
+                            if (val < 0)
+                                val = -val;
+                            break;
                         case EQ:
                         case GRT:
                         case LRT:
-                        case GET:
-                        case LET:
                         case ZER:
                             val = curnode->vals[curnode->stoppos - 1];
                             break;

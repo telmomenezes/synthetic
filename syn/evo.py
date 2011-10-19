@@ -11,10 +11,11 @@ from syn.drmap import drmap_distance
 
 
 class Evo:
-    def __init__(self, targ_net, mrate=0.1, rrate=0.1, pop=100):
+    def __init__(self, targ_net, mrate=0.1, rrate=0.7, pop=500, tournament=2):
         self.targ_net = targ_net
         self.mrate = mrate
         self.rrate = rrate
+        self.tournament = tournament
         self.pop = pop
         self.population = []
 
@@ -22,7 +23,7 @@ class Evo:
         self.nodes = net_node_count(self.syn_net)
         self.edges = net_edge_count(self.syn_net)
         self.nodes = 1000
-        self.edges = 10000
+        self.edges = self.nodes * (net_edge_count(self.syn_net) / net_node_count(self.syn_net))
         self.max_cycles = self.edges * 10
 
         seed_random()
@@ -38,6 +39,7 @@ class Evo:
         print 'Edges:', self.edges
         print 'Population:', self.pop
         print 'Mutation rate:', self.mrate
+        print 'Tournament:', self.tournament
         print 'Recombination rate:', self.rrate
 
         # init population
@@ -74,7 +76,7 @@ class Evo:
             
             for i in range(self.pop):
                 parent1 = -1
-                for i in range(3):
+                for i in range(self.tournament):
                     parent1 = random.randint(0, self.pop - 1)
                     if (parent1 < 0) or (self.fitness[i] < self.fitness[parent1]):
                         parent1 = i
@@ -83,7 +85,7 @@ class Evo:
                 # recombine or clone
                 if random.uniform(0, 1) < self.rrate:
                     parent2 = -1
-                    for i in range(3):
+                    for i in range(self.tournament):
                         parent2 = random.randint(0, self.pop - 1)
                         if (parent2 < 0) or (self.fitness[i] < self.fitness[parent2]):
                             parent2 = i
