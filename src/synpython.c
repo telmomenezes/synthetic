@@ -447,6 +447,20 @@ static PyObject *pysyn_drmap_normalize(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_drmap_binary(PyObject *self, PyObject *args)
+{
+    long p;
+    syn_drmap *map = NULL;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        map = (syn_drmap *)p;
+        syn_drmap_binary(map);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
 static PyObject *pysyn_drmap_distance(PyObject *self, PyObject *args)
 {
     long p1, p2;
@@ -878,6 +892,7 @@ static PyMethodDef methods[] = {
     {"drmap_get_limits", pysyn_drmap_get_limits, METH_VARARGS, "Return DRMap limit values."},
     {"drmap_log_scale", pysyn_drmap_log_scale, METH_VARARGS, "Apply log scale to drmap bin values."},
     {"drmap_normalize", pysyn_drmap_normalize, METH_VARARGS, "Normalize drmap bin values by max value."},
+    {"drmap_binary", pysyn_drmap_binary, METH_VARARGS, "Make drmap binary (0 or 1)."},
     {"drmap_emd_dist", pysyn_drmap_distance, METH_VARARGS, "DRMap earth mover's distance."},
     {"create_generator", pysyn_create_generator, METH_VARARGS, "Create generator."},
     {"destroy_generator", pysyn_destroy_generator, METH_VARARGS, "Destroy generator."},

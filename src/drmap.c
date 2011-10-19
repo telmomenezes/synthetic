@@ -86,6 +86,17 @@ void syn_drmap_normalize(syn_drmap *map)
 }
 
 
+void syn_drmap_binary(syn_drmap *map)
+{
+    unsigned int x, y;
+
+    for (x = 0; x < map->bin_number; x++)
+        for (y = 0; y < map->bin_number; y++)
+            if(map->data[(y * map->bin_number) + x] > 0) 
+                map->data[(y * map->bin_number) + x] = 1;
+}
+
+
 double syn_drmap_simple_dist(syn_drmap *hist1, syn_drmap *hist2)
 {
     double dist = 0;
