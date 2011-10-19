@@ -838,6 +838,16 @@ static PyObject *pysyn_recombine_gpgens(PyObject *self, PyObject *args)
 }
 
 
+// AUX
+static PyObject *pysyn_seed_random(PyObject *self, PyObject *args)
+{
+    srandom(time(NULL));
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+
 static PyMethodDef methods[] = {
     {"create_net", pysyn_create_net, METH_VARARGS, "Create network."},
     {"destroy_net", pysyn_destroy_net, METH_VARARGS, "Destroy network."},
@@ -893,6 +903,7 @@ static PyMethodDef methods[] = {
     {"gpgenerator_get_cycles", pysyn_gpgenerator_get_cycles, METH_VARARGS, "Get number of cycles taken by the simulation."},
     {"print_gpgen", pysyn_print_gpgen, METH_VARARGS, "Print gpgenerator."},
     {"recombine_gpgens", pysyn_recombine_gpgens, METH_VARARGS, "Recombine gpgenerators."},
+    {"seed_random", pysyn_seed_random, METH_VARARGS, "Sedd C random number generator with current time."},
     {NULL, NULL, 0, NULL},
 };
 
