@@ -7,11 +7,11 @@ __date__ = "Oct 2011"
 
 import random
 from syn.core import *
-from syn.drmap import drmap_distance
+from syn.drmap import *
 
 
 class Evo:
-    def __init__(self, targ_net, mrate=0.1, rrate=0.7, pop=500, tournament=2):
+    def __init__(self, targ_net, mrate=0.1, rrate=0.7, pop=25, tournament=2):
         self.targ_net = targ_net
         self.mrate = mrate
         self.rrate = rrate
@@ -66,6 +66,7 @@ class Evo:
                 if fit < best_fit:
                     best_fit = fit
                     print_gpgen(self.population[i])
+                    draw_drmap(net, 'best.png')
                 destroy_net(net)
 
             print 'Generation %d => best fitness: %f' % (cycle, best_fit)

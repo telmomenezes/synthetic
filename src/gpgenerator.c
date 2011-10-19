@@ -16,7 +16,7 @@ syn_gpgen *syn_create_gpgenerator()
 
     gen->edges = 0;
     gen->cycle = 0;
-    gen->prog = create_random_gptree(6, 0.2, 2, 5);
+    gen->prog = create_random_gptree(7, 0.2, 2, 5);
 
     return gen;
 }
@@ -76,6 +76,7 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
             oo = ((double)orig_node->out_degree) / ((double)gen->edges);
             it = ((double)targ_node->in_degree) / ((double)gen->edges);
             ot = ((double)targ_node->out_degree) / ((double)gen->edges);
+            ep = ((double)gen->edges) / ((double)edges);
         }
 
         gen->prog->vars[0] = po;
@@ -84,8 +85,9 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
         gen->prog->vars[3] = oo;
         gen->prog->vars[4] = it;
         gen->prog->vars[5] = ot;
+        gen->prog->vars[6] = ep;
         prob = eval_gptree(gen->prog);
-        //printf("prob: %f; po: %f; pt: %f; io: %f; oo: %f; it: %f; ot: %f\n", prob, po, pt, io, oo, it, ot);
+        //printf("prob: %f; po: %f; pt: %f; io: %f; oo: %f; it: %f; ot: %f; ep: %f\n", prob, po, pt, io, oo, it, ot, ep);
 
         if (RANDOM_TESTPROB(prob)) {
             syn_add_edge(orig_node, targ_node, gen->cycle);
