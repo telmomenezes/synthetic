@@ -61,19 +61,21 @@ class Evo:
                 gen = self.population[i]
                 net = gpgen_run(gen, self.nodes, self.edges, self.max_cycles)
 
-                bins = 50
+                bins = 5
                 compute_pageranks(self.syn_net)
                 compute_pageranks(net)
 
                 drmap1 = get_drmap_with_limits(self.syn_net, bins, -7.0, 7.0, -7.0, 7.0)
                 drmap_log_scale(drmap1)
                 drmap_normalize(drmap1)
+                #drmap_binary(drmap1)
 
                 drmap2 = get_drmap_with_limits(net, bins, -7.0, 7.0, -7.0, 7.0)
                 drmap_log_scale(drmap2)
                 drmap_normalize(drmap2)
+                #drmap_binary(drmap2)
 
-                fit = drmap_simple_dist(drmap1, drmap2)
+                fit = drmap_emd_dist(drmap1, drmap2)
 
                 destroy_drmap(drmap1)
                 destroy_drmap(drmap2)

@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "gptree.h"
+#include "utils.h"
 
 
 gptree* create_gptree(unsigned int varcount)
@@ -46,6 +47,7 @@ gpnode* create_random_gptree2(unsigned int varcount,
 {
     gpnode* node;
     gpval val;
+    gpval power;
     unsigned int var;
     unsigned int i;
 
@@ -62,7 +64,9 @@ gpnode* create_random_gptree2(unsigned int varcount,
             node = create_gpnode(VAR, SUM, 0, var, parent);
         }
         else {
-            val = ((double)random()) / ((double)RAND_MAX);
+            val = RANDOM_UNIFORM * 10;
+            power = (RANDOM_UNIFORM * 40.0) - 20;
+            val = pow(val, power);
             node = create_gpnode(VAL, SUM, val, 0, parent);
         }
     }
