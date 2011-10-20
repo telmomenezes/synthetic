@@ -80,13 +80,13 @@ class Evo:
 
                 fit = drmap_emd_dist(drmap1, drmap2)
 
-                fit = 0
-                for x in range(0, bins):
-                    for y in range(0, bins):
-                        wx = math.fabs(x - 5)
-                        wy = math.fabs(y - 5)
-                        w = wx * wy
-                        fit -= drmap_get_value(drmap2, x, y) * w
+                #fit = 0
+                #for x in range(0, bins):
+                #    for y in range(0, bins):
+                #        wx = math.fabs(x - 5)
+                #        wy = math.fabs(y - 5)
+                #        w = wx * wy
+                #        fit -= drmap_get_value(drmap2, x, y) * w
 
                 destroy_drmap(drmap1)
                 destroy_drmap(drmap2)
