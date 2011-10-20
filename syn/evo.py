@@ -61,8 +61,6 @@ class Evo:
                 gen = self.population[i]
                 net = gpgen_run(gen, self.nodes, self.edges, self.max_cycles)
 
-                print '\nedges:', net_edge_count(net)
-               
                 bins = 50
                 compute_pageranks(self.syn_net)
                 compute_pageranks(net)
@@ -75,12 +73,12 @@ class Evo:
                 drmap_log_scale(drmap2)
                 drmap_normalize(drmap2)
 
-                fit = drmap_emd_dist(drmap1, drmap2)
+                fit = drmap_simple_dist(drmap1, drmap2)
 
                 destroy_drmap(drmap1)
                 destroy_drmap(drmap2)
                 self.fitness[i] = fit
-                print fit
+                print i, fit
                 if fit < best_fit:
                     best_fit = fit
                     print_gpgen(self.population[i])

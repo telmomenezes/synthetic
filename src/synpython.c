@@ -492,7 +492,7 @@ static PyObject *pysyn_drmap_binary(PyObject *self, PyObject *args)
     return result;
 }
 
-static PyObject *pysyn_drmap_distance(PyObject *self, PyObject *args)
+static PyObject *pysyn_drmap_emd_distance(PyObject *self, PyObject *args)
 {
     long p1, p2;
     syn_drmap *hist1 = NULL;
@@ -503,6 +503,23 @@ static PyObject *pysyn_drmap_distance(PyObject *self, PyObject *args)
       hist1 = (syn_drmap *)p1;
       hist2 = (syn_drmap *)p2;
       value = syn_drmap_emd_dist(hist1, hist2);
+    }
+
+    PyObject *result = Py_BuildValue("d", value);
+    return result;
+}
+
+static PyObject *pysyn_drmap_simple_distance(PyObject *self, PyObject *args)
+{
+    long p1, p2;
+    syn_drmap *hist1 = NULL;
+    syn_drmap *hist2 = NULL;
+    double value = 0.0;
+
+    if (PyArg_ParseTuple(args, "ll", &p1, &p2)) {
+      hist1 = (syn_drmap *)p1;
+      hist2 = (syn_drmap *)p2;
+      value = syn_drmap_simple_dist(hist1, hist2);
     }
 
     PyObject *result = Py_BuildValue("d", value);
@@ -926,7 +943,8 @@ static PyMethodDef methods[] = {
     {"drmap_log_scale", pysyn_drmap_log_scale, METH_VARARGS, "Apply log scale to drmap bin values."},
     {"drmap_normalize", pysyn_drmap_normalize, METH_VARARGS, "Normalize drmap bin values by max value."},
     {"drmap_binary", pysyn_drmap_binary, METH_VARARGS, "Make drmap binary (0 or 1)."},
-    {"drmap_emd_dist", pysyn_drmap_distance, METH_VARARGS, "DRMap earth mover's distance."},
+    {"drmap_simple_dist", pysyn_drmap_simple_distance, METH_VARARGS, "DRMap simple distance."},
+    {"drmap_emd_dist", pysyn_drmap_emd_distance, METH_VARARGS, "DRMap earth mover's distance."},
     {"create_generator", pysyn_create_generator, METH_VARARGS, "Create generator."},
     {"destroy_generator", pysyn_destroy_generator, METH_VARARGS, "Destroy generator."},
     {"clone_generator", pysyn_clone_generator, METH_VARARGS, "Clone generator."},
