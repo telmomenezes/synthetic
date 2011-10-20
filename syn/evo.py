@@ -6,12 +6,13 @@ __date__ = "Oct 2011"
 
 
 import random
+import math
 from syn.core import *
 from syn.drmap import *
 
 
 class Evo:
-    def __init__(self, targ_net, mrate=0.1, rrate=0.7, pop=500, tournament=2):
+    def __init__(self, targ_net, mrate=0.1, rrate=0.3, pop=500, tournament=2):
         self.targ_net = targ_net
         self.mrate = mrate
         self.rrate = rrate
@@ -34,6 +35,9 @@ class Evo:
         destroy_net(self.syn_net)
 
     def run(self):
+        bins = 10
+        draw_drmap(self.syn_net, 'target.png', bins=bins)
+        
         print 'Evolving gpgenerator'
         print 'Nodes:', self.nodes
         print 'Edges:', self.edges
@@ -61,7 +65,6 @@ class Evo:
                 gen = self.population[i]
                 net = gpgen_run(gen, self.nodes, self.edges, self.max_cycles)
 
-                bins = 5
                 compute_pageranks(self.syn_net)
                 compute_pageranks(net)
 
@@ -76,6 +79,14 @@ class Evo:
                 #drmap_binary(drmap2)
 
                 fit = drmap_emd_dist(drmap1, drmap2)
+
+                fit = 0
+                for x in range(0, bins):
+                    for y in range(0, bins):
+                        wx = math.fabs(x - 5)
+                        wy = math.fabs(y - 5)
+                        w = wx * wy
+                        fit -= drmap_get_value(drmap2, x, y) * w
 
                 destroy_drmap(drmap1)
                 destroy_drmap(drmap2)

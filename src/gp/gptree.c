@@ -64,9 +64,13 @@ gpnode* create_random_gptree2(unsigned int varcount,
             node = create_gpnode(VAR, SUM, 0, var, parent);
         }
         else {
-            val = RANDOM_UNIFORM * 10;
-            power = (RANDOM_UNIFORM * 40.0) - 20;
-            val = pow(val, power);
+            val = RANDOM_UNIFORM;
+
+            if (random() % 2) {
+                val *= 10;
+                power = (RANDOM_UNIFORM * 40.0) - 20;
+                val = pow(val, power);
+            }
             node = create_gpnode(VAL, SUM, val, 0, parent);
         }
     }
