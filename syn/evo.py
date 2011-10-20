@@ -84,7 +84,7 @@ class Evo:
                 if fit < best_fit:
                     best_fit = fit
                     print_gpgen(self.population[i])
-                    draw_drmap(net, 'best.png')
+                    draw_drmap(net, 'best.png', bins=bins)
                 destroy_net(net)
 
             print 'Generation %d => best fitness: %f' % (cycle, best_fit)
