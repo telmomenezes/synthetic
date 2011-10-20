@@ -428,7 +428,7 @@ static PyObject *pysyn_drmap_set_value(PyObject *self, PyObject *args)
     syn_drmap *hist = NULL;
     double val;
 
-    if (PyArg_ParseTuple(args, "liif", &p, &x, &y, &val)) {
+    if (PyArg_ParseTuple(args, "liid", &p, &x, &y, &val)) {
       hist = (syn_drmap *)p;
       syn_drmap_set_value(hist, x, y, val);
     }

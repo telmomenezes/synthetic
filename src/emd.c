@@ -102,6 +102,7 @@ double groundDist(feature_t* feature1, feature_t* feature2)
     double deltaX = feature1->x - feature2->x;
     double deltaY = feature1->y - feature2->y;
     double dist = sqrt((deltaX * deltaX) + (deltaY * deltaY));
+    //double dist = (deltaX * deltaX) + (deltaY * deltaY);
     return dist;
 }
 

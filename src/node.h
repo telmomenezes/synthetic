@@ -11,21 +11,25 @@
 typedef struct syn_node_s {
     unsigned int type;
     unsigned int id;
-    syn_edge *targets;
-    syn_edge *origins;
+    syn_edge* targets;
+    syn_edge* origins;
     unsigned int in_degree;
     unsigned int out_degree;
     int marked;
     unsigned long last_walk_id;
     
     // node list
-    struct syn_node_s *next;
+    struct syn_node_s* next;
     
     // pageranks
     double pr_in;
     double pr_in_last;
     double pr_out;
     double pr_out_last;
+
+    // for generators
+    struct syn_node_s* gentarget;
+    double genweight;
 } syn_node;
 
 

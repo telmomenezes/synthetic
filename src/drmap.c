@@ -110,9 +110,6 @@ double syn_drmap_simple_dist(syn_drmap *hist1, syn_drmap *hist2)
 
 signature_t* syn_drmap_get_emd_signature(syn_drmap *hist)
 {
-    double interval_hor = (hist->max_val_hor - hist->min_val_hor) / ((double)hist->bin_number);
-    double interval_ver = (hist->max_val_ver - hist->min_val_ver) / ((double)hist->bin_number);
-    
     unsigned int n = 0;
     unsigned int x, y;
     
@@ -132,8 +129,8 @@ signature_t* syn_drmap_get_emd_signature(syn_drmap *hist)
         for (y = 0; y < hist->bin_number; y++) {
             double val = hist->data[(y * hist->bin_number) + x];
             if (val > 0) {
-                features[i].x = (x * interval_hor) + hist->min_val_hor;
-                features[i].y = (y * interval_ver) + hist->min_val_ver;
+                features[i].x = x;
+                features[i].y = y;
                 weights[i] = val;
                 i++;
             }
