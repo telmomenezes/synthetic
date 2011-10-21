@@ -12,7 +12,7 @@ from syn.drmap import *
 
 
 class Evo:
-    def __init__(self, targ_net, mrate=0.1, rrate=0.3, pop=25, tournament=2):
+    def __init__(self, targ_net, mrate=0.1, rrate=0.3, pop=500, tournament=2):
         self.targ_net = targ_net
         self.mrate = mrate
         self.rrate = rrate
