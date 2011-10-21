@@ -12,7 +12,7 @@ from syn.drmap import *
 
 
 class Evo:
-    def __init__(self, targ_net, mrate=0.1, rrate=0.3, pop=500, tournament=2):
+    def __init__(self, targ_net, mrate=0.1, rrate=0.3, pop=100, tournament=2):
         self.targ_net = targ_net
         self.mrate = mrate
         self.rrate = rrate
@@ -23,7 +23,7 @@ class Evo:
         self.syn_net = targ_net.load_net()
         self.nodes = net_node_count(self.syn_net)
         self.edges = net_edge_count(self.syn_net)
-        self.nodes = 250
+        self.nodes = 1000
         self.edges = self.nodes * (net_edge_count(self.syn_net) / net_node_count(self.syn_net))
         self.max_cycles = self.edges * 100
 
