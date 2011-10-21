@@ -12,7 +12,8 @@
 
 
 typedef struct syn_gpgen_s {
-    gptree* prog;
+    gptree* prog_origin;
+    gptree* prog_target;
     unsigned int edges;
     unsigned int cycle;
 } syn_gpgen;

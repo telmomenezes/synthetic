@@ -28,7 +28,6 @@ typedef struct syn_node_s {
     double pr_out_last;
 
     // for generators
-    struct syn_node_s* gentarget;
     double genweight;
 } syn_node;
 

@@ -16,7 +16,8 @@ syn_gpgen *syn_create_gpgenerator()
 
     gen->edges = 0;
     gen->cycle = 0;
-    gen->prog = create_random_gptree(7, 0.2, 2, 5);
+    gen->prog_origin = create_random_gptree(4, 0.2, 2, 5);
+    gen->prog_target = create_random_gptree(7, 0.2, 2, 5);
 
     return gen;
 }
@@ -24,7 +25,8 @@ syn_gpgen *syn_create_gpgenerator()
 
 void syn_destroy_gpgenerator(syn_gpgen *gen)
 {
-    destroy_gptree(gen->prog);
+    destroy_gptree(gen->prog_origin);
+    destroy_gptree(gen->prog_target);
     free(gen);
 }
 
@@ -35,7 +37,8 @@ syn_gpgen *syn_clone_gpgenerator(syn_gpgen *gen)
 
     gen_clone->edges = 0;
     gen_clone->cycle = 0;
-    gen_clone->prog = clone_gptree(gen->prog);
+    gen_clone->prog_origin = clone_gptree(gen->prog_origin);
+    gen_clone->prog_target = clone_gptree(gen->prog_target);
 
     return gen_clone;
 }
@@ -65,12 +68,43 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
         total_weight = 0;
         orig_node = net->nodes;
         while (orig_node) {
-            targ_node = orig_node;
-            while (targ_node == orig_node) {
-                targ_node = syn_get_random_node(net);
+            po = ((double)orig_node->id) / ((double)nodes);
+            io = oo = ep = 0;
+            if (gen->edges > 0) {
+                io = ((double)orig_node->in_degree) / ((double)gen->edges);
+                oo = ((double)orig_node->out_degree) / ((double)gen->edges);
+                ep = ((double)gen->edges) / ((double)edges);
             }
-            orig_node->gentarget = targ_node;
 
+            gen->prog_origin->vars[0] = po;
+            gen->prog_origin->vars[1] = io;
+            gen->prog_origin->vars[2] = oo;
+            gen->prog_origin->vars[3] = ep;
+            weight = eval_gptree(gen->prog_origin);
+            if (weight <= 0)
+                weight = 0.1;
+
+            orig_node->genweight = weight;
+            total_weight += weight;
+
+            orig_node = orig_node->next;
+        }
+
+        if (total_weight == 0)
+            return net;
+
+        weight = RANDOM_UNIFORM * total_weight;
+        orig_node = net->nodes;
+        total_weight = orig_node->genweight;
+        //printf("w: %f; tw: %f\n", weight, total_weight);
+        while (total_weight < weight) {
+            orig_node = orig_node->next;
+            total_weight += orig_node->genweight;
+        }
+        
+        total_weight = 0;
+        targ_node = net->nodes;
+        while (targ_node) {
             po = ((double)orig_node->id) / ((double)nodes);
             pt = ((double)targ_node->id) / ((double)nodes);
         
@@ -84,35 +118,40 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
                 ep = ((double)gen->edges) / ((double)edges);
             }
 
-            gen->prog->vars[0] = po;
-            gen->prog->vars[1] = pt;
-            gen->prog->vars[2] = io;
-            gen->prog->vars[3] = oo;
-            gen->prog->vars[4] = it;
-            gen->prog->vars[5] = ot;
-            gen->prog->vars[6] = ep;
-            weight = eval_gptree(gen->prog);
+            gen->prog_target->vars[0] = po;
+            gen->prog_target->vars[1] = pt;
+            gen->prog_target->vars[2] = io;
+            gen->prog_target->vars[3] = oo;
+            gen->prog_target->vars[4] = it;
+            gen->prog_target->vars[5] = ot;
+            gen->prog_target->vars[6] = ep;
+            weight = eval_gptree(gen->prog_target);
+            if (weight <= 0)
+                weight = 0.1;
             //printf("weight: %f; po: %f; pt: %f; io: %f; oo: %f; it: %f; ot: %f; ep: %f\n", weight, po, pt, io, oo, it, ot, ep);
+
+            if (orig_node == targ_node)
+                weight = 0;
         
-            orig_node->genweight = weight;
+            targ_node->genweight = weight;
             total_weight += weight;
 
-            orig_node = orig_node->next;
+            targ_node = targ_node->next;
         }
 
-        if (total_weight > 0) {
-            weight = RANDOM_UNIFORM * total_weight;
+        if (total_weight == 0)
+            return net;
 
-            orig_node = net->nodes;
-            total_weight = orig_node->genweight;
-            while (total_weight < weight) {
-                orig_node = orig_node->next;
-                total_weight += orig_node->genweight;
-            }
-
-            syn_add_edge_to_net(net, orig_node, orig_node->gentarget, gen->cycle);
-            gen->edges++;
+        weight = RANDOM_UNIFORM * total_weight;
+        targ_node = net->nodes;
+        total_weight = targ_node->genweight;
+        while (total_weight < weight) {
+            targ_node = targ_node->next;
+            total_weight += targ_node->genweight;
         }
+
+        syn_add_edge_to_net(net, orig_node, targ_node, gen->cycle);
+        gen->edges++;
             
         gen->cycle++;
     }
@@ -123,7 +162,11 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
 
 void syn_print_gpgen(syn_gpgen* gen)
 {
-    print_gptree(gen->prog);
+    printf("PROG ORIGIN\n\n");
+    print_gptree(gen->prog_origin);
+    printf("\nPROG TARGET\n");
+    print_gptree(gen->prog_target);
+    printf("\n");
 }
 
 
@@ -133,7 +176,20 @@ syn_gpgen* syn_recombine_gpgens(syn_gpgen* g1, syn_gpgen* g2)
 
     gen->edges = 0;
     gen->cycle = 0;
-    gen->prog = recombine_gptrees(g1->prog, g2->prog);
+    switch(random() % 3) {
+    case 0:
+        gen->prog_origin = recombine_gptrees(g1->prog_origin, g2->prog_origin);
+        gen->prog_target = clone_gptree(g1->prog_target);
+        break;
+    case 1:
+        gen->prog_origin = clone_gptree(g1->prog_origin);
+        gen->prog_target = recombine_gptrees(g1->prog_target, g2->prog_target);
+        break;
+    case 2:
+        gen->prog_origin = recombine_gptrees(g1->prog_origin, g2->prog_origin);
+        gen->prog_target = recombine_gptrees(g1->prog_target, g2->prog_target);
+        break;
+    }
 
     return gen;
 }

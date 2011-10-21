@@ -66,7 +66,7 @@ gpnode* create_random_gptree2(unsigned int varcount,
         else {
             val = RANDOM_UNIFORM;
 
-            if (random() % 2) {
+            if (0) {
                 val *= 10;
                 power = (RANDOM_UNIFORM * 40.0) - 20;
                 val = pow(val, power);
