@@ -78,7 +78,7 @@ class Evo:
                 drmap_normalize(drmap2)
                 #drmap_binary(drmap2)
 
-                fit = drmap_emd_dist(drmap1, drmap2)
+                fit = drmap_simple_dist(drmap1, drmap2)
 
                 #fit = 0
                 #for x in range(0, bins):
