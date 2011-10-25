@@ -69,24 +69,21 @@ class Evo:
                 compute_pageranks(net)
 
                 drmap1 = get_drmap_with_limits(self.syn_net, bins, -7.0, 7.0, -7.0, 7.0)
-                #drmap_log_scale(drmap1)
-                #drmap_normalize(drmap1)
-                drmap_binary(drmap1)
+                drmap_log_scale(drmap1)
+                drmap_normalize(drmap1)
+                i#drmap_binary(drmap1)
 
                 drmap2 = get_drmap_with_limits(net, bins, -7.0, 7.0, -7.0, 7.0)
-                #drmap_log_scale(drmap2)
-                #drmap_normalize(drmap2)
-                drmap_binary(drmap2)
+                drmap_log_scale(drmap2)
+                drmap_normalize(drmap2)
+                #drmap_binary(drmap2)
 
-                fit = drmap_simple_dist(drmap1, drmap2)
+                #fit = drmap_simple_dist(drmap1, drmap2)
 
-                #fit = 0
-                #for x in range(0, bins):
-                #    for y in range(0, bins):
-                #        wx = math.fabs(x - 5)
-                #        wy = math.fabs(y - 5)
-                #        w = wx * wy
-                #        fit -= drmap_get_value(drmap2, x, y) * w
+                fit = 0
+                for y in range(0, bins):
+                    if drmap_get_value(drmap2, 0, y) != 0:
+                        fit -= 1
 
                 destroy_drmap(drmap1)
                 destroy_drmap(drmap2)
