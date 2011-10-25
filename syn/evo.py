@@ -71,7 +71,7 @@ class Evo:
                 drmap1 = get_drmap_with_limits(self.syn_net, bins, -7.0, 7.0, -7.0, 7.0)
                 drmap_log_scale(drmap1)
                 drmap_normalize(drmap1)
-                i#drmap_binary(drmap1)
+                #drmap_binary(drmap1)
 
                 drmap2 = get_drmap_with_limits(net, bins, -7.0, 7.0, -7.0, 7.0)
                 drmap_log_scale(drmap2)
@@ -83,10 +83,10 @@ class Evo:
                 fit = 0
                 for y in range(0, bins):
                     if drmap_get_value(drmap2, 0, y) != 0:
-                        fit -= 1000
+                        fit -= 1000000
                 for y in range(0, bins):
                     if drmap_get_value(drmap2, 1, y) != 0:
-                        fit -= 100
+                        fit -= 1000
                 for y in range(0, bins):
                     if drmap_get_value(drmap2, 2, y) != 0:
                         fit -= 10
