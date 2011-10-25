@@ -73,26 +73,26 @@ class Evo:
                 drmap_normalize(drmap1)
                 #drmap_binary(drmap1)
 
-                drmap2 = get_drmap_with_limits(net, bins, -5.0, 5.0, -5.0, 5.0)
+                drmap2 = get_drmap_with_limits(net, bins, -4.0, 4.0, -4.0, 4.0)
                 drmap_log_scale(drmap2)
                 drmap_normalize(drmap2)
                 #drmap_binary(drmap2)
 
-                #fit = drmap_simple_dist(drmap1, drmap2)
+                fit = drmap_emd_dist(drmap1, drmap2)
 
-                fit = 0
-                for y in range(0, bins):
-                    if drmap_get_value(drmap2, 0, y) != 0:
-                        fit -= 1000000
-                for y in range(0, bins):
-                    if drmap_get_value(drmap2, 1, y) != 0:
-                        fit -= 1000
-                for y in range(0, bins):
-                    if drmap_get_value(drmap2, 2, y) != 0:
-                        fit -= 10
-                for y in range(0, bins):
-                    if drmap_get_value(drmap2, 3, y) != 0:
-                        fit -= 1
+                #fit = 0
+                #for y in range(0, bins):
+                #    if drmap_get_value(drmap2, 0, y) != 0:
+                #        fit -= 1000000
+                #for y in range(0, bins):
+                #    if drmap_get_value(drmap2, 1, y) != 0:
+                #        fit -= 1000
+                #for y in range(0, bins):
+                #    if drmap_get_value(drmap2, 2, y) != 0:
+                #        fit -= 10
+                #for y in range(0, bins):
+                #    if drmap_get_value(drmap2, 3, y) != 0:
+                #        fit -= 1
 
                 destroy_drmap(drmap1)
                 destroy_drmap(drmap2)
