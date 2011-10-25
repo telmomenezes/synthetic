@@ -84,14 +84,14 @@ class Evo:
                 for y in range(0, bins):
                     if drmap_get_value(drmap2, 0, y) != 0:
                         fit -= 1000
-                for y in range(1, bins):
-                    if drmap_get_value(drmap2, 0, y) != 0:
+                for y in range(0, bins):
+                    if drmap_get_value(drmap2, 1, y) != 0:
                         fit -= 100
-                for y in range(2, bins):
-                    if drmap_get_value(drmap2, 0, y) != 0:
+                for y in range(0, bins):
+                    if drmap_get_value(drmap2, 2, y) != 0:
                         fit -= 10
-                for y in range(3, bins):
-                    if drmap_get_value(drmap2, 0, y) != 0:
+                for y in range(0, bins):
+                    if drmap_get_value(drmap2, 3, y) != 0:
                         fit -= 1
 
                 destroy_drmap(drmap1)
