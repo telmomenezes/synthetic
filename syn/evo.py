@@ -35,6 +35,82 @@ class Evo:
         destroy_net(self.syn_net)
 
     def run(self):
+        self.pop = 5
+        bins = 10
+        draw_drmap(self.syn_net, 'target.png', bins=bins)
+        
+        print 'Evolving gpgenerator'
+        print 'Nodes:', self.nodes
+        print 'Edges:', self.edges
+        print 'Population:', self.pop
+
+        # init population
+        self.population = []
+        self.fitness = []
+        for i in range(self.pop):
+            gen = create_gpgenerator()
+            self.population.append(gen)
+            self.fitness.append(0)
+
+        print 'Population initialized.'
+
+        cycle = 0
+        best_fit = 9999999
+        best_gen = None
+        # evolutionary loop
+        while True:
+            # eval fitness
+            for i in range(self.pop):
+                gen = self.population[i]
+                net = gpgen_run(gen, self.nodes, self.edges, self.max_cycles)
+
+                compute_pageranks(self.syn_net)
+                compute_pageranks(net)
+
+                drmap1 = get_drmap_with_limits(self.syn_net, bins, -7.0, 7.0, -7.0, 7.0)
+                drmap_log_scale(drmap1)
+                drmap_normalize(drmap1)
+
+                drmap2 = get_drmap_with_limits(net, bins, -4.0, 4.0, -4.0, 4.0)
+                drmap_log_scale(drmap2)
+                drmap_normalize(drmap2)
+
+                fit = drmap_emd_dist(drmap1, drmap2)
+
+                destroy_drmap(drmap1)
+                destroy_drmap(drmap2)
+                self.fitness[i] = fit
+                print i, fit
+                if fit < best_fit:
+                    best_fit = fit
+                    best_gen = self.population[i]
+                    print_gpgen(self.population[i])
+                    draw_drmap(net, 'best.png', bins=bins)
+                destroy_net(net)
+
+            print 'Generation %d => best fitness: %f' % (cycle, best_fit)
+            cycle += 1
+
+            # next generation
+            newgen = []
+            
+            newgen.append(clone_gpgenerator(best_gen))
+
+            for i in range(1, self.pop):
+                clone = clone_gpgenerator(best_gen)
+                chicken = create_gpgenerator()
+                child = recombine_gpgens(clone, chicken)
+                destroy_gpgenerator(chicken)
+                destroy_gpgenerator(clone)
+                newgen.append(child)
+
+            # replace generations
+            for i in range(self.pop):
+                destroy_gpgenerator(self.population[i])
+            self.population = newgen
+
+
+    def run2(self):
         bins = 10
         draw_drmap(self.syn_net, 'target.png', bins=bins)
         
@@ -71,28 +147,12 @@ class Evo:
                 drmap1 = get_drmap_with_limits(self.syn_net, bins, -7.0, 7.0, -7.0, 7.0)
                 drmap_log_scale(drmap1)
                 drmap_normalize(drmap1)
-                #drmap_binary(drmap1)
 
                 drmap2 = get_drmap_with_limits(net, bins, -4.0, 4.0, -4.0, 4.0)
                 drmap_log_scale(drmap2)
                 drmap_normalize(drmap2)
-                #drmap_binary(drmap2)
 
-                fit = drmap_simple_dist(drmap1, drmap2)
-
-                #fit = 0
-                #for y in range(0, bins):
-                #    if drmap_get_value(drmap2, 0, y) != 0:
-                #        fit -= 1000000
-                #for y in range(0, bins):
-                #    if drmap_get_value(drmap2, 1, y) != 0:
-                #        fit -= 1000
-                #for y in range(0, bins):
-                #    if drmap_get_value(drmap2, 2, y) != 0:
-                #        fit -= 10
-                #for y in range(0, bins):
-                #    if drmap_get_value(drmap2, 3, y) != 0:
-                #        fit -= 1
+                fit = drmap_emd_dist(drmap1, drmap2)
 
                 destroy_drmap(drmap1)
                 destroy_drmap(drmap2)
