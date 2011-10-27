@@ -35,7 +35,7 @@ class Evo:
         destroy_net(self.syn_net)
 
     def run(self):
-        self.pop = 5
+        self.pop = 10
         bins = 10
         draw_drmap(self.syn_net, 'target.png', bins=bins)
         
@@ -46,19 +46,18 @@ class Evo:
 
         # init population
         self.population = []
-        self.fitness = []
         for i in range(self.pop):
             gen = create_gpgenerator()
             self.population.append(gen)
-            self.fitness.append(0)
 
         print 'Population initialized.'
 
         cycle = 0
-        best_fit = 9999999
-        best_gen = None
+        
         # evolutionary loop
         while True:
+            best_fit = 9999999
+            best_gen = None
             # eval fitness
             for i in range(self.pop):
                 gen = self.population[i]
