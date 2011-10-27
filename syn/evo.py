@@ -55,8 +55,9 @@ class Evo:
         cycle = 0
         
         # evolutionary loop
+        best_fit = 9999999
         while True:
-            best_fit = 9999999
+            best_gen_fit = 9999999
             best_gen = None
             # eval fitness
             for i in range(self.pop):
@@ -78,16 +79,18 @@ class Evo:
 
                 destroy_drmap(drmap1)
                 destroy_drmap(drmap2)
-                self.fitness[i] = fit
                 print i, fit
-                if fit < best_fit:
-                    best_fit = fit
+                if fit < best_gen_fit:
+                    best_gen_fit = fit
                     best_gen = self.population[i]
                     print_gpgen(self.population[i])
                     draw_drmap(net, 'best.png', bins=bins)
                 destroy_net(net)
 
-            print 'Generation %d => best fitness: %f' % (cycle, best_fit)
+                if fit < best_fit:
+                    best_fit = fit
+
+            print 'Generation %d => best fitness: %f [%f]' % (cycle, best_gen_fit, best_fit)
             cycle += 1
 
             # next generation
