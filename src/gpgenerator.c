@@ -68,21 +68,19 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
         total_weight = 0;
         orig_node = net->nodes;
         while (orig_node) {
-            po = ((double)orig_node->id) / ((double)nodes);
+            po = (double)orig_node->id;
             io = oo = ep = 0;
             if (gen->edges > 0) {
-                io = ((double)orig_node->in_degree) / ((double)gen->edges);
-                oo = ((double)orig_node->out_degree) / ((double)gen->edges);
-                ep = ((double)gen->edges) / ((double)edges);
+                io = (double)orig_node->in_degree;
+                oo = (double)orig_node->out_degree;
+                ep = (double)gen->edges;
             }
 
             gen->prog_origin->vars[0] = po;
             gen->prog_origin->vars[1] = io;
             gen->prog_origin->vars[2] = oo;
             gen->prog_origin->vars[3] = ep;
-            weight = eval_gptree(gen->prog_origin);
-            if (weight <= 0)
-                weight = 0.1;
+            weight = 1.0 + eval_gptree(gen->prog_origin);
 
             orig_node->genweight = weight;
             total_weight += weight;
@@ -105,17 +103,17 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
         total_weight = 0;
         targ_node = net->nodes;
         while (targ_node) {
-            po = ((double)orig_node->id) / ((double)nodes);
-            pt = ((double)targ_node->id) / ((double)nodes);
+            po = (double)orig_node->id;
+            pt = (double)targ_node->id;
         
             io = oo = it = ot = ep = 0;
 
             if (gen->edges > 0) {
-                io = ((double)orig_node->in_degree) / ((double)gen->edges);
-                oo = ((double)orig_node->out_degree) / ((double)gen->edges);
-                it = ((double)targ_node->in_degree) / ((double)gen->edges);
-                ot = ((double)targ_node->out_degree) / ((double)gen->edges);
-                ep = ((double)gen->edges) / ((double)edges);
+                io = (double)orig_node->in_degree;
+                oo = (double)orig_node->out_degree;
+                it = (double)targ_node->in_degree;
+                ot = (double)targ_node->out_degree;
+                ep = (double)gen->edges;
             }
 
             gen->prog_target->vars[0] = po;
@@ -125,9 +123,7 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
             gen->prog_target->vars[4] = it;
             gen->prog_target->vars[5] = ot;
             gen->prog_target->vars[6] = ep;
-            weight = eval_gptree(gen->prog_target);
-            if (weight <= 0)
-                weight = 0.1;
+            weight = 1.0 + eval_gptree(gen->prog_target);
             //printf("weight: %f; po: %f; pt: %f; io: %f; oo: %f; it: %f; ot: %f; ep: %f\n", weight, po, pt, io, oo, it, ot, ep);
 
             if (orig_node == targ_node)
