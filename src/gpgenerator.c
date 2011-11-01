@@ -81,6 +81,8 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
             gen->prog_origin->vars[2] = oo;
             gen->prog_origin->vars[3] = ep;
             weight = 1.0 + eval_gptree(gen->prog_origin);
+            if (weight < 0)
+                weight = 0;
 
             orig_node->genweight = weight;
             total_weight += weight;
@@ -124,6 +126,8 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
             gen->prog_target->vars[5] = ot;
             gen->prog_target->vars[6] = ep;
             weight = 1.0 + eval_gptree(gen->prog_target);
+            if (weight < 0)
+                weight = 0;
             //printf("weight: %f; po: %f; pt: %f; io: %f; oo: %f; it: %f; ot: %f; ep: %f\n", weight, po, pt, io, oo, it, ot, ep);
 
             if (orig_node == targ_node)
