@@ -80,7 +80,7 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
             gen->prog_origin->vars[1] = io;
             gen->prog_origin->vars[2] = oo;
             gen->prog_origin->vars[3] = ep;
-            weight = 1.0 + eval_gptree(gen->prog_origin);
+            weight = eval_gptree(gen->prog_origin);
             if (weight < 0)
                 weight = 0;
 
@@ -90,8 +90,15 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
             orig_node = orig_node->next;
         }
 
-        if (total_weight == 0)
-            return net;
+        // if total weight is zero, make every node's weight = 1
+        if (total_weight == 0) {
+            orig_node = net->nodes;
+            while (orig_node) {
+                orig_node->genweight = 1.0;
+                total_weight += 1.0;
+                orig_node = orig_node->next;
+            }
+        }
 
         weight = RANDOM_UNIFORM * total_weight;
         orig_node = net->nodes;
@@ -125,7 +132,7 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
             gen->prog_target->vars[4] = it;
             gen->prog_target->vars[5] = ot;
             gen->prog_target->vars[6] = ep;
-            weight = 1.0 + eval_gptree(gen->prog_target);
+            weight = eval_gptree(gen->prog_target);
             if (weight < 0)
                 weight = 0;
             //printf("weight: %f; po: %f; pt: %f; io: %f; oo: %f; it: %f; ot: %f; ep: %f\n", weight, po, pt, io, oo, it, ot, ep);
@@ -139,8 +146,15 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
             targ_node = targ_node->next;
         }
 
-        if (total_weight == 0)
-            return net;
+        // if total weight is zero, make every node's weight = 1
+        if (total_weight == 0) {
+            targ_node = net->nodes;
+            while (targ_node) {
+                targ_node->genweight = 1.0;
+                total_weight += 1.0;
+                targ_node = targ_node->next;
+            }
+        }
 
         weight = RANDOM_UNIFORM * total_weight;
         targ_node = net->nodes;
