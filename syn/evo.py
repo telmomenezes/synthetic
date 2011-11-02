@@ -71,7 +71,7 @@ class Evo:
                 drmap_log_scale(drmap1)
                 drmap_normalize(drmap1)
 
-                drmap2 = get_drmap_with_limits(net, bins, -4.0, 4.0, -4.0, 4.0)
+                drmap2 = get_drmap_with_limits(net, bins, -7.0, 7.0, -7.0, 7.0)
                 drmap_log_scale(drmap2)
                 drmap_normalize(drmap2)
 
