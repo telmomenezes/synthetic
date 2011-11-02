@@ -23,7 +23,7 @@ class Evo:
         self.syn_net = targ_net.load_net()
         self.nodes = net_node_count(self.syn_net)
         self.edges = net_edge_count(self.syn_net)
-        self.nodes = 5000
+        self.nodes = 1000
         self.edges = self.nodes * (net_edge_count(self.syn_net) / net_node_count(self.syn_net))
         self.max_cycles = self.edges * 100
 
@@ -67,11 +67,11 @@ class Evo:
                 compute_pageranks(self.syn_net)
                 compute_pageranks(net)
 
-                drmap1 = get_drmap_with_limits(self.syn_net, bins, -7.0, 7.0, -7.0, 7.0)
+                drmap1 = get_drmap_with_limits(self.syn_net, bins, -5.0, 5.0, -5.0, 5.0)
                 drmap_log_scale(drmap1)
                 drmap_normalize(drmap1)
 
-                drmap2 = get_drmap_with_limits(net, bins, -7.0, 7.0, -7.0, 7.0)
+                drmap2 = get_drmap_with_limits(net, bins, -5.0, 5.0, -5.0, 5.0)
                 drmap_log_scale(drmap2)
                 drmap_normalize(drmap2)
 
