@@ -12,7 +12,7 @@ from syn.drmap import *
 
 
 class Zoo:
-    def __init__(self, mrate=0.3, rrate=0.7, pop=25, tournament=3):
+    def __init__(self, targ_net, mrate=0.3, rrate=0.7, pop=25, tournament=3):
         self.mrate = mrate
         self.rrate = rrate
         self.tournament = tournament
@@ -25,7 +25,13 @@ class Zoo:
         self.max_cycles = self.edges * 100
 
         self.bins = 10
-
+        
+        self.syn_net = targ_net.load_net()
+        compute_pageranks(self.syn_net)
+        self.targ_drmap = get_drmap_with_limits(self.syn_net, self.bins, -7.0, 7.0, -7.0, 7.0)
+        drmap_log_scale(self.targ_drmap)
+        drmap_normalize(self.targ_drmap)
+        
         seed_random()
 
     def __del__(self):
@@ -40,6 +46,13 @@ class Zoo:
         drmap_log_scale(drmap)
         drmap_normalize(drmap)
 
+        # target
+        d = drmap_emd_dist(drmap, self.targ_drmap)
+        if d < self.best_fitness:
+            self.best_fitness = d
+            draw_drmap(net, 'best.png')
+
+        # novelty
         dists = []
 
         for a in self.archive:
@@ -78,6 +91,7 @@ class Zoo:
         print 'Recombination rate:', self.rrate
 
         # init population
+        self.best_fitness = 999999
         self.population = []
         self.fitness = []
         for i in range(self.pop):
@@ -98,7 +112,7 @@ class Zoo:
                 self.fitness[i] = fit
                 print i, fit
 
-            print 'Generation %d' % (cycle,)
+            print 'Generation %d -> best fitness: %f' % (cycle, self.best_fitness)
             cycle += 1
 
             # next generation
