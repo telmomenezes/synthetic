@@ -13,4 +13,4 @@ import sys
 if __name__ == '__main__':
     net = Net(sys.argv[1])
     evo = Evo(net)
-    evo.run2()
+    evo.run()
