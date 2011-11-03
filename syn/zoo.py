@@ -12,7 +12,7 @@ from syn.drmap import *
 
 
 class Zoo:
-    def __init__(self, targ_net, mrate=0.3, rrate=0.7, pop=25, tournament=3):
+    def __init__(self, targ_net, mrate=0.3, rrate=0.7, pop=100, tournament=3):
         self.mrate = mrate
         self.rrate = rrate
         self.tournament = tournament
