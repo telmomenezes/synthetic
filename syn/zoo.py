@@ -50,7 +50,8 @@ class Zoo:
         d = drmap_emd_dist(drmap, self.targ_drmap)
         if d < self.best_fitness:
             self.best_fitness = d
-            draw_drmap(net, 'best.png')
+            draw_drmap(net, '_best.png', bins=self.bins)
+            print 'best fitness found: %f' % self.best_fitness
 
         # novelty
         dists = []
