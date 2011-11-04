@@ -146,7 +146,7 @@ syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, doub
 void syn_compute_pageranks(syn_net *net)
 {
     // TODO: config
-    unsigned int max_iter = 100;
+    unsigned int max_iter = 10;
 
     syn_node *node = net->nodes;
     while (node) {
@@ -162,8 +162,8 @@ void syn_compute_pageranks(syn_net *net)
     
     double zero_test = 0.0001;
 
-    while (((delta_pr_in > zero_test) || (delta_pr_out > zero_test)) && (i < max_iter)) {
-        
+    //while (((delta_pr_in > zero_test) || (delta_pr_out > zero_test)) && (i < max_iter)) {
+    while (i < max_iter) {
         double acc_pr_in = 0;
         double acc_pr_out = 0;
 
