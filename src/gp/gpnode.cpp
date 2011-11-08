@@ -74,6 +74,8 @@ unsigned int fun_arity(gpnode_fun fun)
         case SUB:
         case MUL:
         case DIV:
+        case MIN:
+        case MAX:
             return 2;
         case ZER:
             return 3;
@@ -141,9 +143,14 @@ void print_gpnode(gpnode* node)
         case ABS:
             printf("ABS");
             return;
+        case MIN:
+            printf("MIN");
+            return;
+        case MAX:
+            printf("MAX");
+            return;
         default:
             printf("F??");
             return;
     }
 }
-

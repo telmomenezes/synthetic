@@ -166,6 +166,22 @@ gpval eval_gptree(gptree* tree)
                             else
                                 val = curnode->vals[0] / curnode->vals[1];
                             break;
+                        case MIN:
+                            if (curnode->vals[0] < curnode->vals[1]) {
+                                val = curnode->vals[0];
+                            }
+                            else {
+                                val = curnode->vals[1];
+                            }
+                            break;
+                        case MAX:
+                            if (curnode->vals[0] > curnode->vals[1]) {
+                                val = curnode->vals[0];
+                            }
+                            else {
+                                val = curnode->vals[1];
+                            }
+                            break;
                         case EXP:
                             val = exp(curnode->vals[0]);
                             break;
