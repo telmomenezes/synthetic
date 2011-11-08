@@ -13,104 +13,125 @@
 #include <strings.h>
 #include <stdio.h>
 
-syn_drmap *syn_drmap_create(unsigned int bin_number, double min_val_hor, double max_val_hor,
-     double min_val_ver, double max_val_ver)
+namespace syn
 {
-    syn_drmap *map = (syn_drmap *)malloc(sizeof(syn_drmap));
-    map->bin_number = bin_number;
-    map->min_val_hor = min_val_hor;
-    map->max_val_hor = max_val_hor;
-    map->min_val_ver = min_val_ver;
-    map->max_val_ver = max_val_ver;
-    map->data = (double *)malloc(bin_number * bin_number * sizeof(double));
 
-    syn_drmap_clear(map);
+DRMap::DRMap(unsigned int bin_number, double min_val_hor, double max_val_hor,
+                double min_val_ver, double max_val_ver)
+{
+    this->bin_number = bin_number;
+    this->min_val_hor = min_val_hor;
+    this->max_val_hor = max_val_hor;
+    this->min_val_ver = min_val_ver;
+    this->max_val_ver = max_val_ver;
+    data = (double*)malloc(bin_number * bin_number * sizeof(double));
+
+    clear();
+}
+
+
+DRMap::~DRMap()
+{
+    free(data);
+}
+
+
+void DRMap::clear()
+{
+    bzero(data, bin_number * bin_number * sizeof(double));
+}
+
+
+void DRMap::set_value(unsigned int x, unsigned int y, double val)
+{
+    data[(y * bin_number) + x] = val;
+}
+
+
+void DRMap::inc_value(unsigned int x, unsigned int y)
+{
+    data[(y * bin_number) + x] += 1;
+}
+
+
+double DRMap::get_value(unsigned int x, unsigned int y)
+{
+    return data[(y * bin_number) + x];
+}
+
     
-    return map;
+void DRMap::log_scale()
+{
+    for (unsigned int x = 0; x < bin_number; x++) {
+        for (unsigned int y = 0; y < bin_number; y++) {
+            if(data[(y * bin_number) + x] > 0) { 
+                data[(y * bin_number) + x] = log(data[(y * bin_number) + x]);
+            }
+        }
+    }
 }
 
 
-void syn_drmap_destroy(syn_drmap *hist)
+void DRMap::normalize()
 {
-    free(hist->data);
-    free(hist);
-}
-
-
-void syn_drmap_clear(syn_drmap *hist)
-{
-    bzero(hist->data, hist->bin_number * hist->bin_number * sizeof(double));
-}
-
-
-void syn_drmap_set_value(syn_drmap *hist, unsigned int x, unsigned int y, double val)
-{
-    hist->data[(y * hist->bin_number) + x] = val;
-}
-
-
-void syn_drmap_inc_value(syn_drmap *hist, unsigned int x, unsigned int y)
-{
-    hist->data[(y * hist->bin_number) + x] += 1;
-}
-
-
-double syn_drmap_get_value(syn_drmap *hist, unsigned int x, unsigned int y)
-{
-    return hist->data[(y * hist->bin_number) + x];
-}
-
-    
-void syn_drmap_log_scale(syn_drmap *map)
-{
-    unsigned int x, y;
-    for (x = 0; x < map->bin_number; x++)
-        for (y = 0; y < map->bin_number; y++)
-            if(map->data[(y * map->bin_number) + x] > 0) 
-                map->data[(y * map->bin_number) + x] = log(map->data[(y * map->bin_number) + x]);
-}
-
-void syn_drmap_normalize(syn_drmap *map)
-{
-    unsigned int x, y;
-
     // find max value
     double max = 0;
-    for (x = 0; x < map->bin_number; x++)
-        for (y = 0; y < map->bin_number; y++)
-            if(map->data[(y * map->bin_number) + x] > max) 
-                max = map->data[(y * map->bin_number) + x];
+    for (unsigned int x = 0; x < bin_number; x++) {
+        for (unsigned int y = 0; y < bin_number; y++) {
+            if(data[(y * bin_number) + x] > max) {
+                max = data[(y * bin_number) + x];
+            }
+        }
+    }
 
     // normalize by max
-    for (x = 0; x < map->bin_number; x++)
-        for (y = 0; y < map->bin_number; y++)
-            map->data[(y * map->bin_number) + x] = map->data[(y * map->bin_number) + x] / max;
+    for (unsigned int x = 0; x < bin_number; x++) {
+        for (unsigned int y = 0; y < bin_number; y++) {
+            data[(y * bin_number) + x] = data[(y * bin_number) + x] / max;
+        }
+    }
 }
 
 
-void syn_drmap_binary(syn_drmap *map)
+void DRMap::binary()
 {
-    unsigned int x, y;
-
-    for (x = 0; x < map->bin_number; x++)
-        for (y = 0; y < map->bin_number; y++)
-            if(map->data[(y * map->bin_number) + x] > 0) 
-                map->data[(y * map->bin_number) + x] = 1;
+    for (unsigned int x = 0; x < bin_number; x++) {
+        for (unsigned int y = 0; y < bin_number; y++) {
+            if(data[(y * bin_number) + x] > 0) {
+                data[(y * bin_number) + x] = 1;
+            }
+        }
+    }
 }
 
 
-double syn_drmap_simple_dist(syn_drmap *hist1, syn_drmap *hist2)
+double DRMap::total()
+{
+    double total = 0;
+
+    for (unsigned int x = 0; x < bin_number; x++) {
+        for (unsigned int y = 0; y < bin_number; y++) {
+            total += data[(y * bin_number) + x];
+        }
+    }
+
+    return total;
+}
+
+
+double DRMap::simple_dist(DRMap* map)
 {
     double dist = 0;
-    unsigned int x, y;
-    for (x = 0; x < hist1->bin_number; x++)
-        for (y = 0; y < hist1->bin_number; y++)
-            dist += fabs(hist1->data[(y * hist1->bin_number) + x] - hist2->data[(y * hist2->bin_number) + x]);
+    for (unsigned int x = 0; x < bin_number; x++) {
+        for (unsigned int y = 0; y < bin_number; y++) {
+            dist += fabs(data[(y * bin_number) + x] - map->data[(y * map->bin_number) + x]);
+        }
+    }
     return dist;
 }
 
 
-double groundDist(feature_tt* feature1, feature_tt* feature2)
+double ground_dist(feature_tt* feature1, feature_tt* feature2)
 {
     double deltaX = feature1->x - feature2->x;
     double deltaY = feature1->y - feature2->y;
@@ -120,15 +141,15 @@ double groundDist(feature_tt* feature1, feature_tt* feature2)
 }
 
 
-signature_tt* syn_drmap_get_emd_signature(syn_drmap *hist)
+signature_tt* get_emd_signature(DRMap* map)
 {
     unsigned int n = 0;
-    unsigned int x, y;
-    
-    for (x = 0; x < hist->bin_number; x++) {
-        for (y = 0; y < hist->bin_number; y++) {
-            if (hist->data[(y * hist->bin_number) + x] > 0)
+    unsigned int bin_number = map->get_bin_number();
+    for (unsigned int x = 0; x < bin_number; x++) {
+        for (unsigned int y = 0; y < bin_number; y++) {
+            if (map->get_value(x, y) > 0) {
                 n++;
+            }
         }
     }
 
@@ -136,10 +157,9 @@ signature_tt* syn_drmap_get_emd_signature(syn_drmap *hist)
     double* weights = (double*)malloc(sizeof(double) * n);
 
     unsigned int i = 0;
-
-    for (x = 0; x < hist->bin_number; x++) {
-        for (y = 0; y < hist->bin_number; y++) {
-            double val = hist->data[(y * hist->bin_number) + x];
+    for (unsigned int x = 0; x < bin_number; x++) {
+        for (unsigned int y = 0; y < bin_number; y++) {
+            double val = map->get_value(x, y);
             if (val > 0) {
                 features[i].x = x;
                 features[i].y = y;
@@ -158,12 +178,21 @@ signature_tt* syn_drmap_get_emd_signature(syn_drmap *hist)
 }
 
 
-double syn_drmap_emd_dist(syn_drmap *hist1, syn_drmap *hist2)
+double DRMap::emd_dist(DRMap* map)
 {
-    signature_tt* sig1 = syn_drmap_get_emd_signature(hist1);
-    signature_tt* sig2 = syn_drmap_get_emd_signature(hist2);
+    double infinity = 9999999999.9;
+
+    if (total() == 0) {
+        return infinity;
+    }
+    if (map->total() == 0) {
+        return infinity;
+    }
+
+    signature_tt* sig1 = get_emd_signature(this);
+    signature_tt* sig2 = get_emd_signature(map);
     
-    double dist = emd_hat_signature_interface(sig1, sig2, groundDist, -1);
+    double dist = emd_hat_signature_interface(sig1, sig2, ground_dist, -1);
 
     free(sig1->Features);
     free(sig1->Weights);
@@ -176,14 +205,14 @@ double syn_drmap_emd_dist(syn_drmap *hist1, syn_drmap *hist2)
 }
 
 
-void syn_drmap_print(syn_drmap *hist)
+void DRMap::print()
 {
-    unsigned int x, y;
-
-    for (y = 0; y < hist->bin_number; y++) {
-        for (x = 0; x < hist->bin_number; x++) {
-            printf("%f\t", syn_drmap_get_value(hist, x, y));
+    for (unsigned int y = 0; y < bin_number; y++) {
+        for (unsigned int x = 0; x < bin_number; x++) {
+            printf("%f\t", get_value(x, y));
         }
         printf("\n");
     }
+}
+
 }

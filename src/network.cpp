@@ -6,9 +6,13 @@
 
 #include "network.h"
 #include "utils.h"
-#include <math.h>
+#include <cmath>
 #include <string.h>
 #include <stdio.h>
+
+
+using std::isfinite;
+
 
 namespace syn
 {
@@ -88,18 +92,18 @@ syn_node* Net::get_random_node()
     return curnode;
 }
 
-syn_drmap* Net::get_drmap(unsigned int bin_number)
+DRMap* Net::get_drmap(unsigned int bin_number)
 {
     return get_drmap_with_limits(bin_number, min_pr_in, max_pr_in, min_pr_out, max_pr_out);
 }
 
-syn_drmap* Net::get_drmap_with_limits(unsigned int bin_number, double min_val_hor,
+DRMap* Net::get_drmap_with_limits(unsigned int bin_number, double min_val_hor,
                                         double max_val_hor, double min_val_ver, double max_val_ver)
 {
     double interval_hor = (max_val_hor - min_val_hor) / ((double)bin_number);
     double interval_ver = (max_val_ver - min_val_ver) / ((double)bin_number);
 
-    syn_drmap* map = syn_drmap_create(bin_number, min_val_hor - interval_hor,
+    DRMap* map = new DRMap(bin_number, min_val_hor - interval_hor,
         max_val_hor, min_val_ver - interval_ver, max_val_ver);
 
     syn_node* node = nodes;
@@ -131,7 +135,7 @@ syn_drmap* Net::get_drmap_with_limits(unsigned int bin_number, double min_val_ho
         }
 
         if ((x >= 0) && (y >= 0) && ((node->in_degree != 0) || (node->out_degree != 0))) {
-            syn_drmap_inc_value(map, x, y);
+            map->inc_value(x, y);
         }
         
         node = node->next;

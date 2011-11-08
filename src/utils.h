@@ -9,7 +9,7 @@
 
 #include <time.h>
 #include <stdlib.h>
-#include <math.h>
+#include <cmath>
 
 // MAX & MIN
 #define MAXIM(x,y) ((x) > (y) ? (x) : (y))

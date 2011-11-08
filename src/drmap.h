@@ -7,32 +7,44 @@
 #pragma once
 
 
-//#include "emd.h"
+namespace syn {
 
+class DRMap
+{
+public:
+	DRMap(unsigned int bin_number, double min_val_hor, double max_val_hor,
+    	double min_val_ver, double max_val_ver);
+	virtual ~DRMap();
 
-typedef struct syn_drmap_s {
-    double *data;
+	void clear();
+	void set_value(unsigned int x, unsigned int y, double val);
+	void inc_value(unsigned int x, unsigned int y);
+	double get_value(unsigned int x, unsigned int y);
+
+	void log_scale();
+	void normalize();
+	void binary();
+
+	double total();
+
+	double simple_dist(DRMap* map);
+	double emd_dist(DRMap* map);
+
+	void print();
+
+	unsigned int get_bin_number() {return bin_number;}
+	double get_min_val_hor() {return min_val_hor;}
+	double get_max_val_hor() {return max_val_hor;}
+	double get_min_val_ver() {return min_val_ver;}
+	double get_max_val_ver() {return max_val_ver;}
+
+private:
+	double* data;
     unsigned int bin_number;
     double min_val_hor;
     double max_val_hor;
     double min_val_ver;
     double max_val_ver;
-} syn_drmap;
+};
 
-syn_drmap *syn_drmap_create(unsigned int bin_number, double min_val_hor, double max_val_hor,
-    double min_val_ver, double max_val_ver);
-void syn_drmap_destroy(syn_drmap *hist);
-
-void syn_drmap_clear(syn_drmap *hist);
-void syn_drmap_set_value(syn_drmap *hist, unsigned int x, unsigned int y, double val);
-void syn_drmap_inc_value(syn_drmap *hist, unsigned int x, unsigned int y);
-double syn_drmap_get_value(syn_drmap *hist, unsigned int x, unsigned int y);
-
-void syn_drmap_log_scale(syn_drmap *map);
-void syn_drmap_normalize(syn_drmap *map);
-void syn_drmap_binary(syn_drmap *map);
-
-double syn_drmap_simple_dist(syn_drmap *hist1, syn_drmap *hist2);
-double syn_drmap_emd_dist(syn_drmap *hist1, syn_drmap *hist2);
-
-void syn_drmap_print(syn_drmap *hist);
+}

@@ -6,7 +6,7 @@
 
 #include "node.h"
 #include "utils.h"
-#include <math.h>
+#include <cmath>
 #include <stdio.h>
 
 

@@ -6,6 +6,7 @@
 #include "gpgenerator.h"
 
 using syn::Net;
+using syn::DRMap;
 
 // NET API
 
@@ -319,10 +320,10 @@ static PyObject *pysyn_create_drmap(PyObject *self, PyObject *args)
 {
     unsigned int bin_number;
     float min_val_hor, max_val_hor, min_val_ver, max_val_ver;
-    syn_drmap *map = NULL;
+    DRMap* map = NULL;
 
     if (PyArg_ParseTuple(args, "iffff", &bin_number, &min_val_hor, &max_val_hor, &min_val_ver, &max_val_ver)) {
-        map = syn_drmap_create(bin_number, min_val_hor, max_val_hor, min_val_ver, max_val_ver);
+        map = new DRMap(bin_number, min_val_hor, max_val_hor, min_val_ver, max_val_ver);
     }
 
     PyObject *result = Py_BuildValue("l", (long)map);
@@ -332,11 +333,11 @@ static PyObject *pysyn_create_drmap(PyObject *self, PyObject *args)
 static PyObject *pysyn_destroy_drmap(PyObject *self, PyObject *args)
 {
     long p;
-    syn_drmap *map = NULL;
+    DRMap* map = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        map = (syn_drmap *)p;
-        syn_drmap_destroy(map);
+        map = (DRMap*)p;
+        delete map;
     }
     
     PyObject *result = Py_BuildValue("");
@@ -348,7 +349,7 @@ static PyObject *pysyn_get_drmap(PyObject *self, PyObject *args)
     long p;
     int bin_number;
     Net* net;
-    syn_drmap* map = NULL;
+    DRMap* map = NULL;
 
     if (PyArg_ParseTuple(args, "li", &p, &bin_number)) {
         net = (Net*)p;
@@ -364,7 +365,7 @@ static PyObject *pysyn_get_drmap_with_limits(PyObject *self, PyObject *args)
     long p;
     int bin_number;
     Net* net;
-    syn_drmap* map = NULL;
+    DRMap* map = NULL;
     double min_val_hor;
     double max_val_hor;
     double min_val_ver;
@@ -382,11 +383,11 @@ static PyObject *pysyn_get_drmap_with_limits(PyObject *self, PyObject *args)
 static PyObject *pysyn_drmap_print(PyObject *self, PyObject *args)
 {
     long p;
-    syn_drmap *map = NULL;
+    DRMap* map = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        map = (syn_drmap *)p;
-        syn_drmap_print(map);
+        map = (DRMap*)p;
+        map->print();
     }
     
     PyObject *result = Py_BuildValue("");
@@ -396,13 +397,13 @@ static PyObject *pysyn_drmap_print(PyObject *self, PyObject *args)
 static PyObject *pysyn_drmap_bin_number(PyObject *self, PyObject *args)
 {
     long p;
-    syn_drmap *hist = NULL;
+    DRMap* map = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        hist = (syn_drmap *)p;
+        map = (DRMap*)p;
     }
     
-    PyObject *result = Py_BuildValue("i", hist->bin_number);
+    PyObject *result = Py_BuildValue("i", map->get_bin_number());
     return result;
 }
 
@@ -410,12 +411,12 @@ static PyObject *pysyn_drmap_get_value(PyObject *self, PyObject *args)
 {
     long p;
     int x, y;
-    syn_drmap *hist = NULL;
+    DRMap* map = NULL;
     double value = 0.0;
 
     if (PyArg_ParseTuple(args, "lii", &p, &x, &y)) {
-      hist = (syn_drmap *)p;
-      value = syn_drmap_get_value(hist, x, y);
+      map = (DRMap*)p;
+      value = map->get_value(x, y);
     }
     
     PyObject *result = Py_BuildValue("f", value);
@@ -426,12 +427,12 @@ static PyObject *pysyn_drmap_set_value(PyObject *self, PyObject *args)
 {
     long p;
     int x, y;
-    syn_drmap *hist = NULL;
+    DRMap* map = NULL;
     double val;
 
     if (PyArg_ParseTuple(args, "liid", &p, &x, &y, &val)) {
-      hist = (syn_drmap *)p;
-      syn_drmap_set_value(hist, x, y, val);
+      map = (DRMap*)p;
+      map->set_value(x, y, val);
     }
     
     PyObject *result = Py_BuildValue("");
@@ -441,24 +442,25 @@ static PyObject *pysyn_drmap_set_value(PyObject *self, PyObject *args)
 static PyObject *pysyn_drmap_get_limits(PyObject *self, PyObject *args)
 {
     long p;
-    syn_drmap *map = NULL;
+    DRMap* map = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        map = (syn_drmap *)p;
+        map = (DRMap*)p;
     }
     
-    PyObject *result = Py_BuildValue("(dddd)", map->min_val_hor, map->max_val_hor, map->min_val_ver, map->max_val_ver);
+    PyObject *result = Py_BuildValue("(dddd)", map->get_min_val_hor(), map->get_max_val_hor(),
+                                        map->get_min_val_ver(), map->get_max_val_ver());
     return result;
 }
 
 static PyObject *pysyn_drmap_log_scale(PyObject *self, PyObject *args)
 {
     long p;
-    syn_drmap *map = NULL;
+    DRMap* map = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        map = (syn_drmap *)p;
-        syn_drmap_log_scale(map);
+        map = (DRMap*)p;
+        map->log_scale();
     }
     
     PyObject *result = Py_BuildValue("");
@@ -468,11 +470,11 @@ static PyObject *pysyn_drmap_log_scale(PyObject *self, PyObject *args)
 static PyObject *pysyn_drmap_normalize(PyObject *self, PyObject *args)
 {
     long p;
-    syn_drmap *map = NULL;
+    DRMap* map = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        map = (syn_drmap *)p;
-        syn_drmap_normalize(map);
+        map = (DRMap*)p;
+        map->normalize();
     }
     
     PyObject *result = Py_BuildValue("");
@@ -482,11 +484,11 @@ static PyObject *pysyn_drmap_normalize(PyObject *self, PyObject *args)
 static PyObject *pysyn_drmap_binary(PyObject *self, PyObject *args)
 {
     long p;
-    syn_drmap *map = NULL;
+    DRMap* map = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        map = (syn_drmap *)p;
-        syn_drmap_binary(map);
+        map = (DRMap*)p;
+        map->binary();
     }
     
     PyObject *result = Py_BuildValue("");
@@ -496,14 +498,14 @@ static PyObject *pysyn_drmap_binary(PyObject *self, PyObject *args)
 static PyObject *pysyn_drmap_emd_distance(PyObject *self, PyObject *args)
 {
     long p1, p2;
-    syn_drmap *hist1 = NULL;
-    syn_drmap *hist2 = NULL;
+    DRMap* map1 = NULL;
+    DRMap* map2 = NULL;
     double value = 0.0;
 
     if (PyArg_ParseTuple(args, "ll", &p1, &p2)) {
-      hist1 = (syn_drmap *)p1;
-      hist2 = (syn_drmap *)p2;
-      value = syn_drmap_emd_dist(hist1, hist2);
+        map1 = (DRMap*)p1;
+        map2 = (DRMap*)p2;
+        value = map1->emd_dist(map2);
     }
 
     PyObject *result = Py_BuildValue("d", value);
@@ -513,14 +515,14 @@ static PyObject *pysyn_drmap_emd_distance(PyObject *self, PyObject *args)
 static PyObject *pysyn_drmap_simple_distance(PyObject *self, PyObject *args)
 {
     long p1, p2;
-    syn_drmap *hist1 = NULL;
-    syn_drmap *hist2 = NULL;
+    DRMap* map1 = NULL;
+    DRMap* map2 = NULL;
     double value = 0.0;
 
     if (PyArg_ParseTuple(args, "ll", &p1, &p2)) {
-      hist1 = (syn_drmap *)p1;
-      hist2 = (syn_drmap *)p2;
-      value = syn_drmap_simple_dist(hist1, hist2);
+        map1 = (DRMap*)p1;
+        map2 = (DRMap*)p2;
+        value = map1->simple_dist(map2);
     }
 
     PyObject *result = Py_BuildValue("d", value);

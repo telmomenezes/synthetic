@@ -27,8 +27,8 @@ public:
 
     void compute_pageranks();
     void write_pageranks(const char *file_path);
-    syn_drmap* get_drmap(unsigned int bin_number);
-    syn_drmap* get_drmap_with_limits(unsigned int bin_number, double min_val_hor, double max_val_hor, double min_val_ver, double max_val_ver);
+    DRMap* get_drmap(unsigned int bin_number);
+    DRMap* get_drmap_with_limits(unsigned int bin_number, double min_val_hor, double max_val_hor, double min_val_ver, double max_val_ver);
 
     void print_net_info();
 
@@ -54,7 +54,7 @@ private:
     unsigned long min_ts;
     unsigned long max_ts;
 
-    syn_drmap* last_map;
+    DRMap* last_map;
 };
 
 }
