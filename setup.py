@@ -14,8 +14,9 @@ core_module = Extension('core',
                     define_macros = [('MAJOR_VERSION', '1'),
                                      ('MINOR_VERSION', '0')],
                     libraries = ['m'],
-                    include_dirs = ['src', 'src/gp'],
-                    sources = ['src/synpython.c', 'src/edge.c', 'src/node.c', 'src/emd.c', 'src/drmap.c', 'src/network.c', 'src/mgenerator.c', 'src/gp/gpnode.c', 'src/gp/gptree.c', 'src/gpgenerator.c'])
+                    include_dirs = ['src', 'src/gp', 'src/FastEMD'],
+                    sources = ['src/synpython.cpp', 'src/edge.cpp', 'src/node.cpp', 'src/drmap.cpp', 'src/network.cpp', 
+                                'src/mgenerator.cpp', 'src/gp/gpnode.cpp', 'src/gp/gptree.cpp', 'src/gpgenerator.cpp'])
 
 setup (name = 'synthetic',
        version = '1.0',

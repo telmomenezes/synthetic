@@ -6,10 +6,12 @@
 
 #include "drmap.h"
 #include "utils.h"
+
+#include "emd_hat_signatures_interface.hpp"
+
 #include <stdlib.h>
 #include <strings.h>
 #include <stdio.h>
-
 
 syn_drmap *syn_drmap_create(unsigned int bin_number, double min_val_hor, double max_val_hor,
      double min_val_ver, double max_val_ver)
@@ -108,7 +110,17 @@ double syn_drmap_simple_dist(syn_drmap *hist1, syn_drmap *hist2)
 }
 
 
-signature_t* syn_drmap_get_emd_signature(syn_drmap *hist)
+double groundDist(feature_tt* feature1, feature_tt* feature2)
+{
+    double deltaX = feature1->x - feature2->x;
+    double deltaY = feature1->y - feature2->y;
+    double dist = sqrt((deltaX * deltaX) + (deltaY * deltaY));
+    //double dist = (deltaX * deltaX) + (deltaY * deltaY);
+    return dist;
+}
+
+
+signature_tt* syn_drmap_get_emd_signature(syn_drmap *hist)
 {
     unsigned int n = 0;
     unsigned int x, y;
@@ -120,7 +132,7 @@ signature_t* syn_drmap_get_emd_signature(syn_drmap *hist)
         }
     }
 
-    feature_t* features = (feature_t*)malloc(sizeof(feature_t) * n);
+    feature_tt* features = (feature_tt*)malloc(sizeof(feature_tt) * n);
     double* weights = (double*)malloc(sizeof(double) * n);
 
     unsigned int i = 0;
@@ -137,7 +149,7 @@ signature_t* syn_drmap_get_emd_signature(syn_drmap *hist)
         }
     }
 
-    signature_t* signature = (signature_t*)malloc(sizeof(signature_t));
+    signature_tt* signature = (signature_tt*)malloc(sizeof(signature_tt));
     signature->n = n;
     signature->Features = features;
     signature->Weights = weights;
@@ -148,11 +160,11 @@ signature_t* syn_drmap_get_emd_signature(syn_drmap *hist)
 
 double syn_drmap_emd_dist(syn_drmap *hist1, syn_drmap *hist2)
 {
-    signature_t* sig1 = syn_drmap_get_emd_signature(hist1);
-    signature_t* sig2 = syn_drmap_get_emd_signature(hist2);
+    signature_tt* sig1 = syn_drmap_get_emd_signature(hist1);
+    signature_tt* sig2 = syn_drmap_get_emd_signature(hist2);
     
-    double dist = emd(sig1, sig2, groundDist, NULL, NULL);
-    
+    double dist = emd_hat_signature_interface(sig1, sig2, groundDist, -1);
+
     free(sig1->Features);
     free(sig1->Weights);
     free(sig1);

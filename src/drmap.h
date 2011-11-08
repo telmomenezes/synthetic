@@ -7,7 +7,7 @@
 #pragma once
 
 
-#include "emd.h"
+//#include "emd.h"
 
 
 typedef struct syn_drmap_s {
@@ -36,5 +36,3 @@ double syn_drmap_simple_dist(syn_drmap *hist1, syn_drmap *hist2);
 double syn_drmap_emd_dist(syn_drmap *hist1, syn_drmap *hist2);
 
 void syn_drmap_print(syn_drmap *hist);
-
-signature_t* syn_drmap_get_emd_signature(syn_drmap *hist);
