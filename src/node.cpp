@@ -9,53 +9,52 @@
 #include <cmath>
 #include <stdio.h>
 
-
-syn_node *syn_create_node(unsigned int type, unsigned int id)
+namespace syn
 {
-    syn_node *node = (syn_node *)malloc(sizeof(syn_node));
-    node->type = type;
-    node->id = id;
-    node->in_degree = 0;
-    node->out_degree = 0;
-    node->marked = 0;
-    node->last_walk_id = 0;
-    node->targets = NULL;
-    node->origins = NULL;
-    
-    return node;
+
+Node::Node(unsigned int type, unsigned int id)
+{
+    this->type = type;
+    this->id = id;
+    in_degree = 0;
+    out_degree = 0;
+    marked = 0;
+    last_walk_id = 0;
+    targets = NULL;
+    origins = NULL;
 }
 
 
-void syn_destroy_node(syn_node *node)
+Node::~Node()
 {
     // we destroy the outgoing edges of every node
-    syn_edge *edge = node->targets;
-    syn_edge *next_edge;
+    Edge* edge = targets;
+    Edge* next_edge;
     while (edge) {
         next_edge = edge->next_targ;
-        syn_destroy_edge(edge);
+        delete edge;
         edge = next_edge;
     }
-
-    free(node);
 }
 
 
-int syn_add_edge(syn_node *origin, syn_node *target, unsigned long timestamp)
+int Node::add_edge(Node* target, unsigned long timestamp)
 {
-    if (origin == target)
+    if (this == target) {
         return 0;
+    }
         
-    if (syn_edge_exists(origin, target))
+    if (edge_exists(target)) {
         return 0;
+    }
 
-    syn_edge *edge = syn_create_edge();
-    edge->orig = origin;
+    Edge* edge = new Edge();
+    edge->orig = this;
     edge->targ = target;
     edge->timestamp = timestamp;
-    edge->next_targ = origin->targets;
-    origin->targets = edge;
-    origin->out_degree++;
+    edge->next_targ = targets;
+    targets = edge;
+    out_degree++;
     edge->next_orig = target->origins;
     target->origins = edge;
     target->in_degree++;
@@ -64,9 +63,9 @@ int syn_add_edge(syn_node *origin, syn_node *target, unsigned long timestamp)
 }
 
 
-int syn_edge_exists(syn_node *origin, syn_node *target)
+int Node::edge_exists(Node* target)
 {
-    syn_edge *edge = origin->targets;
+    Edge* edge = targets;
     
     while (edge) {
         if (edge->targ == target) {
@@ -78,3 +77,4 @@ int syn_edge_exists(syn_node *origin, syn_node *target)
     return 0;
 }
 
+}

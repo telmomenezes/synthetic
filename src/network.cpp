@@ -32,39 +32,39 @@ Net::Net()
 
 Net::~Net()
 {
-    syn_node* node = nodes;
+    Node* node = nodes;
     while (node) {
-        syn_node* next_node = node->next;
-        syn_destroy_node(node);
+        Node* next_node = node->next;
+        delete node;
         node = next_node;
     }
 }
 
 
-syn_node* Net::add_node(unsigned int type)
+Node* Net::add_node(unsigned int type)
 {
     node_count++;
-    syn_node *node = syn_create_node(type, SYN_CURID++);
+    Node* node = new Node(type, SYN_CURID++);
     node->next = nodes;
     nodes = node;
     return node;
 }
 
-syn_node* Net::add_node_with_id(unsigned int nid, unsigned int type)
+Node* Net::add_node_with_id(unsigned int nid, unsigned int type)
 {
     node_count++;
     if (nid >= SYN_CURID) {
         SYN_CURID = nid + 1;
     }
-    syn_node* node = syn_create_node(type, nid);
+    Node* node = new Node(type, nid);
     node->next = nodes;
     nodes = node;
     return node;
 }
 
-int Net::add_edge_to_net(syn_node* orig, syn_node* targ, unsigned long timestamp)
+int Net::add_edge_to_net(Node* orig, Node* targ, unsigned long timestamp)
 {
-    if (syn_add_edge(orig, targ, timestamp)) {
+    if (orig->add_edge(targ, timestamp)) {
         edge_count++;
 
         if (timestamp > 0) {
@@ -82,10 +82,10 @@ int Net::add_edge_to_net(syn_node* orig, syn_node* targ, unsigned long timestamp
     return 0;
 }
 
-syn_node* Net::get_random_node()
+Node* Net::get_random_node()
 {
     unsigned int pos = RANDOM_UINT(node_count);
-    syn_node* curnode = nodes;
+    Node* curnode = nodes;
     for (int i = 0; i < pos; i++) {
         curnode = curnode->next;
     }
@@ -106,35 +106,35 @@ DRMap* Net::get_drmap_with_limits(unsigned int bin_number, double min_val_hor,
     DRMap* map = new DRMap(bin_number, min_val_hor - interval_hor,
         max_val_hor, min_val_ver - interval_ver, max_val_ver);
 
-    syn_node* node = nodes;
+    Node* node = nodes;
     while (node) {
         int x = 0;
         int y = 0;
 
-        if (isfinite(node->pr_in)) {
-            if (node->pr_in <= min_val_hor) {
+        if (isfinite(node->get_pr_in())) {
+            if (node->get_pr_in() <= min_val_hor) {
                 x = 0;
             }
-            else if (node->pr_in >= max_val_hor) {
+            else if (node->get_pr_in() >= max_val_hor) {
                 x = bin_number - 1;
             }
             else {
-                x = (unsigned int)floor((node->pr_in - min_val_hor) / interval_hor);
+                x = (unsigned int)floor((node->get_pr_in() - min_val_hor) / interval_hor);
             }
         }
         if (isfinite(node->pr_out)) {
-            if (node->pr_out <= min_val_ver) {
+            if (node->get_pr_out() <= min_val_ver) {
                 y = 0;
             }
-            else if (node->pr_out >= max_val_ver) {
+            else if (node->get_pr_out() >= max_val_ver) {
                 y = bin_number - 1;
             }
             else {
-                y = (unsigned int)floor((node->pr_out - min_val_ver) / interval_ver);
+                y = (unsigned int)floor((node->get_pr_out() - min_val_ver) / interval_ver);
             }
         }
 
-        if ((x >= 0) && (y >= 0) && ((node->in_degree != 0) || (node->out_degree != 0))) {
+        if ((x >= 0) && (y >= 0) && ((node->get_in_degree() != 0) || (node->get_out_degree() != 0))) {
             map->inc_value(x, y);
         }
         
@@ -150,7 +150,7 @@ void Net::compute_pageranks()
     // TODO: config
     unsigned int max_iter = 10;
 
-    syn_node* node = nodes;
+    Node* node = nodes;
     while (node) {
         node->pr_in_last = 1;
         node->pr_out_last = 1;
@@ -172,7 +172,7 @@ void Net::compute_pageranks()
         node = nodes;
         while(node) {
             node->pr_in = 0;
-            syn_edge *origin = node->origins;
+            Edge* origin = node->origins;
             while (origin) {
                 //node->_prIn += origin->_prInLast / ((double)origin->getOutDegree());
                 node->pr_in += origin->orig->pr_in_last;
@@ -184,7 +184,7 @@ void Net::compute_pageranks()
             acc_pr_in += node->pr_in;
 
             node->pr_out = 0;
-            syn_edge *target = node->targets;
+            Edge* target = node->targets;
             while (target) {
                 node->pr_out += target->targ->pr_out_last;
                 target = target->next_targ;
@@ -271,7 +271,7 @@ void Net::write_pageranks(const char *file_path)
    
     fprintf(f, "id, pr_in, pr_out, in_degree, out_degree\n");
 
-    syn_node* node = nodes;
+    Node* node = nodes;
     while (node) {
         fprintf(f, "%d,%.10f,%.10f,%d,%d\n", node->id, node->pr_in, node->pr_out, node->in_degree, node->out_degree);
         node = node->next;

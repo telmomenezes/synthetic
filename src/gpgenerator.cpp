@@ -5,9 +5,13 @@
 
 
 #include "gpgenerator.h"
+#include "Node.h"
 #include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
+
+
+using syn::Node;
 
 
 syn_gpgen *syn_create_gpgenerator()
@@ -59,8 +63,8 @@ Net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, unsig
         net->add_node_with_id(i, 0);
     }
 
-    syn_node* orig_node;
-    syn_node* targ_node;
+    Node* orig_node;
+    Node* targ_node;
     double total_weight;
     double weight;
 

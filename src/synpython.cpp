@@ -6,7 +6,9 @@
 #include "gpgenerator.h"
 
 using syn::Net;
+using syn::Node;
 using syn::DRMap;
+
 
 // NET API
 
@@ -37,7 +39,7 @@ static PyObject *pysyn_add_node(PyObject *self, PyObject *args)
     long p;
     int type;
     Net* net;
-    syn_node* node = NULL;
+    Node* node = NULL;
 
     if (PyArg_ParseTuple(args, "li", &p, &type)) {
         net = (Net*)p;
@@ -54,7 +56,7 @@ static PyObject *pysyn_add_node_with_id(PyObject *self, PyObject *args)
     unsigned int nid;
     int type;
     Net* net;
-    syn_node* node = NULL;
+    Node* node = NULL;
 
     if (PyArg_ParseTuple(args, "lii", &p, &nid, &type)) {
         net = (Net*)p;
@@ -70,14 +72,14 @@ static PyObject *pysyn_add_edge_to_net(PyObject *self, PyObject *args)
     long p1, p2, p3;
     unsigned long ts = 0;
     Net* net;
-    syn_node* orig;
-    syn_node* targ;
+    Node* orig;
+    Node* targ;
     int res = 0;
 
     if (PyArg_ParseTuple(args, "llll", &p1, &p2, &p3, &ts)) {
       net = (Net*)p1;
-      orig = (syn_node *)p2;
-      targ = (syn_node *)p3;
+      orig = (Node*)p2;
+      targ = (Node*)p3;
       res = net->add_edge_to_net(orig, targ, ts);
     }
 
@@ -209,7 +211,7 @@ static PyObject *pysyn_net_first_node(PyObject *self, PyObject *args)
 {
     long p;
     Net* net;
-    syn_node* node = NULL;
+    Node* node = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
         net = (Net*)p;
@@ -226,11 +228,11 @@ static PyObject *pysyn_net_first_node(PyObject *self, PyObject *args)
 static PyObject *pysyn_node_next_node(PyObject *self, PyObject *args)
 {
     long p;
-    syn_node *node;
-    syn_node *next_node = NULL;
+    Node* node;
+    Node* next_node = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        node = (syn_node *)p;
+        node = (Node*)p;
         next_node = node->next;
     }
 
@@ -241,12 +243,12 @@ static PyObject *pysyn_node_next_node(PyObject *self, PyObject *args)
 static PyObject *pysyn_node_id(PyObject *self, PyObject *args)
 {
     long p;
-    syn_node *node;
+    Node* node;
     unsigned int value = 0;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        node = (syn_node *)p;
-        value = node->id;
+        node = (Node*)p;
+        value = node->get_id();
     }
 
     PyObject *result = Py_BuildValue("i", value);
@@ -256,12 +258,12 @@ static PyObject *pysyn_node_id(PyObject *self, PyObject *args)
 static PyObject *pysyn_node_in_degree(PyObject *self, PyObject *args)
 {
     long p;
-    syn_node *node;
+    Node* node;
     unsigned int value = 0;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        node = (syn_node *)p;
-        value = node->in_degree;
+        node = (Node*)p;
+        value = node->get_in_degree();
     }
 
     PyObject *result = Py_BuildValue("i", value);
@@ -271,12 +273,12 @@ static PyObject *pysyn_node_in_degree(PyObject *self, PyObject *args)
 static PyObject *pysyn_node_out_degree(PyObject *self, PyObject *args)
 {
     long p;
-    syn_node *node;
+    Node* node;
     unsigned int value = 0;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        node = (syn_node *)p;
-        value = node->out_degree;
+        node = (Node*)p;
+        value = node->get_out_degree();
     }
 
     PyObject *result = Py_BuildValue("i", value);
@@ -286,12 +288,12 @@ static PyObject *pysyn_node_out_degree(PyObject *self, PyObject *args)
 static PyObject *pysyn_node_pr_in(PyObject *self, PyObject *args)
 {
     long p;
-    syn_node *node;
+    Node* node;
     double value = 0;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        node = (syn_node *)p;
-        value = node->pr_in;
+        node = (Node*)p;
+        value = node->get_pr_in();
     }
 
     PyObject *result = Py_BuildValue("f", value);
@@ -301,12 +303,12 @@ static PyObject *pysyn_node_pr_in(PyObject *self, PyObject *args)
 static PyObject *pysyn_node_pr_out(PyObject *self, PyObject *args)
 {
     long p;
-    syn_node *node;
+    Node* node;
     double value = 0;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        node = (syn_node *)p;
-        value = node->pr_out;
+        node = (Node*)p;
+        value = node->get_pr_out();
     }
 
     PyObject *result = Py_BuildValue("f", value);

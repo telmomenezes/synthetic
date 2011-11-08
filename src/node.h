@@ -8,18 +8,34 @@
 
 #include "edge.h"
 
-typedef struct syn_node_s {
+namespace syn
+{
+
+class Node {
+public:
+    Node(unsigned int type, unsigned int id);
+    virtual ~Node();
+
+    int add_edge(Node* target, unsigned long timestamp);
+    int edge_exists(Node* target);
+
+    unsigned int get_id(){return id;}
+    unsigned int get_in_degree(){return in_degree;}
+    unsigned int get_out_degree(){return out_degree;}
+    double get_pr_in(){return pr_in;}
+    double get_pr_out(){return pr_out;}
+
+    // node list
+    Node* next;
+
     unsigned int type;
     unsigned int id;
-    syn_edge* targets;
-    syn_edge* origins;
+    Edge* targets;
+    Edge* origins;
     unsigned int in_degree;
     unsigned int out_degree;
     int marked;
     unsigned long last_walk_id;
-    
-    // node list
-    struct syn_node_s* next;
     
     // pageranks
     double pr_in;
@@ -29,12 +45,6 @@ typedef struct syn_node_s {
 
     // for generators
     double genweight;
-} syn_node;
+};
 
-
-syn_node *syn_create_node(unsigned int type, unsigned int id);
-void syn_destroy_node(syn_node *node);
-
-int syn_add_edge(syn_node *origin, syn_node *target, unsigned long timestamp);
-int syn_edge_exists(syn_node *origin, syn_node *target);
-
+}

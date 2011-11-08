@@ -6,15 +6,21 @@
 
 #pragma once
 
-struct syn_node_s;
 
-typedef struct syn_edge_s {
-    struct syn_node_s *orig;
-    struct syn_node_s *targ;
-    struct syn_edge_s *next_orig;
-    struct syn_edge_s *next_targ;
+namespace syn
+{
+class Node;
+
+class Edge {
+public:
+	Edge();
+	virtual ~Edge();
+    
+    Node* orig;
+    Node* targ;
+    Edge* next_orig;
+    Edge* next_targ;
     unsigned long timestamp;
-} syn_edge;
+};
 
-syn_edge *syn_create_edge(void);
-void syn_destroy_edge(syn_edge *edge);
+}

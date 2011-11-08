@@ -19,14 +19,14 @@ public:
     Net();
     virtual ~Net();
 
-    syn_node* add_node(unsigned int type);
-    syn_node* add_node_with_id(unsigned int nid, unsigned int type);
-    int add_edge_to_net(syn_node* orig, syn_node* targ, unsigned long timestamp);
+    Node* add_node(unsigned int type);
+    Node* add_node_with_id(unsigned int nid, unsigned int type);
+    int add_edge_to_net(Node* orig, Node* targ, unsigned long timestamp);
 
-    syn_node* get_random_node();
+    Node* get_random_node();
 
     void compute_pageranks();
-    void write_pageranks(const char *file_path);
+    void write_pageranks(const char* file_path);
     DRMap* get_drmap(unsigned int bin_number);
     DRMap* get_drmap_with_limits(unsigned int bin_number, double min_val_hor, double max_val_hor, double min_val_ver, double max_val_ver);
 
@@ -37,7 +37,7 @@ public:
     unsigned int get_temporal(){return temporal;}
     unsigned long get_min_ts(){return min_ts;}
     unsigned long get_max_ts(){return max_ts;}
-    syn_node* get_nodes() {return nodes;}
+    Node* get_nodes() {return nodes;}
 
 private:
     double min_pr_in;
@@ -45,7 +45,7 @@ private:
     double max_pr_in;
     double max_pr_out;
     
-    syn_node* nodes;
+    Node* nodes;
 
     unsigned int node_count;
     unsigned int edge_count;
