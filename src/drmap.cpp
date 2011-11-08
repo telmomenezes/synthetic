@@ -74,14 +74,14 @@ void DRMap::log_scale()
 
 void DRMap::normalize()
 {
-    double t = total();
-    if (t <= 0) {
+    double m = max();
+    if (m <= 0) {
         return;
     }
-    // normalize by total
+    // normalize by max
     for (unsigned int x = 0; x < bin_number; x++) {
         for (unsigned int y = 0; y < bin_number; y++) {
-            data[(y * bin_number) + x] = data[(y * bin_number) + x] / t;
+            data[(y * bin_number) + x] = data[(y * bin_number) + x] / m;
         }
     }
 }
@@ -110,6 +110,22 @@ double DRMap::total()
     }
 
     return total;
+}
+
+
+double DRMap::max()
+{
+    double max = 0;
+
+    for (unsigned int x = 0; x < bin_number; x++) {
+        for (unsigned int y = 0; y < bin_number; y++) {
+            if (data[(y * bin_number) + x] > max) {
+                max = data[(y * bin_number) + x];
+            }
+        }
+    }
+
+    return max;
 }
 
 

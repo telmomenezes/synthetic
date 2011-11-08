@@ -26,6 +26,7 @@ public:
 	void binary();
 
 	double total();
+	double max();
 
 	double simple_dist(DRMap* map);
 	double emd_dist(DRMap* map);
