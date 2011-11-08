@@ -74,20 +74,14 @@ void DRMap::log_scale()
 
 void DRMap::normalize()
 {
-    // find max value
-    double max = 0;
-    for (unsigned int x = 0; x < bin_number; x++) {
-        for (unsigned int y = 0; y < bin_number; y++) {
-            if(data[(y * bin_number) + x] > max) {
-                max = data[(y * bin_number) + x];
-            }
-        }
+    double = total();
+    if (total <= 0) {
+        return;
     }
-
-    // normalize by max
+    // normalize by total
     for (unsigned int x = 0; x < bin_number; x++) {
         for (unsigned int y = 0; y < bin_number; y++) {
-            data[(y * bin_number) + x] = data[(y * bin_number) + x] / max;
+            data[(y * bin_number) + x] = data[(y * bin_number) + x] / total;
         }
     }
 }
@@ -184,10 +178,10 @@ double DRMap::emd_dist(DRMap* map)
 
     double infinity = 9999999999.9;
 
-    if (total() == 0) {
+    if (total() <= 0) {
         return infinity;
     }
-    if (map->total() == 0) {
+    if (map->total() <= 0) {
         return infinity;
     }
 
