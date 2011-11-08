@@ -74,14 +74,14 @@ void DRMap::log_scale()
 
 void DRMap::normalize()
 {
-    double = total();
-    if (total <= 0) {
+    double t = total();
+    if (t <= 0) {
         return;
     }
     // normalize by total
     for (unsigned int x = 0; x < bin_number; x++) {
         for (unsigned int y = 0; y < bin_number; y++) {
-            data[(y * bin_number) + x] = data[(y * bin_number) + x] / total;
+            data[(y * bin_number) + x] = data[(y * bin_number) + x] / t;
         }
     }
 }
