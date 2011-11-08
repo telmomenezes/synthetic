@@ -3,15 +3,15 @@
 #include "node.h"
 #include "network.h"
 #include "drmap.h"
-#include "mgenerator.h"
 #include "gpgenerator.h"
 
+using syn::Net;
 
 // NET API
 
 static PyObject *pysyn_create_net(PyObject *self, PyObject *args)
 {
-    syn_net *net = syn_create_net();
+    Net* net = new Net();
     PyObject *result = Py_BuildValue("l", (long)net);
     
     return result;
@@ -20,11 +20,11 @@ static PyObject *pysyn_create_net(PyObject *self, PyObject *args)
 static PyObject *pysyn_destroy_net(PyObject *self, PyObject *args)
 {
     long p;
-    syn_net *net;
+    Net* net;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        net = (syn_net *)p;
-        syn_destroy_net(net);
+        net = (Net*)p;
+        delete net;
     }
     
     PyObject *result = Py_BuildValue("");
@@ -35,12 +35,12 @@ static PyObject *pysyn_add_node(PyObject *self, PyObject *args)
 {
     long p;
     int type;
-    syn_net *net;
-    syn_node *node = NULL;
+    Net* net;
+    syn_node* node = NULL;
 
     if (PyArg_ParseTuple(args, "li", &p, &type)) {
-        net = (syn_net *)p;
-        node = syn_add_node(net, type);
+        net = (Net*)p;
+        node = net->add_node(type);
     }
 
     PyObject *result = Py_BuildValue("l", (long)node);
@@ -52,12 +52,12 @@ static PyObject *pysyn_add_node_with_id(PyObject *self, PyObject *args)
     long p;
     unsigned int nid;
     int type;
-    syn_net *net;
-    syn_node *node = NULL;
+    Net* net;
+    syn_node* node = NULL;
 
     if (PyArg_ParseTuple(args, "lii", &p, &nid, &type)) {
-        net = (syn_net *)p;
-        node = syn_add_node_with_id(net, nid, type);
+        net = (Net*)p;
+        node = net->add_node_with_id(nid, type);
     }
 
     PyObject *result = Py_BuildValue("l", (long)node);
@@ -68,15 +68,16 @@ static PyObject *pysyn_add_edge_to_net(PyObject *self, PyObject *args)
 {
     long p1, p2, p3;
     unsigned long ts = 0;
-    syn_net *net;
-    syn_node *orig, *targ;
+    Net* net;
+    syn_node* orig;
+    syn_node* targ;
     int res = 0;
 
     if (PyArg_ParseTuple(args, "llll", &p1, &p2, &p3, &ts)) {
-      net = (syn_net *)p1;
+      net = (Net*)p1;
       orig = (syn_node *)p2;
       targ = (syn_node *)p3;
-      res = syn_add_edge_to_net(net, orig, targ, ts);
+      res = net->add_edge_to_net(orig, targ, ts);
     }
 
     PyObject *result = Py_BuildValue("i", res);
@@ -88,11 +89,11 @@ static PyObject *pysyn_add_edge_to_net(PyObject *self, PyObject *args)
 static PyObject *pysyn_compute_pageranks(PyObject *self, PyObject *args)
 {
     long p;
-    syn_net *net;
+    Net* net;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-      net = (syn_net *)p;
-      syn_compute_pageranks(net);
+      net = (Net*)p;
+      net->compute_pageranks();
     }
     
     PyObject *result = Py_BuildValue("");
@@ -102,12 +103,12 @@ static PyObject *pysyn_compute_pageranks(PyObject *self, PyObject *args)
 static PyObject *pysyn_write_pageranks(PyObject *self, PyObject *args)
 {
     long p;
-    char *file_path;
-    syn_net *net;
+    char* file_path;
+    Net* net;
 
     if (PyArg_ParseTuple(args, "ls", &p, &file_path)) {
-      net = (syn_net *)p;
-      syn_write_pageranks(net, file_path);
+      net = (Net*)p;
+      net->write_pageranks(file_path);
     }
     
     PyObject *result = Py_BuildValue("");
@@ -117,11 +118,11 @@ static PyObject *pysyn_write_pageranks(PyObject *self, PyObject *args)
 static PyObject *pysyn_print_net_info(PyObject *self, PyObject *args)
 {
     long p;
-    syn_net *net;
+    Net* net;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-      net = (syn_net *)p;
-      syn_print_net_info(net);
+      net = (Net*)p;
+      net->print_net_info();
     }
     
     PyObject *result = Py_BuildValue("");
@@ -131,12 +132,12 @@ static PyObject *pysyn_print_net_info(PyObject *self, PyObject *args)
 static PyObject *pysyn_net_node_count(PyObject *self, PyObject *args)
 {
     long p;
-    syn_net *net;
+    Net* net;
     unsigned int node_count = 0;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-      net = (syn_net *)p;
-      node_count = net->node_count;
+      net = (Net*)p;
+      node_count = net->get_node_count();
     }
     
     PyObject *result = Py_BuildValue("i", node_count);
@@ -146,12 +147,12 @@ static PyObject *pysyn_net_node_count(PyObject *self, PyObject *args)
 static PyObject *pysyn_net_edge_count(PyObject *self, PyObject *args)
 {
     long p;
-    syn_net *net;
+    Net* net;
     unsigned int edge_count = 0;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-      net = (syn_net *)p;
-      edge_count = net->edge_count;
+      net = (Net*)p;
+      edge_count = net->get_edge_count();
     }
     
     PyObject *result = Py_BuildValue("i", edge_count);
@@ -161,12 +162,12 @@ static PyObject *pysyn_net_edge_count(PyObject *self, PyObject *args)
 static PyObject *pysyn_net_temporal(PyObject *self, PyObject *args)
 {
     long p;
-    syn_net *net;
+    Net* net;
     unsigned int temporal = 0;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        net = (syn_net *)p;
-        temporal = net->temporal;
+        net = (Net*)p;
+        temporal = net->get_temporal();
     }
     
     PyObject *result = Py_BuildValue("i", temporal);
@@ -176,12 +177,12 @@ static PyObject *pysyn_net_temporal(PyObject *self, PyObject *args)
 static PyObject *pysyn_net_min_ts(PyObject *self, PyObject *args)
 {
     long p;
-    syn_net *net;
+    Net* net;
     unsigned int min_ts = 0;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        net = (syn_net *)p;
-        min_ts = net->min_ts;
+        net = (Net*)p;
+        min_ts = net->get_min_ts();
     }
     
     PyObject *result = Py_BuildValue("i", min_ts);
@@ -191,12 +192,12 @@ static PyObject *pysyn_net_min_ts(PyObject *self, PyObject *args)
 static PyObject *pysyn_net_max_ts(PyObject *self, PyObject *args)
 {
     long p;
-    syn_net *net;
+    Net* net;
     unsigned int max_ts = 0;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        net = (syn_net *)p;
-        max_ts = net->max_ts;
+        net = (Net*)p;
+        max_ts = net->get_max_ts();
     }
     
     PyObject *result = Py_BuildValue("i", max_ts);
@@ -206,12 +207,12 @@ static PyObject *pysyn_net_max_ts(PyObject *self, PyObject *args)
 static PyObject *pysyn_net_first_node(PyObject *self, PyObject *args)
 {
     long p;
-    syn_net *net;
-    syn_node *node = NULL;
+    Net* net;
+    syn_node* node = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
-        net = (syn_net *)p;
-        node = net->nodes;
+        net = (Net*)p;
+        node = net->get_nodes();
     }
 
     PyObject *result = Py_BuildValue("l", (long)node);
@@ -346,12 +347,12 @@ static PyObject *pysyn_get_drmap(PyObject *self, PyObject *args)
 {
     long p;
     int bin_number;
-    syn_net *net;
-    syn_drmap *map = NULL;
+    Net* net;
+    syn_drmap* map = NULL;
 
     if (PyArg_ParseTuple(args, "li", &p, &bin_number)) {
-        net = (syn_net *)p;
-        map = syn_get_drmap(net, bin_number);
+        net = (Net*)p;
+        map = net->get_drmap(bin_number);
     }
     
     PyObject *result = Py_BuildValue("l", (long)map);
@@ -362,16 +363,16 @@ static PyObject *pysyn_get_drmap_with_limits(PyObject *self, PyObject *args)
 {
     long p;
     int bin_number;
-    syn_net *net;
-    syn_drmap *map = NULL;
+    Net* net;
+    syn_drmap* map = NULL;
     double min_val_hor;
     double max_val_hor;
     double min_val_ver;
     double max_val_ver;
 
     if (PyArg_ParseTuple(args, "lidddd", &p, &bin_number, &min_val_hor, &max_val_hor, &min_val_ver, &max_val_ver)) {
-        net = (syn_net *)p;
-        map = syn_get_drmap_with_limits(net, bin_number, min_val_hor, max_val_hor, min_val_ver, max_val_ver);
+        net = (Net*)p;
+        map = net->get_drmap_with_limits(bin_number, min_val_hor, max_val_hor, min_val_ver, max_val_ver);
     }
     
     PyObject *result = Py_BuildValue("l", (long)map);
@@ -526,262 +527,6 @@ static PyObject *pysyn_drmap_simple_distance(PyObject *self, PyObject *args)
     return result;
 }
 
-// MGENERATOR API
-
-static PyObject *pysyn_create_generator(PyObject *self, PyObject *args)
-{
-    unsigned int types_count;
-    syn_gen *gen = NULL;
-
-    if (PyArg_ParseTuple(args, "i", &types_count)) {
-        gen = syn_create_generator(types_count);
-    }
-
-    PyObject *result = Py_BuildValue("l", (long)gen);
-    return result;
-}
-
-static PyObject *pysyn_destroy_generator(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-
-    if (PyArg_ParseTuple(args, "l", &p)) {
-      gen = (syn_gen *)p;
-      syn_destroy_generator(gen);
-    }
-    
-    PyObject *result = Py_BuildValue("");
-    return result;
-}
-
-static PyObject *pysyn_clone_generator(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    syn_gen *cgen;
-
-    if (PyArg_ParseTuple(args, "l", &p)) {
-      gen = (syn_gen *)p;
-      cgen = syn_clone_generator(gen);
-    }
-
-    PyObject *result = Py_BuildValue("l", (long)cgen);
-    return result;
-}
-
-static PyObject *pysyn_generate_network(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    syn_net *net = NULL;
-    unsigned int node_count, edge_count, max_cycles, max_walk_length;
-
-    if (PyArg_ParseTuple(args, "liiii", &p, &node_count, &edge_count, &max_cycles, &max_walk_length)) {
-      gen = (syn_gen *)p;
-      net = syn_generate_network(gen, node_count, edge_count, max_cycles, max_walk_length);
-    }
-    
-    PyObject *result = Py_BuildValue("l", (long)net);
-    return result;
-}
-
-
-static PyObject *pysyn_generator_set_link(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    unsigned int x, y;
-    double val;
-
-    if (PyArg_ParseTuple(args, "liid", &p, &x, &y, &val)) {
-      gen = (syn_gen *)p;
-      gen->m_link[(y * gen->types_count) + x] = val;
-    }
-    
-    PyObject *result = Py_BuildValue("");
-    return result;
-}
-
-
-static PyObject *pysyn_generator_set_random(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    unsigned int x, y;
-    double val;
-
-    if (PyArg_ParseTuple(args, "liid", &p, &x, &y, &val)) {
-      gen = (syn_gen *)p;
-      gen->m_random[(y * gen->types_count) + x] = val;
-    }
-    
-    PyObject *result = Py_BuildValue("");
-    return result;
-}
-
-
-static PyObject *pysyn_generator_set_follow(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    unsigned int x, y;
-    double val;
-
-    if (PyArg_ParseTuple(args, "liid", &p, &x, &y, &val)) {
-      gen = (syn_gen *)p;
-      gen->m_follow[(y * gen->types_count) + x] = val;
-    }
-    
-    PyObject *result = Py_BuildValue("");
-    return result;
-}
-
-
-static PyObject *pysyn_generator_set_rfollow(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    unsigned int x, y;
-    double val;
-
-    if (PyArg_ParseTuple(args, "liid", &p, &x, &y, &val)) {
-      gen = (syn_gen *)p;
-      gen->m_rfollow[(y * gen->types_count) + x] = val;
-    }
-    
-    PyObject *result = Py_BuildValue("");
-    return result;
-}
-
-
-static PyObject *pysyn_generator_set_weight(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    unsigned int pos;
-    double val;
-
-    if (PyArg_ParseTuple(args, "lid", &p, &pos, &val)) {
-      gen = (syn_gen *)p;
-      gen->m_weight[pos] = val;
-    }
-    
-    PyObject *result = Py_BuildValue("");
-    return result;
-}
-
-
-static PyObject *pysyn_generator_set_stop(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    unsigned int pos;
-    double val;
-
-    if (PyArg_ParseTuple(args, "lid", &p, &pos, &val)) {
-      gen = (syn_gen *)p;
-      gen->m_stop[pos] = val;
-    }
-    
-    PyObject *result = Py_BuildValue("");
-    return result;
-}
-
-
-static PyObject *pysyn_generator_get_r_edges(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    unsigned int r_edges = 0;
-
-    if (PyArg_ParseTuple(args, "l", &p)) {
-        gen = (syn_gen *)p;
-        r_edges = gen->r_edges;
-    }
-    
-    PyObject *result = Py_BuildValue("i", r_edges);
-    return result;
-}
-
-
-static PyObject *pysyn_generator_get_l_edges(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    unsigned int l_edges = 0;
-
-    if (PyArg_ParseTuple(args, "l", &p)) {
-        gen = (syn_gen *)p;
-        l_edges = gen->l_edges;
-    }
-    
-    PyObject *result = Py_BuildValue("i", l_edges);
-    return result;
-}
-
-
-static PyObject *pysyn_generator_get_total_edges(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    unsigned int total_edges = 0;
-
-    if (PyArg_ParseTuple(args, "l", &p)) {
-        gen = (syn_gen *)p;
-        total_edges = gen->total_edges;
-    }
-    
-    PyObject *result = Py_BuildValue("i", total_edges);
-    return result;
-}
-
-
-static PyObject *pysyn_generator_get_cycles(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    unsigned int cycles = 0;
-
-    if (PyArg_ParseTuple(args, "l", &p)) {
-        gen = (syn_gen *)p;
-        cycles = gen->cycles;
-    }
-    
-    PyObject *result = Py_BuildValue("i", cycles);
-    return result;
-}
-
-
-static PyObject *pysyn_generator_init_random(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-
-    if (PyArg_ParseTuple(args, "l", &p)) {
-        gen = (syn_gen *)p;
-        syn_gen_initrandom(gen);
-    }
-    
-    PyObject *result = Py_BuildValue("");
-    return result;
-}
-
-static PyObject *pysyn_generator_mutate(PyObject *self, PyObject *args)
-{
-    long p;
-    syn_gen *gen;
-    double mrate;
-
-    if (PyArg_ParseTuple(args, "ld", &p, &mrate)) {
-        gen = (syn_gen *)p;
-        syn_gen_mutate(gen, mrate);
-    }
-    
-    PyObject *result = Py_BuildValue("");
-    return result;
-}
-
 
 // GPGENERATOR API
 
@@ -825,7 +570,7 @@ static PyObject *pysyn_gpgen_run(PyObject *self, PyObject *args)
 {
     long p;
     syn_gpgen *gen;
-    syn_net *net = NULL;
+    Net* net = NULL;
     unsigned int nodes, edges, max_cycles;
 
     if (PyArg_ParseTuple(args, "liii", &p, &nodes, &edges, &max_cycles)) {
@@ -945,22 +690,6 @@ static PyMethodDef methods[] = {
     {"drmap_binary", pysyn_drmap_binary, METH_VARARGS, "Make drmap binary (0 or 1)."},
     {"drmap_simple_dist", pysyn_drmap_simple_distance, METH_VARARGS, "DRMap simple distance."},
     {"drmap_emd_dist", pysyn_drmap_emd_distance, METH_VARARGS, "DRMap earth mover's distance."},
-    {"create_generator", pysyn_create_generator, METH_VARARGS, "Create generator."},
-    {"destroy_generator", pysyn_destroy_generator, METH_VARARGS, "Destroy generator."},
-    {"clone_generator", pysyn_clone_generator, METH_VARARGS, "Clone generator."},
-    {"generate_network", pysyn_generate_network, METH_VARARGS, "Generate network."},
-    {"generator_set_link", pysyn_generator_set_link, METH_VARARGS, "Set value at a position of the generator link matrix."},
-    {"generator_set_random", pysyn_generator_set_random, METH_VARARGS, "Set value at a position of the generator random matrix."},
-    {"generator_set_follow", pysyn_generator_set_follow, METH_VARARGS, "Set value at a position of the generator follow matrix."},
-    {"generator_set_rfollow", pysyn_generator_set_rfollow, METH_VARARGS, "Set value at a position of the generator rfollow matrix."},
-    {"generator_set_weight", pysyn_generator_set_weight, METH_VARARGS, "Set value at a position of the generator weight matrix."},
-    {"generator_set_stop", pysyn_generator_set_stop, METH_VARARGS, "Set value at a position of the generator stop matrix."},
-    {"generator_get_r_edges", pysyn_generator_get_r_edges, METH_VARARGS, "Get number of random edges generated."},
-    {"generator_get_l_edges", pysyn_generator_get_l_edges, METH_VARARGS, "Get number of random walk edges generated."},
-    {"generator_get_total_edges", pysyn_generator_get_total_edges, METH_VARARGS, "Get total number edges generated."},
-    {"generator_get_cycles", pysyn_generator_get_cycles, METH_VARARGS, "Get number of cycles taken by the simulation."},
-    {"generator_init_random", pysyn_generator_init_random, METH_VARARGS, "Initalize random generator."},
-    {"generator_mutate", pysyn_generator_mutate, METH_VARARGS, "Mutate generator."},
     {"create_gpgenerator", pysyn_create_gpgenerator, METH_VARARGS, "Create gpgenerator."},
     {"destroy_gpgenerator", pysyn_destroy_gpgenerator, METH_VARARGS, "Destroy gpgenerator."},
     {"clone_gpgenerator", pysyn_clone_gpgenerator, METH_VARARGS, "Clone gpgenerator."},

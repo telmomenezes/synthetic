@@ -10,67 +10,66 @@
 #include <string.h>
 #include <stdio.h>
 
+namespace syn
+{
+
 static unsigned int SYN_CURID = 0;
 
-syn_net *syn_create_net()
+Net::Net()
 {
-    syn_net *net = (syn_net *)malloc(sizeof(syn_net));
-    net->node_count = 0;
-    net->edge_count = 0;
-    net->nodes = NULL;
-    net->temporal = 0;
-    net->min_ts = 0;
-    net->max_ts = 0;
-    return net;
+    node_count = 0;
+    edge_count = 0;
+    nodes = NULL;
+    temporal = 0;
+    min_ts = 0;
+    max_ts = 0;
 }
 
 
-void syn_destroy_net(syn_net *net)
+Net::~Net()
 {
-    syn_node *node = net->nodes;
-    syn_node *next_node;
+    syn_node* node = nodes;
     while (node) {
-        next_node = node->next;
+        syn_node* next_node = node->next;
         syn_destroy_node(node);
         node = next_node;
     }
-    free(net);
 }
 
 
-syn_node *syn_add_node(syn_net *net, unsigned int type)
+syn_node* Net::add_node(unsigned int type)
 {
-    net->node_count++;
+    node_count++;
     syn_node *node = syn_create_node(type, SYN_CURID++);
-    node->next = net->nodes;
-    net->nodes = node;
+    node->next = nodes;
+    nodes = node;
     return node;
 }
 
-syn_node *syn_add_node_with_id(syn_net *net, unsigned int nid, unsigned int type)
+syn_node* Net::add_node_with_id(unsigned int nid, unsigned int type)
 {
-    net->node_count++;
+    node_count++;
     if (nid >= SYN_CURID) {
         SYN_CURID = nid + 1;
     }
-    syn_node *node = syn_create_node(type, nid);
-    node->next = net->nodes;
-    net->nodes = node;
+    syn_node* node = syn_create_node(type, nid);
+    node->next = nodes;
+    nodes = node;
     return node;
 }
 
-int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ, unsigned long timestamp)
+int Net::add_edge_to_net(syn_node* orig, syn_node* targ, unsigned long timestamp)
 {
     if (syn_add_edge(orig, targ, timestamp)) {
-        net->edge_count++;
+        edge_count++;
 
         if (timestamp > 0) {
-            net->temporal = 1;
-            if ((net->min_ts == 0) || (timestamp < net->min_ts)) {
-                net->min_ts = timestamp;
+            temporal = 1;
+            if ((min_ts == 0) || (timestamp < min_ts)) {
+                min_ts = timestamp;
             }
-            if ((net->max_ts == 0) || (timestamp > net->max_ts)) {
-                net->max_ts = timestamp;
+            if ((max_ts == 0) || (timestamp > max_ts)) {
+                max_ts = timestamp;
             }
         }
 
@@ -79,32 +78,31 @@ int syn_add_edge_to_net(syn_net *net, syn_node* orig, syn_node* targ, unsigned l
     return 0;
 }
 
-syn_node* syn_get_random_node(syn_net* net)
+syn_node* Net::get_random_node()
 {
-    unsigned int pos = RANDOM_UINT(net->node_count);
-    int i;
-    syn_node* curnode = net->nodes;
-    for (i = 0; i < pos; i++) {
+    unsigned int pos = RANDOM_UINT(node_count);
+    syn_node* curnode = nodes;
+    for (int i = 0; i < pos; i++) {
         curnode = curnode->next;
     }
     return curnode;
 }
 
-syn_drmap *syn_get_drmap(syn_net *net, unsigned int bin_number)
+syn_drmap* Net::get_drmap(unsigned int bin_number)
 {
-    return syn_get_drmap_with_limits(net, bin_number, net->min_pr_in, net->max_pr_in, net->min_pr_out, net->max_pr_out);
+    return get_drmap_with_limits(bin_number, min_pr_in, max_pr_in, min_pr_out, max_pr_out);
 }
 
-syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, double min_val_hor,
+syn_drmap* Net::get_drmap_with_limits(unsigned int bin_number, double min_val_hor,
                                         double max_val_hor, double min_val_ver, double max_val_ver)
 {
     double interval_hor = (max_val_hor - min_val_hor) / ((double)bin_number);
     double interval_ver = (max_val_ver - min_val_ver) / ((double)bin_number);
 
-    syn_drmap *map = syn_drmap_create(bin_number, min_val_hor - interval_hor,
+    syn_drmap* map = syn_drmap_create(bin_number, min_val_hor - interval_hor,
         max_val_hor, min_val_ver - interval_ver, max_val_ver);
 
-    syn_node *node = net->nodes;
+    syn_node* node = nodes;
     while (node) {
         int x = 0;
         int y = 0;
@@ -143,12 +141,12 @@ syn_drmap *syn_get_drmap_with_limits(syn_net *net, unsigned int bin_number, doub
 }
 
 
-void syn_compute_pageranks(syn_net *net)
+void Net::compute_pageranks()
 {
     // TODO: config
     unsigned int max_iter = 10;
 
-    syn_node *node = net->nodes;
+    syn_node* node = nodes;
     while (node) {
         node->pr_in_last = 1;
         node->pr_out_last = 1;
@@ -167,7 +165,7 @@ void syn_compute_pageranks(syn_net *net)
         double acc_pr_in = 0;
         double acc_pr_out = 0;
 
-        node = net->nodes;
+        node = nodes;
         while(node) {
             node->pr_in = 0;
             syn_edge *origin = node->origins;
@@ -176,7 +174,7 @@ void syn_compute_pageranks(syn_net *net)
                 node->pr_in += origin->orig->pr_in_last;
                 origin = origin->next_orig;
             }
-            node->pr_in += (1.0 - 0.85) / ((double)net->node_count);
+            node->pr_in += (1.0 - 0.85) / ((double)node_count);
             //node->pr_in += (1.0 - 0.85);
             node->pr_in *= 0.85;
             acc_pr_in += node->pr_in;
@@ -187,7 +185,7 @@ void syn_compute_pageranks(syn_net *net)
                 node->pr_out += target->targ->pr_out_last;
                 target = target->next_targ;
             }
-            node->pr_out += (1.0 - 0.85) / ((double)net->node_count);
+            node->pr_out += (1.0 - 0.85) / ((double)node_count);
             //node->pr_out += (1.0 - 0.85);
             node->pr_out *= 0.85;
             acc_pr_out += node->pr_out;
@@ -200,7 +198,7 @@ void syn_compute_pageranks(syn_net *net)
         delta_pr_in = 0;
         delta_pr_out = 0;
 
-        node = net->nodes;
+        node = nodes;
         while (node) {
             node->pr_in /= acc_pr_in;
             node->pr_out /= acc_pr_out;
@@ -219,8 +217,8 @@ void syn_compute_pageranks(syn_net *net)
     }
 
     // relative pr
-    double base_pr = 1.0 / ((double)net->node_count);
-    node = net->nodes;
+    double base_pr = 1.0 / ((double)node_count);
+    node = nodes;
     while (node) {
         node->pr_in = node->pr_in / base_pr;
         node->pr_out = node->pr_out / base_pr;
@@ -228,7 +226,7 @@ void syn_compute_pageranks(syn_net *net)
     }
     
     // use log scale
-    node = net->nodes;
+    node = nodes;
     while (node) {
         node->pr_in = log(node->pr_in);
         node->pr_out = log(node->pr_out);
@@ -236,24 +234,24 @@ void syn_compute_pageranks(syn_net *net)
     }
 
     // compute min/max EVC in and out
-    net->min_pr_in = 0;
-    net->min_pr_out = 0;
-    net->max_pr_in = 0;
-    net->max_pr_out = 0;
+    min_pr_in = 0;
+    min_pr_out = 0;
+    max_pr_in = 0;
+    max_pr_out = 0;
     int first = 1;
-    node = net->nodes;
+    node = nodes;
     while (node) {
-        if (isfinite(node->pr_in) && (first || (node->pr_in < net->min_pr_in))) {
-            net->min_pr_in = node->pr_in;
+        if (isfinite(node->pr_in) && (first || (node->pr_in < min_pr_in))) {
+            min_pr_in = node->pr_in;
         }
-        if (isfinite(node->pr_out) && (first || (node->pr_out < net->min_pr_out))) {
-            net->min_pr_out = node->pr_out;
+        if (isfinite(node->pr_out) && (first || (node->pr_out < min_pr_out))) {
+            min_pr_out = node->pr_out;
         }
-        if (isfinite(node->pr_in) && (first || (node->pr_in > net->max_pr_in))) {
-            net->max_pr_in = node->pr_in;
+        if (isfinite(node->pr_in) && (first || (node->pr_in > max_pr_in))) {
+            max_pr_in = node->pr_in;
         }
-        if (isfinite(node->pr_out) && (first || (node->pr_out > net->max_pr_out))) {
-            net->max_pr_out = node->pr_out;
+        if (isfinite(node->pr_out) && (first || (node->pr_out > max_pr_out))) {
+            max_pr_out = node->pr_out;
         }
 
         first = 0;
@@ -263,15 +261,13 @@ void syn_compute_pageranks(syn_net *net)
 }
 
 
-void syn_write_pageranks(syn_net *net, const char *file_path)
+void Net::write_pageranks(const char *file_path)
 {
-    FILE *f;
-    f = fopen(file_path, "w");
+    FILE *f = fopen(file_path, "w");
    
     fprintf(f, "id, pr_in, pr_out, in_degree, out_degree\n");
 
-    
-    syn_node *node = net->nodes;
+    syn_node* node = nodes;
     while (node) {
         fprintf(f, "%d,%.10f,%.10f,%d,%d\n", node->id, node->pr_in, node->pr_out, node->in_degree, node->out_degree);
         node = node->next;
@@ -280,11 +276,12 @@ void syn_write_pageranks(syn_net *net, const char *file_path)
     fclose(f);
 }
 
-void syn_print_net_info(syn_net *net)
+void Net::print_net_info()
 {
-    printf("node number: %d\n", net->node_count);
-    printf("edge number: %d\n", net->edge_count);
-    printf("log(pr_in): [%f, %f]\n", net->min_pr_in, net->max_pr_in);
-    printf("log(pr_out): [%f, %f]\n", net->min_pr_out, net->max_pr_out);
+    printf("node number: %d\n", node_count);
+    printf("edge number: %d\n", edge_count);
+    printf("log(pr_in): [%f, %f]\n", min_pr_in, max_pr_in);
+    printf("log(pr_out): [%f, %f]\n", min_pr_out, max_pr_out);
 }
 
+}

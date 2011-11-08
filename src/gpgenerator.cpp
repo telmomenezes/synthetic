@@ -44,19 +44,19 @@ syn_gpgen *syn_clone_gpgenerator(syn_gpgen *gen)
 }
 
 
-syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, unsigned int max_cycles)
+Net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, unsigned int max_cycles)
 {
     unsigned int i, j;
     double po, pt, io, oo, it, ot, ep;
 
-    syn_net *net = syn_create_net();
+    Net* net = new Net();
 
     gen->edges = 0;
     gen->cycle = 0;
 
     // create nodes
     for (i = 0; i < nodes; i++) {
-        syn_add_node_with_id(net, i, 0);
+        net->add_node_with_id(i, 0);
     }
 
     syn_node* orig_node;
@@ -66,7 +66,7 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
 
     for (i = 0; i < edges; i++) {
         total_weight = 0;
-        orig_node = net->nodes;
+        orig_node = net->get_nodes();
         while (orig_node) {
             po = (double)orig_node->id;
             io = oo = ep = 0;
@@ -92,7 +92,7 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
 
         // if total weight is zero, make every node's weight = 1
         if (total_weight == 0) {
-            orig_node = net->nodes;
+            orig_node = net->get_nodes();
             while (orig_node) {
                 orig_node->genweight = 1.0;
                 total_weight += 1.0;
@@ -101,7 +101,7 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
         }
 
         weight = RANDOM_UNIFORM * total_weight;
-        orig_node = net->nodes;
+        orig_node = net->get_nodes();
         total_weight = orig_node->genweight;
         //printf("w: %f; tw: %f\n", weight, total_weight);
         while (total_weight < weight) {
@@ -110,7 +110,7 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
         }
         
         total_weight = 0;
-        targ_node = net->nodes;
+        targ_node = net->get_nodes();
         while (targ_node) {
             po = (double)orig_node->id;
             pt = (double)targ_node->id;
@@ -148,7 +148,7 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
 
         // if total weight is zero, make every node's weight = 1
         if (total_weight == 0) {
-            targ_node = net->nodes;
+            targ_node = net->get_nodes();
             while (targ_node) {
                 targ_node->genweight = 1.0;
                 total_weight += 1.0;
@@ -157,14 +157,14 @@ syn_net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, u
         }
 
         weight = RANDOM_UNIFORM * total_weight;
-        targ_node = net->nodes;
+        targ_node = net->get_nodes();
         total_weight = targ_node->genweight;
         while (total_weight < weight) {
             targ_node = targ_node->next;
             total_weight += targ_node->genweight;
         }
 
-        syn_add_edge_to_net(net, orig_node, targ_node, gen->cycle);
+        net->add_edge_to_net(orig_node, targ_node, gen->cycle);
         gen->edges++;
             
         gen->cycle++;
