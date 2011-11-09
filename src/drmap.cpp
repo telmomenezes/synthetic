@@ -74,7 +74,7 @@ void DRMap::log_scale()
 
 void DRMap::normalize()
 {
-    double m = max();
+    double m = total();
     if (m <= 0) {
         return;
     }

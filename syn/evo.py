@@ -116,7 +116,7 @@ class Evo:
 
     def run2(self):
         bins = 10
-        draw_drmap(self.syn_net, 'target.png', bins=bins)
+        draw_drmap(self.syn_net, 'target.png', bins=bins, limit=self.map_limit)
         
         print 'Evolving gpgenerator'
         print 'Nodes:', self.nodes
@@ -166,7 +166,7 @@ class Evo:
                 if fit < best_fit:
                     best_fit = fit
                     print_gpgen(self.population[i])
-                    draw_drmap(net, 'best.png', bins=bins)
+                    draw_drmap(net, 'best.png', bins=bins, limit=self.map_limit)
                 destroy_net(net)
 
             print 'Generation %d => best fitness: %f' % (cycle, best_fit)
