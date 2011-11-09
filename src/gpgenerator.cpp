@@ -5,7 +5,7 @@
 
 
 #include "gpgenerator.h"
-#include "Node.h"
+#include "node.h"
 #include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
