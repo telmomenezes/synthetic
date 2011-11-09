@@ -10,25 +10,36 @@
 #include "network.h"
 #include "gp/gptree.h"
 
-using syn::Net;
+namespace syn
+{
 
-typedef struct syn_gpgen_s {
+class GPGenerator
+{
+public:
+	GPGenerator();
+	virtual ~GPGenerator();
+
+	GPGenerator* clone();
+
+	Net* run(unsigned int node_count, unsigned int edge_count, unsigned int max_cycles);
+
+	void print();
+
+	GPGenerator* recombine(GPGenerator* gen);
+
+	unsigned int get_cycle() {return cycle;}
+	unsigned int get_edges() {return edges;}
+
+	void set_cycle(unsigned int cycle) {this->cycle = cycle;}
+	void set_edges(unsigned int edges) {this->edges = edges;}
+	void set_prog_origin(gptree* prog_origin) {this->prog_origin = prog_origin;}
+	void set_prog_target(gptree* prog_target) {this->prog_target = prog_target;}
+
+private:
     gptree* prog_origin;
     gptree* prog_target;
     unsigned int edges;
     unsigned int cycle;
-} syn_gpgen;
+};
 
-
-syn_gpgen *syn_create_gpgenerator();
-
-void syn_destroy_gpgenerator(syn_gpgen *gen);
-
-syn_gpgen *syn_clone_gpgenerator(syn_gpgen *gen);
-
-Net* syn_gpgen_run(syn_gpgen *gen, unsigned int nodes, unsigned int edges, unsigned int max_cycles);
-
-void syn_print_gpgen(syn_gpgen* gen);
-
-syn_gpgen* syn_recombine_gpgens(syn_gpgen* g1, syn_gpgen* g2);
-
+}
