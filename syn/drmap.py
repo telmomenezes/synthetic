@@ -10,7 +10,7 @@ import sys
 from PIL import Image, ImageDraw
 
 
-def draw_drmap(syn_net, img_file, bins=50, img_side=500):
+def draw_drmap(syn_net, img_file, bins=50, img_side=500, limit=7.0):
     # TODO: use precomputed values
     compute_pageranks(syn_net)
 
@@ -19,7 +19,7 @@ def draw_drmap(syn_net, img_file, bins=50, img_side=500):
     # colors
     grid_color = (255, 255, 0)
 
-    drmap = get_drmap_with_limits(syn_net, bins, -7.0, 7.0, -7.0, 7.0)
+    drmap = get_drmap_with_limits(syn_net, bins, -limit, limit, -limit, limit)
     drmap_log_scale(drmap)
     drmap_normalize(drmap)
 

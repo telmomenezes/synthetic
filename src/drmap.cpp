@@ -190,7 +190,7 @@ signature_tt* get_emd_signature(DRMap* map)
 
 double DRMap::emd_dist(DRMap* map)
 {
-    printf("totals-> %f; %f\n", total(), map->total());
+    //printf("totals-> %f; %f\n", total(), map->total());
 
     double infinity = 9999999999.9;
 
