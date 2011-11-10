@@ -23,21 +23,27 @@ class Evo:
         self.syn_net = targ_net.load_net()
         self.nodes = net_node_count(self.syn_net)
         self.edges = net_edge_count(self.syn_net)
-        self.nodes = 1000
+        self.nodes = 2500
         self.edges = self.nodes * (net_edge_count(self.syn_net) / net_node_count(self.syn_net))
         self.max_cycles = self.edges * 100
         self.map_limit = 5.0
+        self.pop = 10
+        self.bins = 10
 
         seed_random()
 
+        compute_pageranks(self.syn_net)
+        self.drmap1 = get_drmap_with_limits(self.syn_net, self.bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
+        drmap_log_scale(self.drmap1)
+        drmap_normalize(self.drmap1)
+
     def __del__(self):
+        destroy_drmap(self.drmap1)
         for i in range(self.pop):
             destroy_gpgenerator(self.population[i])
         destroy_net(self.syn_net)
 
     def run(self):
-        self.pop = 10
-        bins = 10
         draw_drmap(self.syn_net, 'target.png', bins=bins, limit=self.map_limit)
         
         print 'Evolving gpgenerator'
@@ -66,22 +72,16 @@ class Evo:
                 gen = self.population[i]
                 net = gpgen_run(gen, self.nodes, self.edges, self.max_cycles)
 
-                compute_pageranks(self.syn_net)
                 compute_pageranks(net)
 
-                drmap1 = get_drmap_with_limits(self.syn_net, bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
-                drmap_log_scale(drmap1)
-                drmap_normalize(drmap1)
-
-                drmap2 = get_drmap_with_limits(net, bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
+                drmap2 = get_drmap_with_limits(net, self.bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
                 drmap_log_scale(drmap2)
                 drmap_normalize(drmap2)
 
-                fit = drmap_emd_dist(drmap1, drmap2)
+                fit = drmap_emd_dist(self.drmap1, drmap2)
 
-                destroy_drmap(drmap1)
                 destroy_drmap(drmap2)
-                print i, fit
+                #print i, fit
                 if fit < best_gen_fit:
                     best_gen_fit = fit
                     best_gen = self.population[i]
@@ -90,7 +90,7 @@ class Evo:
                 if fit < best_fit:
                     best_fit = fit
                     print_gpgen(self.population[i])
-                    draw_drmap(net, 'best.png', bins=bins, limit=self.map_limit)
+                    draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
 
             print 'Generation %d => best fitness: %f [%f]' % (cycle, best_gen_fit, best_fit)
             cycle += 1
