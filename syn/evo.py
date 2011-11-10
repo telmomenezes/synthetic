@@ -45,7 +45,7 @@ class Evo:
         destroy_net(self.syn_net)
 
     def run(self):
-        draw_drmap(self.syn_net, 'target.png', bins=bins, limit=self.map_limit)
+        draw_drmap(self.syn_net, 'target.png', bins=self.bins, limit=self.map_limit)
         
         print 'Evolving gpgenerator'
         print 'Nodes:', self.nodes
