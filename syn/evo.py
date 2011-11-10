@@ -7,6 +7,7 @@ __date__ = "Oct 2011"
 
 import random
 import math
+import sys
 from syn.core import *
 from syn.drmap import *
 
@@ -90,9 +91,11 @@ class Evo:
                 if fit < best_fit:
                     best_fit = fit
                     print_gpgen(self.population[i])
+                    sys.stdout.flush()
                     draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
 
             print 'Generation %d => best fitness: %f [%f]' % (cycle, best_gen_fit, best_fit)
+            sys.stdout.flush()
             cycle += 1
 
             # next generation
