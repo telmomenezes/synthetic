@@ -10,51 +10,46 @@
 #include "gpnode.h"
 
 
-typedef struct gptree_s {
-    gpnode* root;
+namespace syn
+{
+
+class GPTree
+{
+public:
+    GPTree(unsigned int varcount);
+    virtual ~GPTree();
+
+    void r_destroy_gpnode(GPNode* node);
+
+    void init_random(float prob_term,
+                        unsigned int max_depth_low_limit,
+                        unsigned int max_depth_high_limit);
+    GPNode* init_random2(float prob_term,
+                            GPNode* parent,
+                            unsigned int max_depth,
+                            unsigned int grow,
+                            unsigned int depth);
+
+    gpval eval();
+
+    void print();
+    GPTree* clone();
+    unsigned int size();
+    GPNode* gpnode_by_pos(unsigned int pos);
+    GPTree* recombine(GPTree* parent2);
+
     double* vars;
+
+private:
+    GPNode* root;
     unsigned int varcount;
-} gptree;
 
+    void print2(GPNode* node, unsigned int indent);
+    GPNode* clone2(GPNode* node, GPNode* parent);
+    unsigned int size2(GPNode* node);
+    GPNode* gpnode_by_pos2(GPNode* node,
+                            unsigned int pos,
+                            unsigned int *curpos);
+};
 
-gptree* create_gptree(unsigned int varcount);
-
-void destroy_gptree(gptree* tree);
-
-void r_destroy_gpnode(gpnode* node);
-
-gptree* create_random_gptree(unsigned int varcount,
-                                float prob_term,
-                                unsigned int max_depth_low_limit,
-                                unsigned int max_depth_high_limit);
-
-gpnode* create_random_gptree2(unsigned int varcount,
-                                float prob_term,
-                                gpnode* parent,
-                                unsigned int max_depth,
-                                unsigned int grow,
-                                unsigned int depth);
-
-gpval eval_gptree(gptree* tree);
-
-
-void print_gptree(gptree* tree);
-
-void print_gptree2(gpnode* node, unsigned int indent);
-
-gptree* clone_gptree(gptree* tree);
-
-gpnode* clone_gpnode(gpnode* node, gpnode* parent);
-
-unsigned int gptree_size();
-
-unsigned int gptree_size2(gpnode* node);
-
-gpnode* gpnode_by_pos(gptree* tree, unsigned int pos);
-
-gpnode* gpnode_by_pos2(gpnode* node,
-                        unsigned int pos,
-                        unsigned int *curpos);
-
-gptree* recombine_gptrees(gptree* parent1, gptree* parent2);
-
+}

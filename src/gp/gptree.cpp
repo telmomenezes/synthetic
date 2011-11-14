@@ -12,66 +12,63 @@
 #include "utils.h"
 
 
-gptree* create_gptree(unsigned int varcount)
-{
-    gptree* tree = (gptree*)malloc(sizeof(gptree));
-    tree->varcount = varcount;
-    tree->vars = (gpval *)malloc(sizeof(gpval) * varcount);
-    bzero(tree->vars, sizeof(gpval) * varcount);
+namespace syn {
 
-    return tree;
+GPTree::GPTree(unsigned int varcount)
+{
+    this->varcount = varcount;
+    vars = (gpval *)malloc(sizeof(gpval) * varcount);
+    bzero(vars, sizeof(gpval) * varcount);
 }
 
 
-gptree* create_random_gptree(unsigned int varcount,
-                                float prob_term,
-                                unsigned int max_depth_low_limit,
-                                unsigned int max_depth_high_limit)
+GPTree::~GPTree()
 {
-    gptree* tree = create_gptree(varcount);
+    r_destroy_gpnode(root);
+    free(vars);
+}
+
+
+void GPTree::init_random(float prob_term,
+                            unsigned int max_depth_low_limit,
+                            unsigned int max_depth_high_limit)
+{
     unsigned int grow = random() % 2;
     unsigned int max_depth = max_depth_low_limit + (random() % (max_depth_high_limit - max_depth_low_limit));
 
-    tree->root = create_random_gptree2(varcount, prob_term, NULL, max_depth, grow, 0);
-
-    return tree;
+    root = init_random2(prob_term, NULL, max_depth, grow, 0);
 }
 
 
-gpnode* create_random_gptree2(unsigned int varcount,
-                                float prob_term,
-                                gpnode* parent,
+GPNode* GPTree::init_random2(float prob_term,
+                                GPNode* parent,
                                 unsigned int max_depth,
                                 unsigned int grow,
                                 unsigned int depth)
 {
-    gpnode* node;
-    gpval val;
-    gpval power;
-    unsigned int var;
-    unsigned int i;
+    GPNode* node;
 
     float p = ((float)(random() % 999999999)) / 999999999.0;
     if (((!grow) || (p > prob_term)) && (depth < max_depth)) {
-        node = create_gpnode(FUN, (gpnode_fun)(random() % GPFUN_COUNT), 0, 0, parent);
-        for (i = 0; i < node->arity; i++) {
-            node->params[i] = create_random_gptree2(varcount, prob_term, node, max_depth, grow, depth + 1);
+        node = new GPNode(FUN, (gpnode_fun)(random() % GPFUN_COUNT), 0, 0, parent);
+        for (unsigned int i = 0; i < node->arity; i++) {
+            node->params[i] = init_random2(prob_term, node, max_depth, grow, depth + 1);
         }
     }
     else {
         if ((random() % 2) && (varcount > 0)) {
-            var = random() % varcount;
-            node = create_gpnode(VAR, SUM, 0, var, parent);
+            unsigned int var = random() % varcount;
+            node = new GPNode(VAR, SUM, 0, var, parent);
         }
         else {
-            val = RANDOM_UNIFORM;
+            gpval val = RANDOM_UNIFORM;
 
             if (0) {
                 val *= 10;
-                power = (RANDOM_UNIFORM * 40.0) - 20;
+                gpval power = (RANDOM_UNIFORM * 40.0) - 20;
                 val = pow(val, power);
             }
-            node = create_gpnode(VAL, SUM, val, 0, parent);
+            node = new GPNode(VAL, SUM, val, 0, parent);
         }
     }
 
@@ -79,26 +76,18 @@ gpnode* create_random_gptree2(unsigned int varcount,
 }
 
 
-void destroy_gptree(gptree* tree)
+void GPTree::r_destroy_gpnode(GPNode* node)
 {
-    r_destroy_gpnode(tree->root);
-    free(tree->vars);
-    free(tree);
-}
-
-
-void r_destroy_gpnode(gpnode* node)
-{
-    unsigned int i;
-    for (i = 0; i < node->arity; i++)
+    for (unsigned int i = 0; i < node->arity; i++) {
         r_destroy_gpnode(node->params[i]);
-    destroy_gpnode(node);
+    }
+    delete node;
 }
 
 
-gpval eval_gptree(gptree* tree)
+gpval GPTree::eval()
 {
-    gpnode* curnode = tree->root;
+    GPNode* curnode = root;
     curnode->curpos = -1;
     gpval val;
 
@@ -208,7 +197,7 @@ gpval eval_gptree(gptree* tree)
                     }
                     break;
                 case VAR:
-                    val = tree->vars[curnode->var];
+                    val = vars[curnode->var];
                     break;
                 case VAL:
                     val = curnode->val;
@@ -225,34 +214,33 @@ gpval eval_gptree(gptree* tree)
 }
 
 
-void print_gptree(gptree* tree)
+void GPTree::print()
 {
-    print_gptree2(tree->root, 0);
+    print2(root, 0);
     printf("\n");
 }
 
 
-void print_gptree2(gpnode* node, unsigned int indent)
+void GPTree::print2(GPNode* node, unsigned int indent)
 {
-    unsigned int i;
     unsigned int ind = indent;
 
     if (node->arity > 0) {
         if (node->parent) {
             printf("\n");
         }
-        for (i = 0; i < indent; i++) {
+        for (unsigned int i = 0; i < indent; i++) {
             printf("  ");
         }
         printf("(");
         ind++;
     }
 
-    print_gpnode(node);
+    node->print();
 
-    for (i = 0; i < node->arity; i++) {
+    for (unsigned int i = 0; i < node->arity; i++) {
         printf(" ");
-        print_gptree2(node->params[i], ind);
+        print2(node->params[i], ind);
     }
 
     if (node->arity > 0) {
@@ -262,63 +250,60 @@ void print_gptree2(gpnode* node, unsigned int indent)
 }
 
 
-gptree* clone_gptree(gptree* tree)
+GPTree* GPTree::clone()
 {
-    gptree* ctree = create_gptree(tree->varcount);
-    ctree->root = clone_gpnode(tree->root, NULL);
+    GPTree* ctree = new GPTree(varcount);
+    ctree->root = clone2(root, NULL);
 
     return ctree;
 }
 
 
-gpnode* clone_gpnode(gpnode* node, gpnode* parent)
+GPNode* GPTree::clone2(GPNode* node, GPNode* parent)
 {
-    unsigned int i;
-    gpnode* cnode = create_gpnode(node->type, node->fun, node->val, node->var, parent);
-    for (i = 0; i < node->arity; i++)
-        cnode->params[i] = clone_gpnode(node->params[i], cnode);
+    GPNode* cnode = new GPNode(node->type, node->fun, node->val, node->var, parent);
+    for (unsigned int i = 0; i < node->arity; i++)
+        cnode->params[i] = clone2(node->params[i], cnode);
 
     return cnode;
 }
 
 
-unsigned int gptree_size(gptree* tree)
+unsigned int GPTree::size()
 {
-    return gptree_size2(tree->root);
+    return size2(root);
 }
 
 
-unsigned int gptree_size2(gpnode* node)
+unsigned int GPTree::size2(GPNode* node)
 {
     unsigned int c = 1;
-    unsigned int i;
-    for (i = 0; i < node->arity; i++) {
-        c += gptree_size2(node->params[i]);
+    for (unsigned int i = 0; i < node->arity; i++) {
+        c += size2(node->params[i]);
     }
 
     return c;
 }
 
 
-gpnode* gpnode_by_pos(gptree* tree, unsigned int pos)
+GPNode* GPTree::gpnode_by_pos(unsigned int pos)
 {
     unsigned int curpos = 0;
-    return gpnode_by_pos2(tree->root, pos, &curpos);
+    return gpnode_by_pos2(root, pos, &curpos);
 }
 
 
-gpnode* gpnode_by_pos2(gpnode* node,
-                            unsigned int pos,
-                            unsigned int *curpos)
+GPNode* GPTree::gpnode_by_pos2(GPNode* node,
+                                unsigned int pos,
+                                unsigned int* curpos)
 {
-    gpnode* nodefound;
-    unsigned int i;
+    GPNode* nodefound;
 
     if (pos == (*curpos)) {
         return node;
     }
     (*curpos)++;
-    for (i = 0; i < node->arity; i++) {
+    for (unsigned int i = 0; i < node->arity; i++) {
         nodefound = gpnode_by_pos2(node->params[i], pos, curpos);
         if (nodefound) {
             return nodefound;
@@ -329,26 +314,25 @@ gpnode* gpnode_by_pos2(gpnode* node,
 }
 
 
-gptree* recombine_gptrees(gptree* parent1, gptree* parent2)
+GPTree* GPTree::recombine(GPTree* parent2)
 {
-    gptree* child = clone_gptree(parent1);
-    unsigned int size1 = gptree_size(parent1);
-    unsigned int size2 = gptree_size(parent2);
+    GPTree* child = clone();
+    unsigned int size1 = size();
+    unsigned int size2 = parent2->size();
     unsigned int pos1 = random() % size1;
     unsigned int pos2 = random() % size2;
 
-    gpnode* point1 = gpnode_by_pos(child, pos1);
-    gpnode* point2 = gpnode_by_pos(parent2, pos2);
-    gpnode* point1parent = point1->parent;
-    gpnode* point2clone;
+    GPNode* point1 = child->gpnode_by_pos(pos1);
+    GPNode* point2 = parent2->gpnode_by_pos(pos2);
+    GPNode* point1parent = point1->parent;
+    GPNode* point2clone;
 
-    unsigned int i;
     unsigned int parampos;
 
-    /* remove sub-tree from child */
-    /* find point1 position in it's parent's param array */
+    // remove sub-tree from child
+    // find point1 position in it's parent's param array
     if (point1parent) {
-        for (i = 0; i < point1parent->arity; i++) {
+        for (unsigned int i = 0; i < point1parent->arity; i++) {
             if (point1parent->params[i] == point1) {
                 parampos = i;
                 break;
@@ -356,10 +340,10 @@ gptree* recombine_gptrees(gptree* parent1, gptree* parent2)
         }
     }
 
-    destroy_gpnode(point1);
+    delete point1;
 
-    /* copy sub-tree from parent 2 to parent 1*/
-    point2clone = clone_gpnode(point2, point1parent);
+    // copy sub-tree from parent 2 to parent 1
+    point2clone = clone2(point2, point1parent);
     if (point1parent) {
         point1parent->params[parampos] = point2clone;
     }
@@ -370,3 +354,4 @@ gptree* recombine_gptrees(gptree* parent1, gptree* parent2)
     return child;
 }
 
+}

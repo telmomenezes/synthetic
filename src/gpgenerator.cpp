@@ -18,15 +18,17 @@ GPGenerator::GPGenerator()
 {
     edges = 0;
     cycle = 0;
-    prog_origin = create_random_gptree(4, 0.2, 2, 5);
-    prog_target = create_random_gptree(7, 0.2, 2, 5);
+    prog_origin = new GPTree(4);
+    prog_origin->init_random(0.2, 2, 5);
+    prog_target = new GPTree(7);
+    prog_target->init_random(0.2, 2, 5);
 }
 
 
 GPGenerator::~GPGenerator()
 {
-    destroy_gptree(prog_origin);
-    destroy_gptree(prog_target);
+    delete prog_origin;
+    delete prog_target;
 }
 
 
@@ -36,8 +38,8 @@ GPGenerator* GPGenerator::clone()
 
     gen_clone->edges = 0;
     gen_clone->cycle = 0;
-    gen_clone->prog_origin = clone_gptree(prog_origin);
-    gen_clone->prog_target = clone_gptree(prog_target);
+    gen_clone->prog_origin = prog_origin->clone();
+    gen_clone->prog_target = prog_target->clone();
 
     return gen_clone;
 }
@@ -79,7 +81,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count, unsigned
             prog_origin->vars[1] = io;
             prog_origin->vars[2] = oo;
             prog_origin->vars[3] = ep;
-            weight = eval_gptree(prog_origin);
+            weight = prog_origin->eval();
             if (weight < 0) {
                 weight = 0;
             }
@@ -132,7 +134,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count, unsigned
             prog_target->vars[4] = it;
             prog_target->vars[5] = ot;
             prog_target->vars[6] = ep;
-            weight = eval_gptree(prog_target);
+            weight = prog_target->eval();
             if (weight < 0) {
                 weight = 0;
             }
@@ -179,9 +181,9 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count, unsigned
 void GPGenerator::print()
 {
     printf("PROG ORIGIN\n\n");
-    print_gptree(prog_origin);
+    prog_origin->print();
     printf("\nPROG TARGET\n");
-    print_gptree(prog_target);
+    prog_target->print();
     printf("\n");
 }
 
@@ -194,16 +196,16 @@ GPGenerator* GPGenerator::recombine(GPGenerator* gen)
     cycle = 0;
     switch(random() % 3) {
     case 0:
-        child->prog_origin = recombine_gptrees(prog_origin, gen->prog_origin);
-        child->prog_target = clone_gptree(prog_target);
+        child->prog_origin = prog_origin->recombine(gen->prog_origin);
+        child->prog_target = prog_target->clone();
         break;
     case 1:
-        child->prog_origin = clone_gptree(prog_origin);
-        child->prog_target = recombine_gptrees(prog_target, gen->prog_target);
+        child->prog_origin = prog_origin->clone();
+        child->prog_target = prog_target->recombine(gen->prog_target);
         break;
     case 2:
-        child->prog_origin = recombine_gptrees(prog_origin, gen->prog_origin);
-        child->prog_target = recombine_gptrees(prog_target, gen->prog_target);
+        child->prog_origin = prog_origin->recombine(gen->prog_origin);
+        child->prog_target = prog_target->recombine(gen->prog_target);
         break;
     }
 

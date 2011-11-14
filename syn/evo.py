@@ -82,17 +82,18 @@ class Evo:
                 fit = drmap_emd_dist(self.drmap1, drmap2)
 
                 destroy_drmap(drmap2)
-                #print i, fit
+                print i, fit
                 if fit < best_gen_fit:
                     best_gen_fit = fit
                     best_gen = self.population[i]
-                destroy_net(net)
-
+                
                 if fit < best_fit:
                     best_fit = fit
                     print_gpgen(self.population[i])
                     sys.stdout.flush()
                     draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
+
+                destroy_net(net)
 
             print 'Generation %d => best fitness: %f [%f]' % (cycle, best_gen_fit, best_fit)
             sys.stdout.flush()

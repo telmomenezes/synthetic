@@ -9,45 +9,43 @@
 #include "gpnode.h"
 
 
-gpnode* create_gpnode(gpnode_type nodetype,
-                        gpnode_fun fun,
-                        gpval val,
-                        unsigned int var,
-                        gpnode* parent)
+namespace syn {
+
+GPNode::GPNode(gpnode_type nodetype,
+                gpnode_fun fun,
+                gpval val,
+                unsigned int var,
+                GPNode* parent)
 {
-    gpnode* node = (gpnode *)malloc(sizeof(gpnode));
-    node->type = nodetype;
-    node->parent = parent;
+    this->type = nodetype;
+    this->parent = parent;
 
     if (nodetype == FUN) {
-        node->fun = fun;
-        node->arity = fun_arity(fun);
-        node->condpos = fun_condpos(fun);
+        this->fun = fun;
+        this->arity = fun_arity(fun);
+        this->condpos = fun_condpos(fun);
     }
     else if (nodetype == VAR) {
-        node->var = var;
-        node->arity = 0;
-        node->condpos = -1;
+        this->var = var;
+        this->arity = 0;
+        this->condpos = -1;
     }
     else {
-        node->val = val;
-        node->arity = 0;
-        node->condpos = -1;
+        this->val = val;
+        this->arity = 0;
+        this->condpos = -1;
     }
 
-    node->stoppos = node->arity;
-
-    return node;
+    this->stoppos = this->arity;
 }
 
 
-void destroy_gpnode(gpnode* node)
+GPNode::~GPNode()
 {
-    free(node);
 }
 
 
-int fun_condpos(gpnode_fun fun)
+int GPNode::fun_condpos(gpnode_fun fun)
 {
     switch(fun) {
         case ZER:
@@ -62,7 +60,7 @@ int fun_condpos(gpnode_fun fun)
 }
 
 
-unsigned int fun_arity(gpnode_fun fun)
+unsigned int GPNode::fun_arity(gpnode_fun fun)
 {
     switch(fun) {
         case EXP:
@@ -89,24 +87,24 @@ unsigned int fun_arity(gpnode_fun fun)
 }
 
 
-void print_gpnode(gpnode* node)
+void GPNode::print()
 {
-    if (node->type == VAL) {
-        printf("%f", node->val);
+    if (this->type == VAL) {
+        printf("%f", this->val);
         return;
     }
 
-    if (node->type == VAR) {
-        printf("$%d", node->var);
+    if (this->type == VAR) {
+        printf("$%d", this->var);
         return;
     }
 
-    if (node->type != FUN) {
+    if (this->type != FUN) {
         printf("???");
         return;
     }
 
-    switch(node->fun) {
+    switch(this->fun) {
         case SUM:
             printf("+");
             return;
@@ -153,4 +151,6 @@ void print_gpnode(gpnode* node)
             printf("F??");
             return;
     }
+}
+
 }

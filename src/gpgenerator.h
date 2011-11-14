@@ -31,8 +31,8 @@ public:
 	unsigned int get_edges() {return edges;}
 
 private:
-    gptree* prog_origin;
-    gptree* prog_target;
+    GPTree* prog_origin;
+    GPTree* prog_target;
     unsigned int edges;
     unsigned int cycle;
 };
