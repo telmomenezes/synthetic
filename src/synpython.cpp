@@ -649,6 +649,20 @@ static PyObject *pysyn_recombine_gpgens(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_load_gpgen(PyObject *self, PyObject *args)
+{
+    long p;
+    char* file_path;
+    GPGenerator* gen;
+
+    if (PyArg_ParseTuple(args, "ls", &p, &file_path)) {
+        gen = (GPGenerator*)p;
+        gen->load(file_path);
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
 
 // AUX
 static PyObject *pysyn_seed_random(PyObject *self, PyObject *args)
@@ -703,6 +717,7 @@ static PyMethodDef methods[] = {
     {"gpgenerator_get_cycle", pysyn_gpgenerator_get_cycle, METH_VARARGS, "Get number of cycles taken by the simulation."},
     {"print_gpgen", pysyn_print_gpgen, METH_VARARGS, "Print gpgenerator."},
     {"recombine_gpgens", pysyn_recombine_gpgens, METH_VARARGS, "Recombine gpgenerators."},
+    {"load_gpgen", pysyn_load_gpgen, METH_VARARGS, "Load gpgenerator from file."},
     {"seed_random", pysyn_seed_random, METH_VARARGS, "Sedd C random number generator with current time."},
     {NULL, NULL, 0, NULL},
 };

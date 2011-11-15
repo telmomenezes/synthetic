@@ -7,8 +7,13 @@
 #pragma once
 
 
+#include <string>
 #include "network.h"
 #include "gp/gptree.h"
+
+
+using std::string;
+
 
 namespace syn
 {
@@ -29,6 +34,8 @@ public:
 
 	unsigned int get_cycle() {return cycle;}
 	unsigned int get_edges() {return edges;}
+
+	void load(string filepath);
 
 private:
     GPTree* prog_origin;

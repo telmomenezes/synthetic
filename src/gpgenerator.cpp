@@ -9,6 +9,12 @@
 #include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+
+using namespace std;
 
 
 namespace syn
@@ -210,6 +216,38 @@ GPGenerator* GPGenerator::recombine(GPGenerator* gen)
     }
 
     return child;
+}
+
+
+void GPGenerator::load(string filepath)
+{
+    std::ifstream file(filepath.c_str());
+    string line;
+
+    std::getline(file, line);
+         
+    for (int i = 0; i < 2; i++) {
+        while ((line.compare("") == 0)
+                || (line[0] == '\n')
+                || (line[0] == '#')) {
+            std::getline(file, line);
+        }
+        
+        std::stringstream prog;
+        while (line.compare("")
+                && (line[0] != '\n')
+                && (line[0] != '#')) {
+            prog << line;
+            std::getline(file, line);
+        }
+
+        if (i == 0) {
+            prog_origin->parse(prog.str());
+        }
+        else {
+            prog_target->parse(prog.str());
+        }
+    }
 }
 
 }

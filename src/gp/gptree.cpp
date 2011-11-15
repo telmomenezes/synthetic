@@ -10,6 +10,18 @@
 #include <math.h>
 #include "gptree.h"
 #include "utils.h"
+#include <sstream>
+#include <iostream>
+
+
+template <class T>
+bool from_string(T& t, 
+                 const std::string& s, 
+                 std::ios_base& (*f)(std::ios_base&))
+{
+  std::istringstream iss(s);
+  return !(iss >> f >> t).fail();
+}
 
 
 namespace syn {
@@ -352,6 +364,124 @@ GPTree* GPTree::recombine(GPTree* parent2)
     }
 
     return child;
+}
+
+
+int GPTree::token_end(string prog, int pos)
+{
+    int curpos = pos;
+    char curchar = prog[curpos];
+    while ((curchar != ' ') 
+            && (curchar != '\n')
+            && (curchar != '\t')
+            && (curchar != '\r')
+            && (curchar != ')')
+            && (curchar != '(')
+            && (curchar != 0)) {
+
+        curpos++;
+        if (curpos >= prog.length()) {
+            return curpos;
+        }
+        
+        curchar = prog[curpos];
+    }
+            
+    return curpos;
+}
+
+
+int GPTree::token_start(string prog)
+{
+    int curpos = parse_pos;
+    char curchar = prog[curpos];
+    while ((curchar == ' ')
+            || (curchar == '\n')
+            || (curchar == '\t')
+            || (curchar == '\r')
+            || (curchar == ')')
+            || (curchar == '(')
+            || (curchar == 0)) {
+
+        curchar = prog[++curpos];
+    }
+
+    return curpos;
+}
+
+
+GPNode* GPTree::parse2(string prog, GPNode* parent)
+{
+    int start = token_start(prog);
+    int end = token_end(prog, start);
+        
+    // TODO: off by 1?
+    string token = prog.substr(start, (end - start));
+        
+    GPNode* node;
+
+    double val;
+    if (from_string<double>(val, string(token), std::dec)) {
+        node = new GPNode(VAL, SUM, val, 0, parent);
+    }
+    else {
+        if (token[0] == '$') {
+            int var;
+            from_string<int>(var, token.substr(1), std::dec);
+            node = new GPNode(VAR, SUM, 0, var, parent);
+        }
+        else {
+            gpnode_fun fun = SUM;
+            if (token.compare("+") == 0)
+                fun = SUM;
+            else if (token.compare("-") == 0)
+                fun = SUB;
+            else if (token.compare("*") == 0)
+                fun = MUL;
+            else if (token.compare("/") == 0)
+                fun = DIV;
+            else if (token.compare("ZER") == 0)
+                fun = ZER;
+            else if (token.compare("==") == 0)
+                fun = EQ;
+            else if (token.compare(">") == 0)
+                fun = GRT;
+            else if (token.compare("<") == 0)
+                fun = LRT;
+            else if (token.compare("EXP") == 0)
+                fun = EXP;
+            else if (token.compare("LOG") == 0)
+                fun = LOG;
+            else if (token.compare("SIN") == 0)
+                fun = SIN;
+            else if (token.compare("ABS") == 0)
+                fun = ABS;
+            else if (token.compare("MIN") == 0)
+                fun = MIN;
+            else if (token.compare("MAX") == 0)
+                fun = MAX;
+            
+            node = new GPNode(FUN, fun, 0, 0, parent);
+
+            parse_pos = end;
+            
+            for (int i = 0; i < node->arity; i++) {
+                node->params[i] = parse2(prog, node);
+            }
+
+            return node;
+        }
+    }
+
+    parse_pos = end;
+    return node;
+}
+
+
+void GPTree::parse(string prog)
+{
+    parse_pos = 0;
+    root = parse2(prog, NULL);
 }
 
 }

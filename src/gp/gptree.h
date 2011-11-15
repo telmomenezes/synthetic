@@ -7,7 +7,11 @@
 #pragma once
 
 
+#include <string>
 #include "gpnode.h"
+
+
+using std::string;
 
 
 namespace syn
@@ -38,11 +42,15 @@ public:
     GPNode* gpnode_by_pos(unsigned int pos);
     GPTree* recombine(GPTree* parent2);
 
+    void parse(string prog);
+
     double* vars;
 
 private:
     GPNode* root;
     unsigned int varcount;
+
+    int parse_pos;
 
     void print2(GPNode* node, unsigned int indent);
     GPNode* clone2(GPNode* node, GPNode* parent);
@@ -50,6 +58,9 @@ private:
     GPNode* gpnode_by_pos2(GPNode* node,
                             unsigned int pos,
                             unsigned int *curpos);
+    int token_end(string prog, int pos);
+    int token_start(string prog);
+    GPNode* parse2(string prog, GPNode* parent);
 };
 
 }
