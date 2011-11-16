@@ -8,10 +8,13 @@
 #include "node.h"
 #include "utils.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
+
+using std::cout;
+using std::endl;
 
 
 using namespace std;
@@ -186,11 +189,10 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count, unsigned
 
 void GPGenerator::print()
 {
-    printf("PROG ORIGIN\n\n");
+    cout << "#PROG ORIGIN" << endl;
     prog_origin->print();
-    printf("\nPROG TARGET\n");
+    cout << endl << "#PROG TARGET" << endl;
     prog_target->print();
-    printf("\n");
 }
 
 
@@ -238,7 +240,8 @@ void GPGenerator::load(string filepath)
                 && (line[0] != '\n')
                 && (line[0] != '#')) {
             prog << line;
-            std::getline(file, line);
+            if (!std::getline(file, line))
+                break;
         }
 
         if (i == 0) {

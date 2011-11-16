@@ -14,6 +14,10 @@
 #include <iostream>
 
 
+using std::cout;
+using std::endl;
+
+
 template <class T>
 bool from_string(T& t, 
                  const std::string& s, 
@@ -417,7 +421,8 @@ GPNode* GPTree::parse2(string prog, GPNode* parent)
         
     // TODO: off by 1?
     string token = prog.substr(start, (end - start));
-        
+    //cout << token << endl;
+
     GPNode* node;
 
     double val;
