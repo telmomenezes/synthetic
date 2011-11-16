@@ -664,6 +664,20 @@ static PyObject *pysyn_load_gpgen(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_simplify_gpgen(PyObject *self, PyObject *args)
+{
+    long p;
+    GPGenerator* gen;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        gen = (GPGenerator*)p;
+        gen->simplify();
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
 // AUX
 static PyObject *pysyn_seed_random(PyObject *self, PyObject *args)
 {
@@ -718,6 +732,7 @@ static PyMethodDef methods[] = {
     {"print_gpgen", pysyn_print_gpgen, METH_VARARGS, "Print gpgenerator."},
     {"recombine_gpgens", pysyn_recombine_gpgens, METH_VARARGS, "Recombine gpgenerators."},
     {"load_gpgen", pysyn_load_gpgen, METH_VARARGS, "Load gpgenerator from file."},
+    {"simplify_gpgen", pysyn_simplify_gpgen, METH_VARARGS, "Dynamic prune gpgen programs."},
     {"seed_random", pysyn_seed_random, METH_VARARGS, "Sedd C random number generator with current time."},
     {NULL, NULL, 0, NULL},
 };

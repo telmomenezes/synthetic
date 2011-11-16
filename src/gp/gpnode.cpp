@@ -17,6 +17,21 @@ GPNode::GPNode(gpnode_type nodetype,
                 unsigned int var,
                 GPNode* parent)
 {
+    init(nodetype, fun, val, var, parent);
+}
+
+
+GPNode::~GPNode()
+{
+}
+
+
+void GPNode::init(gpnode_type nodetype,
+                    gpnode_fun fun,
+                    gpval val,
+                    unsigned int var,
+                    GPNode* parent)
+{
     this->type = nodetype;
     this->parent = parent;
 
@@ -37,11 +52,14 @@ GPNode::GPNode(gpnode_type nodetype,
     }
 
     this->stoppos = this->arity;
+
+    this->dyn_status = UNUSED;
 }
 
 
-GPNode::~GPNode()
+void GPNode::clone(GPNode* node)
 {
+    init(node->type, node->fun, node->val, node->var, node->parent);
 }
 
 

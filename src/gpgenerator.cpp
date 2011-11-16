@@ -253,4 +253,11 @@ void GPGenerator::load(string filepath)
     }
 }
 
+
+void GPGenerator::simplify() {
+    prog_origin->dyn_pruning();
+    prog_target->dyn_pruning();    
 }
+
+}
+

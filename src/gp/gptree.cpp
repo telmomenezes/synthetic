@@ -220,6 +220,20 @@ gpval GPTree::eval()
                     break;
             }
 
+            switch (curnode->dyn_status) {
+            case UNUSED:
+                curnode->dyn_status = CONSTANT;
+                break;
+            case CONSTANT:
+                if (curnode->curval != val)
+                    curnode->dyn_status = DYNAMIC;
+                break;
+            default:
+                break;
+            }
+
+            curnode->curval = val;
+            
             curnode = curnode->parent;
             if (curnode)
                 curnode->vals[curnode->curpos] = val;
@@ -487,6 +501,61 @@ void GPTree::parse(string prog)
 {
     parse_pos = 0;
     root = parse2(prog, NULL);
+}
+
+
+void GPTree::move_up(GPNode* orig_node, GPNode* targ_node)
+{
+    targ_node->clone(orig_node);
+    targ_node->dyn_status = orig_node->dyn_status;
+
+    for (int i = 0; i < orig_node->arity; i++) {
+        targ_node->params[i] = orig_node->params[i];
+        targ_node->params[i]->parent = targ_node;
+    }
+
+    delete(orig_node);
+}
+
+
+void GPTree::dyn_pruning()
+{
+    dyn_pruning2(root);
+}
+
+
+void GPTree::dyn_pruning2(GPNode* node)
+{
+    // nodes with constant value
+    if (node->dyn_status == CONSTANT) {
+        for (int i = 0; i < node->arity; i++)
+            delete(node->params[i]);
+        node->init(VAL, SUM, node->curval, 0, node->parent);
+    }
+
+    // conditions with constant branching
+    if (node->condpos > 0) {
+        GPNode* branch1 = node->params[node->condpos];
+        GPNode* branch2 = node->params[node->condpos + 1];
+
+        int branch = -1;
+
+        if (branch1->dyn_status == UNUSED)
+            branch = node->condpos + 1;
+        else if (branch2->dyn_status == UNUSED)
+            branch = node->condpos;
+
+        if (branch > 0) {
+            for (int i = 0; i < node->arity; i++)
+                if (i != branch)
+                    delete(node->params[i]);
+
+            move_up(node->params[branch], node);
+        }
+    }
+
+    for (int i = 0; i < node->arity; i++)
+        dyn_pruning2(node->params[i]);
 }
 
 }

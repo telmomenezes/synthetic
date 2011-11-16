@@ -37,6 +37,8 @@ public:
 
 	void load(string filepath);
 
+	void simplify();
+	
 private:
     GPTree* prog_origin;
     GPTree* prog_target;

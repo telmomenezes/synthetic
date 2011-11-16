@@ -44,6 +44,8 @@ public:
 
     void parse(string prog);
 
+    void dyn_pruning();
+
     double* vars;
 
 private:
@@ -61,6 +63,9 @@ private:
     int token_end(string prog, int pos);
     int token_start(string prog);
     GPNode* parse2(string prog, GPNode* parent);
+
+    void move_up(GPNode* orig_node, GPNode* targ_node);
+    void dyn_pruning2(GPNode* node);
 };
 
 }
