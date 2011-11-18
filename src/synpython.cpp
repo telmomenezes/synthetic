@@ -617,14 +617,15 @@ static PyObject *pysyn_gpgenerator_get_cycle(PyObject *self, PyObject *args)
     return result;
 }
 
-static PyObject *pysyn_print_gpgen(PyObject *self, PyObject *args)
+static PyObject *pysyn_write_gpgen(PyObject *self, PyObject *args)
 {
     long p;
+    char* file_path;
     GPGenerator* gen;
 
-    if (PyArg_ParseTuple(args, "l", &p)) {
+    if (PyArg_ParseTuple(args, "ls", &p, &file_path)) {
         gen = (GPGenerator*)p;
-        gen->print();
+        gen->write(file_path);
     }
     
     PyObject *result = Py_BuildValue("");
@@ -657,7 +658,7 @@ static PyObject *pysyn_load_gpgen(PyObject *self, PyObject *args)
 
     if (PyArg_ParseTuple(args, "ls", &p, &file_path)) {
         gen = (GPGenerator*)p;
-        gen->load(file_path);
+        gen->load(file_path);   
     }
     
     PyObject *result = Py_BuildValue("");
@@ -729,7 +730,7 @@ static PyMethodDef methods[] = {
     {"gpgen_run", pysyn_gpgen_run, METH_VARARGS, "Generate network with gp generator."},
     {"gpgenerator_get__edges", pysyn_gpgenerator_get_edges, METH_VARARGS, "Get total number edges generated."},
     {"gpgenerator_get_cycle", pysyn_gpgenerator_get_cycle, METH_VARARGS, "Get number of cycles taken by the simulation."},
-    {"print_gpgen", pysyn_print_gpgen, METH_VARARGS, "Print gpgenerator."},
+    {"write_gpgen", pysyn_write_gpgen, METH_VARARGS, "Write gpgenerator."},
     {"recombine_gpgens", pysyn_recombine_gpgens, METH_VARARGS, "Recombine gpgenerators."},
     {"load_gpgen", pysyn_load_gpgen, METH_VARARGS, "Load gpgenerator from file."},
     {"simplify_gpgen", pysyn_simplify_gpgen, METH_VARARGS, "Dynamic prune gpgen programs."},

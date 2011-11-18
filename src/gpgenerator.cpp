@@ -187,12 +187,17 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count, unsigned
 }
 
 
-void GPGenerator::print()
+void GPGenerator::write(string file_path)
 {
-    cout << "#PROG ORIGIN" << endl;
-    prog_origin->print();
-    cout << endl << "#PROG TARGET" << endl;
-    prog_target->print();
+    ofstream f;
+    f.open(file_path.c_str());
+
+    f << "#PROG ORIGIN" << endl;
+    f << prog_origin->to_string();
+    f << endl << "#PROG TARGET" << endl;
+    f << prog_target->to_string();
+
+    f.close();
 }
 
 

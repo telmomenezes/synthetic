@@ -6,7 +6,11 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <sstream>
 #include "gpnode.h"
+
+
+using namespace std;
 
 
 namespace syn {
@@ -105,69 +109,55 @@ unsigned int GPNode::fun_arity(gpnode_fun fun)
 }
 
 
-void GPNode::print()
+string GPNode::to_string()
 {
     if (this->type == VAL) {
-        printf("%f", this->val);
-        return;
+        std::stringstream sstm;
+        sstm << "" << this->val;
+        return sstm.str();
     }
 
     if (this->type == VAR) {
-        printf("$%d", this->var);
-        return;
+        std::stringstream sstm;
+        sstm << "$" << this->val;
+        return sstm.str();
     }
 
     if (this->type != FUN) {
-        printf("???");
-        return;
+        return "???";
     }
 
     switch(this->fun) {
         case SUM:
-            printf("+");
-            return;
+            return "+";
         case SUB:
-            printf("-");
-            return;
+            return "-";
         case MUL:
-            printf("*");
-            return;
+            return "*";
         case DIV:
-            printf("/");
-            return;
+            return "/";
         case ZER:
-            printf("ZER");
-            return;
+            return "ZER";
         case EQ:
-            printf("==");
-            return;
+            return "==";
         case GRT:
-            printf(">");
-            return;
+            return ">";
         case LRT:
-            printf("<");
-            return;
+            return "<";
         case EXP:
-            printf("EXP");
-            return;
+            return "EXP";
         case LOG:
-            printf("LOG");
-            return;
+            return "LOG";
         case SIN:
-            printf("SIN");
-            return;
+            return "SIN";
         case ABS:
-            printf("ABS");
-            return;
+            return "ABS";
         case MIN:
-            printf("MIN");
-            return;
+            return "MIN";
         case MAX:
-            printf("MAX");
-            return;
+            return "MAX";
         default:
-            printf("F??");
-            return;
+            return "F??";
     }
 }
 

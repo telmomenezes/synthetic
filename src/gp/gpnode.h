@@ -10,6 +10,12 @@
 #define GPFUN_COUNT 14
 
 
+#include <string>
+
+
+using std::string;
+
+
 namespace syn {
 
 typedef double gpval;
@@ -40,7 +46,7 @@ public:
 
     unsigned int fun_arity(gpnode_fun fun);
     int fun_condpos(gpnode_fun fun);
-    void print();
+    string to_string();
 
     gpnode_type type;
     gpval val;

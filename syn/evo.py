@@ -13,7 +13,7 @@ from syn.drmap import *
 
 
 class Evo:
-    def __init__(self, targ_net, mrate=0.3, rrate=0.7, pop=100, tournament=3):
+    def __init__(self, targ_net, mrate=0.3, rrate=0.7, pop=100, tournament=3, nodes=5000):
         self.targ_net = targ_net
         self.mrate = mrate
         self.rrate = rrate
@@ -22,9 +22,10 @@ class Evo:
         self.population = []
 
         self.syn_net = targ_net.load_net()
-        self.nodes = net_node_count(self.syn_net)
-        self.edges = net_edge_count(self.syn_net)
-        self.nodes = 2500
+        if nodes <= 0:
+            self.nodes = net_node_count(self.syn_net)
+        else:
+            self.nodes = nodes
         self.edges = self.nodes * (net_edge_count(self.syn_net) / net_node_count(self.syn_net))
         self.max_cycles = self.edges * 100
         self.map_limit = 5.0
@@ -82,21 +83,19 @@ class Evo:
                 fit = drmap_emd_dist(self.drmap1, drmap2)
 
                 destroy_drmap(drmap2)
-                print i, fit
+                #print i, fit
                 if fit < best_gen_fit:
                     best_gen_fit = fit
                     best_gen = self.population[i]
                 
                 if fit < best_fit:
                     best_fit = fit
-                    print_gpgen(self.population[i])
-                    sys.stdout.flush()
+                    write_gpgen(self.population[i], 'best%d.prog' % cycle)
                     draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
 
                 destroy_net(net)
 
-            print 'Generation %d => best fitness: %f [%f]' % (cycle, best_gen_fit, best_fit)
-            sys.stdout.flush()
+            print '%d, %f, %f' % (cycle, best_gen_fit, best_fit)
             cycle += 1
 
             # next generation

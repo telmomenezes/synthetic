@@ -36,7 +36,7 @@ public:
 
     gpval eval();
 
-    void print();
+    string to_string();
     GPTree* clone();
     unsigned int size();
     GPNode* gpnode_by_pos(unsigned int pos);
@@ -54,7 +54,7 @@ private:
 
     int parse_pos;
 
-    void print2(GPNode* node, unsigned int indent);
+    string to_string2(GPNode* node, unsigned int indent);
     GPNode* clone2(GPNode* node, GPNode* parent);
     unsigned int size2(GPNode* node);
     GPNode* gpnode_by_pos2(GPNode* node,

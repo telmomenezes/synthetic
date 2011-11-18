@@ -244,39 +244,45 @@ gpval GPTree::eval()
 }
 
 
-void GPTree::print()
+string GPTree::to_string()
 {
-    print2(root, 0);
-    printf("\n");
+    std::stringstream prog;
+    prog << to_string2(root, 0);
+    prog << endl;
+    return prog.str();
 }
 
 
-void GPTree::print2(GPNode* node, unsigned int indent)
+string GPTree::to_string2(GPNode* node, unsigned int indent)
 {
+    std::stringstream prog;
+
     unsigned int ind = indent;
 
     if (node->arity > 0) {
         if (node->parent) {
-            printf("\n");
+            prog << endl;
         }
         for (unsigned int i = 0; i < indent; i++) {
-            printf("  ");
+            prog << "  ";
         }
-        printf("(");
+        prog << "(";
         ind++;
     }
 
-    node->print();
+    prog << node->to_string();
 
     for (unsigned int i = 0; i < node->arity; i++) {
-        printf(" ");
-        print2(node->params[i], ind);
+        prog << " ";
+        prog << to_string2(node->params[i], ind);
     }
 
     if (node->arity > 0) {
-        printf(")");
+        prog << ")";
         ind--;
     }
+
+    return prog.str();
 }
 
 

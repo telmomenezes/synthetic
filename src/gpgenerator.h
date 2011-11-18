@@ -28,7 +28,7 @@ public:
 
 	Net* run(unsigned int node_count, unsigned int edge_count, unsigned int max_cycles);
 
-	void print();
+	void write(string to_string);
 
 	GPGenerator* recombine(GPGenerator* gen);
 
