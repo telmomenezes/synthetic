@@ -1,5 +1,4 @@
-* separate the several types of evolutionary algorithms
 * stoping condition for evolutionary algorithms
 * evolutionary algorithms csv log output
-* different normalization strategies for drmaps on evo and display
 * install scripts as system-level commands
+* make zoo work again

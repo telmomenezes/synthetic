@@ -24,6 +24,9 @@ class GA(Evo):
         print 'Recombination rate:', rrate
         print 'Tournament:', tournament
 
+        # open log file
+        log = open('log.csv', 'w')
+
         # init population
         self.population = []
         fitness = []
@@ -38,6 +41,8 @@ class GA(Evo):
         best_fit = 9999999
         # evolutionary loop
         while True:
+            print 'Generation', cycle
+
             # eval fitness
             best_gen_fit = 9999999
             for i in range(pop):
@@ -63,7 +68,7 @@ class GA(Evo):
                     draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
                 destroy_net(net)
 
-            print '%d, %f, %f' % (cycle, best_gen_fit, best_fit)
+            log.write('%d, %f, %f' % (cycle, best_gen_fit, best_fit))
             cycle += 1
 
             # next generation
@@ -103,3 +108,5 @@ class GA(Evo):
             for i in range(pop):
                 destroy_gpgenerator(self.population[i])
             self.population = newgen
+
+        log.close()
