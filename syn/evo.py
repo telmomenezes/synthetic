@@ -22,7 +22,7 @@ class Evo:
             self.nodes = net_node_count(self.syn_net)
         else:
             self.nodes = nodes
-        self.edges = self.nodes * (net_edge_count(self.syn_net) / net_node_count(self.syn_net))
+        self.edges = int(float(self.nodes) * (float(net_edge_count(self.syn_net)) / float(net_node_count(self.syn_net))))
         self.map_limit = map_limit
         self.bins = bins
 
