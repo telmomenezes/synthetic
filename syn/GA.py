@@ -14,7 +14,7 @@ from syn.drmap import *
 
 
 class GA(Evo):
-    def run(self, pop=100, mrate=0.3, rrate=0.7, tournament=3):
+    def run(self, pop=100, mrate=0.3, rrate=0.7, tournament=3, stop=20):
         print 'Synthetic - Evolving GPGenerator [genetic algorithm]'
         print 'Nodes:', self.nodes
         print 'Edges:', self.edges
@@ -23,6 +23,7 @@ class GA(Evo):
         print 'Mutation rate:', mrate
         print 'Recombination rate:', rrate
         print 'Tournament:', tournament
+        print 'Stop condition:', stop
 
         # open log file
         log = open('log.csv', 'w')
@@ -39,9 +40,12 @@ class GA(Evo):
 
         cycle = 0
         best_fit = 9999999
+        stag = 0
         # evolutionary loop
-        while True:
+        while stag < stop:
             print 'Generation', cycle
+
+            improved = False
 
             # eval fitness
             best_gen_fit = 9999999
@@ -59,14 +63,20 @@ class GA(Evo):
 
                 destroy_drmap(sim_drmap)
                 fitness[i] = fit
-                print i, fit
+                print 'gen:%d; best_gen:%f; best:%f; stag:%d, ind[%d]->%f' % (cycle, best_gen_fit, best_fit, stag, i, fit)
                 if fit < best_gen_fit:
                     best_gen_fit = fit
                 if fit < best_fit:
+                    improved = True
                     best_fit = fit
                     write_gpgen(self.population[i], 'best%d.prog' % cycle)
                     draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
                 destroy_net(net)
+            
+            if improved:
+                stag = 0
+            else:
+                stag += 1
 
             log.write('%d, %f, %f' % (cycle, best_gen_fit, best_fit))
             cycle += 1
@@ -110,3 +120,4 @@ class GA(Evo):
             self.population = newgen
 
         log.close()
+        print 'Done.'
