@@ -54,7 +54,7 @@ GPGenerator* GPGenerator::clone()
 }
 
 
-Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count, unsigned int max_cycles)
+Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
 {
     Net* net = new Net();
 
@@ -265,4 +265,3 @@ void GPGenerator::simplify() {
 }
 
 }
-

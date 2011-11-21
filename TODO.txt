@@ -1,8 +1,5 @@
-* More info on DRMap page
-* Show deafult DRMap on network pages
-* Language parser
-* DRMap distance interface
-* Evolution interface
-* Various user roles
-* Import more network formats
-* Temporal DRMaps
+* separate the several types of evolutionary algorithms
+* stoping condition for evolutionary algorithms
+* evolutionary algorithms csv log output
+* different normalization strategies for drmaps on evo and display
+* install scripts as system-level commands

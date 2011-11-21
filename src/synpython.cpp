@@ -576,11 +576,11 @@ static PyObject *pysyn_gpgen_run(PyObject *self, PyObject *args)
     long p;
     GPGenerator* gen;
     Net* net = NULL;
-    unsigned int nodes, edges, max_cycles;
+    unsigned int nodes, edges;
 
-    if (PyArg_ParseTuple(args, "liii", &p, &nodes, &edges, &max_cycles)) {
+    if (PyArg_ParseTuple(args, "lii", &p, &nodes, &edges)) {
       gen = (GPGenerator*)p;
-      net = gen->run(nodes, edges, max_cycles);
+      net = gen->run(nodes, edges);
     }
     
     PyObject *result = Py_BuildValue("l", (long)net);

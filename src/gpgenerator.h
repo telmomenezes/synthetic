@@ -26,7 +26,7 @@ public:
 
 	GPGenerator* clone();
 
-	Net* run(unsigned int node_count, unsigned int edge_count, unsigned int max_cycles);
+	Net* run(unsigned int node_count, unsigned int edge_count);
 
 	void write(string to_string);
 

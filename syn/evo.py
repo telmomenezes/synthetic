@@ -13,12 +13,8 @@ from syn.drmap import *
 
 
 class Evo:
-    def __init__(self, targ_net, mrate=0.3, rrate=0.7, pop=100, tournament=3, nodes=5000):
+    def __init__(self, targ_net, nodes=2000, map_limit=5.0, bins=10):
         self.targ_net = targ_net
-        self.mrate = mrate
-        self.rrate = rrate
-        self.tournament = tournament
-        self.pop = pop
         self.population = []
 
         self.syn_net = targ_net.load_net()
@@ -27,188 +23,20 @@ class Evo:
         else:
             self.nodes = nodes
         self.edges = self.nodes * (net_edge_count(self.syn_net) / net_node_count(self.syn_net))
-        self.max_cycles = self.edges * 100
-        self.map_limit = 5.0
-        self.pop = 10
-        self.bins = 10
+        self.map_limit = map_limit
+        self.bins = bins
 
         seed_random()
 
         compute_pageranks(self.syn_net)
-        self.drmap1 = get_drmap_with_limits(self.syn_net, self.bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
-        drmap_log_scale(self.drmap1)
-        drmap_normalize(self.drmap1)
+        self.targ_drmap = get_drmap_with_limits(self.syn_net, self.bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
+        drmap_log_scale(self.targ_drmap)
+        drmap_normalize(self.targ_drmap)
+
+        draw_drmap(self.syn_net, 'target.png', bins=self.bins, limit=self.map_limit)
 
     def __del__(self):
-        destroy_drmap(self.drmap1)
-        for i in range(self.pop):
-            destroy_gpgenerator(self.population[i])
+        destroy_drmap(self.targ_drmap)
+        for p in self.pop:
+            destroy_gpgenerator(p)
         destroy_net(self.syn_net)
-
-    def run(self):
-        draw_drmap(self.syn_net, 'target.png', bins=self.bins, limit=self.map_limit)
-        
-        print 'Evolving gpgenerator'
-        print 'Nodes:', self.nodes
-        print 'Edges:', self.edges
-        print 'Population:', self.pop
-        print 'Map limit:', self.map_limit
-
-        # init population
-        self.population = []
-        for i in range(self.pop):
-            gen = create_gpgenerator()
-            self.population.append(gen)
-
-        print 'Population initialized.'
-
-        cycle = 0
-        
-        # evolutionary loop
-        best_fit = 9999999
-        while True:
-            best_gen_fit = 9999999
-            best_gen = None
-            # eval fitness
-            for i in range(self.pop):
-                gen = self.population[i]
-                net = gpgen_run(gen, self.nodes, self.edges, self.max_cycles)
-
-                compute_pageranks(net)
-
-                drmap2 = get_drmap_with_limits(net, self.bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
-                drmap_log_scale(drmap2)
-                drmap_normalize(drmap2)
-
-                fit = drmap_emd_dist(self.drmap1, drmap2)
-
-                destroy_drmap(drmap2)
-                #print i, fit
-                if fit < best_gen_fit:
-                    best_gen_fit = fit
-                    best_gen = self.population[i]
-                
-                if fit < best_fit:
-                    best_fit = fit
-                    write_gpgen(self.population[i], 'best%d.prog' % cycle)
-                    draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
-
-                destroy_net(net)
-
-            print '%d, %f, %f' % (cycle, best_gen_fit, best_fit)
-            cycle += 1
-
-            # next generation
-            newgen = []
-            
-            newgen.append(clone_gpgenerator(best_gen))
-
-            for i in range(1, self.pop):
-                clone = clone_gpgenerator(best_gen)
-                chicken = create_gpgenerator()
-                child = recombine_gpgens(clone, chicken)
-                destroy_gpgenerator(chicken)
-                destroy_gpgenerator(clone)
-                newgen.append(child)
-
-            # replace generations
-            for i in range(self.pop):
-                destroy_gpgenerator(self.population[i])
-            self.population = newgen
-
-
-    def run2(self):
-        bins = 10
-        draw_drmap(self.syn_net, 'target.png', bins=bins, limit=self.map_limit)
-        
-        print 'Evolving gpgenerator'
-        print 'Nodes:', self.nodes
-        print 'Edges:', self.edges
-        print 'Population:', self.pop
-        print 'Mutation rate:', self.mrate
-        print 'Tournament:', self.tournament
-        print 'Recombination rate:', self.rrate
-        print 'Map limit:', self.map_limit
-
-        # init population
-        self.population = []
-        self.fitness = []
-        for i in range(self.pop):
-            gen = create_gpgenerator()
-            self.population.append(gen)
-            self.fitness.append(0)
-
-        print 'Population initialized.'
-
-        cycle = 0
-        best_fit = 9999999
-        # evolutionary loop
-        while True:
-            # eval fitness
-            for i in range(self.pop):
-                gen = self.population[i]
-                net = gpgen_run(gen, self.nodes, self.edges, self.max_cycles)
-
-                compute_pageranks(self.syn_net)
-                compute_pageranks(net)
-
-                drmap1 = get_drmap_with_limits(self.syn_net, bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
-                drmap_log_scale(drmap1)
-                drmap_normalize(drmap1)
-
-                drmap2 = get_drmap_with_limits(net, bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
-                drmap_log_scale(drmap2)
-                drmap_normalize(drmap2)
-
-                fit = drmap_emd_dist(drmap1, drmap2)
-
-                destroy_drmap(drmap1)
-                destroy_drmap(drmap2)
-                self.fitness[i] = fit
-                print i, fit
-                if fit < best_fit:
-                    best_fit = fit
-                    print_gpgen(self.population[i])
-                    draw_drmap(net, 'best.png', bins=bins, limit=self.map_limit)
-                destroy_net(net)
-
-            print 'Generation %d => best fitness: %f' % (cycle, best_fit)
-            cycle += 1
-
-            # next generation
-            newgen = []
-            
-            for i in range(self.pop):
-                parent1 = -1
-                for i in range(self.tournament):
-                    parent1 = random.randint(0, self.pop - 1)
-                    if (parent1 < 0) or (self.fitness[i] < self.fitness[parent1]):
-                        parent1 = i
-
-                child = None
-                # recombine or clone
-                if random.uniform(0, 1) < self.rrate:
-                    parent2 = -1
-                    for i in range(self.tournament):
-                        parent2 = random.randint(0, self.pop - 1)
-                        if (parent2 < 0) or (self.fitness[i] < self.fitness[parent2]):
-                            parent2 = i
-
-                    child = recombine_gpgens(self.population[parent1], self.population[parent2])
-                else:
-                    child = clone_gpgenerator(self.population[parent1])
-
-                # mutate
-                if random.uniform(0, 1) < self.mrate:
-                    chicken = create_gpgenerator()
-                    child2 = recombine_gpgens(child, chicken)
-                    destroy_gpgenerator(chicken)
-                    destroy_gpgenerator(child)
-                    child = child2
-
-                newgen.append(child)
-
-            # replace generations
-            for i in range(self.pop):
-                destroy_gpgenerator(self.population[i])
-            self.population = newgen
