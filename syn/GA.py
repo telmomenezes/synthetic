@@ -54,7 +54,7 @@ class GA(Evo):
 
                 destroy_drmap(sim_drmap)
                 fitness[i] = fit
-                #print i, fit
+                print i, fit
                 if fit < best_gen_fit:
                     best_gen_fit = fit
                 if fit < best_fit:
