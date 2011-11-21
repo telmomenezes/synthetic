@@ -21,7 +21,7 @@ def draw_drmap(syn_net, img_file, bins=50, img_side=500, limit=7.0):
 
     drmap = get_drmap_with_limits(syn_net, bins, -limit, limit, -limit, limit)
     drmap_log_scale(drmap)
-    drmap_normalize(drmap)
+    drmap_normalize_max(drmap)
 
 
     im = Image.new('RGBA', (img_side, img_side), (0, 0, 0, 0))
@@ -66,18 +66,18 @@ def draw_drmap(syn_net, img_file, bins=50, img_side=500, limit=7.0):
     im.save(img_file)
 
 
-def drmap_distance(net1, net2, bins=50):
+def drmap_distance(net1, net2, bins=50, limit=7.0):
     # TODO: use precomputed values
     compute_pageranks(net1)
     compute_pageranks(net2)
 
-    drmap1 = get_drmap_with_limits(net1, bins, -7.0, 7.0, -7.0, 7.0)
+    drmap1 = get_drmap_with_limits(net1, bins, -limit, limit, -limit, limit)
     drmap_log_scale(drmap1)
-    drmap_normalize(drmap1)
+    drmap_normalize_total(drmap1)
 
-    drmap2 = get_drmap_with_limits(net2, bins, -7.0, 7.0, -7.0, 7.0)
+    drmap2 = get_drmap_with_limits(net2, bins, -limit, limit, -limit, limit)
     drmap_log_scale(drmap2)
-    drmap_normalize(drmap2)
+    drmap_normalize_total(drmap2)
 
     dist = drmap_emd_dist(drmap1, drmap2)
 

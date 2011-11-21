@@ -48,7 +48,7 @@ class GA(Evo):
 
                 sim_drmap = get_drmap_with_limits(net, self.bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
                 drmap_log_scale(sim_drmap)
-                drmap_normalize(sim_drmap)
+                drmap_normalize_total(sim_drmap)
 
                 fit = drmap_emd_dist(self.targ_drmap, sim_drmap)
 

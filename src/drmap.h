@@ -22,7 +22,8 @@ public:
 	double get_value(unsigned int x, unsigned int y);
 
 	void log_scale();
-	void normalize();
+	void normalize_max();
+	void normalize_total();
 	void binary();
 
 	double total();

@@ -470,14 +470,28 @@ static PyObject *pysyn_drmap_log_scale(PyObject *self, PyObject *args)
     return result;
 }
 
-static PyObject *pysyn_drmap_normalize(PyObject *self, PyObject *args)
+static PyObject *pysyn_drmap_normalize_max(PyObject *self, PyObject *args)
 {
     long p;
     DRMap* map = NULL;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
         map = (DRMap*)p;
-        map->normalize();
+        map->normalize_max();
+    }
+    
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
+static PyObject *pysyn_drmap_normalize_total(PyObject *self, PyObject *args)
+{
+    long p;
+    DRMap* map = NULL;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        map = (DRMap*)p;
+        map->normalize_total();
     }
     
     PyObject *result = Py_BuildValue("");
@@ -720,7 +734,8 @@ static PyMethodDef methods[] = {
     {"drmap_set_value", pysyn_drmap_set_value, METH_VARARGS, "Set DRMap bin value."},
     {"drmap_get_limits", pysyn_drmap_get_limits, METH_VARARGS, "Return DRMap limit values."},
     {"drmap_log_scale", pysyn_drmap_log_scale, METH_VARARGS, "Apply log scale to drmap bin values."},
-    {"drmap_normalize", pysyn_drmap_normalize, METH_VARARGS, "Normalize drmap bin values by max value."},
+    {"drmap_normalize_max", pysyn_drmap_normalize_max, METH_VARARGS, "Normalize drmap bin values by max value."},
+    {"drmap_normalize_total", pysyn_drmap_normalize_total, METH_VARARGS, "Normalize drmap bin values by total value."},
     {"drmap_binary", pysyn_drmap_binary, METH_VARARGS, "Make drmap binary (0 or 1)."},
     {"drmap_simple_dist", pysyn_drmap_simple_distance, METH_VARARGS, "DRMap simple distance."},
     {"drmap_emd_dist", pysyn_drmap_emd_distance, METH_VARARGS, "DRMap earth mover's distance."},
