@@ -49,6 +49,6 @@ class Evo:
 
     def __del__(self):
         destroy_drmap(self.targ_drmap)
-        for p in self.pop:
+        for p in self.population:
             destroy_gpgenerator(p)
         destroy_net(self.syn_net)
