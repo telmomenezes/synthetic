@@ -13,7 +13,7 @@ from syn.drmap import *
 
 
 class Evo:
-    def __init__(self, targ_net, max_effort=5000, map_limit=7.0, bins=25):
+    def __init__(self, targ_net, max_effort=100, map_limit=7.0, bins=50):
         self.targ_net = targ_net
         self.population = []
 
