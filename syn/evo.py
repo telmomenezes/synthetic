@@ -43,7 +43,7 @@ class Evo:
         compute_pageranks(self.syn_net)
         self.targ_drmap = get_drmap_with_limits(self.syn_net, self.bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
         drmap_log_scale(self.targ_drmap)
-        drmap_normalize_total(self.targ_drmap)
+        drmap_normalize_max(self.targ_drmap)
 
         draw_drmap(self.syn_net, 'target.png', bins=self.bins, limit=self.map_limit)
 
