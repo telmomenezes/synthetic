@@ -32,7 +32,7 @@ class Evo:
 
         # check if max effort was reached
         if e > me:
-            n = math.sqrt(me / en_ration)
+            n = math.sqrt(me / en_ratio)
             self.nodes = int(n)
             self.edges = int(n * en_ratio)
         self.map_limit = map_limit
