@@ -55,6 +55,8 @@ class ES(Evo):
             if i == 0:
                 best_fit = fit
                 thr_fit = fit
+                write_gpgen(gen, 'best%d.prog' % cycle)
+                draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
             else:
                 if fit < best_fit:
                     best_fit = fit
