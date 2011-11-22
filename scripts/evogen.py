@@ -6,11 +6,11 @@ __date__ = "Oct 2011"
 
 
 from syn.net import Net
-from syn.GA import GA
+from syn.ES import ES
 import sys
 
 
 if __name__ == '__main__':
     net = Net(sys.argv[1])
-    evo = GA(net)
+    evo = ES(net)
     evo.run()

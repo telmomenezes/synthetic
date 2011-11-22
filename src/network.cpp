@@ -174,24 +174,25 @@ void Net::compute_pageranks()
             node->pr_in = 0;
             Edge* origin = node->origins;
             while (origin) {
-                //node->_prIn += origin->_prInLast / ((double)origin->getOutDegree());
-                node->pr_in += origin->orig->pr_in_last;
+                node->pr_in += origin->orig->pr_in_last / ((double)origin->orig->out_degree);
+                //node->pr_in += origin->orig->pr_in_last;
                 origin = origin->next_orig;
             }
+            node->pr_in *= 0.85;
             node->pr_in += (1.0 - 0.85) / ((double)node_count);
             //node->pr_in += (1.0 - 0.85);
-            node->pr_in *= 0.85;
             acc_pr_in += node->pr_in;
 
             node->pr_out = 0;
             Edge* target = node->targets;
             while (target) {
-                node->pr_out += target->targ->pr_out_last;
+                node->pr_out += target->targ->pr_out_last / ((double)target->targ->in_degree);
+                //node->pr_out += target->targ->pr_out_last;
                 target = target->next_targ;
             }
+            node->pr_out *= 0.85;
             node->pr_out += (1.0 - 0.85) / ((double)node_count);
             //node->pr_out += (1.0 - 0.85);
-            node->pr_out *= 0.85;
             acc_pr_out += node->pr_out;
             
             node = node->next;

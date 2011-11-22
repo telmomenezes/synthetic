@@ -91,6 +91,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
             prog_origin->vars[2] = oo;
             prog_origin->vars[3] = ep;
             weight = prog_origin->eval();
+            //weight = 1;
             if (weight < 0) {
                 weight = 0;
             }
@@ -144,6 +145,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
             prog_target->vars[5] = ot;
             prog_target->vars[6] = ep;
             weight = prog_target->eval();
+            //weight = 1;
             if (weight < 0) {
                 weight = 0;
             }

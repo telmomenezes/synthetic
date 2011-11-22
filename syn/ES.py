@@ -14,71 +14,116 @@ from syn.drmap import *
 
 
 class ES(Evo):
-    def run(self, pop=10):
+    def compute_fitness(self, net):
+        compute_pageranks(net)
+
+        sim_drmap = get_drmap_with_limits(net, self.bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
+        drmap_log_scale(sim_drmap)
+        drmap_normalize_total(sim_drmap)
+
+        fit = drmap_emd_dist(self.targ_drmap, sim_drmap)
+
+        destroy_drmap(sim_drmap)
+
+        return fit
+
+    def run(self, npars=5):
         print 'Synthetic - Evolving GPGenerator [evolutionary strategy]'
         print 'Nodes:', self.nodes
         print 'Edges:', self.edges
         print 'Map limit:', self.map_limit
-        print 'Population:', pop
+        print 'Parents:', npars
 
-        # init population
-        self.population = []
-        for i in range(pop):
-            gen = create_gpgenerator()
-            self.population.append(gen)
-
-        print 'Population initialized.'
+        # open log file
+        log = open('log.csv', 'w')
 
         cycle = 0
-        
-        # evolutionary loop
-        best_fit = 9999999
-        while True:
-            best_gen_fit = 9999999
-            best_gen = None
-            # eval fitness
-            for i in range(pop):
-                gen = self.population[i]
-                net = gpgen_run(gen, self.nodes, self.edges)
 
-                compute_pageranks(net)
+        # init population
+        parents = []
+        fitnesses = []
+        best_fit = 0
+        thr_fit = 0
+        thr_pos = 0
+        for i in range(npars):
+            gen = create_gpgenerator()
+            parents.append(gen)
+            net = gpgen_run(gen, self.nodes, self.edges)
+            fit = self.compute_fitness(net)
+            fitnesses.append(fit)
 
-                sim_drmap = get_drmap_with_limits(net, self.bins, -self.map_limit, self.map_limit, -self.map_limit, self.map_limit)
-                drmap_log_scale(sim_drmap)
-                drmap_normalize_total(sim_drmap)
-
-                fit = drmap_emd_dist(self.targ_drmap, sim_drmap)
-
-                destroy_drmap(sim_drmap)
-                #print i, fit
-                if fit < best_gen_fit:
-                    best_gen_fit = fit
-                    best_gen = self.population[i]
-                
+            if i == 0:
+                best_fit = fit
+                thr_fit = fit
+            else:
                 if fit < best_fit:
                     best_fit = fit
-                    write_gpgen(self.population[i], 'best%d.prog' % cycle)
+                    write_gpgen(gen, 'best%d.prog' % cycle)
                     draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
+                if fit > thr_fit:
+                    thr_fit = fit
+                    thr_pos = i
+            destroy_net(net)
 
-                destroy_net(net)
+            log.write('%d, %f, %f\n' % (cycle, fit, best_fit))
+            print 'cycle: %d; fit: %f; best: %f [parent init]' % (cycle, fit, best_fit)
 
-            print '%d, %f, %f' % (cycle, best_gen_fit, best_fit)
             cycle += 1
 
-            # next generation
-            newgen = []
-            
-            newgen.append(clone_gpgenerator(best_gen))
+        print 'Initial parents initialized.'
+        print 'Fitness range: %f -> %f' % (best_fit, thr_fit)
+        
+        # evolutionary loop
+        while True:
+            mode = random.randint(0, 2)
+            p1_index = random.randint(0, npars - 1)
 
-            for i in range(1, pop):
-                clone = clone_gpgenerator(best_gen)
+            child = None
+            # recombine or clone
+            if mode < 2:
+                p2_index = random.randint(0, npars - 1)
+                child = recombine_gpgens(parents[p1_index], parents[p2_index])
+            else:
+                child = clone_gpgenerator(parents[p1_index])
+
+            # mutate
+            if mode > 0:
                 chicken = create_gpgenerator()
-                child = recombine_gpgens(clone, chicken)
+                child2 = recombine_gpgens(child, chicken)
                 destroy_gpgenerator(chicken)
-                destroy_gpgenerator(clone)
-                newgen.append(child)
+                destroy_gpgenerator(child)
+                child = child2
 
-            # replace generations
-            for i in range(pop):
-                destroy_gpgenerator(self.population[i])
-            self.population = newgen
+            # eval fitness
+            net = gpgen_run(child, self.nodes, self.edges)
+            fit = self.compute_fitness(net)
+
+            #print i, fit
+            if fit < best_fit:
+                best_fit = fit
+                write_gpgen(child, 'best%d.prog' % cycle)
+                draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
+
+            destroy_net(net)
+
+            # check if new individual should replace one of the parents
+            if fit < thr_fit:
+                destroy_gpgenerator(parents[thr_pos])
+                parents[thr_pos] = child
+                fitnesses[thr_pos] = fit
+
+                for i in range(npars):
+                    if i == 0:
+                        thr_fit = fitnesses[i]
+                        thr_pos = 0
+                    else:
+                        if fitnesses[i] > thr_fit:
+                            thr_fit = fitnesses[i]
+                            thr_pos = i
+            else:
+                destroy_gpgenerator(child)
+
+            log.write('%d, %f, %f\n' % (cycle, fit, best_fit))
+            print 'cycle: %d; fit: %f; best: %f' % (cycle, fit, best_fit)
+            
+            cycle += 1

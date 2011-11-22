@@ -25,7 +25,7 @@ if __name__ == '__main__':
     compute_pageranks(net)
     drmap1 = get_drmap_with_limits(net, bins, -map_limit, map_limit, -map_limit, map_limit)
     drmap_log_scale(drmap1)
-    drmap_normalize(drmap1)
+    drmap_normalize_max(drmap1)
 
     syn_net = gpgen_run(gen, nodes, edges, max_cycles)
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     drmap2 = get_drmap_with_limits(syn_net, bins, -map_limit, map_limit, -map_limit, map_limit)
     drmap_log_scale(drmap2)
-    drmap_normalize(drmap2)
+    drmap_normalize_max(drmap2)
 
     fit = drmap_emd_dist(drmap1, drmap2)
 

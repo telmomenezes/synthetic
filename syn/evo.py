@@ -13,16 +13,28 @@ from syn.drmap import *
 
 
 class Evo:
-    def __init__(self, targ_net, nodes=2000, map_limit=5.0, bins=10):
+    def __init__(self, targ_net, max_effort=5000, map_limit=5.0, bins=10):
         self.targ_net = targ_net
         self.population = []
 
         self.syn_net = targ_net.load_net()
-        if nodes <= 0:
-            self.nodes = net_node_count(self.syn_net)
-        else:
-            self.nodes = nodes
-        self.edges = int(float(self.nodes) * (float(net_edge_count(self.syn_net)) / float(net_node_count(self.syn_net))))
+        self.nodes = net_node_count(self.syn_net)
+        self.edges = net_edge_count(self.syn_net)
+        
+        # edge to node ratio
+        en_ratio = float(net_edge_count(self.syn_net)) / float(net_node_count(self.syn_net))
+        
+        # max effort
+        me = float(max_effort * 1000000) 
+
+        # total effort
+        e = en_ratio * (self.nodes * self.nodes)
+
+        # check if max effort was reached
+        if e > me:
+            n = math.sqrt(me / en_ration)
+            self.nodes = int(n)
+            self.edges = int(n * en_ratio)
         self.map_limit = map_limit
         self.bins = bins
 
