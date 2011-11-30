@@ -18,8 +18,7 @@ Node::Node(unsigned int type, unsigned int id)
     this->id = id;
     in_degree = 0;
     out_degree = 0;
-    marked = 0;
-    last_walk_id = 0;
+    birth = -1;
     targets = NULL;
     origins = NULL;
 }

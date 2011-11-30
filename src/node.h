@@ -34,8 +34,7 @@ public:
     Edge* origins;
     unsigned int in_degree;
     unsigned int out_degree;
-    int marked;
-    unsigned long last_walk_id;
+    int birth;
     
     // pageranks
     double pr_in;
