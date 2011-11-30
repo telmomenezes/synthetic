@@ -119,7 +119,7 @@ string GPNode::to_string()
 
     if (this->type == VAR) {
         std::stringstream sstm;
-        sstm << "$" << this->val;
+        sstm << "$" << this->var;
         return sstm.str();
     }
 
