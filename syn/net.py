@@ -100,6 +100,27 @@ class Net:
         else:
             self.cur.execute("UPDATE params SET perm_edges=0")
 
+    def save(self, syn_net):
+        nodes = {}
+
+        # add nodes
+        node = net_first_node(syn_net)
+        while node != 0:
+            nid = node_id(node)
+            nodes[nid] = self.add_node(nid)
+            node = node_next_node(node)
+
+        # add edges
+        orig = net_first_node(syn_net)
+        while orig != 0:
+            orig_id = node_id(orig)
+            targ = node_first_targ(orig)
+            while targ != 0:
+                targ_id = node_id(targ)
+                self.add_edge(nodes[orig_id], nodes[targ_id])
+                targ = next_targ(targ)
+            orig = node_next_node(orig)
+
     def load_net(self, min_ts=-1, max_ts=-1):
         net = create_net()
 

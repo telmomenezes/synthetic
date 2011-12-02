@@ -7,6 +7,7 @@
 
 using syn::Net;
 using syn::Node;
+using syn::Edge;
 using syn::DRMap;
 using syn::GPGenerator;
 
@@ -241,6 +242,21 @@ static PyObject *pysyn_node_next_node(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_node_first_targ(PyObject *self, PyObject *args)
+{
+    long p;
+    Node* node;
+    Edge* first_targ = NULL;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        node = (Node*)p;
+        first_targ = node->targets;
+    }
+
+    PyObject *result = Py_BuildValue("l", (long)first_targ);
+    return result;
+}
+
 static PyObject *pysyn_node_id(PyObject *self, PyObject *args)
 {
     long p;
@@ -313,6 +329,24 @@ static PyObject *pysyn_node_pr_out(PyObject *self, PyObject *args)
     }
 
     PyObject *result = Py_BuildValue("f", value);
+    return result;
+}
+
+
+// EDGE API
+
+static PyObject *pysyn_next_targ(PyObject *self, PyObject *args)
+{
+    long p;
+    Edge* edge;
+    Edge* next_targ = NULL;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        edge = (Edge*)p;
+        next_targ = edge->next_targ;
+    }
+
+    PyObject *result = Py_BuildValue("l", (long)next_targ);
     return result;
 }
 
@@ -719,11 +753,13 @@ static PyMethodDef methods[] = {
     {"net_max_ts", pysyn_net_max_ts, METH_VARARGS, "Net max timestamp."},
     {"net_first_node", pysyn_net_first_node, METH_VARARGS, "First node in net."},
     {"node_next_node", pysyn_node_next_node, METH_VARARGS, "Get next node from a node."},
+    {"node_first_targ", pysyn_node_first_targ, METH_VARARGS, "Get first target edge from node."},
     {"node_id", pysyn_node_id, METH_VARARGS, "Get node id."},
     {"node_in_degree", pysyn_node_in_degree, METH_VARARGS, "Get node in degree."},
     {"node_out_degree", pysyn_node_out_degree, METH_VARARGS, "Get node out degree."},
     {"node_pr_in", pysyn_node_pr_in, METH_VARARGS, "Get node pr in."},
     {"node_pr_out", pysyn_node_pr_out, METH_VARARGS, "Get node pr out."},
+    {"next_targ", pysyn_next_targ, METH_VARARGS, "Get next target edge."},
     {"create_drmap", pysyn_create_drmap, METH_VARARGS, "Create DRMap."},
     {"destroy_drmap", pysyn_destroy_drmap, METH_VARARGS, "Destroy DRMap."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},
