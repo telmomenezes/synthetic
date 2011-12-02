@@ -335,7 +335,7 @@ static PyObject *pysyn_node_pr_out(PyObject *self, PyObject *args)
 
 // EDGE API
 
-static PyObject *pysyn_next_targ(PyObject *self, PyObject *args)
+static PyObject *pysyn_edge_next_targ(PyObject *self, PyObject *args)
 {
     long p;
     Edge* edge;
@@ -347,6 +347,21 @@ static PyObject *pysyn_next_targ(PyObject *self, PyObject *args)
     }
 
     PyObject *result = Py_BuildValue("l", (long)next_targ);
+    return result;
+}
+
+static PyObject *pysyn_edge_targ(PyObject *self, PyObject *args)
+{
+    long p;
+    Edge* edge;
+    Node* targ = NULL;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        edge = (Edge*)p;
+        targ = edge->targ;
+    }
+
+    PyObject *result = Py_BuildValue("l", (long)targ);
     return result;
 }
 
@@ -759,7 +774,8 @@ static PyMethodDef methods[] = {
     {"node_out_degree", pysyn_node_out_degree, METH_VARARGS, "Get node out degree."},
     {"node_pr_in", pysyn_node_pr_in, METH_VARARGS, "Get node pr in."},
     {"node_pr_out", pysyn_node_pr_out, METH_VARARGS, "Get node pr out."},
-    {"next_targ", pysyn_next_targ, METH_VARARGS, "Get next target edge."},
+    {"edge_next_targ", pysyn_edge_next_targ, METH_VARARGS, "Get next target edge."},
+    {"edge_targ", pysyn_edge_targ, METH_VARARGS, "Get edge's target node."},
     {"create_drmap", pysyn_create_drmap, METH_VARARGS, "Create DRMap."},
     {"destroy_drmap", pysyn_destroy_drmap, METH_VARARGS, "Destroy DRMap."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},

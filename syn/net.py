@@ -114,11 +114,12 @@ class Net:
         orig = net_first_node(syn_net)
         while orig != 0:
             orig_id = node_id(orig)
-            targ = node_first_targ(orig)
-            while targ != 0:
+            edge = node_first_targ(orig)
+            while edge != 0:
+                targ = edge_targ(edge)
                 targ_id = node_id(targ)
                 self.add_edge(nodes[orig_id], nodes[targ_id])
-                targ = next_targ(targ)
+                edge = edge_next_targ(edge)
             orig = node_next_node(orig)
 
     def load_net(self, min_ts=-1, max_ts=-1):

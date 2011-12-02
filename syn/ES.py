@@ -8,6 +8,7 @@ __date__ = "Nov 2011"
 import random
 import math
 import sys
+from syn.net import Net
 from syn.evo import Evo
 from syn.core import *
 from syn.drmap import *
@@ -46,6 +47,8 @@ class ES(Evo):
 
         write_gpgen(parent, 'best%d.prog' % cycle)
         draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
+        n = Net('best%d.syn' % cycle)
+        n.save(net)
         destroy_net(net)
 
         log.write('%d, %f, %f\n' % (cycle, best_fit, best_fit))
@@ -72,6 +75,8 @@ class ES(Evo):
                 parent = child
                 write_gpgen(parent, 'best%d.prog' % cycle)
                 draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
+                n = Net('best%d.syn' % cycle)
+                n.save(net)
             else:
                 destroy_gpgenerator(child)
 
