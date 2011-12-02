@@ -29,7 +29,7 @@ GPGenerator::GPGenerator()
     cycle = 0;
     prog_origin = new GPTree(5);
     prog_origin->init_random(0.2, 2, 5);
-    prog_target = new GPTree(9);
+    prog_target = new GPTree(10);
     prog_target->init_random(0.2, 2, 5);
 }
 
@@ -58,7 +58,6 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
 {
     Net* net = new Net();
 
-    edges = 0;
     cycle = 0;
 
     // create nodes
@@ -72,18 +71,18 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
     double total_weight;
     double weight;
 
-    double po, pt, io, oo, it, ot, ep, ao, at;
+    double po, pt, io, oo, it, ot, t, ao, at, r;
 
     for (unsigned int i = 0; i < edge_count; i++) {
         total_weight = 0;
         orig_node = net->get_nodes();
         while (orig_node) {
             po = (double)orig_node->id;
-            io = oo = ep = ao = at = 0;
+            io = oo = t = ao = at = 0;
             if (edges > 0) {
                 io = (double)orig_node->in_degree;
                 oo = (double)orig_node->out_degree;
-                ep = (double)edges;
+                t = (double)cycle;
             }
 
             if (orig_node->birth >= 0) {
@@ -93,8 +92,8 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
             prog_origin->vars[0] = po;
             prog_origin->vars[1] = io;
             prog_origin->vars[2] = oo;
-            prog_origin->vars[3] = ep;
-            prog_origin->vars[4] = ao;
+            prog_origin->vars[3] = ao;
+            prog_origin->vars[4] = t;
             weight = prog_origin->eval();
             if (weight < 0) {
                 weight = 0;
@@ -131,14 +130,14 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
             po = (double)orig_node->id;
             pt = (double)targ_node->id;
         
-            io = oo = it = ot = ep = ao = at = 0;
+            io = oo = it = ot = t = ao = at = 0;
 
             if (edges > 0) {
                 io = (double)orig_node->in_degree;
                 oo = (double)orig_node->out_degree;
                 it = (double)targ_node->in_degree;
                 ot = (double)targ_node->out_degree;
-                ep = (double)edges;
+                t = (double)cycle;
             }
 
             if (orig_node->birth >= 0) {
@@ -150,15 +149,18 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
 
             //cout << "ages: " << ao << "; " << at << endl;
 
+            r = targ_node->edge_exists(orig_node);
+
             prog_target->vars[0] = po;
-            prog_target->vars[1] = pt;
-            prog_target->vars[2] = io;
-            prog_target->vars[3] = oo;
-            prog_target->vars[4] = it;
-            prog_target->vars[5] = ot;
-            prog_target->vars[6] = ep;
-            prog_target->vars[7] = ao;
+            prog_target->vars[1] = io;
+            prog_target->vars[2] = oo;
+            prog_target->vars[3] = ao;
+            prog_target->vars[4] = t;
+            prog_target->vars[5] = pt;
+            prog_target->vars[6] = it;
+            prog_target->vars[7] = ot;
             prog_target->vars[8] = at;
+            prog_target->vars[9] = r;
             weight = prog_target->eval();
             if (weight < 0) {
                 weight = 0;
@@ -202,7 +204,6 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
         }
 
         net->add_edge_to_net(orig_node, targ_node, cycle);
-        edges++;
             
         cycle++;
     }
