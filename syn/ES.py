@@ -49,6 +49,7 @@ class ES(Evo):
         draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
         n = Net('best%d.syn' % cycle)
         n.save(net)
+        n.close()
         destroy_net(net)
 
         log.write('%d, %f, %f\n' % (cycle, best_fit, best_fit))
@@ -77,6 +78,7 @@ class ES(Evo):
                 draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
                 n = Net('best%d.syn' % cycle)
                 n.save(net)
+                n.close()
             else:
                 destroy_gpgenerator(child)
 

@@ -18,9 +18,7 @@ class Net:
         self.load_params()
 
     def __del__(self):
-        self.conn.commit()
-        self.cur.close()
-        self.conn.close()
+        self.close()
 
     def log(self, message):
         if self.verbose:
@@ -121,6 +119,14 @@ class Net:
                 self.add_edge(nodes[orig_id], nodes[targ_id])
                 edge = edge_next_targ(edge)
             orig = node_next_node(orig)
+
+        # create single interval
+        self.divide_in_intervals(1)
+
+    def close(self):
+        self.conn.commit()
+        self.cur.close()
+        self.conn.close()
 
     def load_net(self, min_ts=-1, max_ts=-1):
         net = create_net()
