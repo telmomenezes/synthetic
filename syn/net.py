@@ -18,7 +18,9 @@ class Net:
         self.load_params()
 
     def __del__(self):
-        self.close()
+        self.conn.commit()
+        self.cur.close()
+        self.conn.close()
 
     def log(self, message):
         if self.verbose:
@@ -122,11 +124,6 @@ class Net:
 
         # create single interval
         self.divide_in_intervals(1)
-
-    def close(self):
-        self.conn.commit()
-        self.cur.close()
-        self.conn.close()
 
     def load_net(self, min_ts=-1, max_ts=-1):
         net = create_net()
