@@ -43,20 +43,21 @@ def draw_drmap(syn_net, img_file, bins=50, img_side=500, limit=7.0):
     draw.line(((center, 0), (center, img_side)), fill=grid_color)
     draw.line(((0, center), (img_side, center)), fill=grid_color)
 
-    for j in range(6):
-        y = center - ((center / 7.0) * (j + 1))
+    divs = int(limit) - 1
+    for j in range(divs):
+        y = center - ((center / limit) * (j + 1))
         draw.line(((center - 5, y), (center + 5, y)), fill=grid_color)
         draw.text((center + 10, y - 5), '%d' % (j + 1), fill=grid_color)
 
-        y = center + ((center / 7.0) * (j + 1))
+        y = center + ((center / limit) * (j + 1))
         draw.line(((center - 5, y), (center + 5, y)), fill=grid_color)
         draw.text((center + 10, y - 5), '-%d' % (j + 1), fill=grid_color)
 
-        x = center - ((center / 7.0) * (j + 1))
+        x = center - ((center / limit) * (j + 1))
         draw.line(((x, center - 5), (x, center + 5)), fill=grid_color)
         draw.text((x - 5, center + 10), '-%d' % (j + 1), fill=grid_color)
 
-        x = center + ((center / 7.0) * (j + 1))
+        x = center + ((center / limit) * (j + 1))
         draw.line(((x, center - 5), (x, center + 5)), fill=grid_color)
         draw.text((x - 2, center + 10), '%d' % (j + 1), fill=grid_color)
 
