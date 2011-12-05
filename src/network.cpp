@@ -9,9 +9,12 @@
 #include <cmath>
 #include <string.h>
 #include <stdio.h>
+#include <iostream>
 
 
 using std::isfinite;
+using std::cout;
+using std::endl;
 
 
 namespace syn
@@ -288,6 +291,120 @@ void Net::print_net_info()
     printf("edge number: %d\n", edge_count);
     printf("log(pr_in): [%f, %f]\n", min_pr_in, max_pr_in);
     printf("log(pr_out): [%f, %f]\n", min_pr_out, max_pr_out);
+}
+
+int Net::triad_type(Node* a, Node* b, Node* c)
+{
+    int type = -1;
+
+    bool ab = a->edge_exists(b);
+    bool ac = a->edge_exists(c);
+    bool ba = b->edge_exists(a);
+    bool bc = b->edge_exists(c);
+    bool ca = c->edge_exists(a);
+    bool cb = c->edge_exists(b);
+
+    if      (ab && ac && !ba && !bc && !ca && !cb) type = 1;
+    else if (!ab && !ac && ba && !bc && ca && !cb) type = 2;
+    else if (!ab && !ac && !ba && bc && ca && !cb) type = 3;
+    else if (!ab && ac && ba && !bc && ca && !cb)  type = 4;
+    else if (ab && ac && ba && !bc && !ca && !cb)  type = 5;
+    else if (ab && ac && ba && !bc && ca && !cb)   type = 6;
+    else if (ab && ac && !ba && bc && !ca && !cb)  type = 7;
+    else if (!ab && ac && ba && !bc && !ca && cb)  type = 8;
+    else if (ab && ac && !ba && bc && !ca && cb)   type = 9;
+    else if (!ab && !ac && ba && bc && ca && cb)   type = 10;
+    else if (ab && ac && !ba && bc && ca && !cb)   type = 11;
+    else if (!ab && ac && ba && bc && ca && cb)    type = 12;
+    else if (ab && ac && ba && bc && ca && cb)     type = 13;
+
+    return type;
+}
+
+void Net::update_triad_profile(Node** triad, unsigned int* profile)
+{
+    int type = triad_type(triad[0], triad[1], triad[2]);
+    if (type < 0) type = triad_type(triad[0], triad[2], triad[1]);
+    if (type < 0) type = triad_type(triad[1], triad[0], triad[2]);
+    if (type < 0) type = triad_type(triad[1], triad[2], triad[0]);
+    if (type < 0) type = triad_type(triad[2], triad[0], triad[1]);
+    if (type < 0) type = triad_type(triad[2], triad[1], triad[0]);
+
+    if (type < 0) {
+        cout << "negative type!" << endl;
+        return;
+    }
+
+    profile[type - 1]++;
+}
+
+bool Net::not_in_triad(Node* node, Node** triad, unsigned int depth)
+{
+    for (unsigned int i = 0; i <= depth; i++) {
+        if (triad[i] == node)
+            return false;
+    }
+
+    return true;
+}
+
+void Net::triad_profile_r(Node** triad, unsigned int depth, unsigned int* profile)
+{
+    if (depth == 2) {
+        update_triad_profile(triad, profile);
+        return;    
+    }
+
+    Node* node = triad[depth];
+
+    Edge* orig = node->origins;
+    while (orig) {
+        Node* next_node = orig->orig;
+        if (next_node->flag && not_in_triad(next_node, triad, depth)) {
+            triad[depth + 1] = next_node;
+            triad_profile_r(triad, depth + 1, profile);
+        }
+        orig = orig->next_orig;
+    }
+
+    Edge* targ = node->targets;
+    while (targ) {
+        Node* next_node = targ->targ;
+        if (next_node->flag && not_in_triad(next_node, triad, depth)) {
+            triad[depth + 1] = next_node;
+            triad_profile_r(triad, depth + 1, profile);
+        }
+        targ = targ->next_targ;
+    }
+}
+
+void Net::triad_profile()
+{
+    Node* triad[3];
+    unsigned int profile[13];
+
+    for (unsigned int i = 0; i < 13; i++)
+        profile[i] = 0;
+    
+    // set all node flags to true
+    Node* node = nodes;
+    while (node) {
+        node->flag = true;
+        node = node->next;
+    }
+
+    // search for triads starting on each node
+    node = nodes;
+    while (node) {
+        triad[0] = node;
+        triad_profile_r(triad, 0, profile);
+        node->flag = false;
+        node = node->next;
+    }
+
+    for (unsigned int i = 0; i < 13; i++)
+        cout << profile[i] << " ";
+    cout << endl;
 }
 
 }

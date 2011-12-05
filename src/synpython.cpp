@@ -224,6 +224,20 @@ static PyObject *pysyn_net_first_node(PyObject *self, PyObject *args)
     return result;
 }
 
+static PyObject *pysyn_net_triad_profile(PyObject *self, PyObject *args)
+{
+    long p;
+    Net* net;
+
+    if (PyArg_ParseTuple(args, "l", &p)) {
+        net = (Net*)p;
+        net->triad_profile();
+    }
+
+    PyObject *result = Py_BuildValue("");
+    return result;
+}
+
 
 // NODE API
 
@@ -742,6 +756,7 @@ static PyObject *pysyn_simplify_gpgen(PyObject *self, PyObject *args)
     return result;
 }
 
+
 // AUX
 static PyObject *pysyn_seed_random(PyObject *self, PyObject *args)
 {
@@ -767,6 +782,7 @@ static PyMethodDef methods[] = {
     {"net_min_ts", pysyn_net_min_ts, METH_VARARGS, "Net min timestamp."},
     {"net_max_ts", pysyn_net_max_ts, METH_VARARGS, "Net max timestamp."},
     {"net_first_node", pysyn_net_first_node, METH_VARARGS, "First node in net."},
+    {"net_triad_profile", pysyn_net_triad_profile, METH_VARARGS, "Compute triad profile."},
     {"node_next_node", pysyn_node_next_node, METH_VARARGS, "Get next node from a node."},
     {"node_first_targ", pysyn_node_first_targ, METH_VARARGS, "Get first target edge from node."},
     {"node_id", pysyn_node_id, METH_VARARGS, "Get node id."},

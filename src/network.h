@@ -39,7 +39,14 @@ public:
     unsigned long get_max_ts(){return max_ts;}
     Node* get_nodes() {return nodes;}
 
+    void triad_profile();
+
 private:
+    int triad_type(Node* a, Node* b, Node* c);
+    void update_triad_profile(Node** triad, unsigned int* profile);
+    bool not_in_triad(Node* node, Node** triad, unsigned int depth);
+    void triad_profile_r(Node** triad, unsigned int depth, unsigned int* profile);
+
     double min_pr_in;
     double min_pr_out;
     double max_pr_in;

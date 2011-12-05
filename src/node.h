@@ -44,6 +44,9 @@ public:
 
     // for generators
     double genweight;
+
+    // Auxiliary flag for algorithms that need to know if this node was already visited
+    bool flag;
 };
 
 }
