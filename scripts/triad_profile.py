@@ -18,11 +18,16 @@ def triad(dbpath):
 
     net = Net(dbpath)
     syn_net = net.load_net()
+
+    print 'Node count: ', net_node_count(syn_net)
+    print 'Edge count: ', net_edge_count(syn_net)
+
     p = net_triad_profile(syn_net)
 
     # generate profiles of random nets
     rprofs = []
     for i in range(rcount):
+        print '#%d' % i
         syn_rand = create_net()
         gen_degree_seq(syn_rand, syn_net)
         rprofs.append(net_triad_profile(syn_rand))
