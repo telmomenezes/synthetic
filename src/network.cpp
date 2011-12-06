@@ -321,7 +321,7 @@ int Net::triad_type(Node* a, Node* b, Node* c)
     return type;
 }
 
-void Net::update_triad_profile(Node** triad, unsigned int* profile)
+void Net::update_triad_profile(Node** triad, unsigned long* profile)
 {
     int type = triad_type(triad[0], triad[1], triad[2]);
     if (type < 0) type = triad_type(triad[0], triad[2], triad[1]);
@@ -348,7 +348,7 @@ bool Net::not_in_triad(Node* node, Node** triad, unsigned int depth)
     return true;
 }
 
-void Net::triad_profile_r(Node** triad, unsigned int depth, unsigned int* profile)
+void Net::triad_profile_r(Node** triad, unsigned int depth, unsigned long* profile)
 {
     if (depth == 2) {
         update_triad_profile(triad, profile);
@@ -378,10 +378,10 @@ void Net::triad_profile_r(Node** triad, unsigned int depth, unsigned int* profil
     }
 }
 
-void Net::triad_profile()
+unsigned long* Net::triad_profile()
 {
     Node* triad[3];
-    unsigned int profile[13];
+    unsigned long* profile = (unsigned long*)malloc(sizeof(unsigned long) * 13);
 
     for (unsigned int i = 0; i < 13; i++)
         profile[i] = 0;
@@ -402,9 +402,78 @@ void Net::triad_profile()
         node = node->next;
     }
 
-    for (unsigned int i = 0; i < 13; i++)
-        cout << profile[i] << " ";
-    cout << endl;
+    return profile;
+}
+
+unsigned int* Net::in_deg_seq()
+{
+    unsigned int* seq = (unsigned int*)malloc(sizeof(unsigned int) * node_count);
+    Node* curnode = nodes;
+    unsigned int i = 0;
+    while (curnode) {
+        seq[i] = curnode->in_degree;
+        curnode = curnode->next;
+        i++;
+    }
+
+    return seq;
+}
+
+unsigned int* Net::out_deg_seq()
+{
+    unsigned int* seq = (unsigned int*)malloc(sizeof(unsigned int) * node_count);
+    Node* curnode = nodes;
+    unsigned int i = 0;
+    while (curnode) {
+        seq[i] = curnode->out_degree;
+        curnode = curnode->next;
+        i++;
+    }
+
+    return seq;
+}
+
+void Net::gen_degree_seq(Net* ref_net)
+{
+    unsigned int* in_deg_seq = ref_net->in_deg_seq();
+    unsigned int* out_deg_seq = ref_net->out_deg_seq();
+
+    unsigned int total_degree = ref_net->edge_count;
+
+    // create nodes
+    Node* new_nodes[ref_net->node_count];
+    for (unsigned int i = 0; i < ref_net->node_count; i++) {
+        new_nodes[i] = add_node(0);
+    }
+
+    // create edges
+    for (unsigned int i = 0; i < ref_net->edge_count; i++) {
+        unsigned int orig_pos = RANDOM_UINT(total_degree);
+        unsigned int targ_pos = RANDOM_UINT(total_degree);
+
+        unsigned int curpos = 0;
+        int orig_index = -1;
+        while (curpos <= orig_pos) {
+            orig_index++;
+            curpos += out_deg_seq[orig_index];
+        }
+        out_deg_seq[orig_index]--;
+
+        curpos = 0;
+        int targ_index = -1;
+        while (curpos <= targ_pos) {
+            targ_index++;
+            curpos += in_deg_seq[targ_index];
+        }
+        in_deg_seq[targ_index]--;
+
+        add_edge_to_net(new_nodes[orig_index], new_nodes[targ_index], 0);
+
+        total_degree--;
+    }
+
+    free(in_deg_seq);
+    free(out_deg_seq);
 }
 
 }

@@ -39,13 +39,17 @@ public:
     unsigned long get_max_ts(){return max_ts;}
     Node* get_nodes() {return nodes;}
 
-    void triad_profile();
+    unsigned long* triad_profile();
+
+    unsigned int* in_deg_seq();
+    unsigned int* out_deg_seq();
+    void gen_degree_seq(Net* ref_net);
 
 private:
     int triad_type(Node* a, Node* b, Node* c);
-    void update_triad_profile(Node** triad, unsigned int* profile);
+    void update_triad_profile(Node** triad, unsigned long* profile);
     bool not_in_triad(Node* node, Node** triad, unsigned int depth);
-    void triad_profile_r(Node** triad, unsigned int depth, unsigned int* profile);
+    void triad_profile_r(Node** triad, unsigned int depth, unsigned long* profile);
 
     double min_pr_in;
     double min_pr_out;

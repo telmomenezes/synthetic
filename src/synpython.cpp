@@ -228,16 +228,35 @@ static PyObject *pysyn_net_triad_profile(PyObject *self, PyObject *args)
 {
     long p;
     Net* net;
+    unsigned long* pro;
 
     if (PyArg_ParseTuple(args, "l", &p)) {
         net = (Net*)p;
-        net->triad_profile();
+        pro = net->triad_profile();
+    }
+
+    PyObject *result = Py_BuildValue("(l, l, l, l, l, l, l, l, l, l, l, l, l)",
+        pro[0], pro[1], pro[2], pro[3], pro[4], pro[5], pro[6], pro[7], pro[8], pro[9], pro[10], pro[11], pro[12]);
+    free(pro);
+    return result;
+}
+
+static PyObject *pysyn_gen_degree_seq(PyObject *self, PyObject *args)
+{
+    long p1;
+    long p2;
+    Net* net_targ;
+    Net* net_orig;
+
+    if (PyArg_ParseTuple(args, "ll", &p1, &p2)) {
+        net_targ = (Net*)p1;
+        net_orig = (Net*)p2;
+        net_targ->gen_degree_seq(net_orig);
     }
 
     PyObject *result = Py_BuildValue("");
     return result;
 }
-
 
 // NODE API
 
@@ -783,6 +802,8 @@ static PyMethodDef methods[] = {
     {"net_max_ts", pysyn_net_max_ts, METH_VARARGS, "Net max timestamp."},
     {"net_first_node", pysyn_net_first_node, METH_VARARGS, "First node in net."},
     {"net_triad_profile", pysyn_net_triad_profile, METH_VARARGS, "Compute triad profile."},
+    {"gen_degree_seq", pysyn_gen_degree_seq, METH_VARARGS, "Generate network with same degree distribution as refrence."},
+
     {"node_next_node", pysyn_node_next_node, METH_VARARGS, "Get next node from a node."},
     {"node_first_targ", pysyn_node_first_targ, METH_VARARGS, "Get first target edge from node."},
     {"node_id", pysyn_node_id, METH_VARARGS, "Get node id."},
@@ -790,8 +811,10 @@ static PyMethodDef methods[] = {
     {"node_out_degree", pysyn_node_out_degree, METH_VARARGS, "Get node out degree."},
     {"node_pr_in", pysyn_node_pr_in, METH_VARARGS, "Get node pr in."},
     {"node_pr_out", pysyn_node_pr_out, METH_VARARGS, "Get node pr out."},
+    
     {"edge_next_targ", pysyn_edge_next_targ, METH_VARARGS, "Get next target edge."},
     {"edge_targ", pysyn_edge_targ, METH_VARARGS, "Get edge's target node."},
+    
     {"create_drmap", pysyn_create_drmap, METH_VARARGS, "Create DRMap."},
     {"destroy_drmap", pysyn_destroy_drmap, METH_VARARGS, "Destroy DRMap."},
     {"get_drmap", pysyn_get_drmap, METH_VARARGS, "Get DRMap from net."},
@@ -807,6 +830,7 @@ static PyMethodDef methods[] = {
     {"drmap_binary", pysyn_drmap_binary, METH_VARARGS, "Make drmap binary (0 or 1)."},
     {"drmap_simple_dist", pysyn_drmap_simple_distance, METH_VARARGS, "DRMap simple distance."},
     {"drmap_emd_dist", pysyn_drmap_emd_distance, METH_VARARGS, "DRMap earth mover's distance."},
+    
     {"create_gpgenerator", pysyn_create_gpgenerator, METH_VARARGS, "Create gpgenerator."},
     {"destroy_gpgenerator", pysyn_destroy_gpgenerator, METH_VARARGS, "Destroy gpgenerator."},
     {"clone_gpgenerator", pysyn_clone_gpgenerator, METH_VARARGS, "Clone gpgenerator."},
