@@ -27,9 +27,9 @@ GPGenerator::GPGenerator()
 {
     edges = 0;
     cycle = 0;
-    prog_origin = new GPTree(5);
+    prog_origin = new GPTree(4);
     prog_origin->init_random(0.2, 2, 5);
-    prog_target = new GPTree(10);
+    prog_target = new GPTree(7);
     prog_target->init_random(0.2, 2, 5);
 }
 
@@ -85,15 +85,17 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
                 t = (double)cycle;
             }
 
+            /*
             if (orig_node->birth >= 0) {
                 ao = (double)(cycle - orig_node->birth);
             }
+            */
 
             prog_origin->vars[0] = po;
             prog_origin->vars[1] = io;
             prog_origin->vars[2] = oo;
-            prog_origin->vars[3] = ao;
-            prog_origin->vars[4] = t;
+            prog_origin->vars[3] = t;
+            //prog_origin->vars[4] = ao;
             weight = prog_origin->eval();
             if (weight < 0) {
                 weight = 0;
@@ -140,27 +142,29 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
                 t = (double)cycle;
             }
 
+            /*
             if (orig_node->birth >= 0) {
                 ao = (double)(cycle - orig_node->birth);
             }
             if (targ_node->birth >= 0) {
                 at = (double)(cycle - targ_node->birth);
             }
+            */
 
             //cout << "ages: " << ao << "; " << at << endl;
 
-            r = targ_node->edge_exists(orig_node);
+            //r = targ_node->edge_exists(orig_node);
 
             prog_target->vars[0] = po;
             prog_target->vars[1] = io;
             prog_target->vars[2] = oo;
-            prog_target->vars[3] = ao;
-            prog_target->vars[4] = t;
-            prog_target->vars[5] = pt;
-            prog_target->vars[6] = it;
-            prog_target->vars[7] = ot;
-            prog_target->vars[8] = at;
-            prog_target->vars[9] = r;
+            prog_target->vars[3] = t;
+            prog_target->vars[4] = pt;
+            prog_target->vars[5] = it;
+            prog_target->vars[6] = ot;
+            //prog_target->vars[7] = ao;
+            //prog_target->vars[8] = at;
+            //prog_target->vars[9] = r;
             weight = prog_target->eval();
             if (weight < 0) {
                 weight = 0;
