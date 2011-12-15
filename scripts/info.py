@@ -5,6 +5,7 @@ __author__ = "Telmo Menezes (telmo@telmomenezes.com)"
 __date__ = "Dec 2011"
 
 
+from syn.core import net_node_count, net_edge_count
 from syn.net import Net
 import sys
 
