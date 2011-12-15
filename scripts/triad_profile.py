@@ -24,10 +24,12 @@ def triad(dbpath):
 
     p = net_triad_profile(syn_net)
 
+    print p
+
     # generate profiles of random nets
     rprofs = []
     for i in range(rcount):
-        print '#%d' % i
+        #print '#%d' % i
         syn_rand = create_net()
         gen_degree_seq(syn_rand, syn_net)
         rprofs.append(net_triad_profile(syn_rand))
@@ -57,7 +59,10 @@ def triad(dbpath):
     # compute Z score
     sp = []
     for i in range(13):
-        sp.append((float(p[i]) - avgs[i]) / sds[i])
+        if sds[i] != 0:
+            sp.append((float(p[i]) - avgs[i]) / sds[i])
+        else:
+            sp.append(0)
 
     # compute SP
     denom = 0
