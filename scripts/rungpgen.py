@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 __author__ = "Telmo Menezes (telmo@telmomenezes.com)"
-__date__ = "Nov 2011"
+__date__ = "Dec 2011"
 
 
 from syn.net import Net
@@ -13,11 +13,10 @@ import sys
 if __name__ == '__main__':
     gen = create_gpgenerator()
     load_gpgen(gen, sys.argv[1])
-    print_gpgen(gen)
 
     net = Net(sys.argv[2]).load_net()
-    nodes = 2500
-    edges = nodes * (net_edge_count(net) / net_node_count(net))
+    nodes = net_node_count(net)
+    edges = net_edge_count(net)
     max_cycles = edges * 100
     map_limit = 5.0
     bins = 10
@@ -37,7 +36,11 @@ if __name__ == '__main__':
 
     fit = drmap_emd_dist(drmap1, drmap2)
 
-    print fit
+    print 'fit: ', fit
 
     destroy_drmap(drmap1)
     destroy_drmap(drmap2)
+
+    Net(sys.argv[3]).save(syn_net)
+
+    print 'Done.'
