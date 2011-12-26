@@ -80,4 +80,10 @@ void DistMatrix::update_distances(unsigned int new_orig, unsigned int new_targ)
     }
 }
 
+
+unsigned int DistMatrix::get_distance(unsigned int new_orig, unsigned int new_targ)
+{
+    return DIST(new_orig, new_targ);
+}
+
 }

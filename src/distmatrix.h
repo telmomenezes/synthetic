@@ -23,6 +23,7 @@ public:
     unsigned int* get_matrix(){return _matrix;}
 
     void update_distances(unsigned int new_orig, unsigned int new_targ);
+    unsigned int get_distance(unsigned int new_orig, unsigned int new_targ);
 
 private:
     DistMatrix();

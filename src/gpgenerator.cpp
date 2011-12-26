@@ -7,6 +7,8 @@
 #include "gpgenerator.h"
 #include "node.h"
 #include "utils.h"
+#include "distmatrix.h"
+
 #include <stdlib.h>
 #include <iostream>
 #include <fstream>
@@ -29,7 +31,7 @@ GPGenerator::GPGenerator()
     cycle = 0;
     prog_origin = new GPTree(4);
     prog_origin->init_random(0.2, 2, 5);
-    prog_target = new GPTree(7);
+    prog_target = new GPTree(8);
     prog_target->init_random(0.2, 2, 5);
 }
 
@@ -56,6 +58,9 @@ GPGenerator* GPGenerator::clone()
 
 Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
 {
+    // init DistMatrix
+    DistMatrix::get_instance().set_nodes(node_count);
+
     Net* net = new Net();
 
     cycle = 0;
@@ -71,7 +76,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
     double total_weight;
     double weight;
 
-    double po, pt, io, oo, it, ot, t, ao, at, r;
+    double po, pt, io, oo, it, ot, t, ao, at, r, d;
 
     for (unsigned int i = 0; i < edge_count; i++) {
         total_weight = 0;
@@ -142,6 +147,15 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
                 t = (double)cycle;
             }
 
+            unsigned int dist = DistMatrix::get_instance().get_distance(orig_node->id, targ_node->id);
+            if (dist > 0) {
+                d = 1.0 / ((double)dist);
+            }
+            // lim d->inf 1/d
+            else {
+                d = 0;
+            }
+
             /*
             if (orig_node->birth >= 0) {
                 ao = (double)(cycle - orig_node->birth);
@@ -162,6 +176,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
             prog_target->vars[4] = pt;
             prog_target->vars[5] = it;
             prog_target->vars[6] = ot;
+            prog_target->vars[7] = d;
             //prog_target->vars[7] = ao;
             //prog_target->vars[8] = at;
             //prog_target->vars[9] = r;
@@ -208,6 +223,8 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
         }
 
         net->add_edge_to_net(orig_node, targ_node, cycle);
+        // update distances
+        DistMatrix::get_instance().update_distances(orig_node->id, targ_node->id);
             
         cycle++;
     }
