@@ -31,7 +31,7 @@ GPGenerator::GPGenerator()
     cycle = 0;
     prog_origin = new GPTree(4);
     prog_origin->init_random(0.2, 2, 5);
-    prog_target = new GPTree(8);
+    prog_target = new GPTree(9);
     prog_target->init_random(0.2, 2, 5);
 }
 
@@ -76,31 +76,24 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
     double total_weight;
     double weight;
 
-    double po, pt, io, oo, it, ot, t, ao, at, r, d;
+    double po, pt, io, oo, it, ot, t, ud, dd;
 
     for (unsigned int i = 0; i < edge_count; i++) {
         total_weight = 0;
         orig_node = net->get_nodes();
         while (orig_node) {
             po = (double)orig_node->id;
-            io = oo = t = ao = at = 0;
+            io = oo = t = 0;
             if (edges > 0) {
                 io = (double)orig_node->in_degree;
                 oo = (double)orig_node->out_degree;
                 t = (double)cycle;
             }
 
-            /*
-            if (orig_node->birth >= 0) {
-                ao = (double)(cycle - orig_node->birth);
-            }
-            */
-
             prog_origin->vars[0] = po;
             prog_origin->vars[1] = io;
             prog_origin->vars[2] = oo;
             prog_origin->vars[3] = t;
-            //prog_origin->vars[4] = ao;
             weight = prog_origin->eval();
             if (weight < 0) {
                 weight = 0;
@@ -137,7 +130,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
             po = (double)orig_node->id;
             pt = (double)targ_node->id;
         
-            io = oo = it = ot = t = ao = at = 0;
+            io = oo = it = ot = t = 0;
 
             if (edges > 0) {
                 io = (double)orig_node->in_degree;
@@ -149,25 +142,21 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
 
             unsigned int dist = DistMatrix::get_instance().get_udistance(orig_node->id, targ_node->id);
             if (dist > 0) {
-                d = 1.0 / ((double)dist);
+                ud = 1.0 / ((double)dist);
             }
             // lim d->inf 1/d
             else {
-                d = 0;
+                ud = 0;
             }
 
-            /*
-            if (orig_node->birth >= 0) {
-                ao = (double)(cycle - orig_node->birth);
+            dist = DistMatrix::get_instance().get_ddistance(orig_node->id, targ_node->id);
+            if (dist > 0) {
+                dd = 1.0 / ((double)dist);
             }
-            if (targ_node->birth >= 0) {
-                at = (double)(cycle - targ_node->birth);
-            }
-            */
-
-            //cout << "ages: " << ao << "; " << at << endl;
-
-            //r = targ_node->edge_exists(orig_node);
+            // lim d->inf 1/d
+            else {
+                dd = 0;
+            }            
 
             prog_target->vars[0] = po;
             prog_target->vars[1] = io;
@@ -176,10 +165,9 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
             prog_target->vars[4] = pt;
             prog_target->vars[5] = it;
             prog_target->vars[6] = ot;
-            prog_target->vars[7] = d;
-            //prog_target->vars[7] = ao;
-            //prog_target->vars[8] = at;
-            //prog_target->vars[9] = r;
+            prog_target->vars[7] = ud;
+            prog_target->vars[8] = dd;
+
             weight = prog_target->eval();
             if (weight < 0) {
                 weight = 0;
