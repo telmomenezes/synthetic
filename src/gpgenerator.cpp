@@ -147,7 +147,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
                 t = (double)cycle;
             }
 
-            unsigned int dist = DistMatrix::get_instance().get_distance(orig_node->id, targ_node->id);
+            unsigned int dist = DistMatrix::get_instance().get_udistance(orig_node->id, targ_node->id);
             if (dist > 0) {
                 d = 1.0 / ((double)dist);
             }
@@ -186,6 +186,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
             }
             //printf("weight: %f; po: %f; pt: %f; io: %f; oo: %f; it: %f; ot: %f; ep: %f\n", weight, po, pt, io, oo, it, ot, ep);
 
+            //if ((orig_node == targ_node) || orig_node->edge_exists(targ_node)){
             if (orig_node == targ_node) {
                 weight = 0;
             }

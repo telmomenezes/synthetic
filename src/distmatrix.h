@@ -20,10 +20,12 @@ public:
     }
 
     void set_nodes(unsigned int nodes);
-    unsigned int* get_matrix(){return _matrix;}
+    unsigned int* get_umatrix(){return _umatrix;}
+    unsigned int* get_dmatrix(){return _dmatrix;}
 
     void update_distances(unsigned int new_orig, unsigned int new_targ);
-    unsigned int get_distance(unsigned int new_orig, unsigned int new_targ);
+    unsigned int get_udistance(unsigned int orig, unsigned int targ);
+    unsigned int get_ddistance(unsigned int orig, unsigned int targ);
 
 private:
     DistMatrix();
@@ -32,7 +34,11 @@ private:
     DistMatrix(DistMatrix const&);      // do not implement
     void operator=(DistMatrix const&);  // do not implement
 
-    unsigned int* _matrix;
+
+    // undirected distance matrix
+    unsigned int* _umatrix;
+    // directed distance matrix
+    unsigned int* _dmatrix;
     unsigned int _nodes;
 };
 
