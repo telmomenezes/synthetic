@@ -29,7 +29,7 @@ GPGenerator::GPGenerator()
 {
     edges = 0;
     cycle = 0;
-    prog = new GPTree(9);
+    prog = new GPTree(10);
     prog->init_random(0.2, 2, 5);
 }
 
@@ -76,7 +76,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
     // create edges
     double weight;
     for (unsigned int i = 0; i < edge_count; i++) {
-        double po, pt, io, oo, it, ot, t, ud, dd;     
+        double po, pt, io, oo, it, ot, t, ud, dd, rd;     
         double total_weight = 0;
 
         Node* orig_node;
