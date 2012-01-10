@@ -130,6 +130,15 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
             // lim d->inf 1/d
             else {
                 dd = 0;
+            }
+            
+            dist = DistMatrix::get_instance().get_ddistance(targ_node->id, orig_node->id);
+            if (dist > 0) {
+                dd = 1.0 / ((double)dist);
+            }
+            // lim d->inf 1/d
+            else {
+                rd = 0;
             }            
 
             prog->vars[0] = po;
@@ -141,6 +150,7 @@ Net* GPGenerator::run(unsigned int node_count, unsigned int edge_count)
             prog->vars[6] = ot;
             prog->vars[7] = ud;
             prog->vars[8] = dd;
+            prog->vars[9] = rd;
 
             weight = prog->eval();
             if (weight < 0) {
