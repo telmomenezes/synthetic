@@ -40,7 +40,8 @@ public:
 	void simplify();
 	
 private:
-    GPTree* prog;
+    GPTree* prog_origin;
+    GPTree* prog_target;
     unsigned int edges;
     unsigned int cycle;
 };
