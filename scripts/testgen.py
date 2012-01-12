@@ -16,10 +16,10 @@ if __name__ == '__main__':
     print_gpgen(gen)
 
     net = Net(sys.argv[2]).load_net()
-    nodes = 2500
-    edges = nodes * (net_edge_count(net) / net_node_count(net))
+    nodes = net_node_count(net)
+    edges = net_edge_count(net)
     max_cycles = edges * 100
-    map_limit = 5.0
+    map_limit = 7.0
     bins = 10
 
     compute_pageranks(net)
