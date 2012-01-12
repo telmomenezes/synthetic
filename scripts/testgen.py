@@ -13,7 +13,7 @@ import sys
 if __name__ == '__main__':
     gen = create_gpgenerator()
     load_gpgen(gen, sys.argv[1])
-    print_gpgen(gen)
+    #print_gpgen(gen)
 
     net = Net(sys.argv[2]).load_net()
     nodes = net_node_count(net)
