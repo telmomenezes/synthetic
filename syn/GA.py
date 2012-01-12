@@ -8,6 +8,7 @@ __date__ = "Nov 2011"
 import random
 import math
 import sys
+from syn.net import Net
 from syn.evo import Evo
 from syn.core import *
 from syn.drmap import *
