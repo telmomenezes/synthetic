@@ -11,9 +11,10 @@ import sys
 
 
 if __name__ == '__main__':
+    seed_random()
+
     gen = create_gpgenerator()
     load_gpgen(gen, sys.argv[1])
-    #print_gpgen(gen)
 
     net = Net(sys.argv[2]).load_net()
     nodes = net_node_count(net)
@@ -27,7 +28,7 @@ if __name__ == '__main__':
     drmap_log_scale(drmap1)
     drmap_normalize_max(drmap1)
 
-    syn_net = gpgen_run(gen, nodes, edges, max_cycles)
+    syn_net = gpgen_run(gen, nodes, edges)
 
     compute_pageranks(syn_net)
 
