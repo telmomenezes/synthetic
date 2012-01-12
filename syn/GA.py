@@ -14,7 +14,7 @@ from syn.drmap import *
 
 
 class GA(Evo):
-    def run(self, pop=100, mrate=0.3, rrate=0.7, tournament=3, stop=20):
+    def run(self, pop=1000, mrate=0.3, rrate=0.5, tournament=3, stop=100):
         print 'Synthetic - Evolving GPGenerator [genetic algorithm]'
         print 'Nodes:', self.nodes
         print 'Edges:', self.edges
@@ -71,6 +71,8 @@ class GA(Evo):
                     best_fit = fit
                     write_gpgen(self.population[i], 'best%d.prog' % cycle)
                     draw_drmap(net, 'best%d.png' % cycle, bins=self.bins, limit=self.map_limit)
+                    n = Net('best%d.syn' % cycle)
+                    n.save(net)
                 destroy_net(net)
             
             if improved:
