@@ -15,7 +15,7 @@ from syn.drmap import *
 
 
 class GA(Evo):
-    def run(self, pop=1000, mrate=0.3, rrate=0.5, tournament=3, stop=100):
+    def run(self, pop=1000, mrate=0.3, rrate=0.5, tournament=3, stop=25):
         print 'Synthetic - Evolving GPGenerator [genetic algorithm]'
         print 'Nodes:', self.nodes
         print 'Edges:', self.edges
