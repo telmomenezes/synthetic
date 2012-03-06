@@ -26,7 +26,7 @@ class Evo:
             self.edges = max_edges
             
             # node to edge ratio
-            ne_ratio = float(float(net_node_count(self.syn_net) / net_edge_count(self.syn_net)))
+            ne_ratio = float(net_node_count(self.syn_net)) / float(net_edge_count(self.syn_net))
             
             self.nodes = int(float(max_edges) * ne_ratio)
         
