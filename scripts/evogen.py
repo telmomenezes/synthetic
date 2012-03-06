@@ -13,6 +13,6 @@ import sys
 
 if __name__ == '__main__':
     net = Net(sys.argv[1])
-    #evo = ES(net)
-    evo = GA(net)
+    evo = ES(net)
+    #evo = GA(net)
     evo.run()
