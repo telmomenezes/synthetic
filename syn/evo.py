@@ -21,14 +21,14 @@ class Evo:
         self.nodes = net_node_count(self.syn_net)
         self.edges = net_edge_count(self.syn_net) 
 
-        # check if max nodes is reached
+        # check if max edges is reached
         if self.edges > max_edges:
             self.edges = max_edges
             
             # node to edge ratio
             ne_ratio = float(float(net_node_count(self.syn_net) / net_edge_count(self.syn_net)))
             
-            self.edges = int(float(max_edges) * ne_ratio)
+            self.nodes = int(float(max_edges) * ne_ratio)
         
         self.map_limit = map_limit
         self.bins = bins
