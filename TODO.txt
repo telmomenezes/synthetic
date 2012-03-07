@@ -1,4 +1,0 @@
-* stoping condition for evolutionary algorithms
-* evolutionary algorithms csv log output
-* install scripts as system-level commands
-* make zoo work again
