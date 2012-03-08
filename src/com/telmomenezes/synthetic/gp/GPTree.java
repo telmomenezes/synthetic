@@ -68,14 +68,14 @@ public class GPTree {
 								curnode.curpos++;
 							}
 						break;
-					case GPFun.GE:
-						if (curnode.params[0].curval >= curnode.params[1].curval)
-							curnode.stoppos = 3;
-							else {
-								curnode.stoppos = 4;
-								curnode.curpos++;
-							}
-						break;
+					case GPFun.LRT:
+                        if (curnode.params[0].curval < curnode.params[1].curval)
+                            curnode.stoppos = 3;
+                            else {
+                                curnode.stoppos = 4;
+                                curnode.curpos++;
+                            }
+                        break;
 					case GPFun.ZER:
 						if (curnode.params[0].curval == 0)
 							curnode.stoppos = 2;
@@ -117,17 +117,35 @@ public class GPTree {
 						else
 							val = curnode.params[0].curval / curnode.params[1].curval;
 							break;
+					case GPFun.MIN:
+                        val = curnode.params[0].curval;
+                        if (curnode.params[1].curval < val) {
+                            val = curnode.params[1].curval;
+                        }
+                        break;
+					case GPFun.MAX:
+                        val = curnode.params[0].curval;
+                        if (curnode.params[1].curval > val) {
+                            val = curnode.params[1].curval;
+                        }
+                        break;
+					case GPFun.EXP:
+                        val = Math.exp(curnode.params[0].curval);
+                        break;
+					case GPFun.LOG:
+                        val = Math.log(curnode.params[0].curval);
+                        break;
+					case GPFun.SIN:
+                        val = Math.sin(curnode.params[0].curval);
+                        break;
+					case GPFun.ABS:
+                        val = Math.abs(curnode.params[0].curval);
+                        break;
 					case GPFun.EQ:
 					case GPFun.GRT:
-					case GPFun.GE:
+					case GPFun.LRT:
 					case GPFun.ZER:
 						val = curnode.params[curnode.stoppos - 1].curval;
-						break;
-					case GPFun.RAND_UNIF:
-						val = RandomGenerator.instance().random.nextFloat();
-						break;
-					case GPFun.RAND_NORM:
-						val = RandomGenerator.instance().random.nextGaussian();
 						break;
 					// This is an extra function
 					default:
@@ -439,12 +457,20 @@ public class GPTree {
 					fun = GPFun.EQ;
 				else if (token.equals(">"))
 					fun = GPFun.GRT;
-				else if (token.equals(">="))
-					fun = GPFun.GE;
-				else if (token.equals("RAND_UNIF"))
-					fun = GPFun.RAND_UNIF;
-				else if (token.equals("RAND_NORM"))
-					fun = GPFun.RAND_NORM;
+				else if (token.equals("<"))
+                    fun = GPFun.LRT;
+				else if (token.equals("EXP"))
+                    fun = GPFun.EXP;
+				else if (token.equals("LOG"))
+                    fun = GPFun.LOG;
+				else if (token.equals("SIN"))
+                    fun = GPFun.SIN;
+				else if (token.equals("ABS"))
+                    fun = GPFun.ABS;
+				else if (token.equals("MIN"))
+                    fun = GPFun.MIN;
+				else if (token.equals("MAX"))
+                    fun = GPFun.MAX;
 			
 				node.initFun(fun, parent, extraFuns);
 

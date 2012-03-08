@@ -26,8 +26,14 @@ public class GPGen2P {
         funset.add(GPFun.DIV);
         funset.add(GPFun.EQ);
         funset.add(GPFun.GRT);
-        funset.add(GPFun.GE);
+        funset.add(GPFun.LRT);
         funset.add(GPFun.ZER);
+        funset.add(GPFun.EXP);
+        funset.add(GPFun.LOG);
+        funset.add(GPFun.SIN);
+        funset.add(GPFun.ABS);
+        funset.add(GPFun.MIN);
+        funset.add(GPFun.MAX);
         
         prog_origin = new GPTree(4, funset, null);
         prog_origin.initRandom(0.2, 2, 5);
