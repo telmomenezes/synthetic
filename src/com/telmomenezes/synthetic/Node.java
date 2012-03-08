@@ -69,7 +69,7 @@ public class Node {
         return false;
     }
 
-    Node getNext() {
+    public Node getNext() {
         return next;
     }
 
@@ -77,7 +77,7 @@ public class Node {
         this.next = next;
     }
 
-    int getId() {
+    public int getId() {
         return id;
     }
 
@@ -101,7 +101,7 @@ public class Node {
         this.origins = origins;
     }
 
-    int getInDegree() {
+    public int getInDegree() {
         return inDegree;
     }
 
@@ -109,7 +109,7 @@ public class Node {
         this.inDegree = inDegree;
     }
 
-    int getOutDegree() {
+    public int getOutDegree() {
         return outDegree;
     }
 
@@ -117,11 +117,11 @@ public class Node {
         this.outDegree = outDegree;
     }
 
-    int getBirth() {
+    public int getBirth() {
         return birth;
     }
 
-    void setBirth(int birth) {
+    public void setBirth(int birth) {
         this.birth = birth;
     }
 
@@ -157,11 +157,11 @@ public class Node {
         this.prOutLast = prOutLast;
     }
 
-    double getGenweight() {
+    public double getGenweight() {
         return genweight;
     }
 
-    void setGenweight(double genweight) {
+    public void setGenweight(double genweight) {
         this.genweight = genweight;
     }
 

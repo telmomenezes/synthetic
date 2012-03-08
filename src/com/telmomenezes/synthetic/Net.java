@@ -510,7 +510,7 @@ public class Net {
         this.maxPROut = maxPROut;
     }
 
-    Node getNodes() {
+    public Node getNodes() {
         return nodes;
     }
 
