@@ -86,7 +86,7 @@ public class GPGen1P {
                     }
                     orig_node = node_array[orig_index];
                     targ_node = node_array[targ_index];
-                    if (!orig_node.edgeExists(targ_node)) {
+                    if (!net.edgeExists(orig_node, targ_node)) {
                         new_edge = true;
                     }
                 }
@@ -181,7 +181,7 @@ public class GPGen1P {
                 targ_node.setBirth(cycle);
             }
 
-            net.addEdgeToNet(orig_node, targ_node, cycle);
+            net.addEdge(orig_node, targ_node, cycle);
             // update distances
             DistMatrix.instance().update_distances(orig_node.getId(), targ_node.getId());
             

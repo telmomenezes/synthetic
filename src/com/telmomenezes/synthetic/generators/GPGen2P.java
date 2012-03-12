@@ -67,8 +67,6 @@ public class GPGen2P {
         }
 
         // create edges
-        Node orig_node;
-        Node targ_node;
         double total_weight;
         double weight;
 
@@ -76,8 +74,7 @@ public class GPGen2P {
 
         for (int i = 0; i < edge_count; i++) {
             total_weight = 0;
-            orig_node = net.getNodes();
-            while (orig_node != null) {
+            for (Node orig_node : net.getNodes()) {
                 po = (double)orig_node.getId();
                 io = oo = t = 0;
                 if (edges > 0) {
@@ -97,31 +94,28 @@ public class GPGen2P {
 
                 orig_node.setGenweight(weight);
                 total_weight += weight;
-
-                orig_node = orig_node.getNext();
             }
 
             // if total weight is zero, make every node's weight = 1
             if (total_weight == 0) {
-                orig_node = net.getNodes();
-                while (orig_node != null) {
+                for (Node orig_node : net.getNodes()) {
                     orig_node.setGenweight(1.0);
                     total_weight += 1.0;
-                    orig_node = orig_node.getNext();
                 }
             }
 
+            Node orig_node = null;
             weight = RandomGenerator.instance().random.nextDouble() * total_weight;
-            orig_node = net.getNodes();
-            total_weight = orig_node.getGenweight();
-            while (total_weight < weight) {
-                orig_node = orig_node.getNext();
-                total_weight += orig_node.getGenweight();
+            total_weight = 0;
+            for (Node node : net.getNodes()) {
+                orig_node = node;
+                total_weight += node.getGenweight();
+                if (total_weight >= weight)
+                    break;
             }
         
             total_weight = 0;
-            targ_node = net.getNodes();
-            while (targ_node != null) {
+            for (Node targ_node : net.getNodes()) {
                 po = (double)orig_node.getId();
                 pt = (double)targ_node.getId();
 
@@ -174,26 +168,24 @@ public class GPGen2P {
         
                 targ_node.setGenweight(weight);
                 total_weight += weight;
-
-                targ_node = targ_node.getNext();
             }
 
             // if total weight is zero, make every node's weight = 1
             if (total_weight == 0) {
-                targ_node = net.getNodes();
-                while (targ_node != null) {
-                    targ_node.setGenweight(1.0);
+                for (Node node : net.getNodes()) {
+                    node.setGenweight(1.0);
                     total_weight += 1.0;
-                    targ_node = targ_node.getNext();
                 }
             }
 
             weight = RandomGenerator.instance().random.nextDouble() * total_weight;
-            targ_node = net.getNodes();
-            total_weight = targ_node.getGenweight();
-            while (total_weight < weight) {
-                targ_node = targ_node.getNext();
+            Node targ_node = null;
+            total_weight = 0;
+            for (Node node : net.getNodes()) {
+                targ_node = node;
                 total_weight += targ_node.getGenweight();
+                if (total_weight >= weight)
+                    break;
             }
 
             // set ages
@@ -204,7 +196,7 @@ public class GPGen2P {
                 targ_node.setBirth(cycle);
             }
 
-            net.addEdgeToNet(orig_node, targ_node, cycle);
+            net.addEdge(orig_node, targ_node, cycle);
             // update distances
             DistMatrix.instance().update_distances(orig_node.getId(), targ_node.getId());
             

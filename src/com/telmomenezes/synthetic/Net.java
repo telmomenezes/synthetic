@@ -3,6 +3,8 @@ package com.telmomenezes.synthetic;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Vector;
+
 
 public class Net {
     private static int CURID = 0;
@@ -12,31 +14,25 @@ public class Net {
     private double maxPRIn;
     private double maxPROut;
 
-    private Node nodes;
+    private Vector<Node> nodes;
+    private Vector<Edge> edges;
 
     private int nodeCount;
     private int edgeCount;
-
-    private int temporal;
-    private long minTS;
-    private long maxTS;
 
     private DRMap lastMap;
 
     public Net() {
         nodeCount = 0;
         edgeCount = 0;
-        nodes = null;
-        setTemporal(0);
-        minTS = 0;
-        maxTS = 0;
+        nodes = new Vector<Node>();
+        edges = new Vector<Edge>();
     }
 
     public Node addNode() {
         nodeCount++;
         Node node = new Node(CURID++);
-        node.setNext(nodes);
-        nodes = node;
+        nodes.add(node);
         return node;
     }
 
@@ -46,37 +42,42 @@ public class Net {
             CURID = nid + 1;
         }
         Node node = new Node(nid);
-        node.setNext(nodes);
-        nodes = node;
+        nodes.add(node);
         return node;
     }
-
-    public int addEdgeToNet(Node orig, Node targ, long timestamp) {
-        if (orig.addEdge(targ, timestamp)) {
-            edgeCount++;
-
-            if (timestamp > 0) {
-                setTemporal(1);
-                if ((minTS == 0) || (timestamp < minTS)) {
-                    minTS = timestamp;
-                }
-                if ((maxTS == 0) || (timestamp > maxTS)) {
-                    maxTS = timestamp;
-                }
-            }
-
-            return 1;
+    
+    public boolean addEdge(Node origin, Node target, long timestamp) {
+        if (origin == target) {
+            return false;
         }
-        return 0;
+
+        if (edgeExists(origin, target)) {
+            return false;
+        }
+
+        Edge edge = new Edge(origin, target, timestamp);
+        edges.add(edge);
+        origin.addOutEdge(edge);
+        target.addInEdge(edge);
+
+        edgeCount++;
+        
+        return true;
+    }
+
+    public boolean edgeExists(Node origin, Node target) {
+        for (Edge edge : origin.getOutEdges()) {
+            if (edge.getTarget() == target) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     Node getRandomNode() {
         int pos = RandomGenerator.instance().random.nextInt(nodeCount);
-        Node curnode = nodes;
-        for (int i = 0; i < pos; i++) {
-            curnode = curnode.getNext();
-        }
-        return curnode;
+        return nodes.get(pos);
     }
 
     DRMap getDRMap(int binNumber) {
@@ -93,8 +94,7 @@ public class Net {
         DRMap map = new DRMap(binNumber, minValHor - inervalHor, maxValHor,
                 minValVer - intervalVer, maxValVer);
 
-        Node node = nodes;
-        while (node != null) {
+        for (Node node : nodes) {
             int x = 0;
             int y = 0;
 
@@ -124,8 +124,6 @@ public class Net {
                     && ((node.getInDegree() != 0) || (node.getOutDegree() != 0))) {
                 map.incValue(x, y);
             }
-
-            node = node.getNext();
         }
 
         return map;
@@ -136,11 +134,9 @@ public class Net {
         int maxIter = 10;
         double drag = 0.999;
 
-        Node node = nodes;
-        while (node != null) {
+        for (Node node : nodes) {
             node.setPrInLast(1);
             node.setPrOutLast(1);
-            node = node.getNext();
         }
 
         int i = 0;
@@ -155,15 +151,12 @@ public class Net {
             double accPRIn = 0;
             double accPROut = 0;
 
-            node = nodes;
-            while (node != null) {
+            for (Node node : nodes) {
                 node.setPrIn(0);
-                Edge origin = node.getOrigins();
-                while (origin != null) {
+                for (Edge origin : node.getInEdges()) {
                     node.setPrIn(node.getPrIn()
-                            + origin.getOrig().getPrInLast()
-                            / ((double) origin.getOrig().getOutDegree()));
-                    origin = origin.getNextOrig();
+                            + origin.getOrigin().getPrInLast()
+                            / ((double) origin.getOrigin().getOutDegree()));
                 }
 
                 node.setPrIn(node.getPrIn() * drag);
@@ -173,12 +166,10 @@ public class Net {
                 accPRIn += node.getPrIn();
 
                 node.setPrOut(0);
-                Edge target = node.getTargets();
-                while (target != null) {
+                for (Edge target : node.getOutEdges()) {
                     node.setPrOut(node.getPrOut()
-                            + target.getTarg().getPrOutLast()
-                            / ((double) target.getTarg().getInDegree()));
-                    target = target.getNextTarg();
+                            + target.getTarget().getPrOutLast()
+                            / ((double) target.getTarget().getInDegree()));
                 }
 
                 node.setPrOut(node.getPrOut() * drag);
@@ -186,23 +177,18 @@ public class Net {
                         / ((double) nodeCount));
 
                 accPROut += node.getPrOut();
-
-                node = node.getNext();
             }
 
             // delta_pr_in = 0;
             // delta_pr_out = 0;
 
-            node = nodes;
-            while (node != null) {
+            for (Node node : nodes) {
                 node.setPrIn(node.getPrIn() / accPRIn);
                 node.setPrOut(node.getPrOut() / accPROut);
                 // delta_pr_in += Math.abs(node.pr_in - node.pr_in_last);
                 // delta_pr_out += Math.abs(node.pr_out - node.pr_out_last);
                 node.setPrInLast(node.getPrIn());
                 node.setPrOutLast(node.getPrOut());
-
-                node = node.getNext();
             }
 
             i++;
@@ -210,19 +196,15 @@ public class Net {
 
         // relative pr
         double basePR = 1.0 / ((double) nodeCount);
-        node = nodes;
-        while (node != null) {
+        for (Node node : nodes) {
             node.setPrIn(node.getPrIn() / basePR);
             node.setPrOut(node.getPrOut() / basePR);
-            node = node.getNext();
         }
 
         // use log scale
-        node = nodes;
-        while (node != null) {
+        for (Node node : nodes) {
             node.setPrIn(Math.log(node.getPrIn()));
             node.setPrOut(Math.log(node.getPrOut()));
-            node = node.getNext();
         }
 
         // compute min/max EVC in and out
@@ -231,8 +213,7 @@ public class Net {
         maxPRIn = 0;
         maxPROut = 0;
         boolean first = true;
-        node = nodes;
-        while (node != null) {
+        for (Node node : nodes) {
             if ((new Double(node.getPrIn())).isInfinite()
                     && (first || (node.getPrIn() < minPRIn))) {
                 minPRIn = node.getPrIn();
@@ -251,8 +232,6 @@ public class Net {
             }
 
             first = true;
-
-            node = node.getNext();
         }
     }
 
@@ -263,12 +242,10 @@ public class Net {
 
             out.println("id, pr_in, pr_out, in_degree, out_degree");
 
-            Node node = nodes;
-            while (node != null) {
+            for (Node node : nodes) {
                 out.println(String.format("%d,%.10f,%.10f,%d,%d\n",
                         node.getId(), node.getPrIn(), node.getPrOut(),
                         node.getInDegree(), node.getOutDegree()));
-                node = node.getNext();
             }
 
             out.close();
@@ -289,12 +266,12 @@ public class Net {
     public int triadType(Node a, Node b, Node c) {
         int type = -1;
 
-        boolean ab = a.edgeExists(b);
-        boolean ac = a.edgeExists(c);
-        boolean ba = b.edgeExists(a);
-        boolean bc = b.edgeExists(c);
-        boolean ca = c.edgeExists(a);
-        boolean cb = c.edgeExists(b);
+        boolean ab = edgeExists(a, b);
+        boolean ac = edgeExists(a, c);
+        boolean ba = edgeExists(b, a);
+        boolean bc = edgeExists(b, c);
+        boolean ca = edgeExists(c, a);
+        boolean cb = edgeExists(c, b);
 
         if (ab && ac && !ba && !bc && !ca && !cb)
             type = 1;
@@ -364,24 +341,20 @@ public class Net {
 
         Node node = triad[depth];
 
-        Edge orig = node.getOrigins();
-        while (orig != null) {
-            Node next_node = orig.getOrig();
+        for (Edge orig : node.getInEdges()) {
+            Node next_node = orig.getOrigin();
             if (next_node.isFlag() && notInTriad(next_node, triad, depth)) {
                 triad[depth + 1] = next_node;
                 triadProfile_r(triad, depth + 1, profile);
             }
-            orig = orig.getNextOrig();
         }
 
-        Edge targ = node.getTargets();
-        while (targ != null) {
-            Node next_node = targ.getTarg();
+        for (Edge targ : node.getOutEdges()) {
+            Node next_node = targ.getTarget();
             if (next_node.isFlag() && notInTriad(next_node, triad, depth)) {
                 triad[depth + 1] = next_node;
                 triadProfile_r(triad, depth + 1, profile);
             }
-            targ = targ.getNextTarg();
         }
     }
 
@@ -393,19 +366,15 @@ public class Net {
             profile[i] = 0;
 
         // set all node flags to true
-        Node node = nodes;
-        while (node != null) {
+        for (Node node : nodes) {
             node.setFlag(true);
-            node = node.getNext();
         }
 
         // search for triads starting on each node
-        node = nodes;
-        while (node != null) {
+        for (Node node : nodes) {
             triad[0] = node;
             triadProfile_r(triad, 0, profile);
             node.setFlag(false);
-            node = node.getNext();
         }
 
         return profile;
@@ -413,11 +382,9 @@ public class Net {
 
     public int[] inDegSeq() {
         int seq[] = new int[nodeCount];
-        Node curnode = nodes;
         int i = 0;
-        while (curnode != null) {
+        for (Node curnode : nodes) {
             seq[i] = curnode.getInDegree();
-            curnode = curnode.getNext();
             i++;
         }
 
@@ -426,11 +393,9 @@ public class Net {
 
     public int[] outDegSeq() {
         int seq[] = new int[nodeCount];
-        Node curnode = nodes;
         int i = 0;
-        while (curnode != null) {
+        for (Node curnode : nodes) {
             seq[i] = curnode.getOutDegree();
-            curnode = curnode.getNext();
             i++;
         }
 
@@ -472,7 +437,7 @@ public class Net {
             }
             inDegSeq[targ_index]--;
 
-            addEdgeToNet(newNodes[origIndex], newNodes[targ_index], 0);
+            addEdge(newNodes[origIndex], newNodes[targ_index], 0);
 
             totalDegree--;
         }
@@ -510,12 +475,8 @@ public class Net {
         this.maxPROut = maxPROut;
     }
 
-    public Node getNodes() {
+    public Vector<Node> getNodes() {
         return nodes;
-    }
-
-    void setNodes(Node nodes) {
-        this.nodes = nodes;
     }
 
     int getNodeCount() {
@@ -534,35 +495,22 @@ public class Net {
         this.edgeCount = edgeCount;
     }
 
-    int getTemporal() {
-        return temporal;
-    }
-
-    void setTemporal(int temporal) {
-        this.temporal = temporal;
-    }
-
-    long getMinTS() {
-        return minTS;
-    }
-
-    void setMinTS(long minTS) {
-        this.minTS = minTS;
-    }
-
-    long getMaxTS() {
-        return maxTS;
-    }
-
-    void setMaxTS(long maxTS) {
-        this.maxTS = maxTS;
-    }
-
     DRMap getLastMap() {
         return lastMap;
     }
 
     void setLastMap(DRMap lastMap) {
         this.lastMap = lastMap;
+    }
+    
+    public Vector<Edge> getEdges() {
+        return edges;
+    }
+    
+    @Override
+    public String toString() {
+        String str = "node count: " + nodeCount + "\n";
+        str += "edge count: " + edgeCount + "\n";
+        return str;
     }
 }

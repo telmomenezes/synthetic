@@ -1,12 +1,12 @@
 package com.telmomenezes.synthetic;
 
-public class Node {
-    // node list
-    private Node next;
+import java.util.HashSet;
+import java.util.Set;
 
+public class Node {
     private int id;
-    private Edge targets;
-    private Edge origins;
+    private Set<Edge> inEdges;
+    private Set<Edge> outEdges;
     private int inDegree;
     private int outDegree;
     private int birth;
@@ -29,92 +29,28 @@ public class Node {
         inDegree = 0;
         outDegree = 0;
         birth = -1;
-        targets = null;
-        origins = null;
-    }
-
-    public boolean addEdge(Node target, long timestamp) {
-        if (this == target) {
-            return false;
-        }
-
-        if (edgeExists(target)) {
-            return false;
-        }
-
-        Edge edge = new Edge();
-        edge.setOrig(this);
-        edge.setTarg(target);
-        edge.setTimestamp(timestamp);
-        edge.setNextTarg(targets);
-        targets = edge;
-        outDegree++;
-        edge.setNextOrig(target.origins);
-        target.origins = edge;
-        target.inDegree++;
-
-        return true;
-    }
-
-    public boolean edgeExists(Node target) {
-        Edge edge = targets;
-
-        while (edge != null) {
-            if (edge.getTarg() == target) {
-                return true;
-            }
-            edge = edge.getNextTarg();
-        }
-
-        return false;
-    }
-
-    public Node getNext() {
-        return next;
-    }
-
-    void setNext(Node next) {
-        this.next = next;
+        inEdges = new HashSet<Edge>();
+        outEdges = new HashSet<Edge>();
     }
 
     public int getId() {
         return id;
     }
 
-    void setId(int id) {
-        this.id = id;
+    Set<Edge> getInEdges() {
+        return inEdges;
     }
-
-    Edge getTargets() {
-        return targets;
-    }
-
-    void setTargets(Edge targets) {
-        this.targets = targets;
-    }
-
-    Edge getOrigins() {
-        return origins;
-    }
-
-    void setOrigins(Edge origins) {
-        this.origins = origins;
+    
+    Set<Edge> getOutEdges() {
+        return outEdges;
     }
 
     public int getInDegree() {
         return inDegree;
     }
 
-    void setInDegree(int inDegree) {
-        this.inDegree = inDegree;
-    }
-
     public int getOutDegree() {
         return outDegree;
-    }
-
-    void setOutDegree(int outDegree) {
-        this.outDegree = outDegree;
     }
 
     public int getBirth() {
@@ -171,5 +107,15 @@ public class Node {
 
     void setFlag(boolean flag) {
         this.flag = flag;
+    }
+    
+    void addInEdge(Edge edge) {
+        inEdges.add(edge);
+        inDegree++;
+    }
+    
+    void addOutEdge(Edge edge) {
+        outEdges.add(edge);
+        outDegree++;
     }
 }
