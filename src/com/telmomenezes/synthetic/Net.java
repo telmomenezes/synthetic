@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
 
+import com.telmomenezes.synthetic.io.NetFileType;
+import com.telmomenezes.synthetic.io.SNAPNetFile;
+
 
 public class Net {
     private static int CURID = 0;
@@ -28,7 +31,27 @@ public class Net {
         nodes = new Vector<Node>();
         edges = new Vector<Edge>();
     }
+    
+    static Net load(String filePath, NetFileType fileType) {
+        switch (fileType) {
+        case SNAP:
+            Net net = (new SNAPNetFile()).load(filePath);
+            return net;
+        default:
+            return null;
+        }
+    }
 
+    public void save(String filePath, NetFileType fileType) {
+        switch (fileType) {
+        case SNAP:
+            (new SNAPNetFile()).save(this, filePath);
+            break;
+        default:
+            break;
+        }
+    }
+    
     public Node addNode() {
         nodeCount++;
         Node node = new Node(CURID++);
