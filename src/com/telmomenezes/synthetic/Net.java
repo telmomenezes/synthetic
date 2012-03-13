@@ -32,7 +32,7 @@ public class Net {
         edges = new Vector<Edge>();
     }
     
-    static Net load(String filePath, NetFileType fileType) {
+    public static Net load(String filePath, NetFileType fileType) {
         switch (fileType) {
         case SNAP:
             Net net = (new SNAPNetFile()).load(filePath);

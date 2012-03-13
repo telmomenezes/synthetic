@@ -29,7 +29,7 @@ public class SynCLI {
     }
     
     public void run(String[] args) {
-        args = new String[]{"netstats", "-inet", "hello.txt"};
+        //args = new String[]{"netstats", "-inet", "wiki-Vote.txt"};
         
         CommandLineParser parser = new GnuParser();
         options = new Options();
@@ -38,13 +38,23 @@ public class SynCLI {
         try {
             cline = parser.parse(options, args);
 
-            String tool = args[0];
+            String cmd = args[0];
+            Command cmdObj = null;
             
-            if (tool == "netstats") {
-                NetStats.run(cline);
+            if (cmd.equals("help")) {
+                printHelpMessage();
+            }
+            else if (cmd.equals("netstats")) {
+                cmdObj = new NetStats();
             }
             else {
-                printErrorMessage("Command '" + tool + "' does not exist.");
+                printErrorMessage("Command '" + cmd + "' does not exist.");
+            }
+            
+            if (cmdObj != null) {
+                if (!cmdObj.run(cline)) {
+                    printErrorMessage(cmdObj.getErrorMessage());
+                }
             }
         }
         catch (ParseException e) {
