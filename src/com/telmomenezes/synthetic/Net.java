@@ -103,12 +103,12 @@ public class Net {
         return nodes.get(pos);
     }
 
-    DRMap getDRMap(int binNumber) {
+    public DRMap getDRMap(int binNumber) {
         return getDRMapWithLimit(binNumber, minPRIn, maxPRIn, minPROut,
                 maxPROut);
     }
 
-    DRMap getDRMapWithLimit(int binNumber, double minValHor, double maxValHor,
+    public DRMap getDRMapWithLimit(int binNumber, double minValHor, double maxValHor,
             double minValVer, double maxValVer) {
 
         double inervalHor = (maxValHor - minValHor) / ((double) binNumber);
@@ -120,8 +120,8 @@ public class Net {
         for (Node node : nodes) {
             int x = 0;
             int y = 0;
-
-            if ((new Double(node.getPrIn())).isInfinite()) {
+            
+            if (!(new Double(node.getPrIn())).isInfinite()) {
                 if (node.getPrIn() <= minValHor) {
                     x = 0;
                 } else if (node.getPrIn() >= maxValHor) {
@@ -131,7 +131,7 @@ public class Net {
                             / inervalHor);
                 }
             }
-            if ((new Double(node.getPrOut())).isInfinite()) {
+            if (!(new Double(node.getPrOut())).isInfinite()) {
                 if (node.getPrOut() <= minValVer) {
                     y = 0;
                 } else if (node.getPrOut() >= maxValVer) {
