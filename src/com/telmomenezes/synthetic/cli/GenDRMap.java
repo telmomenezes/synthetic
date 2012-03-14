@@ -15,7 +15,19 @@ public class GenDRMap extends Command {
             return false;
         }
         
+        if(!cline.hasOption("inet")) {
+            setErrorMessage("input network file must be specified");
+            return false;
+        }
+        
+        if(!cline.hasOption("mimg")) {
+            setErrorMessage("file path to write DRMap image to must be specified");
+            return false;
+        }
+        
         String netfile = cline.getOptionValue("inet");
+        String outfile = cline.getOptionValue("mimg");
+        
         Net net = Net.load(netfile, NetFileType.SNAP);
   
         net.computePageranks();
@@ -25,7 +37,7 @@ public class GenDRMap extends Command {
         drmap.normalizeMax();
         
         //System.out.println(drmap);
-        drmap.draw("drmap.png", 500);
+        drmap.draw(outfile, 500);
         
         return true;
     }

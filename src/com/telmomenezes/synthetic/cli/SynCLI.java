@@ -29,11 +29,12 @@ public class SynCLI {
     }
     
     public void run(String[] args) {
-        args = new String[]{"gendrmap", "-inet", "wiki-Vote.txt"};
+        //args = new String[]{"gendrmap", "-inet", "wiki-Vote.txt", "-mimg", "wiki-Vote.png"};
         
         CommandLineParser parser = new GnuParser();
         options = new Options();
         options.addOption("inet", true, "input net file");
+        options.addOption("mimg", true, "file path to write DRMap image to");
         
         try {
             cline = parser.parse(options, args);
