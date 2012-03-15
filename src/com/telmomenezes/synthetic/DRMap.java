@@ -13,6 +13,8 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
+import com.telmomenezes.synthetic.emd.EMDL1;
+
 
 public class DRMap {
 
@@ -212,51 +214,30 @@ public class DRMap {
         return dist;
     }
 
-    /*
-     * double ground_dist(feature_tt* feature1, feature_tt* feature2) { double
-     * deltaX = feature1->x - feature2->x; double deltaY = feature1->y -
-     * feature2->y; double dist = sqrt((deltaX * deltaX) + (deltaY * deltaY));
-     * //double dist = (deltaX * deltaX) + (deltaY * deltaY); return dist; }
-     * 
-     * 
-     * signature_tt* get_emd_signature(DRMap* map) { unsigned int n = 0;
-     * unsigned int bin_number = map->get_bin_number(); for (unsigned int x = 0;
-     * x < bin_number; x++) { for (unsigned int y = 0; y < bin_number; y++) { if
-     * (map->get_value(x, y) > 0) { n++; } } }
-     * 
-     * feature_tt* features = (feature_tt*)malloc(sizeof(feature_tt) * n);
-     * double* weights = (double*)malloc(sizeof(double) * n);
-     * 
-     * unsigned int i = 0; for (unsigned int x = 0; x < bin_number; x++) { for
-     * (unsigned int y = 0; y < bin_number; y++) { double val =
-     * map->get_value(x, y); if (val > 0) { features[i].x = x; features[i].y =
-     * y; weights[i] = val; i++; } } }
-     * 
-     * signature_tt* signature = (signature_tt*)malloc(sizeof(signature_tt));
-     * signature->n = n; signature->Features = features; signature->Weights =
-     * weights;
-     * 
-     * return signature; }
-     * 
-     * 
-     * double DRMap::emd_dist(DRMap* map) { //printf("totals-> %f; %f\n",
-     * total(), map->total());
-     * 
-     * double infinity = 9999999999.9;
-     * 
-     * if (total() <= 0) { return infinity; } if (map->total() <= 0) { return
-     * infinity; }
-     * 
-     * signature_tt* sig1 = get_emd_signature(this); signature_tt* sig2 =
-     * get_emd_signature(map);
-     * 
-     * double dist = emd_hat_signature_interface(sig1, sig2, ground_dist, -1);
-     * 
-     * free(sig1->Features); free(sig1->Weights); free(sig1);
-     * free(sig2->Features); free(sig2->Weights); free(sig2);
-     * 
-     * return dist; }
-     */
+     
+    double emdDist(DRMap map) {
+        //printf("totals-> %f; %f\n", total(), map->total());
+ 
+        double infinity = 9999999999.9;
+
+        if (total() <= 0) {
+            return infinity;
+        }
+        if (map.total() <= 0) {
+            return infinity;
+        }
+
+        int[] hist1 = toHist();
+        int[] hist2 = map.toHist();
+        int[] dimensions = {binNumber, binNumber};
+
+        return EMDL1.distance(hist1, hist2, dimensions);
+    }
+
+    private int[] toHist() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     @Override
     public String toString() {
