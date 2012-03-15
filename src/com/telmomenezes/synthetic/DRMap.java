@@ -13,6 +13,10 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
+import com.telmomenezes.synthetic.emd.EMD;
+import com.telmomenezes.synthetic.emd.Feature;
+import com.telmomenezes.synthetic.emd.Signature;
+
 
 public class DRMap {
 
@@ -55,8 +59,7 @@ public class DRMap {
         for (int x = 0; x < binNumber; x++) {
             for (int y = 0; y < binNumber; y++) {
                 if (getData()[(y * binNumber) + x] > 0) {
-                    getData()[(y * binNumber) + x] = Math
-                            .log(getData()[(y * binNumber) + x]);
+                    getData()[(y * binNumber) + x] = Math.log(getData()[(y * binNumber) + x]);
                 }
             }
         }
@@ -212,10 +215,43 @@ public class DRMap {
         return dist;
     }
 
-    /*
-    double emdDist(DRMap map) {
-        //printf("totals-> %f; %f\n", total(), map->total());
- 
+    private Signature getEmdSignature()
+    {
+        int n = 0;
+        for (int x = 0; x < binNumber; x++) {
+            for (int y = 0; y < binNumber; y++) {
+                if (getValue(x, y) > 0) {
+                    n++;
+                }
+            }
+        }
+
+        Feature[] features = new Feature[n];
+        double[] weights = new double[n];
+
+        int i = 0;
+        for (int x = 0; x < binNumber; x++) {
+            for (int y = 0; y < binNumber; y++) {
+                double val = getValue(x, y);
+                if (val > 0) {
+                    features[i].x = x;
+                    features[i].y = y;
+                    weights[i] = val;
+                    i++;
+                }
+            }
+        }
+
+        Signature signature = new Signature();
+        signature.n = n;
+        signature.Features = features;
+        signature.Weights = weights;
+
+        return signature;
+    }
+    
+    public double emdDist(DRMap map)
+    {
         double infinity = 9999999999.9;
 
         if (total() <= 0) {
@@ -225,12 +261,11 @@ public class DRMap {
             return infinity;
         }
 
-        int[] hist1 = toHist();
-        int[] hist2 = map.toHist();
-        int[] dimensions = {binNumber, binNumber};
-
-        return EMDL1.distance(hist1, hist2, dimensions);
-    }*/
+        Signature sig1 = this.getEmdSignature();
+        Signature sig2 = map.getEmdSignature();
+        
+        return EMD.compute(sig1, sig2, -1);
+    }
 
     @Override
     public String toString() {

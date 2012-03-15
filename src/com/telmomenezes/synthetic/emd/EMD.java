@@ -41,18 +41,6 @@ import java.util.LinkedList;
 //If you use this code, please cite the papers.
 //=============================================================================
 
-//feature_tt SHOULD BE MODIFIED BY THE USER TO REFLECT THE FEATURE TYPE
-class Feature {
-    public double x;
-    public double y;
-}
-
-class Signature {
-    int n;                  /* Number of features in the signature */
-    Feature[] Features;     /* Pointer to the features vector */
-    double[] Weights;       /* Pointer to the weights of the features (Changed from Rubner's)*/
-}
-
 
 /// Fastest version of EMD. Also, in my experience metric ground distance yields better
 /// performance. 
