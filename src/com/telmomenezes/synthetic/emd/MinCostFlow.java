@@ -100,10 +100,9 @@ class MinCostFlow {
 
         // reduced costs for forward edges (c[i,j]-pi[i]+pi[j])
         // Note that for forward edges the residual capacity is infinity
-        Vector<List<EdgeLong1>> r_cost_forward = new Vector<List<EdgeLong1>>(
-                _num_nodes);
+        Vector<List<EdgeLong1>> r_cost_forward = new Vector<List<EdgeLong1>>();
         for (int i = 0; i < _num_nodes; i++) {
-            r_cost_forward.set(i, new LinkedList<EdgeLong1>());
+            r_cost_forward.add(new LinkedList<EdgeLong1>());
         }
         for (int from = 0; from < _num_nodes; ++from) {
             for (EdgeLong it : c.get(from)) {
@@ -114,10 +113,9 @@ class MinCostFlow {
         // reduced costs and capacity for backward edges (c[j,i]-pi[j]+pi[i])
         // Since the flow at the beginning is 0, the residual capacity is also
         // zero
-        Vector<List<EdgeLong2>> r_cost_cap_backward = new Vector<List<EdgeLong2>>(
-                _num_nodes);
+        Vector<List<EdgeLong2>> r_cost_cap_backward = new Vector<List<EdgeLong2>>();
         for (int i = 0; i < _num_nodes; i++) {
-            r_cost_cap_backward.set(i, new LinkedList<EdgeLong2>());
+            r_cost_cap_backward.add(new LinkedList<EdgeLong2>());
         }
         for (int from = 0; from < _num_nodes; ++from) {
             for (EdgeLong it : c.get(from)) {
@@ -136,8 +134,14 @@ class MinCostFlow {
         long delta = (long) (Math.pow(2.0,
                 Math.ceil(Math.log((double) U) / Math.log(2.0))));
 
-        Vector<Long> d = new Vector<Long>(_num_nodes);
-        Vector<Integer> prev = new Vector<Integer>(_num_nodes);
+        Vector<Long> d = new Vector<Long>();
+        for (int i = 0; i < _num_nodes; i++) {
+            d.add(0l);
+        }
+        Vector<Integer> prev = new Vector<Integer>();
+        for (int i = 0; i < _num_nodes; i++) {
+            prev.add(0);
+        }
         delta = 1;
 
         while (true) { // until we break when S or T is empty
@@ -284,9 +288,9 @@ class MinCostFlow {
         // ----------------------------------------------------------------
         // main loop
         // ----------------------------------------------------------------
-        Vector<Boolean> finalNodesFlg = new Vector<Boolean>(_num_nodes);
+        Vector<Boolean> finalNodesFlg = new Vector<Boolean>();
         for (int i = 0; i < _num_nodes; i++) {
-            finalNodesFlg.set(i, false);
+            finalNodesFlg.add(false);
         }
         do {
             int u = Q.get(0)._to;

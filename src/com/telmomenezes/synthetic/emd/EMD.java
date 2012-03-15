@@ -86,8 +86,14 @@ public class EMD {
                                   Signature Signature2,
                                   double extra_mass_penalty) {
     
-        Vector<Double> P = new Vector<Double>(Signature1.n + Signature2.n);
-        Vector<Double> Q = new Vector<Double>(Signature1.n + Signature2.n); 
+        Vector<Double> P = new Vector<Double>();
+        for (int i = 0; i < Signature1.n + Signature2.n; i++) {
+            P.add(0.0);
+        }
+        Vector<Double> Q = new Vector<Double>(); 
+        for (int i = 0; i < Signature1.n + Signature2.n; i++) {
+            Q.add(0.0);
+        }
         for (int i = 0; i < Signature1.n; ++i) {
             P.set(i, Signature1.Weights[i]);
         }
@@ -97,19 +103,23 @@ public class EMD {
     
         Vector<Vector<Double>> C = new Vector<Vector<Double>>();
         for (int i = 0; i < P.size(); i++) {
-            C.add(new Vector<Double>(P.size()));
+            Vector<Double> vec = new Vector<Double>();
+            for (int j = 0; j < P.size(); j++) {
+                vec.add(0.0);
+            }
+            C.add(vec);
         }
     
         for (int i = 0; i < Signature1.n; ++i) {
             for (int j = 0; j < Signature2.n; ++j) {
-                double dist = 0;//double dist = func( (Signature1->Features+i) , (Signature2->Features+j) );
+                double dist = ground_dist((Signature1.Features[i]), (Signature2.Features[j]));
                 assert(dist >= 0);
                 C.get(i).set(j + Signature1.n, dist);
                 C.get(j + Signature1.n).set(i, dist);
             }
         }
 
-        return emd_hat_operator(P,Q,C, extra_mass_penalty);
+        return emd_hat_operator(P, Q, C, extra_mass_penalty);
     }
     
     // TODO: this function should be specifiable by caller
@@ -149,17 +159,37 @@ public class EMD {
 
         // Constructing the input
         int N = P.size();
-        Vector<Long> iPOrig = new Vector<Long>(N);
-        Vector<Long> iQOrig = new Vector<Long>(N);
-        Vector<Long> iP = new Vector<Long>(N);
-        Vector<Long> iQ = new Vector<Long>(N);
-        Vector<Vector<Long>> iC = new Vector<Vector<Long>>(N);
+        Vector<Long> iPOrig = new Vector<Long>();
         for (int i = 0; i < N; i++) {
-            iC.set(i, new Vector<Long>(N));
+            iPOrig.add(0l);
         }
-        Vector<Vector<Long>> iF = new Vector<Vector<Long>>(N);
+        Vector<Long> iQOrig = new Vector<Long>();
         for (int i = 0; i < N; i++) {
-            iF.set(i, new Vector<Long>(N));
+            iQOrig.add(0l);
+        }
+        Vector<Long> iP = new Vector<Long>();
+        for (int i = 0; i < N; i++) {
+            iP.add(0l);
+        }
+        Vector<Long> iQ = new Vector<Long>();
+        for (int i = 0; i < N; i++) {
+            iQ.add(0l);
+        }
+        Vector<Vector<Long>> iC = new Vector<Vector<Long>>();
+        for (int i = 0; i < N; i++) {
+            Vector<Long> vec = new Vector<Long>();
+            for (int j = 0; j < N; j++) {
+                vec.add(0l);
+            }
+            iC.add(vec);
+        }
+        Vector<Vector<Long>> iF = new Vector<Vector<Long>>();
+        for (int i = 0; i < N; i++) {
+            Vector<Long> vec = new Vector<Long>();
+            for (int j = 0; j < N; j++) {
+                vec.add(0l);
+            }
+            iF.add(vec);
         }
 
         // Converting to CONVERT_TO_T
@@ -244,8 +274,11 @@ public class EMD {
             abs_diff_sum_P_sum_Q = sum_P - sum_Q;
         }
 
-        // creating the b vector that contains all vertexes
-        Vector<Long> b = new Vector<Long>(2 * N + 2);
+        // creating the b vector that contains all vertices
+        Vector<Long> b = new Vector<Long>();
+        for (int i = 0; i < 2 * N + 2; i++) {
+            b.add(0l);
+        }
         int THRESHOLD_NODE = 2 * N;
         int ARTIFICIAL_NODE = 2 * N + 1; // need to be last !
         for (int i = 0; i < N; ++i) {
@@ -290,7 +323,7 @@ public class EMD {
         // regular edges between sinks and sources without threshold edges
         Vector<List<EdgeLong>> c = new Vector<List<EdgeLong>>(b.size());
         for (int i = 0; i < b.size(); i++) {
-            c.set(i, new LinkedList<EdgeLong>());
+            c.add(new LinkedList<EdgeLong>());
         }
         for (int i = 0; i < N; ++i) {
             if (b.get(i) == 0)
@@ -350,11 +383,11 @@ public class EMD {
         // Note here it should be vector<int> and not vector<NODE_T>
         // as I'm using -1 as a special flag !!!
         int REMOVE_NODE_FLAG = -1;
-        Vector<Integer> nodes_new_names = new Vector<Integer>(b.size());
+        Vector<Integer> nodes_new_names = new Vector<Integer>();
         for (int i = 0; i < b.size(); i++) {
-            nodes_new_names.set(i, REMOVE_NODE_FLAG);
+            nodes_new_names.add(REMOVE_NODE_FLAG);
         }
-        Vector<Integer> nodes_old_names = new Vector<Integer>(b.size());
+        Vector<Integer> nodes_old_names = new Vector<Integer>();
         for (int i = 0; i < N * 2; ++i) {
             if (b.get(i) != 0) {
                 if (sources_that_flow_not_only_to_thresh.contains(i)
@@ -381,18 +414,19 @@ public class EMD {
         nodes_old_names.add(ARTIFICIAL_NODE);
         ++current_node_name;
 
-        Vector<Long> bb = new Vector<Long>(current_node_name);
-        int j = 0;
+        Vector<Long> bb = new Vector<Long>();
+        //int j = 0;
         for (int i = 0; i < b.size(); ++i) {
             if (nodes_new_names.get(i) != REMOVE_NODE_FLAG) {
-                bb.set(j, b.get(i));
-                ++j;
+                //bb.set(j, b.get(i));
+                bb.add(b.get(i));
+                //++j;
             }
         }
 
-        Vector<List<EdgeLong>> cc = new Vector<List<EdgeLong>>(bb.size());
+        Vector<List<EdgeLong>> cc = new Vector<List<EdgeLong>>();
         for (int i = 0; i < bb.size(); i++) {
-            cc.set(i, new LinkedList<EdgeLong>());
+            cc.add(new LinkedList<EdgeLong>());
         }
         for (int i = 0; i < c.size(); ++i) {
             if (nodes_new_names.get(i) == REMOVE_NODE_FLAG)
@@ -410,9 +444,9 @@ public class EMD {
 
         long my_dist;
 
-        Vector<List<EdgeLong0>> flows = new Vector<List<EdgeLong0>>(bb.size());
+        Vector<List<EdgeLong0>> flows = new Vector<List<EdgeLong0>>();
         for (int i = 0; i < bb.size(); i++) {
-            flows.set(i, new LinkedList<EdgeLong0>());
+            flows.add(new LinkedList<EdgeLong0>());
         }
 
         long mcf_dist = mcf.operator(bb, cc, flows);

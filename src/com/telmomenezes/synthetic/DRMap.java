@@ -38,6 +38,11 @@ public class DRMap {
 
         clear();
     }
+    
+    public DRMap(int binNumber) {
+        this(binNumber, Double.MIN_VALUE, Double.MAX_VALUE,
+                Double.MIN_VALUE, Double.MAX_VALUE);
+    }
 
     public void clear() {
         Arrays.fill(getData(), 0);
@@ -227,6 +232,9 @@ public class DRMap {
         }
 
         Feature[] features = new Feature[n];
+        for (int i = 0; i < n; i++) {
+            features[i] = new Feature();
+        }
         double[] weights = new double[n];
 
         int i = 0;
@@ -250,10 +258,13 @@ public class DRMap {
         return signature;
     }
     
-    public double emdDist(DRMap map)
+    public double emdDistance(DRMap map)
     {
-        double infinity = 9999999999.9;
+        double infinity = Double.MAX_VALUE;
 
+        if ((total() <= 0) && (map.total() <= 0)) {
+            return 0;
+        }
         if (total() <= 0) {
             return infinity;
         }
@@ -261,7 +272,7 @@ public class DRMap {
             return infinity;
         }
 
-        Signature sig1 = this.getEmdSignature();
+        Signature sig1 = getEmdSignature();
         Signature sig2 = map.getEmdSignature();
         
         return EMD.compute(sig1, sig2, -1);
@@ -325,5 +336,19 @@ public class DRMap {
 
     void setMaxValVer(double maxValVer) {
         this.maxValVer = maxValVer;
+    }
+    
+    public static void main(String[] args) {
+        DRMap m1 = new DRMap(3);
+        m1.setValue(0, 0, 1.0);
+        System.out.println(m1);
+        
+        DRMap m2 = new DRMap(3);
+        //m2.setValue(1, 1, 1.0);
+        m2.setValue(2, 2, 1.0);
+        System.out.println(m2);
+        
+        double dist = m1.emdDistance(m2);
+        System.out.println("dist: " + dist);
     }
 }
