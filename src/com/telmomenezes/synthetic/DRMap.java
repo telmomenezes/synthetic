@@ -13,8 +13,6 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
-import com.telmomenezes.synthetic.emd.EMDL1;
-
 
 public class DRMap {
 
@@ -214,7 +212,7 @@ public class DRMap {
         return dist;
     }
 
-     
+    /*
     double emdDist(DRMap map) {
         //printf("totals-> %f; %f\n", total(), map->total());
  
@@ -232,12 +230,7 @@ public class DRMap {
         int[] dimensions = {binNumber, binNumber};
 
         return EMDL1.distance(hist1, hist2, dimensions);
-    }
-
-    private int[] toHist() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    }*/
 
     @Override
     public String toString() {
