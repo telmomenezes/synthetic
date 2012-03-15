@@ -1,3 +1,15 @@
+/**
+ * This class computes the Earth Mover's Distance, using the EMD-HAT algorithm
+ * created by Ofir Pele and Michael Werman.
+ * 
+ * This implementation is strongly based on the C++ code by the same authors,
+ * that can be found here:
+ * http://www.cs.huji.ac.il/~ofirpele/FastEMD/code/
+ * 
+ * Some of the author's comments on the original code that we deemed relevant
+ * were kept or edited for this context.
+ */
+
 package com.telmomenezes.synthetic.emd;
 
 import java.util.Vector;
@@ -236,13 +248,8 @@ public class EMD {
 
         return dist;
 
-    } // emd_hat_impl<double>
-      // ----------------------------------------------------------------------------------------
-
-    // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-    // Main implementation
-    // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
+    }
+    
     static long emd_hat_impl_long(Vector<Long> POrig, Vector<Long> QOrig,
             Vector<Long> Pc, Vector<Long> Qc, Vector<Vector<Long>> C,
             long extra_mass_penalty, Vector<Vector<Long>> F) {
