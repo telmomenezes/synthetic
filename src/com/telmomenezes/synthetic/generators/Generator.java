@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Vector;
 
+import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.gp.ProgSet;
 
 
@@ -14,7 +15,12 @@ import com.telmomenezes.synthetic.gp.ProgSet;
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
 public abstract class Generator implements Comparable<Generator> {
-
+    protected int nodeCount;
+    protected int edgeCount;
+    
+    protected int cycle;
+    protected int curEdges;
+    
 	protected ProgSet progset;
     protected int progcount;
     public boolean simulated;
@@ -26,7 +32,12 @@ public abstract class Generator implements Comparable<Generator> {
     protected boolean checkPaths;
 
 
-	public Generator() {
+	public Generator(int nodeCount, int edgeCount) {
+	    this.nodeCount = nodeCount;
+	    this.edgeCount = edgeCount;
+	    
+	    cycle = 0;
+	    
 		progset = null;
 
 		simulated = false;
@@ -41,9 +52,9 @@ public abstract class Generator implements Comparable<Generator> {
 
 	
 	/**
-     * Creates a clone of this model.
+     * Creates a clone of this generator.
      * 
-     * @return clone Model object
+     * @return clone generator object
      */
 	public abstract Generator clone();
 	
@@ -55,7 +66,7 @@ public abstract class Generator implements Comparable<Generator> {
     
     
     /**
-     * Computes the fitness of this model, after it has been run.
+     * Computes the fitness of this generator, after it has been run.
      * 
      * @return the fitness as a double value
      */
@@ -63,41 +74,31 @@ public abstract class Generator implements Comparable<Generator> {
 	
     
     /**
-     * Runs a simulation based on this model.
+     * Runs a simulation based on this generator.
      */
-    public abstract void run();
+    public abstract Net run();
 
    
     /**
-     * Compute a distance between two models.
+     * Compute a distance between two generators.
      * 
-     * @param model the model against which the distance should be computed
+     * @param generator the generator against which the distance should be computed
      * @return the distance as a double value
      */
-    public abstract double distance(Generator model);
+    public abstract double distance(Generator generator);
     
     
     /**
-     * Copies the model in the parameter to this model.
+     * Copies the generator in the parameter to this generator.
      * 
-     * @param model to copy from
+     * @param generator to copy from
      */
-    public void copy(Generator model) {}
-	
-	
-    /**
-     * Removes unnecessary data from the model after the fitness has been
-     * computed.
-     * 
-     * Useful to preserve memory in models that generate a large amount of
-     * auxiliary data during the simulation run.
-     */
-	public void trim() {}
+    public void copy(Generator generator) {}
 
     
 	/**
      * Creates a String with information about the parameterization of this
-     * model.
+     * generator.
      * 
      * @return string with parameters information
      */
@@ -125,40 +126,40 @@ public abstract class Generator implements Comparable<Generator> {
 
 
 	/**
-     * Recombines the programs in this model with the ones in the parameter
-     * model, returning a new child model.
+     * Recombines the programs in this generator with the ones in the parameter
+     * generator, returning a new child generator.
      * 
-     * @param parent2 the other parent model
-     * @return new child model
+     * @param parent2 the other parent generator
+     * @return new child generator
      */
 	public Generator recombine(Generator parent2)
 	{
-		Generator model = null;
-		model = (Generator)clone();
-		model.progset = progset.recombine(parent2.progset);
-		return model;
+		Generator generator = null;
+		generator = (Generator)clone();
+		generator.progset = progset.recombine(parent2.progset);
+		return generator;
 	}
 
 
 	/**
-     * Creates a new model with a program set copied from this one.
+     * Creates a new generator with a program set copied from this one.
      * 
-     * @return new model with cloned program set
+     * @return new generator with cloned program set
      */
 	public Generator cloneProgs()
 	{
-		Generator model = null;
-		model = (Generator)clone();
-		model.progset = progset.clone(true);
-		return model;
+		Generator generator = null;
+		generator = (Generator)clone();
+		generator.progset = progset.clone(true);
+		return generator;
 	}
 
 
 	/**
-     * A measure of the genotype size for this model.
+     * A measure of the genotype size for this generator.
      * 
      * Computes the total number of nodes in all the programs in the program set
-     * of this model.
+     * of this generator.
      * 
      * @return total number of nodes in program set
      */
@@ -207,19 +208,19 @@ public abstract class Generator implements Comparable<Generator> {
 
 
 	/**
-     * Compare branching information between this and the parameter model.
+     * Compare branching information between this and the parameter generator.
      * 
-     * @param model Model to compare branching information against
+     * @param generator generator to compare branching information against
      * @return true if branching is equal, false otherwise
      */
-	public boolean progsCompareBranching(Generator model)
+	public boolean progsCompareBranching(Generator generator)
 	{
-		return progset.compareBranching(model.progset);
+		return progset.compareBranching(generator.progset);
 	}
 
 
 	/**
-     * Feed a program set to the model, for the purpose of maintaining a record
+     * Feed a program set to the generator, for the purpose of maintaining a record
      * of execution paths.
      * 
      * Checks if the program set passed in the parameter contains a new
@@ -228,7 +229,7 @@ public abstract class Generator implements Comparable<Generator> {
      * program set.
      * 
      * @param ps Program set representing an execution path
-     * @return index of execution path in the model record
+     * @return index of execution path in the generator record
      */
 	public int executionPath(ProgSet ps)
 	{
@@ -254,11 +255,11 @@ public abstract class Generator implements Comparable<Generator> {
 	}
 	
 	
-	public int compareTo(Generator model) {
+	public int compareTo(Generator generator) {
 		
-        if (fitness < model.fitness)
+        if (fitness < generator.fitness)
         	return -1;
-        else if (fitness > model.fitness)
+        else if (fitness > generator.fitness)
         	return 1;
         else
         	return 0;
@@ -295,4 +296,24 @@ public abstract class Generator implements Comparable<Generator> {
 	public Vector<ProgSet> getExecutionPaths() {
 		return executionPaths;
 	}
+
+
+    public int getNodeCount() {
+        return nodeCount;
+    }
+
+
+    public void setNodeCount(int nodeCount) {
+        this.nodeCount = nodeCount;
+    }
+
+
+    public int getEdgeCount() {
+        return edgeCount;
+    }
+
+
+    public void setEdgeCount(int edgeCount) {
+        this.edgeCount = edgeCount;
+    }
 }

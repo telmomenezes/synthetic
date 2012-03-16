@@ -23,7 +23,6 @@ public class EvoStrategy implements PopGenerator {
 		this.mixing = mixing;
 	}
 	
-	
 	public Vector<Generator> newGeneration(EvoGen evo) {
 		
 		// send the parents to the start of the vector by sorting

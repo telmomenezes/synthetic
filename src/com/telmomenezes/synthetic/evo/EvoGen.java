@@ -77,7 +77,6 @@ public class EvoGen extends Evo {
 					model.computeFitness();
 					fitTime += System.currentTimeMillis() - time0;
 					model.postFitness = model.fitness;
-					model.trim();
 					System.gc();
 				}
 
