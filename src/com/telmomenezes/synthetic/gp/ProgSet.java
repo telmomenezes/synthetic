@@ -1,4 +1,4 @@
-package com.telmomenezes.synthetic;
+package com.telmomenezes.synthetic.gp;
 
 
 import java.io.BufferedReader;
@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Vector;
 
+import com.telmomenezes.synthetic.RandomGenerator;
 import com.telmomenezes.synthetic.gp.GPExtraFuns;
 import com.telmomenezes.synthetic.gp.GPTree;
 

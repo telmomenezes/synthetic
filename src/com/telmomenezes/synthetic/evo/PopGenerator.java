@@ -2,7 +2,7 @@ package com.telmomenezes.synthetic.evo;
 
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.Model;
+import com.telmomenezes.synthetic.generators.Generator;
 
 
 /**
@@ -14,7 +14,7 @@ import com.telmomenezes.synthetic.Model;
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
 public interface PopGenerator {
-	public Vector<Model> newGeneration(EvoGen evo);
+	public Vector<Generator> newGeneration(EvoGen evo);
 	
 	public String paramsString();
 }

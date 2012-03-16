@@ -1,6 +1,6 @@
 package com.telmomenezes.synthetic.evo;
 
-import com.telmomenezes.synthetic.Model;
+import com.telmomenezes.synthetic.generators.Generator;
 
 
 /**
@@ -27,14 +27,14 @@ public class EvoGen extends Evo {
 	private EvoGenCallbacks callbacks;
 	
 	
-	public EvoGen(PopGenerator popgen, int populationSize, Model baseModel)
+	public EvoGen(PopGenerator popgen, int populationSize, Generator baseModel)
 	{
 		this.popgen = popgen;
 	
 		callbacks = null;
 
 		for (int i = 0; i < populationSize; i++) {
-			Model model = (Model)baseModel.clone();
+			Generator model = (Generator)baseModel.clone();
 			model.initProgsRandom();
 			population.add(model);
 		}
@@ -62,7 +62,7 @@ public class EvoGen extends Evo {
 			simTime = 0;
 			fitTime = 0;
 
-			Model model;
+			Generator model;
 			
 			for (int j = 0; j < getPopulationSize(); j++) {
 				model = population.get(j);

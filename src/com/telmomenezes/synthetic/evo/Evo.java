@@ -2,7 +2,7 @@ package com.telmomenezes.synthetic.evo;
 
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.Model;
+import com.telmomenezes.synthetic.generators.Generator;
 
 
 /**
@@ -12,18 +12,18 @@ import com.telmomenezes.synthetic.Model;
  */
 public abstract class Evo {
 	
-	protected Vector<Model> population;
+	protected Vector<Generator> population;
     
 	protected PostFitness postFitness;
 
     // state
-	protected Model bestmodel;
+	protected Generator bestmodel;
 	protected double bestFitness;
 	
 	
 	public Evo()
 	{
-		population = new Vector<Model>();
+		population = new Vector<Generator>();
 
 		postFitness = null;
 		
@@ -39,7 +39,7 @@ public abstract class Evo {
 	public abstract String paramsString();
 
 
-	public Model getBestmodel() {
+	public Generator getBestmodel() {
 		return bestmodel;
 	}
 
@@ -49,7 +49,7 @@ public abstract class Evo {
 	}
 
 
-	public Vector<Model> getPopulation() {
+	public Vector<Generator> getPopulation() {
 		return population;
 	}
 

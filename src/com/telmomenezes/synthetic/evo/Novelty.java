@@ -2,7 +2,7 @@ package com.telmomenezes.synthetic.evo;
 
 import java.util.ArrayList;
 
-import com.telmomenezes.synthetic.Model;
+import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.RandomGenerator;
 
 
@@ -22,7 +22,7 @@ public class Novelty implements PostFitness {
 	private int k;
 	protected double[] neighbours;
 	private double min;
-	protected ArrayList<Model> archive;
+	protected ArrayList<Generator> archive;
 	double meanSpar;
 	Evo evo;
 	
@@ -40,7 +40,7 @@ public class Novelty implements PostFitness {
 
 		// compute sparseness
 		for (int j = 0; j < evo.getPopulationSize(); j++) {
-			Model model = evo.getPopulation().get(j);
+			Generator model = evo.getPopulation().get(j);
 			meanSpar += computeSparseness(model);
 
 			// add some to archive
@@ -85,7 +85,7 @@ public class Novelty implements PostFitness {
 	}
 
 
-	private double computeSparseness(Model model)
+	private double computeSparseness(Generator model)
 	{
 		for (int i = 0; i < k; i++)
 			neighbours[i] = -1.0;
@@ -102,7 +102,7 @@ public class Novelty implements PostFitness {
 		}
 
 		// compare to archive
-		for (Model archModel : archive) {
+		for (Generator archModel : archive) {
             double d = model.distance(archModel);
 
             if ((min < 0.0) || (d < min))

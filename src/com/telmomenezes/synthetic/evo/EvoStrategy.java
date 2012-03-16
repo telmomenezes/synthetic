@@ -3,7 +3,7 @@ package com.telmomenezes.synthetic.evo;
 import java.util.Collections;
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.Model;
+import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.RandomGenerator;
 
 
@@ -24,13 +24,13 @@ public class EvoStrategy implements PopGenerator {
 	}
 	
 	
-	public Vector<Model> newGeneration(EvoGen evo) {
+	public Vector<Generator> newGeneration(EvoGen evo) {
 		
 		// send the parents to the start of the vector by sorting
 		Collections.shuffle(evo.population);
 		Collections.sort(evo.population);
 		
-		Vector<Model> newPopulation = new Vector<Model>();
+		Vector<Generator> newPopulation = new Vector<Generator>();
 		
 		// place parents in new population
 		for (int i = 0; i < parents; i++)
@@ -39,7 +39,7 @@ public class EvoStrategy implements PopGenerator {
 		// generate offspring
 		for (int i = 0; i < evo.getPopulationSize() - parents; i++) {
 
-			Model parent, child, child2;
+			Generator parent, child, child2;
 			
 			// select first parent
 			parent = selectParent(evo);
@@ -64,7 +64,7 @@ public class EvoStrategy implements PopGenerator {
 	}
 
 
-	private Model selectParent(EvoGen evo)
+	private Generator selectParent(EvoGen evo)
 	{
 		int index = RandomGenerator.instance().random.nextInt(parents);
 		return evo.getPopulation().get(index);

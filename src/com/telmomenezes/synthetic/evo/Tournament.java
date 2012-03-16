@@ -2,7 +2,7 @@ package com.telmomenezes.synthetic.evo;
 
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.Model;
+import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.RandomGenerator;
 
 
@@ -30,11 +30,11 @@ public class Tournament implements PopGenerator {
 	}
 	
 	
-	public Vector<Model> newGeneration(EvoGen evo) {
-		Vector<Model> newPopulation = new Vector<Model>();
+	public Vector<Generator> newGeneration(EvoGen evo) {
+		Vector<Generator> newPopulation = new Vector<Generator>();
 		for (int j = 0; j < evo.getPopulationSize(); j++) {
 
-			Model parent1, parent2, child, childm;
+			Generator parent1, parent2, child, childm;
 			
 			// select first parent
 			parent1 = selectParent(evo);
@@ -63,7 +63,7 @@ public class Tournament implements PopGenerator {
 	}
 
 
-	private Model selectParent(EvoGen evo)
+	private Generator selectParent(EvoGen evo)
 	{
 		int bestIndex = - 1;
 		double bestFitness = 0;
