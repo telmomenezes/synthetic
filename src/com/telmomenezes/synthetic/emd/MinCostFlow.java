@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Stack;
 import java.util.Vector;
 
+
 class EdgeLong {
     public EdgeLong(int to, long cost) {
         _to = to;
@@ -62,13 +63,6 @@ class EdgeLong3 {
     long _dist;
 }
 
-/*
- * //----------------------------------------------------------------------------
- * -- template<typename NUM_T> struct edgeCompareByCost { bool operator()(const
- * edge<NUM_T>& a, const edge<NUM_T>& b) { return a._cost<b._cost; } };
- * //--------
- * ----------------------------------------------------------------------
- */
 
 class MinCostFlow {
     int _num_nodes;
@@ -95,8 +89,8 @@ class MinCostFlow {
             for (EdgeLong it : c.get(from)) {
                 x.get(from).add(new EdgeLong0(it._to, it._cost, 0));
                 x.get(it._to).add(new EdgeLong0(from, -it._cost, 0));
-            } // it
-        } // from
+            }
+        }
 
         // reduced costs for forward edges (c[i,j]-pi[i]+pi[j])
         // Note that for forward edges the residual capacity is infinity
@@ -121,8 +115,8 @@ class MinCostFlow {
             for (EdgeLong it : c.get(from)) {
                 r_cost_cap_backward.get(it._to).add(
                         new EdgeLong2(from, -it._cost, 0));
-            } // it
-        } // from
+            }
+        }
 
         // Max supply TODO:demand?, given U?, optimization-> min out of
         // demand,supply
@@ -165,7 +159,6 @@ class MinCostFlow {
             compute_shortest_path(d, prev, k, r_cost_forward,
                     r_cost_cap_backward, e, l);
 
-            // ---------------------------------------------------------------
             // find delta (minimum on the path from k to l)
             // delta = e[k];
             // if (-e[l] < delta) delta = e[k];
@@ -190,9 +183,7 @@ class MinCostFlow {
 
                 to = from;
             } while (to != k);
-            // ---------------------------------------------------------------
 
-            // ---------------------------------------------------------------
             // augment delta flow from k to l (backwards actually...)
             to = l[0];
             do {
@@ -238,15 +229,14 @@ class MinCostFlow {
 
                 to = from;
             } while (to != k);
-            // ---------------------------------------------------------------------------------
         }
         // compute distance from x
         long dist = 0;
         for (int from = 0; from < _num_nodes; ++from) {
             for (EdgeLong0 it : x.get(from)) {
                 dist += (it._cost * it._flow);
-            } // it
-        } // from
+            }
+        }
 
         return dist;
     }
@@ -255,9 +245,7 @@ class MinCostFlow {
             int from, Vector<List<EdgeLong1>> cost_forward,
             Vector<List<EdgeLong2>> cost_backward, Vector<Long> e, int[] l) {
 
-        // ----------------------------------------------------------------
         // Making heap (all inf except 0, so we are saving comparisons...)
-        // ----------------------------------------------------------------
         Stack<EdgeLong3> Q = new Stack<EdgeLong3>();
         for (int i = 0; i < _num_nodes; i++) {
             Q.push(new EdgeLong3());
@@ -283,11 +271,8 @@ class MinCostFlow {
             Q.get(j)._dist = Long.MAX_VALUE;
             ++j;
         }
-        // ----------------------------------------------------------------
 
-        // ----------------------------------------------------------------
         // main loop
-        // ----------------------------------------------------------------
         Vector<Boolean> finalNodesFlg = new Vector<Boolean>();
         for (int i = 0; i < _num_nodes; i++) {
             finalNodesFlg.add(false);
@@ -314,7 +299,7 @@ class MinCostFlow {
                     heap_decrease_key(Q, _nodes_to_Q, v, alt);
                     prev.set(v, u);
                 }
-            } // it
+            }
             for (EdgeLong2 it : cost_backward.get(u)) {
                 if (it._residual_capacity > 0) {
                     assert (it._reduced_cost >= 0);
@@ -326,7 +311,7 @@ class MinCostFlow {
                         prev.set(v, u);
                     }
                 }
-            } // it
+            }
 
         } while (!Q.isEmpty());
 
@@ -351,14 +336,9 @@ class MinCostFlow {
                     it._reduced_cost -= d.get(it._to) - d.get(l[0]);
                 }
 
-            }// it
+            }
         }
-        // ---------------------------------------------------------------------------------
-        // tmp_tic_toc.toc();
-
-        // ----------------------------------------------------------------
-
-    } // compute_shortest_path
+    }
 
     void heap_decrease_key(Vector<EdgeLong3> Q, Vector<Integer> nodes_to_Q,
             int v, long alt) {
@@ -368,17 +348,16 @@ class MinCostFlow {
             swap_heap(Q, nodes_to_Q, i, PARENT(i));
             i = PARENT(i);
         }
-    } // heap_decrease_key
+    }
 
     void heap_remove_first(Stack<EdgeLong3> Q, Vector<Integer> nodes_to_Q) {
         swap_heap(Q, nodes_to_Q, 0, Q.size() - 1);
         Q.pop();
         heapify(Q, nodes_to_Q, 0);
-    } // heap_remove_first
+    }
 
     void heapify(Vector<EdgeLong3> Q, Vector<Integer> nodes_to_Q, int i) {
         do {
-            // TODO: change to loop
             int l = LEFT(i);
             int r = RIGHT(i);
             int smallest;
@@ -399,7 +378,7 @@ class MinCostFlow {
 
         } while (true);
 
-    } // end heapify
+    }
 
     void swap_heap(Vector<EdgeLong3> Q, Vector<Integer> nodes_to_Q, int i, int j) {
         EdgeLong3 tmp = Q.get(i);
@@ -407,46 +386,18 @@ class MinCostFlow {
         Q.set(j, tmp);
         nodes_to_Q.set(Q.get(j)._to, j);
         nodes_to_Q.set(Q.get(i)._to, i);
-    } // swap_heapify
+    }
 
     int LEFT(int i) {
         return 2 * (i + 1) - 1;
     }
 
     int RIGHT(int i) {
-        return 2 * (i + 1); // 2*(i+1)+1-1
+        return 2 * (i + 1);
     }
 
     int PARENT(int i) {
         return (i - 1) / 2;
     }
 
-} // end min_cost_flow
-
-// Copyright (c) 2009-2011, Ofir Pele
-// All rights reserved.
-
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are
-// met:
-// * Redistributions of source code must retain the above copyright
-// notice, this list of conditions and the following disclaimer.
-// * Redistributions in binary form must reproduce the above copyright
-// notice, this list of conditions and the following disclaimer in the
-// documentation and/or other materials provided with the distribution.
-// * Neither the name of the The Hebrew University of Jerusalem nor the
-// names of its contributors may be used to endorse or promote products
-// derived from this software without specific prior written permission.
-
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
-// IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
-// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-// LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-// NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+}
