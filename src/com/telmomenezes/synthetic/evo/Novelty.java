@@ -1,4 +1,4 @@
-package com.telmomenezes.synthetic.gp;
+package com.telmomenezes.synthetic.evo;
 
 import java.util.ArrayList;
 
