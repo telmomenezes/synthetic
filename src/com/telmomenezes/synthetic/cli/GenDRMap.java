@@ -15,11 +15,6 @@ public class GenDRMap extends Command {
             return false;
         }
         
-        if(!cline.hasOption("inet")) {
-            setErrorMessage("input network file must be specified");
-            return false;
-        }
-        
         if(!cline.hasOption("mimg")) {
             setErrorMessage("file path to write DRMap image to must be specified");
             return false;

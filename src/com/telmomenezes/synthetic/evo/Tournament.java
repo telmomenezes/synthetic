@@ -16,19 +16,24 @@ import com.telmomenezes.synthetic.RandomGenerator;
  */
 public class Tournament implements PopGenerator {
 	
+    private int popSize;
 	private int tournamentSize;
 	private double recombProb;
 	private double mutProb;
 	
 	
-	public Tournament(int tournamentSize, double mutProb, double recombProb) {
-		this.tournamentSize = tournamentSize;
+	public Tournament(int popSize, int tournamentSize, double mutProb, double recombProb) {
+		this.popSize = popSize;
+	    this.tournamentSize = tournamentSize;
 		
 		// default values
 		this.mutProb = mutProb;
 		this.recombProb = recombProb;
 	}
 	
+	public int popSize() {
+        return popSize;
+    }
 	
 	public Vector<Generator> newGeneration(EvoGen evo) {
 		Vector<Generator> newPopulation = new Vector<Generator>();
@@ -81,7 +86,7 @@ public class Tournament implements PopGenerator {
 	}
 	
 	
-	public String paramsString()
+	public String infoString()
 	{
 		String tmpstr = "";
 		tmpstr += "Algorithm: Genetic Algorithm with Tournament Selection\n";

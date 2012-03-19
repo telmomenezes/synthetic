@@ -16,11 +16,17 @@ public class EvoStrategy implements PopGenerator {
 	
 	private int parents;
 	private int mixing;
+	private int children;
 	
 	
-	public EvoStrategy(int parents, int mixing) {
+	public EvoStrategy(int parents, int mixing, int children) {
 		this.parents = parents;
 		this.mixing = mixing;
+		this.children = parents;
+	}
+	
+	public int popSize() {
+	    return parents + children;
 	}
 	
 	public Vector<Generator> newGeneration(EvoGen evo) {
@@ -36,7 +42,7 @@ public class EvoStrategy implements PopGenerator {
 			newPopulation.add(evo.population.get(i));
 		
 		// generate offspring
-		for (int i = 0; i < evo.getPopulationSize() - parents; i++) {
+		for (int i = 0; i < children; i++) {
 
 			Generator parent, child, child2;
 			
@@ -70,12 +76,12 @@ public class EvoStrategy implements PopGenerator {
 	}
 	
 	
-	public String paramsString()
+	public String infoString()
 	{
-		String tmpstr = "";
-		tmpstr += "Algorithm: Evolutionary Strategy\n";
-		tmpstr += "parents: " + parents + "\n";
-		tmpstr += "mixing: " + mixing + "\n";
-		return tmpstr;
+		String str = "";
+		str += "search algorithm: evolutionary strategy\n";
+		str += "parents: " + parents + "\n";
+		str += "mixing: " + mixing + "\n";
+		return str;
 	}
 }

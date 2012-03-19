@@ -31,18 +31,7 @@ public class GPGen2P extends Generator {
         progset.funsets.set(1, GenericFunSet.instance().getFunset());
         progset.prognames.set(1, "Target\n");
     }
-    
-    
-    /**
-     * Computes the fitness of this generator, after it has been run.
-     * 
-     * @return the fitness as a double value
-     */
-    public double computeFitness() {
-        return 0;
-    }
 
-   
     /**
      * Compute a distance between two generators.
      * 
@@ -212,7 +201,6 @@ public class GPGen2P extends Generator {
 
     @Override
     public Generator clone() {
-        // TODO Auto-generated method stub
-        return null;
+        return new GPGen2P(nodeCount, edgeCount);
     }
 }

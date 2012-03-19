@@ -14,7 +14,7 @@ import com.telmomenezes.synthetic.generators.Generator;
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
 public interface PopGenerator {
+    public int popSize();
 	public Vector<Generator> newGeneration(EvoGen evo);
-	
-	public String paramsString();
+	public String infoString();
 }

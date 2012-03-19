@@ -502,7 +502,7 @@ public class Net {
         return nodes;
     }
 
-    int getNodeCount() {
+    public int getNodeCount() {
         return nodeCount;
     }
 
@@ -510,7 +510,7 @@ public class Net {
         this.nodeCount = nodeCount;
     }
 
-    int getEdgeCount() {
+    public int getEdgeCount() {
         return edgeCount;
     }
 

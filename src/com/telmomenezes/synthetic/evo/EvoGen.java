@@ -10,7 +10,8 @@ import com.telmomenezes.synthetic.generators.Generator;
  */
 public class EvoGen extends Evo {
     
-	PopGenerator popgen;
+	private PopGenerator popgen;
+	private EvoGenCallbacks callbacks;
 	
     // parameters
 	private int generations;
@@ -22,21 +23,17 @@ public class EvoGen extends Evo {
 	protected double genTime;
 	protected double simTime;
 	protected double fitTime;
-    
-    // callbacks
-	private EvoGenCallbacks callbacks;
 	
 	
-	public EvoGen(PopGenerator popgen, int populationSize, Generator baseModel)
+	public EvoGen(PopGenerator popgen, EvoGenCallbacks callbacks)
 	{
 		this.popgen = popgen;
-	
-		callbacks = null;
-
-		for (int i = 0; i < populationSize; i++) {
-			Generator model = (Generator)baseModel.clone();
-			model.initProgsRandom();
-			population.add(model);
+		this.callbacks = callbacks;
+		
+		for (int i = 0; i < popgen.popSize(); i++) {
+			Generator gen = callbacks.baseGenerator().clone();
+			gen.initProgsRandom();
+			population.add(gen);
 		}
 		
 		// default values
@@ -44,7 +41,8 @@ public class EvoGen extends Evo {
 
 		// init state
 		curgen = 0;
-		bestGenFitness = 0;
+		bestFitness = Double.MAX_VALUE;
+		bestGenFitness = Double.MAX_VALUE;
 		meanGenoSize = 0;
 		genTime = 0;
 		simTime = 0;
@@ -62,30 +60,34 @@ public class EvoGen extends Evo {
 			simTime = 0;
 			fitTime = 0;
 
-			Generator model;
+			bestGenFitness = Double.MAX_VALUE;
 			
+			Generator generator;
+			boolean first = false;
 			for (int j = 0; j < getPopulationSize(); j++) {
-				model = population.get(j);
+				generator = population.get(j);
 
-				meanGenoSize += model.genotypeSize();
+				meanGenoSize += generator.genotypeSize();
 
-				if (!model.simulated) {
+				if (!generator.simulated) {
 					long time0 = System.currentTimeMillis();
-					model.run();
+					generator.run();
 					simTime += System.currentTimeMillis() - time0;
 					time0 = System.currentTimeMillis();
-					model.computeFitness();
+					generator.fitness = callbacks.computeFitness(generator);
 					fitTime += System.currentTimeMillis() - time0;
-					model.postFitness = model.fitness;
-					System.gc();
+					generator.postFitness = generator.fitness;
+				
+				    if (first || (generator.fitness < bestGenFitness)) {
+				        first = false;
+				        bestGenFitness = generator.fitness;
+				    }
+				    generator.simulated = true;
 				}
 
-				if ((j == 0) || (model.fitness < bestGenFitness))
-					bestGenFitness = model.fitness;
-
-				if (((curgen == 0) && (j == 0)) || (model.fitness < bestFitness)) {
-					bestFitness = model.fitness;
-					bestmodel = model;
+				if (((curgen == 0) && (j == 0)) || (generator.fitness < bestFitness)) {
+					bestFitness = generator.fitness;
+					bestmodel = generator;
 				}
 			}
 
@@ -111,14 +113,13 @@ public class EvoGen extends Evo {
 	}
 	
 
-	public String paramsString()
+	public String infoString()
 	{
-		String tmpstr = "";
-		tmpstr += "EVOLUTIONARY PARAMETERES\n";
-		tmpstr += "population size: " + getPopulationSize() + "\n";
-		tmpstr += "generations: " + generations + "\n";
-		tmpstr += popgen.paramsString();
-		return tmpstr;
+		String str = "population size: " + getPopulationSize() + "\n";
+		str += "generations: " + generations + "\n";
+		str += callbacks.infoString();
+		str += popgen.infoString();
+		return str;
 	}
 
 

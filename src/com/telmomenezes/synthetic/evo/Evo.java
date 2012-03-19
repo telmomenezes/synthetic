@@ -28,7 +28,7 @@ public abstract class Evo {
 		postFitness = null;
 		
 		// init state
-		bestFitness = 0;
+		bestFitness = Double.MIN_VALUE;
 		bestmodel = null;
 	}
 
@@ -36,7 +36,7 @@ public abstract class Evo {
 	public abstract void run();
 
 
-	public abstract String paramsString();
+	public abstract String infoString();
 
 
 	public Generator getBestmodel() {

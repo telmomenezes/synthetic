@@ -29,7 +29,7 @@ public class SynCLI {
     }
     
     public void run(String[] args) {
-        //args = new String[]{"gendrmap", "-inet", "wiki-Vote.txt", "-mimg", "wiki-Vote.png"};
+        args = new String[]{"evo", "-inet", "wiki-Vote.txt", "-mimg", "wiki-Vote.png"};
         
         CommandLineParser parser = new GnuParser();
         options = new Options();
@@ -50,6 +50,9 @@ public class SynCLI {
             }
             else if (cmd.equals("gendrmap")) {
                 cmdObj = new GenDRMap();
+            }
+            else if (cmd.equals("evo")) {
+                cmdObj = new Evolve();
             }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");

@@ -63,14 +63,6 @@ public abstract class Generator implements Comparable<Generator> {
      * Creates the program set.
      */
     public abstract void createProgSet();
-    
-    
-    /**
-     * Computes the fitness of this generator, after it has been run.
-     * 
-     * @return the fitness as a double value
-     */
-    public abstract double computeFitness();
 	
     
     /**
