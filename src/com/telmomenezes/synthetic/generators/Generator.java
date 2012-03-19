@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Vector;
 
+import com.telmomenezes.synthetic.DRMap;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.gp.ProgSet;
 
@@ -31,6 +32,7 @@ public abstract class Generator implements Comparable<Generator> {
     private Vector<ProgSet> executionPaths;
     protected boolean checkPaths;
 
+    private DRMap drmap;
 
 	public Generator(int nodeCount, int edgeCount) {
 	    this.nodeCount = nodeCount;
@@ -39,6 +41,8 @@ public abstract class Generator implements Comparable<Generator> {
 	    cycle = 0;
 	    
 		progset = null;
+		
+		drmap = null;
 
 		simulated = false;
 		
@@ -307,5 +311,15 @@ public abstract class Generator implements Comparable<Generator> {
 
     public void setEdgeCount(int edgeCount) {
         this.edgeCount = edgeCount;
+    }
+
+
+    public DRMap getDrmap() {
+        return drmap;
+    }
+
+
+    public void setDrmap(DRMap drmap) {
+        this.drmap = drmap;
     }
 }

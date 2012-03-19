@@ -17,7 +17,6 @@ public abstract class Evo {
 	protected PostFitness postFitness;
 
     // state
-	protected Generator bestmodel;
 	protected double bestFitness;
 	
 	
@@ -28,20 +27,15 @@ public abstract class Evo {
 		postFitness = null;
 		
 		// init state
-		bestFitness = Double.MIN_VALUE;
-		bestmodel = null;
+		bestFitness = Double.MAX_VALUE;
 	}
 
 
 	public abstract void run();
 
-
+	public abstract int getPopulationSize();
+	
 	public abstract String infoString();
-
-
-	public Generator getBestmodel() {
-		return bestmodel;
-	}
 
 
 	public double getBestFitness() {
@@ -56,9 +50,5 @@ public abstract class Evo {
 
 	public void setPostFitness(PostFitness postFitness) {
 		this.postFitness = postFitness;
-	}
-	
-	public int getPopulationSize() {
-		return population.size();
 	}
 }

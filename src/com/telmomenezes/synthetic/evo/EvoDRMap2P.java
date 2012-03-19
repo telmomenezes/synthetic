@@ -5,8 +5,10 @@ import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.generators.GPGen2P;
 import com.telmomenezes.synthetic.generators.Generator;
 
+
 public class EvoDRMap2P implements EvoGenCallbacks {
     private Net targNet;
+    private String outDir;
     private DRMap targDRMap;
     private Generator gen;
     private int nodeCount;
@@ -14,9 +16,11 @@ public class EvoDRMap2P implements EvoGenCallbacks {
     private double enratio;
     private long effort;
     private long maxEffort;
+    private int bestCount;
     
-    public EvoDRMap2P(Net targNet, long maxEffort) {
+    public EvoDRMap2P(Net targNet, String outDir, long maxEffort) {
         this.targNet = targNet;
+        this.outDir = outDir;
         this.targDRMap = genDRMap(targNet);
         this.maxEffort = maxEffort;
         
@@ -34,6 +38,8 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         }
         
         gen = new GPGen2P(nodeCount, edgeCount);
+        
+        bestCount = 0;
     }
     
     public Generator baseGenerator() {
@@ -43,12 +49,20 @@ public class EvoDRMap2P implements EvoGenCallbacks {
     public double computeFitness(Generator gen) {
         Net net = gen.run();
         DRMap drmap = genDRMap(net);
+        gen.setDrmap(drmap);
         return targDRMap.emdDistance(drmap);
+    }
+    
+    public void onNewBest(EvoGen evo) {
+        String suffix = "" + bestCount + "_gen" + evo.getCurgen();
+        Generator bestGen = evo.getBestGenerator();
+        bestGen.getDrmap().draw(outDir + "/best" + suffix + ".png");
+        bestGen.getDrmap().draw(outDir + "/best" + ".png");
+        bestCount++;
     }
 
     public void onGeneration(EvoGen evo) {
-        System.out.println(">> gen: " + evo.getCurgen() + "; best fit: " + evo.getBestFitness() + "; best gen fit: " + evo.getBestGenFitness());
-        System.out.println("     gen time: " + evo.getGenTime() + "; fit time: " + evo.getFitTime());
+        System.out.println(evo.genInfoString());
     }
 
     private DRMap genDRMap(Net net) {

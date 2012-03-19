@@ -17,6 +17,7 @@ public class EvoGen extends Evo {
 	private int generations;
 
     // state
+	private Generator bestGenerator;
 	protected int curgen;
 	protected double bestGenFitness;
 	protected double meanGenoSize;
@@ -40,6 +41,7 @@ public class EvoGen extends Evo {
 		generations = 1000;
 
 		// init state
+		bestGenerator = null;
 		curgen = 0;
 		bestFitness = Double.MAX_VALUE;
 		bestGenFitness = Double.MAX_VALUE;
@@ -49,6 +51,9 @@ public class EvoGen extends Evo {
 		fitTime = 0;
 	}
 
+	public int getPopulationSize() {
+	    return popgen.popSize();
+	}
 	
 	public void run()
 	{
@@ -64,7 +69,7 @@ public class EvoGen extends Evo {
 			
 			Generator generator;
 			boolean first = false;
-			for (int j = 0; j < getPopulationSize(); j++) {
+			for (int j = 0; j < popgen.popSize(); j++) {
 				generator = population.get(j);
 
 				meanGenoSize += generator.genotypeSize();
@@ -87,14 +92,15 @@ public class EvoGen extends Evo {
 
 				if (((curgen == 0) && (j == 0)) || (generator.fitness < bestFitness)) {
 					bestFitness = generator.fitness;
-					bestmodel = generator;
+					bestGenerator = generator;
 				}
 			}
 
-			if (postFitness != null)
+			if (postFitness != null) {
 				postFitness.postProcessFitness(this);
+			}
 			
-			meanGenoSize /= (double)getPopulationSize();
+			meanGenoSize /= (double)popgen.popSize();
 
 			// assign new population
 			population = popgen.newGeneration(this);
@@ -106,16 +112,14 @@ public class EvoGen extends Evo {
 			fitTime /= 1000;
 			
 			// onGeneration callback
-			if (callbacks != null) {
-				callbacks.onGeneration(this);
-			}
+			callbacks.onGeneration(this);
 		}
 	}
 	
 
 	public String infoString()
 	{
-		String str = "population size: " + getPopulationSize() + "\n";
+		String str = "population size: " + popgen.popSize() + "\n";
 		str += "generations: " + generations + "\n";
 		str += callbacks.infoString();
 		str += popgen.infoString();
@@ -128,7 +132,7 @@ public class EvoGen extends Evo {
 		String tmpstr = "gen #" + curgen
         	+ "; best fitness: " + bestFitness
         	+ "; best gen fitness: " + bestGenFitness
-        	+ "; best genotype size: " + bestmodel.genotypeSize()
+        	+ "; best genotype size: " + bestGenerator.genotypeSize()
         	+ "; mean genotype size: " + meanGenoSize
         	+ "; gen comp time: " + genTime + "s."
 			+ "; sim comp time: " + simTime + "s."
@@ -175,4 +179,9 @@ public class EvoGen extends Evo {
 	public double getFitTime() {
 		return fitTime;
 	}
+
+
+    public Generator getBestGenerator() {
+        return bestGenerator;
+    }
 }

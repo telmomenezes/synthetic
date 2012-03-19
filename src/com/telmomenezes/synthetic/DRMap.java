@@ -208,6 +208,10 @@ public class DRMap {
            e.printStackTrace();
         }
     }
+    
+    public void draw(String filename) {
+        draw(filename, 500);
+    }
 
     double simpleDist(DRMap map) {
         double dist = 0;

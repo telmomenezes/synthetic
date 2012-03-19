@@ -35,6 +35,7 @@ public class SynCLI {
         options = new Options();
         options.addOption("inet", true, "input net file");
         options.addOption("mimg", true, "file path to write DRMap image to");
+        options.addOption("odir", true, "output directory");
         
         try {
             cline = parser.parse(options, args);
