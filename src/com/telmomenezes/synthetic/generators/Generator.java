@@ -32,6 +32,7 @@ public abstract class Generator implements Comparable<Generator> {
     private Vector<ProgSet> executionPaths;
     protected boolean checkPaths;
 
+    private Net net;
     private DRMap drmap;
 
 	public Generator(int nodeCount, int edgeCount) {
@@ -321,5 +322,20 @@ public abstract class Generator implements Comparable<Generator> {
 
     public void setDrmap(DRMap drmap) {
         this.drmap = drmap;
+    }
+
+
+    public ProgSet getProgset() {
+        return progset;
+    }
+
+
+    public Net getNet() {
+        return net;
+    }
+
+
+    public void setNet(Net net) {
+        this.net = net;
     }
 }

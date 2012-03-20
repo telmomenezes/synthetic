@@ -26,7 +26,7 @@ public class EvoGen extends Evo {
 	protected double fitTime;
 	
 	
-	public EvoGen(PopGenerator popgen, EvoGenCallbacks callbacks)
+	public EvoGen(PopGenerator popgen, EvoGenCallbacks callbacks, int generations)
 	{
 		this.popgen = popgen;
 		this.callbacks = callbacks;
@@ -38,7 +38,7 @@ public class EvoGen extends Evo {
 		}
 		
 		// default values
-		generations = 1000;
+		this.generations = generations;
 
 		// init state
 		bestGenerator = null;
@@ -93,6 +93,7 @@ public class EvoGen extends Evo {
 				if (((curgen == 0) && (j == 0)) || (generator.fitness < bestFitness)) {
 					bestFitness = generator.fitness;
 					bestGenerator = generator;
+					callbacks.onNewBest(this);
 				}
 			}
 

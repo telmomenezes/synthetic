@@ -4,6 +4,7 @@ package com.telmomenezes.synthetic.gp;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -105,8 +106,7 @@ public class ProgSet {
     }
 
 
-    public int size()
-    {
+    public int size() {
     	int psize = 0;
 
     	for (int i = 0; i < progcount; i++)
@@ -116,8 +116,7 @@ public class ProgSet {
     }
 
 
-    public void write(OutputStreamWriter out) throws IOException
-    {
+    public void write(OutputStreamWriter out) throws IOException {
     	for (int i = 0; i < progcount; i++) {
     		out.write("# " + prognames.get(i));
     		progs[i].write(out);
@@ -125,6 +124,17 @@ public class ProgSet {
     	}
     }
 
+    public void write(String filePath) {
+        try {
+            FileOutputStream fstream = new FileOutputStream(filePath);
+            OutputStreamWriter out = new OutputStreamWriter(fstream);
+            write(out);
+            out.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void load(String filePath) throws IOException
     {
