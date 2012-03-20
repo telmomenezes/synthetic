@@ -17,7 +17,7 @@ public class Evolve extends Command {
     @Override
     public boolean run(CommandLine cline) {
         // TODO: make configurable
-        long maxEffort = 1000 * 1000 * 1;
+        long maxEffort = 1000 * 1000 * 5;
         int generations = 1000;
         
         if(!cline.hasOption("inet")) {

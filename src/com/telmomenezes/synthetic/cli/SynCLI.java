@@ -29,7 +29,7 @@ public class SynCLI {
     }
     
     public void run(String[] args) {
-        args = new String[]{"evo", "-inet", "wiki-Vote.txt", "-odir", "test"};
+        //args = new String[]{"evo", "-inet", "wiki-Vote.txt", "-odir", "test"};
         
         CommandLineParser parser = new GnuParser();
         options = new Options();

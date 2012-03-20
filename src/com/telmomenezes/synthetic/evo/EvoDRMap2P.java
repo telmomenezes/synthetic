@@ -11,10 +11,11 @@ import com.telmomenezes.synthetic.io.NetFileType;
 
 
 public class EvoDRMap2P implements EvoGenCallbacks {
-    private Net targNet;
     private String outDir;
     private DRMap targDRMap;
     private Generator gen;
+    private int targNodeCount;
+    private int targEdgeCount;
     private int nodeCount;
     private int edgeCount;
     private double enratio;
@@ -24,13 +25,14 @@ public class EvoDRMap2P implements EvoGenCallbacks {
     
     
     public EvoDRMap2P(Net targNet, String outDir, long maxEffort) {
-        this.targNet = targNet;
         this.outDir = outDir;
         targDRMap = genDRMap(targNet);
         this.maxEffort = maxEffort;
         
         nodeCount = targNet.getNodeCount();
         edgeCount = targNet.getEdgeCount();
+        targNodeCount = nodeCount;
+        targEdgeCount = edgeCount;
         
         effort = 2 * nodeCount * edgeCount;
         
@@ -121,8 +123,8 @@ public class EvoDRMap2P implements EvoGenCallbacks {
     }
     
     public String infoString() {
-        String str = "target net node count: " + targNet.getNodeCount() + "\n";
-        str += "target net edge count: " + targNet.getEdgeCount() + "\n";
+        String str = "target net node count: " + targNodeCount + "\n";
+        str += "target net edge count: " + targEdgeCount + "\n";
         str += "generated nets node count: " + nodeCount + "\n";
         str += "generated nets edge count: " + edgeCount + "\n";
         str += "edge/node ratio: " + enratio + "\n";
