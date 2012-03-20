@@ -33,8 +33,7 @@ public class Evolve extends Command {
         String netfile = cline.getOptionValue("inet");
         String outdir = cline.getOptionValue("odir");
         
-        Net net = Net.load(netfile, NetFileType.SNAP);
-        EvoDRMap2P callbacks = new EvoDRMap2P(net, outdir, maxEffort);
+        EvoDRMap2P callbacks = new EvoDRMap2P(Net.load(netfile, NetFileType.SNAP), outdir, maxEffort);
         EvoStrategy popGen = new EvoStrategy(1, 1, 1);
         EvoGen evo = new EvoGen(popGen, callbacks, generations);
         
