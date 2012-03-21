@@ -31,7 +31,7 @@ public class GenDRMap extends Command {
         drmap.logScale();
         drmap.normalizeMax();
         
-        //System.out.println(drmap);
+        System.out.println(drmap);
         drmap.draw(outfile, 500);
         
         return true;

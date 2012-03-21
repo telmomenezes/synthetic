@@ -348,11 +348,14 @@ public class DRMap {
         System.out.println(m1);
         
         DRMap m2 = new DRMap(3);
-        //m2.setValue(1, 1, 1.0);
-        m2.setValue(2, 2, 1.0);
+        m2.setValue(0, 0, 1.0);
+        m2.setValue(2, 2, 10.0);
         System.out.println(m2);
         
         double dist = m1.emdDistance(m2);
+        System.out.println("dist: " + dist);
+        
+        dist = m2.emdDistance(m1);
         System.out.println("dist: " + dist);
     }
 }

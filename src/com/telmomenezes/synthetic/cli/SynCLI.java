@@ -34,6 +34,7 @@ public class SynCLI {
         CommandLineParser parser = new GnuParser();
         options = new Options();
         options.addOption("inet", true, "input net file");
+        options.addOption("inet2", true, "second input net file");
         options.addOption("mimg", true, "file path to write DRMap image to");
         options.addOption("odir", true, "output directory");
         
@@ -54,6 +55,9 @@ public class SynCLI {
             }
             else if (cmd.equals("evo")) {
                 cmdObj = new Evolve();
+            }
+            else if (cmd.equals("emddist")) {
+                cmdObj = new EMDDist();
             }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
