@@ -162,16 +162,16 @@ public class EMD {
         double CnormFactor = MULT_FACTOR / maxC;
         for (int i = 0; i < N; ++i) {
             iPOrig.set(i,
-                    (long) (Math.floor(POrig.get(i) * PQnormFactor + 0.5)));
+                    (long)(Math.floor(POrig.get(i) * PQnormFactor + 0.5)));
             iQOrig.set(i,
-                    (long) (Math.floor(QOrig.get(i) * PQnormFactor + 0.5)));
-            iP.set(i, (long) (Math.floor(P.get(i) * PQnormFactor + 0.5)));
-            iQ.set(i, (long) (Math.floor(Q.get(i) * PQnormFactor + 0.5)));
+                    (long)(Math.floor(QOrig.get(i) * PQnormFactor + 0.5)));
+            iP.set(i, (long)(Math.floor(P.get(i) * PQnormFactor + 0.5)));
+            iQ.set(i, (long)(Math.floor(Q.get(i) * PQnormFactor + 0.5)));
             for (int j = 0; j < N; ++j) {
                 iC.get(i)
-                        .set(j,
-                                (long) (Math.floor(C.get(i).get(j)
-                                        * CnormFactor + 0.5)));
+                  .set(j,
+                          (long) (Math.floor(C.get(i).get(j)
+                                  * CnormFactor + 0.5)));
             }
         }
 

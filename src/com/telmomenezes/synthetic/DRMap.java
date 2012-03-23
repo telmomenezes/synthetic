@@ -279,7 +279,11 @@ public class DRMap {
         Signature sig1 = getEmdSignature();
         Signature sig2 = map.getEmdSignature();
         
-        return EMD.compute(sig1, sig2, -1);
+        double dist = EMD.compute(sig1, sig2, -1);
+        if (dist < 0) {
+            dist = infinity;
+        }
+        return dist;
     }
 
     @Override
@@ -349,7 +353,7 @@ public class DRMap {
         
         DRMap m2 = new DRMap(3);
         m2.setValue(0, 0, 1.0);
-        m2.setValue(2, 2, 10.0);
+        m2.setValue(2, 2, 0.1);
         System.out.println(m2);
         
         double dist = m1.emdDistance(m2);

@@ -49,7 +49,7 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         bestCount = 0;
         
         // write target drmap
-        targDRMap.draw(outDir + "/target.png");
+        genDRMap(targNet).draw(outDir + "/target.png");
         
         // write header of evo.csv
         try {
@@ -71,7 +71,6 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         Net net = gen.run();
         DRMap drmap = genDRMap(net);
         gen.setNet(net);
-        gen.setDrmap(drmap);
         return targDRMap.emdDistance(drmap);
     }
     
@@ -82,8 +81,8 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         bestGen.getNet().save(outDir + "/bestnet" + suffix + ".txt", NetFileType.SNAP);
         bestGen.getNet().save(outDir + "/bestnet" + ".txt", NetFileType.SNAP);
         // write drmap
-        bestGen.getDrmap().draw(outDir + "/best" + suffix + ".png");
-        bestGen.getDrmap().draw(outDir + "/best" + ".png");
+        genDRMap(bestGen.getNet()).draw(outDir + "/best" + suffix + ".png");
+        genDRMap(bestGen.getNet()).draw(outDir + "/best" + ".png");
         // write progs
         bestGen.getProgset().write(outDir + "/bestprog" + suffix + ".txt");
         bestGen.getProgset().write(outDir + "/bestprog" + ".txt");
