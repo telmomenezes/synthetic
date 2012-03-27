@@ -14,6 +14,7 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 
 import com.telmomenezes.synthetic.emd.EMD;
+import com.telmomenezes.synthetic.emd.EMDL1;
 import com.telmomenezes.synthetic.emd.Feature;
 import com.telmomenezes.synthetic.emd.Signature;
 
@@ -280,10 +281,42 @@ public class DRMap {
         Signature sig2 = map.getEmdSignature();
         
         double dist = EMD.compute(sig1, sig2, -1);
-        if (dist < 0) {
+        /*if (dist < 0) {
             dist = infinity;
-        }
+        }*/
         return dist;
+    }
+    
+    private int[] intMap() {
+        int[] map = new int[binNumber * binNumber];
+        int i = 0;
+        for (int x = 0; x < binNumber; x++) {
+            for (int y = 0; y < binNumber; y++) {
+                map[i] = (int)(getValue(x, y) * 10000);
+                i++;
+            }
+        }
+        
+        return map;
+    }
+    
+    public double emdDistanceL1(DRMap map) {
+        int[] dims = {binNumber, binNumber};
+        double dist = (double)EMDL1.distance(intMap(), map.intMap(), dims);
+        dist /= 10000.0;
+        return dist;
+    }
+    
+    public String cArray() {    
+        String str = "{";
+        for (int i = 0; i < binNumber * binNumber; i++) {
+            if (i > 0) {
+                str += ", ";
+            }
+            str += "" + data[i];
+        }
+        str += "}";
+        return str;
     }
 
     @Override

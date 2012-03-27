@@ -32,6 +32,7 @@ public class GenDRMap extends Command {
         drmap.normalizeMax();
         
         System.out.println(drmap);
+        //System.out.println(drmap.cArray());
         drmap.draw(outfile, 500);
         
         return true;

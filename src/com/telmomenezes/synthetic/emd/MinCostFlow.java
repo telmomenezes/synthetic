@@ -82,7 +82,9 @@ class MinCostFlow {
         assert (x.size() == c.size());
 
         _num_nodes = e.size();
-        _nodes_to_Q.setSize(_num_nodes);
+        for (int i = 0; i < _num_nodes; i++) {
+            _nodes_to_Q.add(0);
+        }
 
         // init flow
         for (int from = 0; from < _num_nodes; ++from) {
@@ -118,8 +120,7 @@ class MinCostFlow {
             }
         }
 
-        // Max supply TODO:demand?, given U?, optimization-> min out of
-        // demand,supply
+        // Max supply TODO:demand?, given U?, optimization-> min out of demand,supply
         long U = 0;
         for (int i = 0; i < _num_nodes; ++i) {
             if (e.get(i) > U)
@@ -235,6 +236,8 @@ class MinCostFlow {
         for (int from = 0; from < _num_nodes; ++from) {
             for (EdgeLong0 it : x.get(from)) {
                 dist += (it._cost * it._flow);
+              System.out.println("it._cost: " + it._cost + "; it._flow: " + it._flow);
+              System.out.println(dist);
             }
         }
 

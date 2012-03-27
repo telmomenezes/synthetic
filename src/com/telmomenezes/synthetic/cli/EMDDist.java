@@ -35,16 +35,16 @@ public class EMDDist extends Command {
         net2.computePageranks();
         
         DRMap drmap1 = net1.getDRMapWithLimit(10, -7, 7, -7, 7);
-        //drmap1.logScale();
+        drmap1.logScale();
         drmap1.normalizeMax();
         
         DRMap drmap2 = net2.getDRMapWithLimit(10, -7, 7, -7, 7);
-        //drmap2.logScale();
+        drmap2.logScale();
         drmap2.normalizeMax();
         
         System.out.println("total 1: " + drmap1.total());
         System.out.println("total 2: " + drmap2.total());
-        System.out.println("emd distance: " + drmap1.emdDistance(drmap2));
+        System.out.println("emd distance: " + drmap1.emdDistanceL1(drmap2));
         
         return true;
     }

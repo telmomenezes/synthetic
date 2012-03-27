@@ -185,7 +185,7 @@ public class EMD {
         if (extra_mass_penalty == -1)
             extra_mass_penalty = maxC;
         dist += (maxSum - minSum) * extra_mass_penalty;
-
+        
         return dist;
 
     }
@@ -212,7 +212,8 @@ public class EMD {
             P = Qc;
             Q = Pc;
             abs_diff_sum_P_sum_Q = sum_Q - sum_P;
-        } else {
+        }
+        else {
             P = Pc;
             Q = Qc;
             abs_diff_sum_P_sum_Q = sum_P - sum_Q;
@@ -330,7 +331,8 @@ public class EMD {
                     nodes_new_names.set(i, current_node_name);
                     nodes_old_names.add(i);
                     ++current_node_name;
-                } else {
+                }
+                else {
                     if (i >= N) { // sink
                         pre_flow_cost -= b.get(i) * maxC;
                     }
@@ -382,7 +384,7 @@ public class EMD {
         }
 
         long mcf_dist = mcf.operator(bb, cc, flows);
-
+        
         my_dist = pre_flow_cost + // pre-flowing on cases where it was possible
                 mcf_dist + // solution of the transportation problem
                 (abs_diff_sum_P_sum_Q * extra_mass_penalty); // emd-hat extra
