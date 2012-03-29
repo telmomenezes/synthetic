@@ -71,7 +71,7 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         Net net = gen.run();
         DRMap drmap = genDRMap(net);
         gen.setNet(net);
-        return targDRMap.emdDistanceL1(drmap);
+        return targDRMap.emdDistance(drmap);
     }
     
     public void onNewBest(EvoGen evo) {

@@ -44,7 +44,7 @@ public class EMDDist extends Command {
         
         System.out.println("total 1: " + drmap1.total());
         System.out.println("total 2: " + drmap2.total());
-        System.out.println("emd distance: " + drmap1.emdDistanceL1(drmap2));
+        System.out.println("emd distance: " + drmap1.emdDistance(drmap2));
         
         return true;
     }

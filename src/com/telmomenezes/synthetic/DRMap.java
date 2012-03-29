@@ -13,9 +13,8 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
-import com.telmomenezes.synthetic.emd.EMD;
-import com.telmomenezes.synthetic.emd.EMDL1;
-import com.telmomenezes.synthetic.emd.Feature;
+import com.telmomenezes.synthetic.emd.Feature2D;
+import com.telmomenezes.synthetic.emd.JFastEMD;
 import com.telmomenezes.synthetic.emd.Signature;
 
 
@@ -236,10 +235,7 @@ public class DRMap {
             }
         }
 
-        Feature[] features = new Feature[n];
-        for (int i = 0; i < n; i++) {
-            features[i] = new Feature();
-        }
+        Feature2D[] features = new Feature2D[n];
         double[] weights = new double[n];
 
         int i = 0;
@@ -247,8 +243,8 @@ public class DRMap {
             for (int y = 0; y < binNumber; y++) {
                 double val = getValue(x, y);
                 if (val > 0) {
-                    features[i].x = x;
-                    features[i].y = y;
+                    Feature2D f = new Feature2D(x, y);
+                    features[i] = f;
                     weights[i] = val;
                     i++;
                 }
@@ -256,9 +252,9 @@ public class DRMap {
         }
 
         Signature signature = new Signature();
-        signature.n = n;
-        signature.Features = features;
-        signature.Weights = weights;
+        signature.setNumberOfFeatures(n);
+        signature.setFeatures(features);
+        signature.setWeights(weights);
 
         return signature;
     }
@@ -280,31 +276,8 @@ public class DRMap {
         Signature sig1 = getEmdSignature();
         Signature sig2 = map.getEmdSignature();
         
-        double dist = EMD.compute(sig1, sig2, -1);
-        /*if (dist < 0) {
-            dist = infinity;
-        }*/
-        return dist;
-    }
-    
-    private int[] intMap() {
-        int[] map = new int[binNumber * binNumber];
-        int i = 0;
-        for (int x = 0; x < binNumber; x++) {
-            for (int y = 0; y < binNumber; y++) {
-                map[i] = (int)(getValue(x, y) * 10000);
-                i++;
-            }
-        }
-        
-        return map;
-    }
-    
-    public double emdDistanceL1(DRMap map) {
-        int[] dims = {binNumber, binNumber};
-        double dist = (double)EMDL1.distance(intMap(), map.intMap(), dims);
-        dist /= 10000.0;
-        return dist;
+        JFastEMD fastemd = new JFastEMD();
+        return fastemd.distance(sig1, sig2, -1);
     }
     
     public String cArray() {    

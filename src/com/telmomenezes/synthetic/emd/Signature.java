@@ -1,7 +1,32 @@
 package com.telmomenezes.synthetic.emd;
 
+
 public class Signature {
-    public int n;                  // Number of features in the signature
-    public Feature[] Features;     // Pointer to the features vector
-    public double[] Weights;       // Pointer to the weights of the features (Changed from Rubner's)
+    private int numberOfFeatures;
+    private Feature[] features;
+    private double[] weights;
+    
+    public int getNumberOfFeatures() {
+        return numberOfFeatures;
+    }
+    
+    public void setNumberOfFeatures(int numberOfFeatures) {
+        this.numberOfFeatures = numberOfFeatures;
+    }
+
+    public Feature[] getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(Feature[] features) {
+        this.features = features;
+    }
+
+    public double[] getWeights() {
+        return weights;
+    }
+
+    public void setWeights(double[] weights) {
+        this.weights = weights;
+    }
 }
