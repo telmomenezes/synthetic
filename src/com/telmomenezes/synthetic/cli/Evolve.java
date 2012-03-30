@@ -18,7 +18,7 @@ public class Evolve extends Command {
     public boolean run(CommandLine cline) {
         // TODO: make configurable
         long maxEffort = 1000 * 1000 * 5;
-        int generations = 1000;
+        int generations = 999999999;
         
         if(!cline.hasOption("inet")) {
             setErrorMessage("input network file must be specified");
