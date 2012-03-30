@@ -1,6 +1,10 @@
 package com.telmomenezes.synthetic.emd;
 
 
+/**
+ * @author Telmo Menezes (telmo@telmomenezes.com)
+ *
+ */
 public class Signature {
     private int numberOfFeatures;
     private Feature[] features;
