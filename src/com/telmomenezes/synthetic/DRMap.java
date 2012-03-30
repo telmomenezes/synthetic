@@ -263,21 +263,14 @@ public class DRMap {
     {
         double infinity = Double.MAX_VALUE;
 
-        if ((total() <= 0) && (map.total() <= 0)) {
+        if ((total() <= 0) || (map.total() <= 0)) {
             return 0;
-        }
-        if (total() <= 0) {
-            return infinity;
-        }
-        if (map.total() <= 0) {
-            return infinity;
         }
 
         Signature sig1 = getEmdSignature();
         Signature sig2 = map.getEmdSignature();
         
-        JFastEMD fastemd = new JFastEMD();
-        return fastemd.distance(sig1, sig2, -1);
+        return JFastEMD.distance(sig1, sig2, -1);
     }
     
     public String cArray() {    
