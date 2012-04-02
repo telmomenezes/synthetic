@@ -1,10 +1,10 @@
 package com.telmomenezes.synthetic;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
+//import java.awt.Font;
+//import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.geom.Line2D;
+//import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,21 +12,34 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.telmomenezes.synthetic.io.MatrixFile;
 
-public class DRMap extends Map2D {
 
-    public DRMap(int binNumber, double minValHor, double maxValHor,
-            double minValVer, double maxValVer) {
+public class EdgeBalanceMap extends Map2D {
+
+    public EdgeBalanceMap(Net net, int binNumber) {
         super(binNumber);
-        this.minValHor = minValHor;
-        this.maxValHor = maxValHor;
-        this.minValVer = minValVer;
-        this.maxValVer = maxValVer;
-    }
-    
-    public DRMap(int binNumber) {
-        this(binNumber, Double.MIN_VALUE, Double.MAX_VALUE,
-                Double.MIN_VALUE, Double.MAX_VALUE);
+        
+        double maxWeight = 0;
+        for (Edge edge : net.getEdges()) {
+            double weight = edge.getWeight();
+            if (weight > maxWeight) {
+                maxWeight = weight;
+            }
+        }
+        
+        double interval = maxWeight / ((double)(binNumber - 1));
+        
+        for (Edge edge : net.getEdges()) {
+            int x = (int)Math.floor(edge.getWeight() / interval);
+            int y = 0;
+            Edge inverseEdge = net.getInverseEdge(edge);
+            if (inverseEdge != null) {
+                y = (int)Math.floor(inverseEdge.getWeight() / interval);
+            }
+            //System.out.println("x: " + x + "; y: " + y);
+            incValue(x, y);
+        }
     }
     
     public void draw(Graphics2D g, double side) {
@@ -34,13 +47,13 @@ public class DRMap extends Map2D {
         double maxVal = max();
         
         // colors
-        Color gridColor = new Color(255, 255, 0);
+        //Color gridColor = new Color(255, 255, 0);
 
         // font
-        Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
-        FontMetrics metrics = g.getFontMetrics(font);
-        int textHeight = metrics.getHeight();
-        g.setFont(font);
+        //Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+        //FontMetrics metrics = g.getFontMetrics(font);
+        //int textHeight = metrics.getHeight();
+        //g.setFont(font);
         
         // draw cells
         for (int x = 0; x < binNumber; x++) {
@@ -58,7 +71,7 @@ public class DRMap extends Map2D {
             }
         }
                 
-
+        /*
         // draw grid
         double center = side / 2.0;
         g.setPaint(gridColor);
@@ -89,6 +102,7 @@ public class DRMap extends Map2D {
 
         g.drawString("R", (float)(center - 15), 15);
         g.drawString("D", (float)(side - 15), (float)(center - 10));
+        */
     }
     
     public void draw(String filename, int side) {
@@ -110,19 +124,12 @@ public class DRMap extends Map2D {
     }
     
     public static void main(String[] args) {
-        DRMap m1 = new DRMap(3);
-        m1.setValue(0, 0, 1.0);
-        System.out.println(m1);
-        
-        DRMap m2 = new DRMap(3);
-        m2.setValue(0, 0, 1.0);
-        m2.setValue(2, 2, 0.1);
-        System.out.println(m2);
-        
-        double dist = m1.emdDistance(m2);
-        System.out.println("dist: " + dist);
-        
-        dist = m2.emdDistance(m1);
-        System.out.println("dist: " + dist);
+        MatrixFile mf = new MatrixFile();
+        Net net = mf.load("Chimane_AllianceMatrix.txt");
+        EdgeBalanceMap map = new EdgeBalanceMap(net, 10);
+        //map.logScale();
+        map.normalizeTotal();
+        map.draw("chimane.png");
+        System.exit(0);
     }
 }

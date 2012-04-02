@@ -117,6 +117,20 @@ public class Net {
 
         return false;
     }
+    
+    public Edge getEdge(Node origin, Node target) {
+        for (Edge edge : origin.getOutEdges()) {
+            if (edge.getTarget() == target) {
+                return edge;
+            }
+        }
+
+        return null;
+    }
+    
+    public Edge getInverseEdge(Edge edge) {
+        return getEdge(edge.getTarget(), edge.getOrigin());
+    }
 
     Node getRandomNode() {
         int pos = RandomGenerator.instance().random.nextInt(nodeCount);
