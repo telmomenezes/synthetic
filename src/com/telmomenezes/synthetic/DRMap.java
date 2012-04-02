@@ -264,12 +264,6 @@ public class DRMap {
         double infinity = Double.MAX_VALUE;
 
         if ((total() <= 0) || (map.total() <= 0)) {
-            return 0;
-        }
-        if (total() <= 0) {
-            return infinity;
-        }
-        if (map.total() <= 0) {
             return infinity;
         }
 
