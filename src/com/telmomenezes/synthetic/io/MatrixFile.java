@@ -55,18 +55,7 @@ public class MatrixFile extends NetFile {
 
     @Override
     public void save(Net net, String filePath) {
-        try{ 
-            FileWriter fstream = new FileWriter(filePath);
-            BufferedWriter out = new BufferedWriter(fstream);
-            
-            for (Edge edge : net.getEdges()) {
-                out.write("" + edge.getOrigin().getId() + '\t' + edge.getTarget().getId() + '\n');
-            }
-            out.close();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        // TODO
     }
     
     static public void main(String[] args) {
