@@ -23,6 +23,8 @@ public class Net {
     private int nodeCount;
     private int edgeCount;
 
+    private boolean selfEdges;
+    
     private DRMap lastMap;
 
     public Net() {
@@ -30,6 +32,12 @@ public class Net {
         edgeCount = 0;
         nodes = new Vector<Node>();
         edges = new Vector<Edge>();
+        selfEdges = false;
+    }
+    
+    public Net(boolean selfEdges) {
+        this();
+        this.selfEdges = selfEdges;
     }
     
     public static Net load(String filePath, NetFileType fileType) {
@@ -69,8 +77,8 @@ public class Net {
         return node;
     }
     
-    public boolean addEdge(Node origin, Node target, long timestamp) {
-        if (origin == target) {
+    public boolean addEdge(Node origin, Node target, double weight, long timestamp) {
+        if ((!selfEdges) && (origin == target)) {
             return false;
         }
 
@@ -78,7 +86,7 @@ public class Net {
             return false;
         }
 
-        Edge edge = new Edge(origin, target, timestamp);
+        Edge edge = new Edge(origin, target, weight, timestamp);
         edges.add(edge);
         origin.addOutEdge(edge);
         target.addInEdge(edge);
@@ -86,6 +94,18 @@ public class Net {
         edgeCount++;
         
         return true;
+    }
+    
+    public boolean addEdge(Node origin, Node target) {
+        return addEdge(origin, target, 0.0, 0l);
+    }
+    
+    public boolean addEdge(Node origin, Node target, double weight) {
+        return addEdge(origin, target, weight, 0l);
+    }
+    
+    public boolean addEdge(Node origin, Node target, long timestamp) {
+        return addEdge(origin, target, 0.0, timestamp);
     }
 
     public boolean edgeExists(Node origin, Node target) {
