@@ -2,13 +2,10 @@ package com.telmomenezes.synthetic.io;
 
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 
