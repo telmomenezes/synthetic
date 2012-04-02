@@ -136,7 +136,8 @@ public class DRMap {
     
     public void draw(Graphics2D g, double side) {
         double binSide = ((double)side) / ((double)binNumber);
-
+        double maxVal = max();
+        
         // colors
         Color gridColor = new Color(255, 255, 0);
 
@@ -152,7 +153,7 @@ public class DRMap {
                 double val = getValue(x, y);
                 Color color = new Color(0, 150, 200);
                 if (val > 0.0) {
-                    color = new Color((int)(255.0 * val), 0, 0);
+                    color = new Color((int)(255.0 * (val / maxVal)), 0, 0);
                 }
                 g.setPaint(color);
                 g.fill(new Rectangle2D.Double(x * binSide,
