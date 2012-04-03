@@ -22,7 +22,7 @@ public class EdgeBalanceMap extends Map2D {
         
         double maxWeight = 0;
         for (Edge edge : net.getEdges()) {
-            double weight = edge.getWeight();
+            double weight = safelog(edge.getWeight());
             if (weight > maxWeight) {
                 maxWeight = weight;
             }
@@ -31,15 +31,25 @@ public class EdgeBalanceMap extends Map2D {
         double interval = maxWeight / ((double)(binNumber - 1));
         
         for (Edge edge : net.getEdges()) {
-            int x = (int)Math.floor(edge.getWeight() / interval);
+            int x = (int)Math.floor(safelog(edge.getWeight()) / interval);
             int y = 0;
             Edge inverseEdge = net.getInverseEdge(edge);
             if (inverseEdge != null) {
-                y = (int)Math.floor(inverseEdge.getWeight() / interval);
+                y = (int)Math.floor(safelog(inverseEdge.getWeight()) / interval);
             }
             //System.out.println("x: " + x + "; y: " + y);
-            incValue(x, y);
+            if ((x > 0) && (y > 0)) {
+                incValue(x, y);
+            }
         }
+    }
+    
+    private double safelog(double x) {
+        if (x <= 00) {
+            return 0.0;
+        }
+        
+        return Math.log(x + 1);
     }
     
     public void draw(Graphics2D g, double side) {
