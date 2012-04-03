@@ -49,6 +49,16 @@ public class Map2D {
             }
         }
     }
+    
+    public void logScale1() {
+        for (int x = 0; x < binNumber; x++) {
+            for (int y = 0; y < binNumber; y++) {
+                if (getData()[(y * binNumber) + x] > 0) {
+                    getData()[(y * binNumber) + x] = Math.log(getData()[(y * binNumber) + x] + 1.0);
+                }
+            }
+        }
+    }
 
     public void normalizeMax() {
         double m = max();

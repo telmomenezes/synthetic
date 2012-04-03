@@ -38,7 +38,7 @@ public class EdgeBalanceMap extends Map2D {
                 y = (int)Math.floor(safelog(inverseEdge.getWeight()) / interval);
             }
             //System.out.println("x: " + x + "; y: " + y);
-            if ((x > 0) && (y > 0)) {
+            if ((x > 0) || (y > 0)) {
                 incValue(x, y);
             }
         }

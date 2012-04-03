@@ -27,11 +27,11 @@ public class GenEBMap extends Command {
         Net net = Net.load(netfile, NetFileType.MAT);
         
         EdgeBalanceMap map = new EdgeBalanceMap(net, 10);
+        map.logScale1();
         map.normalizeTotal();
         
         map.draw(outfile, 500);
         
         return true;
     }
-
 }
