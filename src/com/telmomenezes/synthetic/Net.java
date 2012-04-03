@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Vector;
 
+import com.telmomenezes.synthetic.io.MatrixFile;
 import com.telmomenezes.synthetic.io.NetFileType;
 import com.telmomenezes.synthetic.io.SNAPNetFile;
 
@@ -41,12 +42,16 @@ public class Net {
     }
     
     public static Net load(String filePath, NetFileType fileType) {
+        Net net = null;
         switch (fileType) {
         case SNAP:
-            Net net = (new SNAPNetFile()).load(filePath);
+            net = (new SNAPNetFile()).load(filePath);
+            return net;
+        case MAT:
+            net = (new MatrixFile()).load(filePath);
             return net;
         default:
-            return null;
+            return net;
         }
     }
 

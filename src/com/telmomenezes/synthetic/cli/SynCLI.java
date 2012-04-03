@@ -38,7 +38,7 @@ public class SynCLI {
         options = new Options();
         options.addOption("inet", true, "input net file");
         options.addOption("inet2", true, "second input net file");
-        options.addOption("mimg", true, "file path to write DRMap image to");
+        options.addOption("mimg", true, "file path to write map image to");
         options.addOption("odir", true, "output directory");
         
         try {
@@ -55,6 +55,9 @@ public class SynCLI {
             }
             else if (cmd.equals("gendrmap")) {
                 cmdObj = new GenDRMap();
+            }
+            else if (cmd.equals("genebmap")) {
+                cmdObj = new GenEBMap();
             }
             else if (cmd.equals("evo")) {
                 cmdObj = new Evolve();
