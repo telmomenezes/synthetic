@@ -96,6 +96,15 @@ public class TopologicalIndices {
         }
         networkSymmetry /= networkConcentration;
     }
+    
+    public double[] delta(TopologicalIndices ti) {
+        double[] delta = new double[4]; 
+        delta[0] = Math.abs(endogamousPercentage - ti.getEndogamousPercentage());
+        delta[1] = Math.abs(networkConcentration - ti.getNetworkConcentration());
+        delta[2] = Math.abs(endogamicNetworkConcentration - ti.getEndogamicNetworkConcentration());
+        delta[3] = Math.abs(networkSymmetry - ti.getNetworkSymmetry());
+        return delta;
+    }
 
     public double getEndogamousPercentage() {
         return endogamousPercentage;

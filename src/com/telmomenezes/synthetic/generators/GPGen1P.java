@@ -51,7 +51,7 @@ public class GPGen1P {
         int TEST_EDGES = 1000;
 
         // init DistMatrix
-        DistMatrix.instance().set_nodes(node_count);
+        DistMatrix.instance().setNodes(node_count);
 
         Net net = new Net();
 
@@ -183,7 +183,7 @@ public class GPGen1P {
 
             net.addEdge(orig_node, targ_node, cycle);
             // update distances
-            DistMatrix.instance().update_distances(orig_node.getId(), targ_node.getId());
+            DistMatrix.instance().updateDistances(orig_node.getId(), targ_node.getId());
             
             cycle++;
         }

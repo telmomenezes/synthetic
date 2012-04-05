@@ -65,6 +65,9 @@ public class SynCLI {
             else if (cmd.equals("emddist")) {
                 cmdObj = new EMDDist();
             }
+            else if (cmd.equals("evoall")) {
+                cmdObj = new EvoAlliance();
+            }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
             }

@@ -248,6 +248,7 @@ public abstract class Generator implements Comparable<Generator> {
 	}
 	
 	
+	
 	public int compareTo(Generator generator) {
 		
         if (fitness < generator.fitness)

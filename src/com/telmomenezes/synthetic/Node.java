@@ -118,4 +118,20 @@ public class Node {
         outEdges.add(edge);
         outDegree++;
     }
+    
+    public double getTotalInputWeight() {
+        double total = 0;
+        for (Edge edge : inEdges) {
+            total += edge.getWeight();
+        }
+        return total;
+    }
+    
+    public double getTotalOutputWeight() {
+        double total = 0;
+        for (Edge edge : outEdges) {
+            total += edge.getWeight();
+        }
+        return total;
+    }
 }

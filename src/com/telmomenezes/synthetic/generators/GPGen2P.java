@@ -45,7 +45,7 @@ public class GPGen2P extends Generator {
 
     public Net run() {
         // init DistMatrix
-        DistMatrix.instance().set_nodes(getNodeCount());
+        DistMatrix.instance().setNodes(getNodeCount());
 
         Net net = new Net();
 
@@ -191,7 +191,7 @@ public class GPGen2P extends Generator {
             curEdges++;
             
             // update distances
-            DistMatrix.instance().update_distances(orig_node.getId(), targ_node.getId());
+            DistMatrix.instance().updateDistances(orig_node.getId(), targ_node.getId());
             
             cycle++;
         }

@@ -25,7 +25,7 @@ public class DistMatrix {
         return _instance;
     }
     
-    public void set_nodes(int nodes)
+    public void setNodes(int nodes)
     {
         if (nodes != _nodes) {
             if (_nodes > 0) {
@@ -62,7 +62,7 @@ public class DistMatrix {
         _dmatrix[(y * _nodes) + x] = d;
     }
     
-    public void update_distances(int new_orig, int new_targ)
+    public void updateDistances(int new_orig, int new_targ)
     {   
         // update distances between new_orig and new_targ
         setUDist(new_orig, new_targ, 1);
