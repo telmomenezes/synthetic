@@ -71,6 +71,9 @@ public class TopologicalIndices {
     private void calcEndogamicNetworkConcentration() {
         endogamicNetworkConcentration = 0;
         
+        if (endogamousPercentage == 0.0)
+            return;
+        
         double endogamicN = endogamousPercentage;
         for (int i = 0; i < m; i++) {
             double x = matrix[i][i] / endogamicN;
