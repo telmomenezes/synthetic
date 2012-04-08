@@ -53,12 +53,10 @@ public class TopologicalIndices {
     }
     
     private void calcEndogamousPercentage() {
-        double sum = 0;
+        endogamousPercentage = 0;
         for (int i = 0; i < m; i++) {
-            sum += matrix[i][i];
+            endogamousPercentage += matrix[i][i];
         }
-        
-        endogamousPercentage = sum / n;
     }
     
     private void calcNetworkConcentration() {
@@ -73,18 +71,11 @@ public class TopologicalIndices {
     private void calcEndogamicNetworkConcentration() {
         endogamicNetworkConcentration = 0;
         
-        double endogamicN = endogamousPercentage * n;
+        double endogamicN = endogamousPercentage;
         for (int i = 0; i < m; i++) {
-            double x = (matrix[i][i] * n) / endogamicN;
+            double x = matrix[i][i] / endogamicN;
             endogamicNetworkConcentration += x * x;
         }
-        
-        for (int i = 0; i < m; i++) {
-            double x = matrix[i][i];
-            endogamicNetworkConcentration += x * x;
-        }
-        
-        endogamicNetworkConcentration /= endogamousPercentage * endogamousPercentage;
     }
     
     private void calcNetworkSymmetry() {
@@ -137,5 +128,9 @@ public class TopologicalIndices {
         Net net = mf.load("alliance_nets/Chimane_AGNATES.csv");
         TopologicalIndices ti = new TopologicalIndices(net);
         System.out.println(ti);
+    }
+
+    public double getN() {
+        return n;
     }
 }

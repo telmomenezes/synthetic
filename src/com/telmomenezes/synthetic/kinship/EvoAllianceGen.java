@@ -24,6 +24,7 @@ public class EvoAllianceGen implements EvoGenCallbacks {
     public EvoAllianceGen(Net targNet, String outDir) {
         this.outDir = outDir;
         targIndices = genIndices(targNet);
+        System.out.println(targIndices);
         
         nodeCount = targNet.getNodeCount();
         edgeCount = targNet.getEdgeCount();
@@ -38,7 +39,7 @@ public class EvoAllianceGen implements EvoGenCallbacks {
         try {
             FileWriter fwriter = new FileWriter(outDir + "/evo.csv");
             BufferedWriter writer = new BufferedWriter(fwriter);
-            writer.write("gen,best_ep,best_nc,best_enc,best_ns,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time\n");
+            writer.write("gen,best_fit,best_gen_fit,best_ep,best_nc,best_enc,best_ns,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time\n");
             writer.close() ;
         }
         catch (Exception e) {
@@ -56,13 +57,26 @@ public class EvoAllianceGen implements EvoGenCallbacks {
         ((AllianceGen)gen).setIndices(indices);
         gen.setNet(net);
         
-        // fitness is irrelevant in this case
-        return 0;
+        double x1 = indices.getEndogamousPercentage() - targIndices.getEndogamousPercentage();
+        double x2 = indices.getNetworkConcentration() - targIndices.getNetworkConcentration();
+        double x3 = indices.getEndogamicNetworkConcentration() - targIndices.getEndogamicNetworkConcentration();
+        double x4 = indices.getNetworkSymmetry() - targIndices.getNetworkSymmetry();
+        x1 *= x1;
+        x2 *= x2;
+        x3 *= x3;
+        x4 *= x4;
+        
+        double dist = Math.sqrt(x1 + x2 + x3 + x4) / 2.0; // max_dist = sqrt(4) = 2
+        
+        return dist;
     }
     
     public void onNewBest(EvoGen evo) {
         String suffix = "" + bestCount + "_gen" + evo.getCurgen();
         Generator bestGen = evo.getBestGenerator();
+        
+        System.out.println("targ: " + targIndices);
+        System.out.println("best: " + ((AllianceGen)bestGen).getIndices());
         
         // write net
         bestGen.getNet().save(outDir + "/bestnet" + suffix + ".txt", NetFileType.SNAP);
@@ -82,6 +96,8 @@ public class EvoAllianceGen implements EvoGenCallbacks {
             FileWriter fwriter = new FileWriter(outDir + "/evo.csv", true);
             BufferedWriter writer = new BufferedWriter(fwriter);
             writer.write("" + evo.getCurgen() + ","
+                    + evo.getBestFitness() + ","
+                    + evo.getBestGenFitness() + ","
                     + bestGen.getIndices().getEndogamousPercentage() + ","
                     + bestGen.getIndices().getNetworkConcentration() + ","
                     + bestGen.getIndices().getEndogamicNetworkConcentration() + ","
@@ -97,7 +113,18 @@ public class EvoAllianceGen implements EvoGenCallbacks {
             e.printStackTrace();
         }
         
-        System.out.println(evo.genInfoString());
+        System.out.println("" + evo.getCurgen() + ","
+                + evo.getBestFitness() + ","
+                + evo.getBestGenFitness() + ","
+                + bestGen.getIndices().getEndogamousPercentage() + ","
+                + bestGen.getIndices().getNetworkConcentration() + ","
+                + bestGen.getIndices().getEndogamicNetworkConcentration() + ","
+                + bestGen.getIndices().getNetworkSymmetry() + ","
+                + evo.getBestGenerator().genotypeSize() + ","
+                + evo.getMeanGenoSize() + ","
+                + evo.getGenTime() + ","
+                + evo.getSimTime() + ","
+                + evo.getFitTime() + "\n");
     }
 
     private TopologicalIndices genIndices(Net net) {

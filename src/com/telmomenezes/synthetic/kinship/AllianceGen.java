@@ -39,7 +39,7 @@ public class AllianceGen extends Generator {
         // init DistMatrix
         DistMatrix.instance().setNodes(nodeCount);
 
-        Net net = new Net();
+        Net net = new Net(true);
 
         // create nodes
         Node[] nodeArray = new Node[nodeCount];
@@ -49,7 +49,7 @@ public class AllianceGen extends Generator {
         }
 
         // create edges
-        for (int i = 0; i < edgeCount; i++) {
+        for (int i = 0; i < targetIndices.getN(); i++) {
             double totalWeight = 0;
             for (int origIndex = 0; origIndex < nodeCount; origIndex++) {
                 for (int targIndex = 0; targIndex < nodeCount; targIndex++) {
@@ -147,15 +147,15 @@ public class AllianceGen extends Generator {
             }
 
             Node origNode = nodeArray[origIndex];
-            Node targNode = nodeArray[targIndex];   
+            Node targNode = nodeArray[targIndex];
 
             Edge edge = net.getEdge(origNode, targNode);
             if (edge == null) {
                 net.addEdge(origNode, targNode, i);
+                edge = net.getEdge(origNode, targNode);
             }
-            else {
-                edge.setWeight(edge.getWeight() + 1.0);
-            }
+
+            edge.setWeight(edge.getWeight() + 1.0);
             
             // update distances
             DistMatrix.instance().updateDistances(origIndex, targIndex);
@@ -171,30 +171,6 @@ public class AllianceGen extends Generator {
     @Override
     public Generator clone() {
         return new AllianceGen(nodeCount, edgeCount, targetIndices);
-    }
-    
-    public int compareTo(Generator generator) {
-        double delta1[] = indices.delta(targetIndices);
-        double delta2[] = ((AllianceGen)generator).indices.delta(targetIndices);
-        
-        int better = 0;
-        int worse = 0;
-        
-        for (int i = 0; i < 4; i++) {
-            if (delta1[0] < delta2[0]) {
-                better++;
-            }
-            else if (delta1[0] > delta2[0]) {
-                worse++;
-            }
-        }
-        
-        if (better > worse)
-            return -1;
-        else if (better < worse)
-            return 1;
-        else
-            return 0;
     }
 
     public TopologicalIndices getIndices() {
