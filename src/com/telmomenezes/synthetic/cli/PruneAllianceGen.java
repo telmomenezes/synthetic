@@ -7,6 +7,7 @@ import org.apache.commons.cli.CommandLine;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.io.NetFileType;
 import com.telmomenezes.synthetic.kinship.AllianceGen;
+import com.telmomenezes.synthetic.kinship.TopologicalIndices;
 
 
 public class PruneAllianceGen extends Command {
@@ -35,7 +36,7 @@ public class PruneAllianceGen extends Command {
         System.out.println("target net: " + netfile);
         
         Net net = Net.load(netfile, NetFileType.MAT);
-        AllianceGen gen = new AllianceGen(net.getNodeCount(), net.getEdgeCount(), null);
+        AllianceGen gen = new AllianceGen(net.getNodeCount(), net.getEdgeCount(), new TopologicalIndices(net));
         try {
             gen.loadProgs(prgFile);
         } catch (IOException e) {
@@ -44,6 +45,7 @@ public class PruneAllianceGen extends Command {
         }
         
         gen.run();
+        gen.dynPruning();
         
         try {
             gen.writeProgs(oprgFile);
