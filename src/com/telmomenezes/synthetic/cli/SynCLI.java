@@ -41,6 +41,8 @@ public class SynCLI {
         options.addOption("inet2", true, "second input net file");
         options.addOption("mimg", true, "file path to write map image to");
         options.addOption("odir", true, "output directory");
+        options.addOption("prg", true, "generator program file");
+        options.addOption("oprg", true, "generator output program file");
         
         try {
             cline = parser.parse(options, args);
@@ -68,6 +70,9 @@ public class SynCLI {
             }
             else if (cmd.equals("evoall")) {
                 cmdObj = new EvoAlliance();
+            }
+            else if (cmd.equals("pruneall")) {
+                cmdObj = new PruneAllianceGen();
             }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
