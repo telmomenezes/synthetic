@@ -47,10 +47,16 @@ public class DistMatrix {
     }
 
     public int getUDist(int x, int y) {
+        if (x == y) {
+            return 0;
+        }
         return _umatrix[(y * _nodes) + x];
     }
     
     public int getDDist(int x, int y) {
+        if (x == y) {
+            return 0;
+        }
         return _dmatrix[(y * _nodes) + x];
     }
     
