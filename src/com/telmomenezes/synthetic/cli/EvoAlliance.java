@@ -17,7 +17,7 @@ public class EvoAlliance extends Command {
     @Override
     public boolean run(CommandLine cline) {
         // TODO: make configurable
-        int generations = 999999999;
+        int generations = 5000;
         
         if(!cline.hasOption("inet")) {
             setErrorMessage("input network file must be specified");

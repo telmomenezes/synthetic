@@ -25,7 +25,7 @@ public class GenericFunSet {
         funset.add(GPFun.ZER);
         funset.add(GPFun.EXP);
         funset.add(GPFun.LOG);
-        funset.add(GPFun.SIN);
+        //funset.add(GPFun.SIN);
         funset.add(GPFun.ABS);
         funset.add(GPFun.MIN);
         funset.add(GPFun.MAX);
