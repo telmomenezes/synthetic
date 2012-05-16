@@ -4,10 +4,12 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.telmomenezes.synthetic.DRMap;
 import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.RandomGenerator;
+import com.telmomenezes.synthetic.io.NetFileType;
 
 
 public class ForestFire {
@@ -28,7 +30,7 @@ public class ForestFire {
         List<Node> candidates = new LinkedList<Node>();
         for (Edge edge : node.getOutEdges()) {
             Node outNode = edge.getTarget();
-            if (outNode.isFlag()) {
+            if (!outNode.isFlag()) {
                 candidates.add(outNode);
             }
         }
@@ -40,7 +42,9 @@ public class ForestFire {
         for (Node c : candidates) {
             if (count <= 0) {
                 break;
-            } 
+            }
+            count--;
+            
             c.setFlag(true);
             sampleNodeCount++;
             if (sampleNodeCount >= targNodeCount) {
@@ -55,23 +59,48 @@ public class ForestFire {
         }
     }
     
-    public Net sample() {
-        targNodeCount = (int)((double)origNet.getNodeCount() * 0.2);
+    public Net sample(double samplePercentage) {
+        targNodeCount = (int)((double)origNet.getNodeCount() * samplePercentage);
+        System.out.println("targNodeCount: " + targNodeCount);
         sampleNodeCount = 0;
         
-        Net sampleNet = new Net();
+        Net sampleNet = origNet.clone();
         
-        origNet.clearFlags();
+        sampleNet.clearFlags();
         
-        // select random node from origNet
         while (sampleNodeCount < targNodeCount) {
-            int index = RandomGenerator.instance().random.nextInt(origNet.getNodeCount());
-            Node node = origNet.getNodes().get(index);
-            node.setFlag(true);
-            sampleNodeCount++;
-            sampleRec(node);
+            Node node = sampleNet.getRandomNode();
+            if (!node.isFlag()) {
+                node.setFlag(true);
+                sampleNodeCount++;
+                sampleRec(node);
+            }
         }
+     
+        sampleNet.removeNonFlaggedNodes();
         
         return sampleNet;
+    }
+    
+    public static void main(String[] args) {
+        Net net = Net.load("wiki-Vote.txt", NetFileType.SNAP);
+        System.out.println(net);
+        //net.printDegDistInfo();
+        ForestFire ff = new ForestFire(net);
+        Net sample = ff.sample(0.2);
+        System.out.println(sample);
+        //sample.printDegDistInfo();
+        
+        // draw drmaps
+        net.computePageranks();
+        DRMap drmap = net.getDRMapWithLimit(10, -7, 7, -7, 7);
+        drmap.logScale();
+        drmap.normalizeMax();
+        drmap.draw("map_orig.png", 500);
+        sample.computePageranks();
+        DRMap drmap2 = sample.getDRMapWithLimit(10, -7, 7, -7, 7);
+        drmap2.logScale();
+        drmap2.normalizeMax();
+        drmap2.draw("map_sample.png", 500);
     }
 }

@@ -212,7 +212,7 @@ public class Net implements Cloneable {
         }
     }
 
-    Node getRandomNode() {
+    public Node getRandomNode() {
         int pos = RandomGenerator.instance().random.nextInt(nodeCount);
         return nodes.get(pos);
     }
@@ -528,7 +528,7 @@ public class Net implements Cloneable {
         return str;
     }
     
-    void printDegDistInfo() {
+    public void printDegDistInfo() {
         int[] inDegSeq = inDegSeq();
         int[] outDegSeq = outDegSeq();
         
