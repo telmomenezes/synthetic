@@ -4,6 +4,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
@@ -174,6 +176,40 @@ public class Net implements Cloneable {
     
     public Edge getInverseEdge(Edge edge) {
         return getEdge(edge.getTarget(), edge.getOrigin());
+    }
+    
+    public void removeEdge(Edge edge) {
+        edge.getOrigin().removeOutput(edge);
+        edge.getTarget().removeInput(edge);
+        edges.remove(edge);
+        edgeCount--;
+    }
+    
+    public void removeNode(Node node) {
+        List<Edge> remEdges = new LinkedList<Edge>(node.getInEdges());
+        for (Edge e : remEdges) {
+            removeEdge(e);
+        }
+        remEdges = new LinkedList<Edge>(node.getOutEdges());
+        for (Edge e : remEdges) {
+            removeEdge(e);
+        }
+        
+        nodes.remove(node);
+        nodeMap.remove(node.getId());
+        nodeCount--;
+    }
+    
+    public void removeNonFlaggedNodes() {
+        List<Node> remNodes = new LinkedList<Node>();
+        for (Node n : nodes) {
+            if (!n.isFlag()) {
+                remNodes.add(n);
+            }
+        }
+        for (Node n : remNodes) {
+            removeNode(n);
+        }
     }
 
     Node getRandomNode() {

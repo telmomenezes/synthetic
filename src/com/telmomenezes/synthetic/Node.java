@@ -141,4 +141,14 @@ public class Node implements Cloneable {
         }
         return total;
     }
+    
+    public void removeInput(Edge edge) {
+        inEdges.remove(edge);
+        inDegree--;
+    }
+    
+    public void removeOutput(Edge edge) {
+        outEdges.remove(edge);
+        outDegree--;
+    }
 }
