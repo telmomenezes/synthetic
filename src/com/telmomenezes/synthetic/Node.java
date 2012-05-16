@@ -3,7 +3,7 @@ package com.telmomenezes.synthetic;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Node {
+public class Node implements Cloneable {
     private int id;
     private Set<Edge> inEdges;
     private Set<Edge> outEdges;
@@ -31,6 +31,13 @@ public class Node {
         birth = -1;
         inEdges = new HashSet<Edge>();
         outEdges = new HashSet<Edge>();
+    }
+    
+    @Override
+    public Node clone()
+    {
+        Node clonedNode = new Node(id);
+        return clonedNode;
     }
 
     public int getId() {

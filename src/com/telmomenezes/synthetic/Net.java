@@ -3,6 +3,8 @@ package com.telmomenezes.synthetic;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.io.MatrixFile;
@@ -10,7 +12,7 @@ import com.telmomenezes.synthetic.io.NetFileType;
 import com.telmomenezes.synthetic.io.SNAPNetFile;
 
 
-public class Net {
+public class Net implements Cloneable {
     private static int CURID = 0;
 
     private double minPRIn;
@@ -20,7 +22,8 @@ public class Net {
 
     protected Vector<Node> nodes;
     protected Vector<Edge> edges;
-
+    protected Map<Integer, Node> nodeMap;
+    
     private int nodeCount;
     private int edgeCount;
 
@@ -33,12 +36,39 @@ public class Net {
         edgeCount = 0;
         nodes = new Vector<Node>();
         edges = new Vector<Edge>();
+        nodeMap = new HashMap<Integer, Node>();
         selfEdges = false;
     }
     
     public Net(boolean selfEdges) {
         this();
         this.selfEdges = selfEdges;
+    }
+    
+    @Override
+    public Net clone()
+    {
+        Net clonedNet = new Net();
+        
+        // clone all nodes
+        for (Node node : nodes) {
+            clonedNet.addNode(node.clone());
+        }
+        
+        // recreate all edges
+        for (Edge edge : edges) {
+            Node orig = edge.getOrigin();
+            Node targ = edge.getTarget();
+            long timestamp = edge.getTimestamp();
+            double weight = edge.getWeight();
+            
+            Node corig = clonedNet.getNodeById(orig.getId());
+            Node ctarg = clonedNet.getNodeById(targ.getId());
+            
+            clonedNet.addEdge(corig, ctarg, weight, timestamp);
+        }
+        
+        return clonedNet;
     }
     
     public static Net load(String filePath, NetFileType fileType) {
@@ -65,21 +95,30 @@ public class Net {
         }
     }
     
-    public Node addNode() {
+    public Node addNode(Node node) {
         nodeCount++;
-        Node node = new Node(CURID++);
         nodes.add(node);
+        nodeMap.put(node.getId(), node);
+        return node;
+    }
+    
+    public Node addNode() {
+        Node node = new Node(CURID++);
+        addNode(node);
         return node;
     }
 
     public Node addNodeWithId(int nid) {
-        nodeCount++;
         if (nid >= CURID) {
             CURID = nid + 1;
         }
         Node node = new Node(nid);
-        nodes.add(node);
+        addNode(node);
         return node;
+    }
+    
+    public Node getNodeById(int id) {
+        return nodeMap.get(id);
     }
     
     public boolean addEdge(Node origin, Node target, double weight, long timestamp) {
