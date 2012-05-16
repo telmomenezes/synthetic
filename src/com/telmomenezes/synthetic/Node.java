@@ -37,11 +37,11 @@ public class Node {
         return id;
     }
 
-    Set<Edge> getInEdges() {
+    public Set<Edge> getInEdges() {
         return inEdges;
     }
     
-    Set<Edge> getOutEdges() {
+    public Set<Edge> getOutEdges() {
         return outEdges;
     }
 
@@ -101,11 +101,11 @@ public class Node {
         this.genweight = genweight;
     }
 
-    boolean isFlag() {
+    public boolean isFlag() {
         return flag;
     }
 
-    void setFlag(boolean flag) {
+    public void setFlag(boolean flag) {
         this.flag = flag;
     }
     

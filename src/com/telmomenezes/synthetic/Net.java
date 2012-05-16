@@ -256,13 +256,12 @@ public class Net {
             i++;
         }
 
-        /*
         // relative pr
         double basePR = 1.0 / ((double) nodeCount);
         for (Node node : nodes) {
             node.setPrIn(node.getPrIn() / basePR);
             node.setPrOut(node.getPrOut() / basePR);
-        }*/
+        }
 
         // use log scale
         for (Node node : nodes) {
@@ -631,6 +630,12 @@ public class Net {
             System.out.print("" + i + ": " + outDegrees[i] + " ");
         }
         System.out.println("\n");
+    }
+    
+    public void clearFlags() {
+        for (Node node : nodes) {
+            node.setFlag(false);
+        }
     }
     
     public static void main(String[] args) {

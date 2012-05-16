@@ -28,4 +28,10 @@ public class RandomGenerator {
 
 		return _instance;
 	}
+	
+	public int nextGeometric(double p) {
+	    double r = random.nextDouble();
+	    double g = Math.log(r) / Math.log(1.0 - r);
+	    return (int)g;
+	}
 }
