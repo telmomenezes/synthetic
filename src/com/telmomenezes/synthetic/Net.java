@@ -18,8 +18,8 @@ public class Net {
     private double maxPRIn;
     private double maxPROut;
 
-    private Vector<Node> nodes;
-    private Vector<Edge> edges;
+    protected Vector<Node> nodes;
+    protected Vector<Edge> edges;
 
     private int nodeCount;
     private int edgeCount;
@@ -256,12 +256,13 @@ public class Net {
             i++;
         }
 
+        /*
         // relative pr
         double basePR = 1.0 / ((double) nodeCount);
         for (Node node : nodes) {
             node.setPrIn(node.getPrIn() / basePR);
             node.setPrOut(node.getPrOut() / basePR);
-        }
+        }*/
 
         // use log scale
         for (Node node : nodes) {
@@ -276,24 +277,24 @@ public class Net {
         maxPROut = 0;
         boolean first = true;
         for (Node node : nodes) {
-            if ((new Double(node.getPrIn())).isInfinite()
+            if ((!(new Double(node.getPrIn())).isInfinite())
                     && (first || (node.getPrIn() < minPRIn))) {
                 minPRIn = node.getPrIn();
             }
-            if ((new Double(node.getPrOut())).isInfinite()
+            if ((!(new Double(node.getPrOut())).isInfinite())
                     && (first || (node.getPrOut() < minPROut))) {
                 minPROut = node.getPrOut();
             }
-            if ((new Double(node.getPrIn())).isInfinite()
+            if ((!(new Double(node.getPrIn())).isInfinite())
                     && (first || (node.getPrIn() > maxPRIn))) {
                 maxPRIn = node.getPrIn();
             }
-            if ((new Double(node.getPrOut())).isInfinite()
+            if ((!(new Double(node.getPrOut())).isInfinite())
                     && (first || (node.getPrOut() > maxPROut))) {
                 maxPROut = node.getPrOut();
             }
 
-            first = true;
+            first = false;
         }
     }
 
@@ -379,20 +380,11 @@ public class Net {
             type = triadType(triad[2], triad[1], triad[0]);
 
         if (type < 0) {
-            System.out.println("negative type!");
+            //System.out.println("negative type!");
             return;
         }
 
         profile[type - 1]++;
-    }
-
-    public boolean notInTriad(Node node, Node[] triad, int depth) {
-        for (int i = 0; i <= depth; i++) {
-            if (triad[i] == node)
-                return false;
-        }
-
-        return true;
     }
 
     public void triadProfile_r(Node[] triad, int depth, long[] profile) {
@@ -404,17 +396,17 @@ public class Net {
         Node node = triad[depth];
 
         for (Edge orig : node.getInEdges()) {
-            Node next_node = orig.getOrigin();
-            if (next_node.isFlag() && notInTriad(next_node, triad, depth)) {
-                triad[depth + 1] = next_node;
+            Node nextNode = orig.getOrigin();
+            if (nextNode.getId() > triad[depth].getId()) {
+                triad[depth + 1] = nextNode;
                 triadProfile_r(triad, depth + 1, profile);
             }
         }
 
         for (Edge targ : node.getOutEdges()) {
-            Node next_node = targ.getTarget();
-            if (next_node.isFlag() && notInTriad(next_node, triad, depth)) {
-                triad[depth + 1] = next_node;
+            Node nextNode = targ.getTarget();
+            if (nextNode.getId() > triad[depth].getId()) {
+                triad[depth + 1] = nextNode;
                 triadProfile_r(triad, depth + 1, profile);
             }
         }
@@ -427,16 +419,43 @@ public class Net {
         for (int i = 0; i < 13; i++)
             profile[i] = 0;
 
-        // set all node flags to true
-        for (Node node : nodes) {
-            node.setFlag(true);
-        }
-
         // search for triads starting on each node
+        int count = 0;
         for (Node node : nodes) {
             triad[0] = node;
             triadProfile_r(triad, 0, profile);
+            System.out.println("#" + count++);
+            for (long p : profile)
+                System.out.print(" " + p);
+            System.out.println();
             node.setFlag(false);
+        }
+
+        return profile;
+    }
+    
+    public long[] sampleTriadProfile() {
+        Node[] triad = new Node[3];
+        long[] profile = new long[13];
+
+        for (int i = 0; i < 13; i++)
+            profile[i] = 0;
+
+        // search for triads starting on each node
+        int count = 0;
+        while (count < 1000000) {
+            int node1 = RandomGenerator.instance().random.nextInt(nodeCount);
+            int node2 = RandomGenerator.instance().random.nextInt(nodeCount);
+            if (node1 == node2)
+                continue;
+            int node3 = RandomGenerator.instance().random.nextInt(nodeCount);
+            if ((node3 == node1) || (node3 == node2))
+                continue;
+            triad[0] = nodes.get(node1);
+            triad[1] = nodes.get(node2);
+            triad[2] = nodes.get(node3);
+            updateTriadProfile(triad, profile);
+            count++;
         }
 
         return profile;
@@ -477,11 +496,11 @@ public class Net {
         }
 
         // create edges
-        for (int i = 0; i < refNet.edgeCount; i++) {
-            int origPos = RandomGenerator.instance().random
-                    .nextInt(totalDegree);
-            int targPos = RandomGenerator.instance().random
-                    .nextInt(totalDegree);
+        int stable = 0;
+        while (stable < 1000) {
+            //System.out.println("totalDegree: " + totalDegree);
+            int origPos = RandomGenerator.instance().random.nextInt(totalDegree);
+            int targPos = RandomGenerator.instance().random.nextInt(totalDegree);
 
             int curpos = 0;
             int origIndex = -1;
@@ -489,19 +508,24 @@ public class Net {
                 origIndex++;
                 curpos += outDegSeq[origIndex];
             }
-            outDegSeq[origIndex]--;
 
             curpos = 0;
-            int targ_index = -1;
+            int targIndex = -1;
             while (curpos <= targPos) {
-                targ_index++;
-                curpos += inDegSeq[targ_index];
+                targIndex++;
+                curpos += inDegSeq[targIndex];
             }
-            inDegSeq[targ_index]--;
-
-            addEdge(newNodes[origIndex], newNodes[targ_index], 0);
-
-            totalDegree--;
+            //System.out.println("" + inDegSeq[targIndex]);
+                
+            //System.out.println("orig: " + origIndex + "; targ: " + targIndex);
+            
+            if (addEdge(newNodes[origIndex], newNodes[targIndex], 0)) {
+                outDegSeq[origIndex]--;
+                inDegSeq[targIndex]--;
+                totalDegree--;
+                stable = 0;
+            }
+            stable++;
         }
     }
 
@@ -509,32 +533,21 @@ public class Net {
         return minPRIn;
     }
 
-    void setMinPRIn(double minPRIn) {
-        this.minPRIn = minPRIn;
-    }
-
     double getMinPROut() {
         return minPROut;
-    }
-
-    void setMinPROut(double minPROut) {
-        this.minPROut = minPROut;
     }
 
     double getMaxPRIn() {
         return maxPRIn;
     }
 
-    void setMaxPRIn(double maxPRIn) {
-        this.maxPRIn = maxPRIn;
-    }
-
     double getMaxPROut() {
         return maxPROut;
     }
-
-    void setMaxPROut(double maxPROut) {
-        this.maxPROut = maxPROut;
+    
+    void printPRInfo() {
+        System.out.println("Input PR > min: " + getMinPRIn() + "; max: " + getMaxPRIn());
+        System.out.println("Output PR > min: " + getMinPROut() + "; max: " + getMaxPROut());
     }
 
     public Vector<Node> getNodes() {
@@ -574,5 +587,72 @@ public class Net {
         String str = "node count: " + nodeCount + "\n";
         str += "edge count: " + edgeCount + "\n";
         return str;
+    }
+    
+    void printDegDistInfo() {
+        int[] inDegSeq = inDegSeq();
+        int[] outDegSeq = outDegSeq();
+        
+        int[] inDegrees = new int[10];
+        int[] outDegrees = new int[10];
+        
+        for (int i = 0; i < 10; i++) {
+            inDegrees[i] = 0;
+            outDegrees[i] = 0;
+        }
+        
+        int maxIn = 0;
+        for (int i : inDegSeq) {
+            if (i > maxIn) {
+                maxIn = i;
+            }
+            if (i < 10) {
+                inDegrees[i]++;
+            }
+        }
+        
+        int maxOut = 0;
+        for (int i : outDegSeq) {
+            if (i > maxOut) {
+                maxOut = i;
+            }
+            if (i < 10) {
+                outDegrees[i]++;
+            }
+        }
+        
+        System.out.println("max in: " + maxIn + "; max out: " + maxOut);
+        System.out.println(">>> in degrees");
+        for (int i = 0; i < 10; i++) {
+            System.out.print("" + i + ": " + inDegrees[i] + " ");
+        }
+        System.out.println("\n>>> out degrees");
+        for (int i = 0; i < 10; i++) {
+            System.out.print("" + i + ": " + outDegrees[i] + " ");
+        }
+        System.out.println("\n");
+    }
+    
+    public static void main(String[] args) {
+        Net net = Net.load("wiki-Vote.txt", NetFileType.SNAP);
+        net.computePageranks();
+        net.printPRInfo();
+        System.exit(0);
+        
+        System.out.println(net);
+        net.printDegDistInfo();
+        Net rnet = new Net();
+        rnet.genDegreeSeq(net);
+        System.out.println(rnet);
+        rnet.printDegDistInfo();
+        
+        long[] tri = net.sampleTriadProfile();
+        for (long t: tri)
+            System.out.print(" " + t);
+        System.out.println("\n");
+        long[] rtri = rnet.sampleTriadProfile();
+        for (long t: rtri)
+            System.out.print(" " + t);
+        System.out.println("\n");
     }
 }
