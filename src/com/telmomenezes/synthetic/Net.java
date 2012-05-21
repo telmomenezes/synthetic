@@ -73,6 +73,36 @@ public class Net implements Cloneable {
         return clonedNet;
     }
     
+    public Net cloneFlagged()
+    {
+        Net clonedNet = new Net();
+        
+        // clone nodes
+        for (Node node : nodes) {
+            if (node.isFlag()) {
+                clonedNet.addNode(node.clone());
+            }
+        }
+        
+        // recreate edges
+        for (Edge edge : edges) {
+            Node orig = edge.getOrigin();
+            Node targ = edge.getTarget();
+            
+            if (orig.isFlag() && targ.isFlag()) {
+                long timestamp = edge.getTimestamp();
+                double weight = edge.getWeight();
+            
+                Node corig = clonedNet.getNodeById(orig.getId());
+                Node ctarg = clonedNet.getNodeById(targ.getId());
+            
+                clonedNet.addEdge(corig, ctarg, weight, timestamp);
+            }
+        }
+        
+        return clonedNet;
+    }
+    
     public static Net load(String filePath, NetFileType fileType) {
         Net net = null;
         switch (fileType) {

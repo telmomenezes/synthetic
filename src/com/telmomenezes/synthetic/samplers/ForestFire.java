@@ -63,12 +63,10 @@ public class ForestFire {
         targNodeCount = (int)((double)origNet.getNodeCount() * samplePercentage);
         sampleNodeCount = 0;
         
-        Net sampleNet = origNet.clone();
-        
-        sampleNet.clearFlags();
+        origNet.clearFlags();
         
         while (sampleNodeCount < targNodeCount) {
-            Node node = sampleNet.getRandomNode();
+            Node node = origNet.getRandomNode();
             if (!node.isFlag()) {
                 node.setFlag(true);
                 sampleNodeCount++;
@@ -76,9 +74,7 @@ public class ForestFire {
             }
         }
      
-        sampleNet.removeNonFlaggedNodes();
-        
-        return sampleNet;
+        return origNet.cloneFlagged();
     }
     
     public static void main(String[] args) {
