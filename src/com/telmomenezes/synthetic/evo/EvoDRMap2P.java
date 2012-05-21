@@ -115,9 +115,8 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         net.computePageranks();
         
         DRMap drmap = net.getDRMapWithLimit(10, -7, 7, -7, 7);
+        drmap.logScale();
         drmap.normalizeTotal();
-        //drmap.logScale();
-        //drmap.normalizeTotal();
         
         return drmap;
     }

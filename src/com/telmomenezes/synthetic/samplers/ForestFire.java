@@ -61,7 +61,6 @@ public class ForestFire {
     
     public Net sample(double samplePercentage) {
         targNodeCount = (int)((double)origNet.getNodeCount() * samplePercentage);
-        System.out.println("targNodeCount: " + targNodeCount);
         sampleNodeCount = 0;
         
         Net sampleNet = origNet.clone();
@@ -87,7 +86,7 @@ public class ForestFire {
         System.out.println(net);
         //net.printDegDistInfo();
         ForestFire ff = new ForestFire(net);
-        Net sample = ff.sample(0.2);
+        Net sample = ff.sample(0.3);
         System.out.println(sample);
         //sample.printDegDistInfo();
         
@@ -95,12 +94,12 @@ public class ForestFire {
         net.computePageranks();
         DRMap drmap = net.getDRMapWithLimit(10, -7, 7, -7, 7);
         drmap.logScale();
-        drmap.normalizeMax();
+        drmap.normalizeTotal();
         drmap.draw("map_orig.png", 500);
         sample.computePageranks();
         DRMap drmap2 = sample.getDRMapWithLimit(10, -7, 7, -7, 7);
         drmap2.logScale();
-        drmap2.normalizeMax();
+        drmap2.normalizeTotal();
         drmap2.draw("map_sample.png", 500);
     }
 }
