@@ -20,13 +20,13 @@ public class EvoDRMap2P implements EvoGenCallbacks {
     private int sampleNodeCount;
     private int sampleEdgeCount;
     private double enratio;
-    private long effort;
-    private long maxEffort;
+    private double effort;
+    private double maxEffort;
     private int bestCount;
     private double samplingRatio;
     
     
-    public EvoDRMap2P(Net targNet, String outDir, long maxEffort) {
+    public EvoDRMap2P(Net targNet, String outDir, double maxEffort) {
         this.outDir = outDir;
         this.maxEffort = maxEffort;
         
@@ -72,8 +72,8 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         }
     }
     
-    private static long computeEffort(Net net) {
-        return 2 * net.getNodeCount() * net.getEdgeCount();
+    private static double computeEffort(Net net) {
+        return 2.0 * (((double)net.getNodeCount()) / 1000.0) * (((double)net.getEdgeCount()) / 1000.0);
     }
     
     public Generator baseGenerator() {
