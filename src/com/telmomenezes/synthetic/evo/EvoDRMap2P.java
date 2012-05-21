@@ -8,6 +8,7 @@ import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.generators.GPGen2P;
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
+import com.telmomenezes.synthetic.samplers.DownSampler;
 
 
 public class EvoDRMap2P implements EvoGenCallbacks {
@@ -16,40 +17,48 @@ public class EvoDRMap2P implements EvoGenCallbacks {
     private Generator gen;
     private int targNodeCount;
     private int targEdgeCount;
-    private int nodeCount;
-    private int edgeCount;
+    private int sampleNodeCount;
+    private int sampleEdgeCount;
     private double enratio;
     private long effort;
     private long maxEffort;
     private int bestCount;
+    private double samplingRatio;
     
     
     public EvoDRMap2P(Net targNet, String outDir, long maxEffort) {
         this.outDir = outDir;
-        targDRMap = genDRMap(targNet);
         this.maxEffort = maxEffort;
         
-        nodeCount = targNet.getNodeCount();
-        edgeCount = targNet.getEdgeCount();
-        targNodeCount = nodeCount;
-        targEdgeCount = edgeCount;
+        targNodeCount = targNet.getNodeCount();
+        targEdgeCount = targNet.getEdgeCount();
         
-        effort = 2 * nodeCount * edgeCount;
+        Net sampleNet = targNet;
+        samplingRatio = 1;
         
-        // in case max effort is exceeded...
-        if (effort > maxEffort) {
-            enratio = ((double)edgeCount) / ((double)nodeCount);
-            nodeCount = (int)Math.sqrt(((double)maxEffort) / enratio);
-            edgeCount = (int)(nodeCount * enratio);
-            effort = maxEffort;
+        // down sampling if needed
+        // TODO: configure attenuation
+        DownSampler sampler = new DownSampler(targNet, 5);
+        while (computeEffort(sampleNet) > maxEffort) {
+            sampleNet = sampler.sampleDown();
+            samplingRatio = sampler.getRatio();
+            System.out.println("sampling down: " + samplingRatio + "; max effort: " + maxEffort + "; current effort: " + computeEffort(sampleNet));
         }
         
-        gen = new GPGen2P(nodeCount, edgeCount);
+        effort = computeEffort(sampleNet);
+        
+        sampleNodeCount = sampleNet.getNodeCount();
+        sampleEdgeCount = sampleNet.getEdgeCount();
+        
+        targDRMap = genDRMap(sampleNet);
+        
+        gen = new GPGen2P(sampleNodeCount, sampleEdgeCount);
         
         bestCount = 0;
         
-        // write target drmap
+        // write target and sample drmaps
         genDRMap(targNet).draw(outDir + "/target.png");
+        genDRMap(sampleNet).draw(outDir + "/targetSample.png");
         
         // write header of evo.csv
         try {
@@ -61,6 +70,10 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    private static long computeEffort(Net net) {
+        return 2 * net.getNodeCount() * net.getEdgeCount();
     }
     
     public Generator baseGenerator() {
@@ -124,9 +137,10 @@ public class EvoDRMap2P implements EvoGenCallbacks {
     public String infoString() {
         String str = "target net node count: " + targNodeCount + "\n";
         str += "target net edge count: " + targEdgeCount + "\n";
-        str += "generated nets node count: " + nodeCount + "\n";
-        str += "generated nets edge count: " + edgeCount + "\n";
         str += "edge/node ratio: " + enratio + "\n";
+        str += "sample net node count: " + sampleNodeCount + "\n";
+        str += "sample net edge count: " + sampleEdgeCount + "\n";
+        str += "sampling ratio: " + samplingRatio + "\n";
         str += "max effort: " + maxEffort + "\n";
         str += "effort: " + effort + "\n";
         

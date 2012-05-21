@@ -7,6 +7,7 @@ public class DownSampler {
     private double step;
     private double attenuation;
     private ForestFire ff;
+    private double ratio;
     
     public DownSampler(Net net, double attenuation) {
         ff = new ForestFire(net);
@@ -16,12 +17,12 @@ public class DownSampler {
     
     public Net sampleDown() {
         step += 1.0;
-        double percent = Math.exp(-step / attenuation);
-        Net sample = ff.sample(percent);
+        ratio = Math.exp(-step / attenuation);
+        Net sample = ff.sample(ratio);
         return sample;
     }
 
-    public double getStep() {
-        return step;
+    public double getRatio() {
+        return ratio;
     }
 }
