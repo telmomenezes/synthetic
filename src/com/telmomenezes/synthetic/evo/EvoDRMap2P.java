@@ -37,8 +37,8 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         samplingRatio = 1;
         
         // down sampling if needed
-        // TODO: configure attenuation
-        DownSampler sampler = new DownSampler(targNet, 5);
+        // TODO: configure attenuation and maxNodes
+        DownSampler sampler = new DownSampler(targNet, 5, 2000);
         while (computeEffort(sampleNet) > maxEffort) {
             sampleNet = sampler.sampleDown();
             samplingRatio = sampler.getRatio();
@@ -129,7 +129,7 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         
         DRMap drmap = net.getDRMapWithLimit(10, -7, 7, -7, 7);
         drmap.logScale();
-        drmap.normalizeTotal();
+        drmap.normalizeMax();
         
         return drmap;
     }
