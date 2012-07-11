@@ -33,7 +33,6 @@ public class SynCLI {
         //args = new String[]{"emddist", "-inet", "wiki-Vote.txt", "-inet2", "bestnet22_gen362.txt"};
         //args = new String[]{"emddist", "-inet", "wiki-Vote.txt", "-inet2", "bestnet21_gen359.txt"};
         //args = new String[]{"gendrmap", "-inet", "bestnet22_gen362.txt", "-mimg", "dummy.png"};
-        //args = new String[]{"evoall", "-inet", "alliance_nets/Watchi_Total_LINEAGES.csv", "-odir", "test"};
         
         CommandLineParser parser = new GnuParser();
         options = new Options();
@@ -67,12 +66,6 @@ public class SynCLI {
             }
             else if (cmd.equals("emddist")) {
                 cmdObj = new EMDDist();
-            }
-            else if (cmd.equals("evoall")) {
-                cmdObj = new EvoAlliance();
-            }
-            else if (cmd.equals("pruneall")) {
-                cmdObj = new PruneAllianceGen();
             }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
