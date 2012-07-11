@@ -13,11 +13,8 @@ public class FreqDist {
     private double interval;
     
     public FreqDist(double[] valueSeq, int bins) {
-        this.bins = bins;
-        freqs = new double[bins];
-        
-        min = Double.POSITIVE_INFINITY;
-        max = Double.NEGATIVE_INFINITY;
+        double min = Double.POSITIVE_INFINITY;
+        double max = Double.NEGATIVE_INFINITY;
         
         for (double x : valueSeq) {
             if (x < min) {
@@ -28,15 +25,29 @@ public class FreqDist {
             }
         }
         
+        init(valueSeq, bins, min, max);
+    }
+    
+    public FreqDist(double[] valueSeq, int bins, double min, double max) {
+        init(valueSeq, bins, min, max);
+    }
+    
+    private void init(double[] valueSeq, int bins, double min, double max) {
+        this.bins = bins;
+        this.min = min;
+        this.max = max;
+        freqs = new double[bins];
         interval = (max - min) / ((double)this.bins);
         
         for (double x : valueSeq) {
-            double delta = x - min;
-            int pos = (int)(delta / interval);
-            if (pos >= this.bins) {
-                pos = this.bins - 1;
+            if ((x >= min) && (x <= max)) {
+                double delta = x - min;
+                int pos = (int)(delta / interval);
+                if (pos >= this.bins) {
+                    pos = this.bins - 1;
+                }
+                freqs[pos]++;
             }
-            freqs[pos]++;
         }
     }
     
@@ -108,5 +119,13 @@ public class FreqDist {
         FreqDist fd2 = new FreqDist(seq2, 10);
         fd1.print();
         System.out.println("EMD dist: " + fd1.emdDistance(fd2));
+    }
+
+    public double getMin() {
+        return min;
+    }
+
+    public double getMax() {
+        return max;
     }
 }
