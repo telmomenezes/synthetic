@@ -3,7 +3,7 @@ package com.telmomenezes.synthetic.motifs;
 import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
-import com.telmomenezes.synthetic.RandomGenerator;
+
 
 public class TriadicProfile {
     
@@ -107,44 +107,23 @@ public class TriadicProfile {
             profile[i] = 0;
 
         // search for triads starting on each node
-        int count = 0;
         for (Node node : net.getNodes()) {
             triad[0] = node;
             triadProfileRec(triad, 0, profile);
-            System.out.println("#" + count++);
-            for (long p : profile)
-                System.out.print(" " + p);
-            System.out.println();
             node.setFlag(false);
         }
 
         return profile;
     }
     
-    public long[] sampleTriadProfile() {
-        Node[] triad = new Node[3];
-        long[] profile = new long[13];
-
-        for (int i = 0; i < 13; i++)
-            profile[i] = 0;
-
-        // search for triads starting on each node
-        int count = 0;
-        while (count < 1000000) {
-            int node1 = RandomGenerator.instance().random.nextInt(net.getNodeCount());
-            int node2 = RandomGenerator.instance().random.nextInt(net.getNodeCount());
-            if (node1 == node2)
-                continue;
-            int node3 = RandomGenerator.instance().random.nextInt(net.getNodeCount());
-            if ((node3 == node1) || (node3 == node2))
-                continue;
-            triad[0] = net.getNodes().get(node1);
-            triad[1] = net.getNodes().get(node2);
-            triad[2] = net.getNodes().get(node3);
-            updateTriadProfile(triad, profile);
-            count++;
-        }
-
-        return profile;
+    static public void main(String[] args) {
+        Net net = Net.load("celegansneural.gml");
+        TriadicProfile tp = new TriadicProfile(net);
+        System.out.println(net);
+        long[] profile = tp.triadProfile();
+        
+        for (long p : profile)
+            System.out.print(" " + p);
+        System.out.println();
     }
 }

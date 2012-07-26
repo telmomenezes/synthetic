@@ -22,15 +22,15 @@ public abstract class NetFile {
         ext = ext.toLowerCase();
             
         Net net = null;
-        if (ext == "snap") {
+        if (ext.equals("snap")) {
             net = (new SNAPNetFile()).load(filePath);
             return net;
         }
-        else if (ext == "mat") {
+        else if (ext.equals("mat")) {
             net = (new MatrixFile()).load(filePath);
             return net;
         }
-        else if (ext == "gml") {
+        else if (ext.equals("gml")) {
             net = (new GMLNetFile()).load(filePath);
             return net;
         }
