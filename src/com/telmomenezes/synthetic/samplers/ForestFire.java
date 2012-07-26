@@ -9,7 +9,6 @@ import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.RandomGenerator;
-import com.telmomenezes.synthetic.io.NetFileType;
 
 
 public class ForestFire {
@@ -78,7 +77,7 @@ public class ForestFire {
     }
     
     public static void main(String[] args) {
-        Net net = Net.load("wiki-Vote.txt", NetFileType.SNAP);
+        Net net = Net.load("wiki-Vote.txt");
         System.out.println(net);
         //net.printDegDistInfo();
         ForestFire ff = new ForestFire(net);

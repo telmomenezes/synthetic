@@ -4,7 +4,6 @@ import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.EdgeBalanceMap;
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.io.NetFileType;
 
 
 public class GenEBMap extends Command {
@@ -24,7 +23,7 @@ public class GenEBMap extends Command {
         String netfile = cline.getOptionValue("inet");
         String outfile = cline.getOptionValue("mimg");
         
-        Net net = Net.load(netfile, NetFileType.MAT);
+        Net net = Net.load(netfile);
         
         EdgeBalanceMap map = new EdgeBalanceMap(net, 10);
         map.logScale1();

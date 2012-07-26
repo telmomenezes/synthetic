@@ -4,7 +4,6 @@ import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.DRMap;
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.io.NetFileType;
 
 
 /**
@@ -28,8 +27,8 @@ public class EMDDist extends Command {
         String netfile1 = cline.getOptionValue("inet");
         String netfile2 = cline.getOptionValue("inet2");
         
-        Net net1 = Net.load(netfile1, NetFileType.SNAP);
-        Net net2 = Net.load(netfile2, NetFileType.SNAP);
+        Net net1 = Net.load(netfile1);
+        Net net2 = Net.load(netfile2);
   
         net1.computePageranks();
         net2.computePageranks();

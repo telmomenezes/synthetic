@@ -4,7 +4,6 @@ import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.DRMap;
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.io.NetFileType;
 
 public class GenDRMap extends Command {
 
@@ -23,7 +22,7 @@ public class GenDRMap extends Command {
         String netfile = cline.getOptionValue("inet");
         String outfile = cline.getOptionValue("mimg");
         
-        Net net = Net.load(netfile, NetFileType.SNAP);
+        Net net = Net.load(netfile);
   
         net.computePageranks();
         

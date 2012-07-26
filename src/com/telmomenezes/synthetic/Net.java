@@ -9,9 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.io.MatrixFile;
+import com.telmomenezes.synthetic.io.NetFile;
 import com.telmomenezes.synthetic.io.NetFileType;
-import com.telmomenezes.synthetic.io.SNAPNetFile;
 
 
 public class Net implements Cloneable {
@@ -103,28 +102,12 @@ public class Net implements Cloneable {
         return clonedNet;
     }
     
-    public static Net load(String filePath, NetFileType fileType) {
-        Net net = null;
-        switch (fileType) {
-        case SNAP:
-            net = (new SNAPNetFile()).load(filePath);
-            return net;
-        case MAT:
-            net = (new MatrixFile()).load(filePath);
-            return net;
-        default:
-            return net;
-        }
+    public static Net load(String filePath) {
+        return NetFile.loadNet(filePath);
     }
 
     public void save(String filePath, NetFileType fileType) {
-        switch (fileType) {
-        case SNAP:
-            (new SNAPNetFile()).save(this, filePath);
-            break;
-        default:
-            break;
-        }
+        NetFile.saveNet(this, filePath, fileType);
     }
     
     public Node addNode(Node node) {

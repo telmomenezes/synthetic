@@ -9,7 +9,6 @@ import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.evo.EvoDRMap2P;
 import com.telmomenezes.synthetic.evo.EvoGen;
 import com.telmomenezes.synthetic.evo.EvoStrategy;
-import com.telmomenezes.synthetic.io.NetFileType;
 
 
 public class Evolve extends Command {
@@ -33,7 +32,7 @@ public class Evolve extends Command {
         String netfile = cline.getOptionValue("inet");
         String outdir = cline.getOptionValue("odir");
         
-        EvoDRMap2P callbacks = new EvoDRMap2P(Net.load(netfile, NetFileType.SNAP), outdir, maxEffort);
+        EvoDRMap2P callbacks = new EvoDRMap2P(Net.load(netfile), outdir, maxEffort);
         EvoStrategy popGen = new EvoStrategy(1, 1, 1);
         EvoGen evo = new EvoGen(popGen, callbacks, generations);
         
