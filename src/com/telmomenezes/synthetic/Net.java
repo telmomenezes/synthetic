@@ -29,6 +29,8 @@ public class Net implements Cloneable {
     
     private DRMap lastMap;
 
+    private boolean pageRanksComputed;
+    
     public Net() {
         nodeCount = 0;
         edgeCount = 0;
@@ -36,6 +38,7 @@ public class Net implements Cloneable {
         edges = new Vector<Edge>();
         nodeMap = new HashMap<Integer, Node>();
         selfEdges = false;
+        pageRanksComputed = false;
     }
     
     public Net(boolean selfEdges) {
@@ -275,6 +278,12 @@ public class Net implements Cloneable {
     }
 
     public void computePageranks() {
+        if (pageRanksComputed) {
+            return;
+        }
+        
+        pageRanksComputed = true;
+        
         // TODO: config
         int maxIter = 10;
         double drag = 0.999;
@@ -405,6 +414,30 @@ public class Net implements Cloneable {
         int i = 0;
         for (Node curnode : nodes) {
             seq[i] = curnode.getOutDegree();
+            i++;
+        }
+
+        return seq;
+    }
+    
+    public double[] prInSeq() {
+        computePageranks();
+        double seq[] = new double[nodeCount];
+        int i = 0;
+        for (Node curnode : nodes) {
+            seq[i] = curnode.getPrIn();
+            i++;
+        }
+
+        return seq;
+    }
+    
+    public double[] prOutSeq() {
+        computePageranks();
+        double seq[] = new double[nodeCount];
+        int i = 0;
+        for (Node curnode : nodes) {
+            seq[i] = curnode.getPrOut();
             i++;
         }
 
