@@ -22,6 +22,5 @@ public class StarNet extends Net {
     public static void main(String[] args) {
         StarNet net = new StarNet(100, true);
         net.computePageranks();
-        net.printPRInfo();
     }
 }

@@ -1,8 +1,5 @@
 package com.telmomenezes.synthetic;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -385,25 +382,6 @@ public class Net implements Cloneable {
         }
     }
 
-    public void writePageranks(String filePath) {
-        try {
-            FileWriter outFile = new FileWriter(filePath);
-            PrintWriter out = new PrintWriter(outFile);
-
-            out.println("id, pr_in, pr_out, in_degree, out_degree");
-
-            for (Node node : nodes) {
-                out.println(String.format("%d,%.10f,%.10f,%d,%d\n",
-                        node.getId(), node.getPrIn(), node.getPrOut(),
-                        node.getInDegree(), node.getOutDegree()));
-            }
-
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void printNetInfo() {
         System.out.println("node number: " + nodeCount);
         System.out.println("edge number: " + edgeCount);
@@ -413,8 +391,8 @@ public class Net implements Cloneable {
                 maxPROut));
     }
 
-    public int[] inDegSeq() {
-        int seq[] = new int[nodeCount];
+    public double[] inDegSeq() {
+        double seq[] = new double[nodeCount];
         int i = 0;
         for (Node curnode : nodes) {
             seq[i] = curnode.getInDegree();
@@ -424,8 +402,8 @@ public class Net implements Cloneable {
         return seq;
     }
 
-    public int[] outDegSeq() {
-        int seq[] = new int[nodeCount];
+    public double[] outDegSeq() {
+        double seq[] = new double[nodeCount];
         int i = 0;
         for (Node curnode : nodes) {
             seq[i] = curnode.getOutDegree();
@@ -436,8 +414,8 @@ public class Net implements Cloneable {
     }
 
     void genDegreeSeq(Net refNet) {
-        int[] inDegSeq = refNet.inDegSeq();
-        int[] outDegSeq = refNet.outDegSeq();
+        double[] inDegSeq = refNet.inDegSeq();
+        double[] outDegSeq = refNet.outDegSeq();
 
         int totalDegree = refNet.edgeCount;
 
@@ -496,11 +474,6 @@ public class Net implements Cloneable {
     double getMaxPROut() {
         return maxPROut;
     }
-    
-    void printPRInfo() {
-        System.out.println("Input PR > min: " + getMinPRIn() + "; max: " + getMaxPRIn());
-        System.out.println("Output PR > min: " + getMinPROut() + "; max: " + getMaxPROut());
-    }
 
     public Vector<Node> getNodes() {
         return nodes;
@@ -510,16 +483,8 @@ public class Net implements Cloneable {
         return nodeCount;
     }
 
-    void setNodeCount(int nodeCount) {
-        this.nodeCount = nodeCount;
-    }
-
     public int getEdgeCount() {
         return edgeCount;
-    }
-
-    void setEdgeCount(int edgeCount) {
-        this.edgeCount = edgeCount;
     }
 
     DRMap getLastMap() {
@@ -539,50 +504,6 @@ public class Net implements Cloneable {
         String str = "node count: " + nodeCount + "\n";
         str += "edge count: " + edgeCount + "\n";
         return str;
-    }
-    
-    public void printDegDistInfo() {
-        int[] inDegSeq = inDegSeq();
-        int[] outDegSeq = outDegSeq();
-        
-        int[] inDegrees = new int[10];
-        int[] outDegrees = new int[10];
-        
-        for (int i = 0; i < 10; i++) {
-            inDegrees[i] = 0;
-            outDegrees[i] = 0;
-        }
-        
-        int maxIn = 0;
-        for (int i : inDegSeq) {
-            if (i > maxIn) {
-                maxIn = i;
-            }
-            if (i < 10) {
-                inDegrees[i]++;
-            }
-        }
-        
-        int maxOut = 0;
-        for (int i : outDegSeq) {
-            if (i > maxOut) {
-                maxOut = i;
-            }
-            if (i < 10) {
-                outDegrees[i]++;
-            }
-        }
-        
-        System.out.println("max in: " + maxIn + "; max out: " + maxOut);
-        System.out.println(">>> in degrees");
-        for (int i = 0; i < 10; i++) {
-            System.out.print("" + i + ": " + inDegrees[i] + " ");
-        }
-        System.out.println("\n>>> out degrees");
-        for (int i = 0; i < 10; i++) {
-            System.out.print("" + i + ": " + outDegrees[i] + " ");
-        }
-        System.out.println("\n");
     }
     
     public void clearFlags() {

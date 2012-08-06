@@ -1,20 +1,26 @@
-package com.telmomenezes.synthetic;
+package com.telmomenezes.synthetic.distribs;
 
 import com.telmomenezes.synthetic.emd.Feature1D;
 import com.telmomenezes.synthetic.emd.JFastEMD;
 import com.telmomenezes.synthetic.emd.Signature;
 
 
-public class FreqDist {
+public class Distrib {
     private double[] freqs;
     private int bins;
     private double min;
     private double max;
     private double interval;
     
-    public FreqDist(double[] valueSeq, int bins) {
-        double min = Double.POSITIVE_INFINITY;
-        double max = Double.NEGATIVE_INFINITY;
+    public Distrib() {}
+    
+    public Distrib(double[] valueSeq, int bins) {
+        init(valueSeq, bins);
+    }
+    
+    protected void init(double[] valueSeq, int bins) {
+        min = Double.POSITIVE_INFINITY;
+        max = Double.NEGATIVE_INFINITY;
         
         for (double x : valueSeq) {
             if (x < min) {
@@ -25,17 +31,7 @@ public class FreqDist {
             }
         }
         
-        init(valueSeq, bins, min, max);
-    }
-    
-    public FreqDist(double[] valueSeq, int bins, double min, double max) {
-        init(valueSeq, bins, min, max);
-    }
-    
-    private void init(double[] valueSeq, int bins, double min, double max) {
         this.bins = bins;
-        this.min = min;
-        this.max = max;
         freqs = new double[bins];
         interval = (max - min) / ((double)this.bins);
         
@@ -59,8 +55,7 @@ public class FreqDist {
         return t;
     }
     
-    private Signature getEmdSignature()
-    {
+    private Signature getEmdSignature() {
         int n = 0;
         for (int x = 0; x < bins; x++) {
             if (freqs[x] > 0) {
@@ -90,7 +85,7 @@ public class FreqDist {
         return signature;
     }
     
-    public double emdDistance(FreqDist fd)
+    public double emdDistance(Distrib fd)
     {
         double infinity = Double.MAX_VALUE;
 
@@ -115,10 +110,10 @@ public class FreqDist {
     public static void main(String[] args) {
         double[] seq1 = {0, 0, 0, 1, 1, 1, 10};
         double[] seq2 = {0, 0, 0, 0, 0, 10, 10};
-        FreqDist fd1 = new FreqDist(seq1, 10);
-        FreqDist fd2 = new FreqDist(seq2, 10);
-        fd1.print();
-        System.out.println("EMD dist: " + fd1.emdDistance(fd2));
+        Distrib d1 = new Distrib(seq1, 10);
+        Distrib d2 = new Distrib(seq2, 10);
+        d1.print();
+        System.out.println("EMD dist: " + d1.emdDistance(d2));
     }
 
     public double getMin() {
