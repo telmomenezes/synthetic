@@ -58,9 +58,6 @@ public class SynCLI {
             else if (cmd.equals("gendrmap")) {
                 cmdObj = new GenDRMap();
             }
-            else if (cmd.equals("genebmap")) {
-                cmdObj = new GenEBMap();
-            }
             else if (cmd.equals("evo")) {
                 cmdObj = new Evolve();
             }

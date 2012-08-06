@@ -58,12 +58,11 @@ public class Net implements Cloneable {
             Node orig = edge.getOrigin();
             Node targ = edge.getTarget();
             long timestamp = edge.getTimestamp();
-            double weight = edge.getWeight();
             
             Node corig = clonedNet.getNodeById(orig.getId());
             Node ctarg = clonedNet.getNodeById(targ.getId());
             
-            clonedNet.addEdge(corig, ctarg, weight, timestamp);
+            clonedNet.addEdge(corig, ctarg, timestamp);
         }
         
         return clonedNet;
@@ -87,12 +86,11 @@ public class Net implements Cloneable {
             
             if (orig.isFlag() && targ.isFlag()) {
                 long timestamp = edge.getTimestamp();
-                double weight = edge.getWeight();
             
                 Node corig = clonedNet.getNodeById(orig.getId());
                 Node ctarg = clonedNet.getNodeById(targ.getId());
             
-                clonedNet.addEdge(corig, ctarg, weight, timestamp);
+                clonedNet.addEdge(corig, ctarg, timestamp);
             }
         }
         
@@ -142,7 +140,7 @@ public class Net implements Cloneable {
             return false;
         }
 
-        Edge edge = new Edge(origin, target, weight, timestamp);
+        Edge edge = new Edge(origin, target, timestamp);
         edges.add(edge);
         origin.addOutEdge(edge);
         target.addInEdge(edge);

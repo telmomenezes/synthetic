@@ -126,22 +126,6 @@ public class Node implements Cloneable {
         outDegree++;
     }
     
-    public double getTotalInputWeight() {
-        double total = 0;
-        for (Edge edge : inEdges) {
-            total += edge.getWeight();
-        }
-        return total;
-    }
-    
-    public double getTotalOutputWeight() {
-        double total = 0;
-        for (Edge edge : outEdges) {
-            total += edge.getWeight();
-        }
-        return total;
-    }
-    
     public void removeInput(Edge edge) {
         inEdges.remove(edge);
         inDegree--;
