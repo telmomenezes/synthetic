@@ -3,14 +3,18 @@ package com.telmomenezes.synthetic.motifs;
 import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
+import com.telmomenezes.synthetic.emd.JFastEMD;
+import com.telmomenezes.synthetic.emd.Signature;
 
 
 public class TriadicProfile {
     
     private Net net;
+    private long[] profile;
     
     public TriadicProfile(Net net) {
         this.net = net;
+        triadProfile();
     }
     
     private int triadType(Node a, Node b, Node c) {
@@ -99,9 +103,9 @@ public class TriadicProfile {
         }
     }
 
-    public long[] triadProfile() {
+    private void triadProfile() {
         Node[] triad = new Node[3];
-        long[] profile = new long[13];
+        profile = new long[13];
 
         for (int i = 0; i < 13; i++)
             profile[i] = 0;
@@ -112,18 +116,46 @@ public class TriadicProfile {
             triadProfileRec(triad, 0, profile);
             node.setFlag(false);
         }
+    }
+    
+    private Signature getEmdSignature()
+    {
+        FeatureTriadic[] features = new FeatureTriadic[13];
+        double[] weights = new double[13];
 
-        return profile;
+        for (int i = 0; i < 13; i++) {
+            FeatureTriadic f = new FeatureTriadic(i);
+            features[i] = f;
+            weights[i] = profile[i];
+        }
+
+        Signature signature = new Signature();
+        signature.setNumberOfFeatures(13);
+        signature.setFeatures(features);
+        signature.setWeights(weights);
+
+        return signature;
+    }
+    
+    public double emdDistance(TriadicProfile profile) {
+        Signature sig1 = getEmdSignature();
+        Signature sig2 = profile.getEmdSignature();
+        
+        return JFastEMD.distance(sig1, sig2, -1);
     }
     
     static public void main(String[] args) {
         Net net = Net.load("celegansneural.gml");
         TriadicProfile tp = new TriadicProfile(net);
         System.out.println(net);
-        long[] profile = tp.triadProfile();
+        long[] profile = tp.getProfile();
         
         for (long p : profile)
             System.out.print(" " + p);
         System.out.println();
+    }
+
+    public long[] getProfile() {
+        return profile;
     }
 }
