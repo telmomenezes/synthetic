@@ -1,5 +1,6 @@
 package com.telmomenezes.synthetic.gp;
 
+
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.Vector;
@@ -18,18 +19,16 @@ public class GPTree {
     private GPNode root;
     private int varcount;
     private Vector<Integer> funset;
-    private GPExtraFuns extraFuns;
     
     private int parsePos;
     
     
-	public GPTree(int varcount, Vector<Integer> funset, GPExtraFuns extraFuns)
+	public GPTree(int varcount, Vector<Integer> funset)
 	{
 		this.varcount = varcount;
 		this.funset = funset;
 		vars = new double[varcount];
 		root = null;
-		this.extraFuns = extraFuns;
 	}
 
 
@@ -41,7 +40,7 @@ public class GPTree {
 	}
 
 
-	public double eval()
+	public double eval(int cycle)
 	{
 		GPNode curnode = root;
 		curnode.curpos = -1;
@@ -135,8 +134,9 @@ public class GPTree {
 					case GPFun.LOG:
                         val = Math.log(curnode.params[0].curval);
                         break;
-					case GPFun.SIN:
-                        val = Math.sin(curnode.params[0].curval);
+					case GPFun.ODD:
+					    long r = Math.round(curnode.params[0].curval);
+                        val = (double)(r % 2);
                         break;
 					case GPFun.ABS:
                         val = Math.abs(curnode.params[0].curval);
@@ -147,9 +147,9 @@ public class GPTree {
 					case GPFun.ZER:
 						val = curnode.params[curnode.stoppos - 1].curval;
 						break;
-					// This is an extra function
+					// this should not happen
 					default:
-						val = extraFuns.eval(this, curnode);
+						break;
 					}
 					break;
 				case VAR:
@@ -160,6 +160,7 @@ public class GPTree {
 					break;
 				}
 
+				// update dynamic status
 				switch (curnode.dynStatus) {
 				case UNUSED:
 					curnode.dynStatus = GPNodeDynStatus.CONSTANT;
@@ -171,6 +172,12 @@ public class GPTree {
 				default:
 					break;
 				}
+				
+				// update eval stats
+				curnode.evals += 1;
+				curnode.lastEval = cycle;
+				
+				// update and move to next node
 				curnode.curval = val;
 				curnode = curnode.parent;
 			}
@@ -180,7 +187,7 @@ public class GPTree {
 	}
 
 
-	private void write2(GPNode node, int indent, OutputStreamWriter out) throws IOException
+	private void write2(GPNode node, int indent, OutputStreamWriter out, ProgSet progSet, boolean evalStats) throws IOException
 	{
 		int ind = indent;
 
@@ -193,11 +200,11 @@ public class GPTree {
 			ind++;
 		}
 
-		node.write(out, extraFuns);
+		node.write(out, progSet, evalStats);
 
 		for (int i = 0; i < node.arity; i++) {
 			out.write(" ");
-			write2(node.params[i], ind, out);
+			write2(node.params[i], ind, out, progSet, evalStats);
 		}
 
 		if (node.arity > 0) {
@@ -207,9 +214,9 @@ public class GPTree {
 	}
 
 
-	public void write(OutputStreamWriter out) throws IOException
+	public void write(OutputStreamWriter out, ProgSet progSet, boolean evalStats) throws IOException
 	{
-		write2(root, 0, out);
+		write2(root, 0, out, progSet, evalStats);
 		out.write("\n");
 	}
 
@@ -227,7 +234,7 @@ public class GPTree {
 			int pos = RandomGenerator.instance().random.nextInt(funset.size());
 			fun = funset.get(pos);
 			node = GPMemPool.instance().getNode();
-			node.initFun(fun, parent, extraFuns);
+			node.initFun(fun, parent);
 			for (int i = 0; i < node.arity; i++)
 				node.params[i] = initRandom2(probTerm, node, maxDepth, grow, depth + 1);
 		}
@@ -240,14 +247,16 @@ public class GPTree {
 			else {
 				double val;
 				int r = RandomGenerator.instance().random.nextInt(10);
-				switch (r) {
-				case 0:
-					val = 0.0;
-					break;
-				default:
-					val = RandomGenerator.instance().random.nextDouble();
-					break;
+				if (r == 0) {
+				    val = 0.0;
 				}
+				else if (r > 5) {
+				    val = RandomGenerator.instance().random.nextInt(10);
+				}
+				else {
+				    val = RandomGenerator.instance().random.nextDouble();
+				}
+				
 				node = GPMemPool.instance().getNode();
 				node.initVal(val, parent);
 			}
@@ -279,7 +288,7 @@ public class GPTree {
 			cnode.initVar(node.var, parent);
 			break;
 		default:
-			cnode.initFun(node.fun, parent, extraFuns);
+			cnode.initFun(node.fun, parent);
 			break;
 		}
 		cnode.curval = node.curval;
@@ -294,7 +303,7 @@ public class GPTree {
 
 	public GPTree clone()
 	{
-		GPTree ctree = new GPTree(varcount, funset, extraFuns);
+		GPTree ctree = new GPTree(varcount, funset);
 		ctree.root = cloneGPNode(root, null);
 		return ctree;
 	}
@@ -422,7 +431,7 @@ public class GPTree {
 	}
 
 
-	private GPNode parse2(String prog, GPNode parent)
+	private GPNode parse2(String prog, GPNode parent, ProgSet progSet)
 	{
 		int start = tokenStart(prog);
 		int end = tokenEnd(prog, start);
@@ -438,7 +447,7 @@ public class GPTree {
 		catch (Exception e) {
 		
 			if (token.charAt(0) == '$') {
-				int var = new Integer(token.substring(1));
+				int var = progSet.getVariableIndices().get(token.substring(1));
 				node.initVar(var, parent);
 			}
 			else {
@@ -463,8 +472,8 @@ public class GPTree {
                     fun = GPFun.EXP;
 				else if (token.equals("LOG"))
                     fun = GPFun.LOG;
-				else if (token.equals("SIN"))
-                    fun = GPFun.SIN;
+				else if (token.equals("ODD"))
+                    fun = GPFun.ODD;
 				else if (token.equals("ABS"))
                     fun = GPFun.ABS;
 				else if (token.equals("MIN"))
@@ -472,12 +481,12 @@ public class GPTree {
 				else if (token.equals("MAX"))
                     fun = GPFun.MAX;
 			
-				node.initFun(fun, parent, extraFuns);
+				node.initFun(fun, parent);
 
 				parsePos = end;
 			
 				for (int i = 0; i < node.arity; i++) {
-					node.params[i] = parse2(prog, node);
+					node.params[i] = parse2(prog, node, progSet);
 				}
 
 				return node;
@@ -489,10 +498,10 @@ public class GPTree {
 	}
 
 
-	public void parse(String prog)
+	public void parse(String prog, ProgSet progSet)
 	{
 		parsePos = 0;
-		root = parse2(prog, null);
+		root = parse2(prog, null, progSet);
 	}
 
 
@@ -509,6 +518,19 @@ public class GPTree {
 		clearBranching2(root);
 	}
 
+	private void clearEvalStats2(GPNode node)
+    {
+        node.evals = 0;
+        node.lastEval = -1;
+        for (int i = 0; i < node.arity; i++) {
+            clearEvalStats2(node.params[i]);
+        }
+    }
+
+    public void clearEvalStats()
+    {
+        clearEvalStats2(root);
+    }
 
 	public int branchingDistance(GPTree tree)
 	{
@@ -537,7 +559,7 @@ public class GPTree {
 			targNode.initVar(origNode.var, origNode.parent);
 			break;
 		default:
-			targNode.initFun(origNode.fun, origNode.parent, extraFuns);
+			targNode.initFun(origNode.fun, origNode.parent);
 			break;
 		}
 		targNode.branching = origNode.branching;

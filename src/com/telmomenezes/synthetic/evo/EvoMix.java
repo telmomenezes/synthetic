@@ -3,17 +3,20 @@ package com.telmomenezes.synthetic.evo;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-import com.telmomenezes.synthetic.DRMap;
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.generators.GPGen2P;
+import com.telmomenezes.synthetic.distribs.InDegrees;
+import com.telmomenezes.synthetic.distribs.OutDegrees;
+import com.telmomenezes.synthetic.distribs.PageRanks;
+import com.telmomenezes.synthetic.distribs.RevPageRanks;
+import com.telmomenezes.synthetic.generators.GPGen1P;
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
+import com.telmomenezes.synthetic.motifs.TriadicProfile;
 import com.telmomenezes.synthetic.samplers.DownSampler;
 
 
-public class EvoDRMap2P implements EvoGenCallbacks {
+public class EvoMix implements EvoGenCallbacks {
     private String outDir;
-    private DRMap targDRMap;
     private Generator gen;
     private int targNodeCount;
     private int targEdgeCount;
@@ -25,8 +28,14 @@ public class EvoDRMap2P implements EvoGenCallbacks {
     private int bestCount;
     private double samplingRatio;
     
+    private InDegrees targInDegrees;
+    private OutDegrees targOutDegrees;
+    private PageRanks targPageRanks;
+    private TriadicProfile targTriadicProfile;
     
-    public EvoDRMap2P(Net targNet, String outDir, double maxEffort) {
+    private int bins;
+    
+    public EvoMix(Net targNet, String outDir, double maxEffort) {
         this.outDir = outDir;
         this.maxEffort = maxEffort;
         
@@ -50,15 +59,16 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         sampleNodeCount = sampleNet.getNodeCount();
         sampleEdgeCount = sampleNet.getEdgeCount();
         
-        targDRMap = genDRMap(sampleNet);
-        
-        gen = new GPGen2P(sampleNodeCount, sampleEdgeCount);
+        gen = new GPGen1P(sampleNodeCount, sampleEdgeCount);
         
         bestCount = 0;
         
-        // write target and sample drmaps
-        genDRMap(targNet).draw(outDir + "/target.png");
-        genDRMap(sampleNet).draw(outDir + "/targetSample.png");
+        // compute target distributions
+        bins = 10;
+        targInDegrees = new InDegrees(sampleNet, bins);
+        targOutDegrees = new OutDegrees(sampleNet, bins);
+        targPageRanks = new PageRanks(sampleNet, bins);
+        targTriadicProfile = new TriadicProfile(sampleNet);
         
         // write header of evo.csv
         try {
@@ -81,10 +91,15 @@ public class EvoDRMap2P implements EvoGenCallbacks {
     }
 
     public double computeFitness(Generator gen) {
-        Net net = gen.run();
-        DRMap drmap = genDRMap(net);
-        gen.setNet(net);
-        return targDRMap.emdDistance(drmap);
+        gen.run();
+        Net net = gen.getNet();
+        
+        InDegrees inDegrees = new InDegrees(net, bins);
+        OutDegrees outDegrees = new OutDegrees(net, bins);
+        PageRanks pageRanks = new PageRanks(net, bins);
+        TriadicProfile triadicProfile = new TriadicProfile(net);
+        
+        return 0;
     }
     
     public void onNewBest(EvoGen evo) {
@@ -93,9 +108,6 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         // write net
         bestGen.getNet().save(outDir + "/bestnet" + suffix + ".txt", NetFileType.SNAP);
         bestGen.getNet().save(outDir + "/bestnet" + ".txt", NetFileType.SNAP);
-        // write drmap
-        genDRMap(bestGen.getNet()).draw(outDir + "/best" + suffix + ".png");
-        genDRMap(bestGen.getNet()).draw(outDir + "/best" + ".png");
         // write progs
         bestGen.getProgset().write(outDir + "/bestprog" + suffix + ".txt");
         bestGen.getProgset().write(outDir + "/bestprog" + ".txt");
@@ -122,16 +134,6 @@ public class EvoDRMap2P implements EvoGenCallbacks {
         }
         
         System.out.println(evo.genInfoString());
-    }
-
-    private DRMap genDRMap(Net net) {
-        net.computePageranks();
-        
-        DRMap drmap = net.getDRMapWithLimit(10, -7, 7, -7, 7);
-        drmap.logScale();
-        drmap.normalizeMax();
-        
-        return drmap;
     }
     
     public String infoString() {

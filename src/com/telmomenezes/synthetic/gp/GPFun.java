@@ -17,8 +17,8 @@ public class GPFun {
 	public final static int ZER = 7;
 	public final static int EXP = 8;
 	public final static int LOG = 9;
-	public final static int SIN = 10;
-	public final static int ABS = 11;
-	public final static int MIN = 12;
-	public final static int MAX = 13;
+	public final static int ABS = 10;
+	public final static int MIN = 11;
+	public final static int MAX = 12;
+	public final static int ODD = 13;
 }

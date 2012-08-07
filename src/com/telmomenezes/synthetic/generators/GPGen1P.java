@@ -6,242 +6,133 @@ import com.telmomenezes.synthetic.DistMatrix;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.RandomGenerator;
-import com.telmomenezes.synthetic.gp.GPFun;
-import com.telmomenezes.synthetic.gp.GPTree;
+import com.telmomenezes.synthetic.gp.GenericFunSet;
+import com.telmomenezes.synthetic.gp.ProgSet;
 
-public class GPGen1P {
-    GPTree prog;
-    int edges;
-    int cycle;
+
+/**
+ * @author Telmo Menezes
+ *
+ */
+public class GPGen1P extends Generator {
+    public GPGen1P(int nodeCount, int edgeCount) {
+        super(nodeCount, edgeCount);
+    }
     
-    public GPGen1P() {
-        edges = 0;
-        cycle = 0;
-        Vector<Integer> funset = new Vector<Integer>();
-        funset.add(GPFun.SUM);
-        funset.add(GPFun.SUB);
-        funset.add(GPFun.MUL);
-        funset.add(GPFun.DIV);
-        funset.add(GPFun.EQ);
-        funset.add(GPFun.GRT);
-        funset.add(GPFun.LRT);
-        funset.add(GPFun.ZER);
-        funset.add(GPFun.EXP);
-        funset.add(GPFun.LOG);
-        funset.add(GPFun.SIN);
-        funset.add(GPFun.ABS);
-        funset.add(GPFun.MIN);
-        funset.add(GPFun.MAX);
-        prog = new GPTree(10, funset, null);
-        prog.initRandom(0.2, 2, 5);
+    @Override
+    public void createProgSet() {
+        progcount = 1;
+        
+        Vector<String> variableNames = new Vector<String>();
+        variableNames.add("origId");
+        variableNames.add("targId");
+        variableNames.add("origInDeg");
+        variableNames.add("origOutDeg");
+        variableNames.add("targInDeg");
+        variableNames.add("targOutDeg");
+        variableNames.add("undirDist");
+        variableNames.add("dirDist");
+        variableNames.add("revDist");
+        
+        progset = new ProgSet(progcount, variableNames);
+        
+        progset.varcounts.set(0, 9);
+        progset.funsets.set(0, GenericFunSet.instance().getFunset());
+        progset.prognames.set(0, "Prog\n");
     }
 
-    public GPGen1P clone() {
-        GPGen1P gen_clone = new GPGen1P();
-
-        gen_clone.edges = 0;
-        gen_clone.cycle = 0;
-        gen_clone.prog = prog.clone();
-
-        return gen_clone;
-    }
-
-    public Net run(int node_count, int edge_count) {
-        // TODO: configure this somewhere
-        int TEST_EDGES = 1000;
-
+    @Override
+    public void run() {
+        // reset eval stats
+        progset.clearEvalStats();
+        
         // init DistMatrix
-        DistMatrix.instance().setNodes(node_count);
+        DistMatrix.instance().setNodes(nodeCount);
 
-        Net net = new Net();
-
-        cycle = 0;
+        net = new Net();
 
         // create nodes
-        Node[] node_array = new Node[node_count];
-        Node[] orig_array = new Node[TEST_EDGES];
-        Node[] targ_array = new Node[TEST_EDGES];
-        double[] weight_array = new double[TEST_EDGES];
-        for (int i = 0; i < node_count; i++) {
-            node_array[i] = net.addNodeWithId(i);
+        Node[] nodeArray = new Node[nodeCount];
+        double[][] weightArray = new double[nodeCount][nodeCount];
+        for (int i = 0; i < nodeCount; i++) {
+            nodeArray[i] = net.addNodeWithId(i);
         }
 
         // create edges
-        double weight;
-        for (int i = 0; i < edge_count; i++) {
-            double po, pt, io, oo, it, ot, t, ud, dd, rd;     
-            double total_weight = 0;
-
-            Node orig_node = null;
-            Node targ_node = null;
-
-            // test TEST_EDGES edges
-            for (int j = 0; j < TEST_EDGES; j++) {
-                boolean new_edge = false;
-                while (!new_edge) {
-                    int orig_index = RandomGenerator.instance().random.nextInt(node_count);
-                    int targ_index = RandomGenerator.instance().random.nextInt(node_count - 1);
-                    if (targ_index >= orig_index) {
-                        targ_index += 1;
-                    }
-                    orig_node = node_array[orig_index];
-                    targ_node = node_array[targ_index];
-                    if (!net.edgeExists(orig_node, targ_node)) {
-                        new_edge = true;
-                    }
-                }
-
-                orig_array[j] = orig_node;
-                targ_array[j] = targ_node;
-
-                po = (double)orig_node.getId();
-                pt = (double)targ_node.getId();
+        for (int i = 0; i < edgeCount; i++) {
+            double totalWeight = 0;
+            for (int origIndex = 0; origIndex < nodeCount; origIndex++) {
+                for (int targIndex = 0; targIndex < nodeCount; targIndex++) {
+                    if (origIndex != targIndex) {
+                        Node origNode = nodeArray[origIndex];
+                        Node targNode = nodeArray[targIndex];
         
-                io = oo = it = ot = t = ud = rd = dd = 0;
-
-                if (edges > 0) {
-                    io = (double)orig_node.getInDegree();
-                    oo = (double)orig_node.getOutDegree();
-                    it = (double)targ_node.getInDegree();
-                    ot = (double)targ_node.getOutDegree();
-                    t = (double)cycle;
-                }
-
-                int dist = DistMatrix.instance().getUDist(orig_node.getId(), targ_node.getId());
-                if (dist > 0) {
-                    ud = 1.0 / ((double)dist);
-                }
-                // lim d->inf 1/d
-                else {
-                    ud = 0;
-                }
-
-                dist = DistMatrix.instance().getDDist(orig_node.getId(), targ_node.getId());
-                if (dist > 0) {
-                    dd = 1.0 / ((double)dist);
-                }
-                // lim d->inf 1/d
-                else {
-                    dd = 0;
-                }
-            
-                dist = DistMatrix.instance().getDDist(targ_node.getId(), orig_node.getId());
-                if (dist > 0) {
-                    rd = 1.0 / ((double)dist);
-                }
-                // lim d->inf 1/d
-                else {
-                    rd = 0;
-                }
-
-                prog.vars[0] = po; // orig node ID
-                prog.vars[1] = io; // orig node indegree
-                prog.vars[2] = oo; // orig node outdegree
-                prog.vars[3] = t;  // time
-                prog.vars[4] = pt; // targ node ID
-                prog.vars[5] = it; // targ node indegree
-                prog.vars[6] = ot; // targ node outdegree
-                prog.vars[7] = ud; // undirected distance
-                prog.vars[8] = dd; // directed distance
-                prog.vars[9] = rd; // reverse distance
-
-                weight = prog.eval();
-                if (weight < 0) {
-                    weight = 0;
-                }
+                        double undirectedDistance = DistMatrix.instance().getUDist(origNode.getId(), targNode.getId());
+                        double directDistance = DistMatrix.instance().getDDist(origNode.getId(), targNode.getId());
+                        double reverseDistance = DistMatrix.instance().getDDist(targNode.getId(), origNode.getId());
+                    
+                        progset.progs[0].vars[0] = (double)origIndex;
+                        progset.progs[0].vars[1] = (double)targIndex;
+                        progset.progs[0].vars[2] = (double)origNode.getInDegree();
+                        progset.progs[0].vars[3] = (double)origNode.getOutDegree();
+                        progset.progs[0].vars[4] = (double)targNode.getInDegree();
+                        progset.progs[0].vars[5] = (double)targNode.getOutDegree();
+                        progset.progs[0].vars[6] = undirectedDistance;
+                        progset.progs[0].vars[7] = directDistance;
+                        progset.progs[0].vars[8] = reverseDistance;
+                    
+                        double weight = progset.progs[0].eval(i);
+                        if (weight < 0) {
+                            weight = 0;
+                        }
         
-                weight_array[j] = weight;
-                total_weight += weight;
+                        weightArray[origIndex][targIndex] = weight;
+                        totalWeight += weight;
+                    }
+                }
             }
 
             // if total weight is zero, make every pair's weight = 1
-            if (total_weight == 0) {
-                for (int j = 0; j < TEST_EDGES; j++) {
-                    weight_array[j] = 1.0;
-                    total_weight += 1.0;
+            if (totalWeight == 0) {
+                for (int x = 0; x < nodeCount; x++) {
+                    for (int y = 0; y < nodeCount; y++) {
+                        if (x != y) {
+                            weightArray[x][y] = 1.0;
+                            totalWeight += 1.0;
+                        }
+                    }
                 }
             }
 
-            weight = RandomGenerator.instance().random.nextDouble() * total_weight;
-            int j = 0;
-            total_weight = weight_array[j];
-            while (total_weight < weight) {
-                j++;
-                total_weight += weight_array[j];
+            double weight = RandomGenerator.instance().random.nextDouble() * totalWeight;
+            int origIndex = 0;
+            int targIndex = 0;
+            totalWeight = weightArray[origIndex][targIndex];
+            while (totalWeight < weight) {
+                origIndex++;
+                if (origIndex >= nodeCount) {
+                    targIndex++;
+                    origIndex = 0;
+                }
+                totalWeight += weightArray[origIndex][targIndex];
             }
 
-            orig_node = orig_array[j];
-            targ_node = targ_array[j];
+            Node origNode = nodeArray[origIndex];
+            Node targNode = nodeArray[targIndex];
 
-            // set ages
-            if (orig_node.getBirth() < 0) {
-                orig_node.setBirth(cycle);
-            }
-            if (targ_node.getBirth() < 0) {
-                targ_node.setBirth(cycle);
-            }
-
-            net.addEdge(orig_node, targ_node, cycle);
-            // update distances
-            DistMatrix.instance().updateDistances(orig_node.getId(), targ_node.getId());
+            net.addEdge(origNode, targNode, i);
             
-            cycle++;
+            // update distances
+            DistMatrix.instance().updateDistances(origIndex, targIndex);
         }
-
-        return net;
     }
-
-
-    /*
-    void write(String file_path) {
-        ofstream f;
-        f.open(file_path.c_str());
-
-        f << "#PROG" << endl;
-        f << prog->to_string();
-
-        f.close();
-    }*/
-
-
-    GPGen1P recombine(GPGen1P gen) {
-        GPGen1P child = new GPGen1P();
-
-        edges = 0;
-        cycle = 0;
-        child.prog = prog.recombine(gen.prog);
-
-        return child;
+    
+    public double distance(Generator generator) {
+        return 0;
     }
-
-/*
-void GPGenerator::load(string filepath)
-{
-    std::ifstream file(filepath.c_str());
-    string line;
-
-    std::getline(file, line);
-         
-    while ((line.compare("") == 0)
-            || (line[0] == '\n')
-            || (line[0] == '#')) {
-        std::getline(file, line);
-    }
-        
-    std::stringstream sprog;
-    while (line.compare("")
-            && (line[0] != '\n')
-            && (line[0] != '#')) {
-        sprog << line;
-        if (!std::getline(file, line))
-            break;
-    }
-
-    prog->parse(sprog.str());
-}*/
-
-
-    void simplify() {
-        prog.dynPruning();    
+    
+    @Override
+    public Generator clone() {
+        return new GPGen1P(nodeCount, edgeCount);
     }
 }

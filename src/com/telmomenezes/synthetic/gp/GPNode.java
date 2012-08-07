@@ -25,6 +25,9 @@ public class GPNode {
 
     public int branching;
     public GPNodeDynStatus dynStatus;
+    
+    public int evals;
+    public int lastEval;
 
     public GPNode() {
         params = new GPNode[4];
@@ -50,11 +53,11 @@ public class GPNode {
         dynStatus = GPNodeDynStatus.UNUSED;
     }
 
-    public void initFun(int fun, GPNode parent, GPExtraFuns extraFuns) {
+    public void initFun(int fun, GPNode parent) {
         type = GPNodeType.FUN;
         this.parent = parent;
         this.fun = fun;
-        arity = funArity(fun, extraFuns);
+        arity = funArity(fun);
         condpos = funCondPos(fun);
         stoppos = arity;
         dynStatus = GPNodeDynStatus.UNUSED;
@@ -73,11 +76,11 @@ public class GPNode {
         }
     }
 
-    private int funArity(int fun, GPExtraFuns extraFuns) {
+    private int funArity(int fun) {
         switch (fun) {
         case GPFun.EXP:
         case GPFun.LOG:
-        case GPFun.SIN:
+        case GPFun.ODD:
         case GPFun.ABS:
             return 1;
         case GPFun.SUM:
@@ -93,79 +96,75 @@ public class GPNode {
         case GPFun.GRT:
         case GPFun.LRT:
             return 4;
-            // this is an extra function
+        // this should not happen
         default:
-            return extraFuns.funArity(fun);
+            return 0;
         }
     }
 
-    public void write(OutputStreamWriter out, GPExtraFuns extraFuns)
+    public void write(OutputStreamWriter out, ProgSet progSet, boolean evalStats)
             throws IOException {
         if (type == GPNodeType.VAL) {
             out.write("" + val);
-            return;
         }
-
-        if (type == GPNodeType.VAR) {
-            out.write("$" + var);
-            return;
+        else if (type == GPNodeType.VAR) {
+            out.write("$" + progSet.getVariableNames().get(var));
         }
-
-        if (type != GPNodeType.FUN) {
-            out.write("???");
-            return;
-        }
-
-        switch (fun) {
-        case GPFun.SUM:
-            out.write("+");
-            return;
-        case GPFun.SUB:
-            out.write("-");
-            return;
-        case GPFun.MUL:
-            out.write("*");
-            return;
-        case GPFun.DIV:
-            out.write("/");
-            return;
-        case GPFun.ZER:
-            out.write("ZER");
-            return;
-        case GPFun.EQ:
-            out.write("==");
-            return;
-        case GPFun.GRT:
-            out.write(">");
-            return;
-        case GPFun.LRT:
-            out.write("<");
-            return;
-        case GPFun.EXP:
-            out.write("EXP");
-            return;
-        case GPFun.LOG:
-            out.write("LOG");
-            return;
-        case GPFun.SIN:
-            out.write("SIN");
-            return;
-        case GPFun.ABS:
-            out.write("ABS");
-            return;
-        case GPFun.MIN:
-            out.write("MIN");
-            return;
-        case GPFun.MAX:
-            out.write("MAX");
-            return;
-        default:
-            if (extraFuns != null)
-                // maybe it's an extra function
-                out.write(extraFuns.funName(fun));
-            else
+        else if (type == GPNodeType.FUN) {
+            switch (fun) {
+            case GPFun.SUM:
+                out.write("+");
+                break;
+            case GPFun.SUB:
+                out.write("-");
+                break;
+            case GPFun.MUL:
+                out.write("*");
+                break;
+            case GPFun.DIV:
+                out.write("/");
+                break;
+            case GPFun.ZER:
+                out.write("ZER");
+                break;
+            case GPFun.EQ:
+                out.write("==");
+                break;
+            case GPFun.GRT:
+                out.write(">");
+                break;
+            case GPFun.LRT:
+                out.write("<");
+                break;
+            case GPFun.EXP:
+                out.write("EXP");
+                break;
+            case GPFun.LOG:
+                out.write("LOG");
+                break;
+            case GPFun.ABS:
+                out.write("ABS");
+                break;
+            case GPFun.MIN:
+                out.write("MIN");
+                break;
+            case GPFun.MAX:
+                out.write("MAX");
+                break;
+            case GPFun.ODD:
+                out.write("ODD");
+                break;
+            default:
                 out.write("F??");
-            return;
+                break;
+            }
+        }
+        else {
+            out.write("???");
+        }
+        
+        if (evalStats) {
+            out.write(" " + evals + " " + lastEval);
         }
     }
 }

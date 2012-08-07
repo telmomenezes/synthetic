@@ -8,11 +8,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.RandomGenerator;
-import com.telmomenezes.synthetic.gp.GPExtraFuns;
-import com.telmomenezes.synthetic.gp.GPTree;
 
 
 /**
@@ -28,13 +28,19 @@ public class ProgSet {
     public Vector<String> prognames;
     public Vector<Vector<Integer>> funsets;
     public Vector<Integer> varcounts;
-    private GPExtraFuns extraFuns;
-
+    private Vector<String> variableNames;
+    private Map<String, Integer> variableIndices;
     
-    public ProgSet(int progcount, GPExtraFuns extraFuns)
-    {
+    
+    public ProgSet(int progcount, Vector<String> variableNames) {
     	this.progcount = progcount;
-    	this.extraFuns = extraFuns;
+    	this.variableNames = variableNames;
+    	
+    	// initialize variable indices table
+    	variableIndices = new HashMap<String, Integer>();
+    	for (int i = 0; i < variableNames.size(); i++) {
+    	    variableIndices.put(variableNames.get(i), i);
+    	}
     	
     	prognames = new Vector<String>();
     	funsets = new Vector<Vector<Integer>>();
@@ -54,7 +60,7 @@ public class ProgSet {
     public void init()
     {
     	for (int i = 0; i < progcount; i++)
-    		progs[i] = new GPTree(varcounts.get(i), funsets.get(i), extraFuns);
+    		progs[i] = new GPTree(varcounts.get(i), funsets.get(i));
     }
 
 
@@ -90,7 +96,7 @@ public class ProgSet {
 
     public ProgSet clone(boolean clone_progs)
     {
-    	ProgSet ps = new ProgSet(progcount, extraFuns);
+    	ProgSet ps = new ProgSet(progcount, variableNames);
 
     	for (int i = 0; i < progcount; i++) {
     		ps.prognames.set(i, prognames.get(i));
@@ -116,10 +122,10 @@ public class ProgSet {
     }
 
 
-    public void write(OutputStreamWriter out) throws IOException {
+    public void write(OutputStreamWriter out, boolean evalStats) throws IOException {
     	for (int i = 0; i < progcount; i++) {
     		out.write("# " + prognames.get(i));
-    		progs[i].write(out);
+    		progs[i].write(out, this, evalStats);
     		out.write("\n\n");
     	}
     }
@@ -128,8 +134,17 @@ public class ProgSet {
         try {
             FileOutputStream fstream = new FileOutputStream(filePath);
             OutputStreamWriter out = new OutputStreamWriter(fstream);
-            write(out);
+            write(out, false);
             out.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void print(boolean evalStats) {
+        try {
+            write(new OutputStreamWriter(System.out), evalStats);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -160,7 +175,7 @@ public class ProgSet {
     			line = br.readLine();
     		}
 
-    		progs[i].parse(prog);
+    		progs[i].parse(prog, this);
     		
     		in.close();
     	}
@@ -183,7 +198,15 @@ public class ProgSet {
     	return true;
     }
 
+    
+    public void clearEvalStats()
+    {
+        for (int i = 0; i < progcount; i++) {
+            progs[i].clearEvalStats();
+        }
+    }
 
+    
     public void dynPruning()
     {
     	for (int i = 0; i < progcount; i++)
@@ -201,5 +224,15 @@ public class ProgSet {
     	}
 
     	return distance;
+    }
+
+
+    public Vector<String> getVariableNames() {
+        return variableNames;
+    }
+
+
+    public Map<String, Integer> getVariableIndices() {
+        return variableIndices;
     } 
 }

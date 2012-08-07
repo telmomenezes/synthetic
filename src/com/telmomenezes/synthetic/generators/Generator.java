@@ -1,5 +1,6 @@
 package com.telmomenezes.synthetic.generators;
 
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -30,9 +31,10 @@ public abstract class Generator implements Comparable<Generator> {
 
     private Vector<ProgSet> executionPaths;
     protected boolean checkPaths;
-
-    private Net net;
-
+    
+    protected Net net;
+    
+    
 	public Generator(int nodeCount, int edgeCount) {
 	    this.nodeCount = nodeCount;
 	    this.edgeCount = edgeCount;
@@ -69,7 +71,7 @@ public abstract class Generator implements Comparable<Generator> {
     /**
      * Runs a simulation based on this generator.
      */
-    public abstract Net run();
+    public abstract void run();
 
    
     /**
@@ -168,15 +170,17 @@ public abstract class Generator implements Comparable<Generator> {
      * @param filePath path to file where programs are to be written
      * @throws IOException
      */
-	public void writeProgs(String filePath) throws IOException
-	{
+	public void writeProgs(String filePath) throws IOException {
 		FileOutputStream fos = new FileOutputStream(filePath);
 		OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8"); 
-		progset.write(out);
+		progset.write(out, false);
 		out.close();
 		fos.close();
 	}
 
+	public void printProgs(boolean evalStats) { 
+        progset.print(evalStats);
+    }
 
 	public void loadProgs(String filePath) throws IOException
 	{
@@ -314,14 +318,8 @@ public abstract class Generator implements Comparable<Generator> {
     public ProgSet getProgset() {
         return progset;
     }
-
-
+    
     public Net getNet() {
         return net;
-    }
-
-
-    public void setNet(Net net) {
-        this.net = net;
     }
 }
