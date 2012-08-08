@@ -81,7 +81,7 @@ public class EvoMix implements EvoGenCallbacks {
         try {
             FileWriter fwriter = new FileWriter(outDir + "/evo.csv");
             BufferedWriter writer = new BufferedWriter(fwriter);
-            writer.write("gen,best_fit,best_gen_fit,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time\n");
+            writer.write("gen,best_fit,best_gen_fit,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,in_degrees_dist,out_degrees_dist,pageranks_dist,triadic_profile_dist\n");
             writer.close() ;
         }
         catch (Exception e) {
@@ -95,7 +95,7 @@ public class EvoMix implements EvoGenCallbacks {
         pageRanksRandomDist = 0.0;
         triadicProfileRandomDist = 0.0;
         
-        int samples = 10;
+        int samples = 100;
         
         for (int i = 0; i < samples; i++) {
             RandomNet rnet = new RandomNet(sampleNodeCount, sampleEdgeCount);
@@ -109,10 +109,12 @@ public class EvoMix implements EvoGenCallbacks {
         outDegreesRandomDist /= samples;
         pageRanksRandomDist /= samples;
         triadicProfileRandomDist /= samples;
+        
+        System.out.println("Random distances: inDegreesRandomDist=" + inDegreesRandomDist + "; outDegreesRandomDist=" + outDegreesRandomDist + "; pageRanksRandomDist=" + pageRanksRandomDist + "; triadicProfileRandomDist=" + triadicProfileRandomDist);
     }
     
     private static double computeEffort(Net net) {
-        return 2.0 * (((double)net.getNodeCount()) / 1000.0) * (((double)net.getEdgeCount()) / 1000.0);
+        return ((double)net.getNodeCount()) * ((double)net.getNodeCount()) * ((double)net.getEdgeCount()) * 0.001;
     }
     
     public Generator baseGenerator() {
@@ -127,7 +129,12 @@ public class EvoMix implements EvoGenCallbacks {
         double outDegreesDist = (new OutDegrees(net, bins)).emdDistance(targOutDegrees);
         double pageRanksDist = (new PageRanks(net, bins)).emdDistance(targPageRanks);
         double triadicProfileDist = (new TriadicProfile(net)).emdDistance(targTriadicProfile);
-        
+    
+        gen.setMetric("inDegreesDist", inDegreesDist);
+        gen.setMetric("outDegreesDist", outDegreesDist);
+        gen.setMetric("pageRanksDist", pageRanksDist);
+        gen.setMetric("triadicProfileDist", triadicProfileDist);
+
         double d1a = inDegreesDist / inDegreesRandomDist;
         double d1b = outDegreesDist / outDegreesRandomDist;
         double d1 = (d1a + d1b) / 2;
@@ -152,6 +159,12 @@ public class EvoMix implements EvoGenCallbacks {
     public void onGeneration(EvoGen evo) {
         // write evo log
         try {
+            Generator bestGen = evo.getBestGenerator();
+            double inDegreesDist = bestGen.getMetric("inDegreesDist");
+            double outDegreesDist = bestGen.getMetric("outDegreesDist");
+            double pageRanksDist = bestGen.getMetric("pageRanksDist");
+            double triadicProfileDist = bestGen.getMetric("triadicProfileDist");
+            
             FileWriter fwriter = new FileWriter(outDir + "/evo.csv", true);
             BufferedWriter writer = new BufferedWriter(fwriter);
             writer.write("" + evo.getCurgen() + ","
@@ -161,7 +174,11 @@ public class EvoMix implements EvoGenCallbacks {
                     + evo.getMeanGenoSize() + ","
                     + evo.getGenTime() + ","
                     + evo.getSimTime() + ","
-                    + evo.getFitTime() + "\n");
+                    + evo.getFitTime() + ","
+                    + inDegreesDist + ","
+                    + outDegreesDist + ","
+                    + pageRanksDist + ","
+                    + triadicProfileDist + "\n");
             writer.close();
         }
         catch (Exception e) {

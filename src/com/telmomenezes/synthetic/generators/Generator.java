@@ -4,6 +4,8 @@ package com.telmomenezes.synthetic.generators;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.Net;
@@ -34,6 +36,7 @@ public abstract class Generator implements Comparable<Generator> {
     
     protected Net net;
     
+    private Map<String, Double> metricTable;
     
 	public Generator(int nodeCount, int edgeCount) {
 	    this.nodeCount = nodeCount;
@@ -51,6 +54,8 @@ public abstract class Generator implements Comparable<Generator> {
 
 		// misc
 		checkPaths = false;
+		
+		metricTable = new HashMap<String, Double>();
 	}
 
 	
@@ -321,5 +326,13 @@ public abstract class Generator implements Comparable<Generator> {
     
     public Net getNet() {
         return net;
+    }
+    
+    public void setMetric(String key, double value) {
+        metricTable.put(key, value);
+    }
+    
+    public double getMetric(String key) {
+        return metricTable.get(key);
     }
 }
