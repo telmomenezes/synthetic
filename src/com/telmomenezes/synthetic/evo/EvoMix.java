@@ -157,14 +157,14 @@ public class EvoMix implements EvoGenCallbacks {
     }
 
     public void onGeneration(EvoGen evo) {
+        Generator bestGen = evo.getBestGenerator();
+        double inDegreesDist = bestGen.getMetric("inDegreesDist");
+        double outDegreesDist = bestGen.getMetric("outDegreesDist");
+        double pageRanksDist = bestGen.getMetric("pageRanksDist");
+        double triadicProfileDist = bestGen.getMetric("triadicProfileDist");
+        
         // write evo log
         try {
-            Generator bestGen = evo.getBestGenerator();
-            double inDegreesDist = bestGen.getMetric("inDegreesDist");
-            double outDegreesDist = bestGen.getMetric("outDegreesDist");
-            double pageRanksDist = bestGen.getMetric("pageRanksDist");
-            double triadicProfileDist = bestGen.getMetric("triadicProfileDist");
-            
             FileWriter fwriter = new FileWriter(outDir + "/evo.csv", true);
             BufferedWriter writer = new BufferedWriter(fwriter);
             writer.write("" + evo.getCurgen() + ","
@@ -186,6 +186,7 @@ public class EvoMix implements EvoGenCallbacks {
         }
         
         System.out.println(evo.genInfoString());
+        System.out.println("inDegreesDist: " + inDegreesDist + "; outDegreesDist: " + outDegreesDist + "; pageRanksDist: " + pageRanksDist + "; triadicProfileDist: " + triadicProfileDist );
     }
     
     public String infoString() {
