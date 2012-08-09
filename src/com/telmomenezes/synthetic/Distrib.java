@@ -69,6 +69,8 @@ public class Distrib {
                 max = x;
             }
         }
+        
+        init(valueSeq, bins, min, max);
     }
     
     public double total() {
