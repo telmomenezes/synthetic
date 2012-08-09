@@ -1,4 +1,4 @@
-package com.telmomenezes.synthetic.distribs;
+package com.telmomenezes.synthetic;
 
 import com.telmomenezes.synthetic.emd.Feature1D;
 import com.telmomenezes.synthetic.emd.JFastEMD;
@@ -18,6 +18,45 @@ public class Distrib {
         init(valueSeq, bins);
     }
     
+    public Distrib(double[] valueSeq, int bins, double min, double max) {
+        init(valueSeq, bins, min, max);
+    }
+    
+    public Distrib(double[] valueSeq, int bins, Distrib distrib) {
+        if (distrib == null) {
+            init(valueSeq, bins);
+        }
+        else {
+            init(valueSeq, bins, distrib.getMin(), distrib.getMax());
+        }
+    }
+    
+    protected void init(double[] valueSeq, int bins, double min, double max) {
+        this.min = min;
+        this.max = max;
+        
+        this.bins = bins;
+        freqs = new double[bins];
+        interval = (max - min) / ((double)this.bins);
+        
+        for (double x0 : valueSeq) {
+            double x = x0;
+            if (x < min) {
+                x = min;
+            }
+            else if (x > max) {
+                x = max;
+            }
+
+            double delta = x - min;
+            int pos = (int)(delta / interval);
+            if (pos >= this.bins) {
+                pos = this.bins - 1;
+            }
+            freqs[pos]++;
+        }
+    }
+    
     protected void init(double[] valueSeq, int bins) {
         min = Double.POSITIVE_INFINITY;
         max = Double.NEGATIVE_INFINITY;
@@ -28,21 +67,6 @@ public class Distrib {
             }
             if (x > max) {
                 max = x;
-            }
-        }
-        
-        this.bins = bins;
-        freqs = new double[bins];
-        interval = (max - min) / ((double)this.bins);
-        
-        for (double x : valueSeq) {
-            if ((x >= min) && (x <= max)) {
-                double delta = x - min;
-                int pos = (int)(delta / interval);
-                if (pos >= this.bins) {
-                    pos = this.bins - 1;
-                }
-                freqs[pos]++;
             }
         }
     }

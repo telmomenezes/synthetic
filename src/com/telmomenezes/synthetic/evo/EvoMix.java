@@ -3,11 +3,9 @@ package com.telmomenezes.synthetic.evo;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
+import com.telmomenezes.synthetic.Distrib;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.RandomNet;
-import com.telmomenezes.synthetic.distribs.InDegrees;
-import com.telmomenezes.synthetic.distribs.OutDegrees;
-import com.telmomenezes.synthetic.distribs.PageRanks;
 import com.telmomenezes.synthetic.generators.GPGen1P;
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
@@ -28,9 +26,9 @@ public class EvoMix implements EvoGenCallbacks {
     private int bestCount;
     private double samplingRatio;
     
-    private InDegrees targInDegrees;
-    private OutDegrees targOutDegrees;
-    private PageRanks targPageRanks;
+    private Distrib targInDegrees;
+    private Distrib targOutDegrees;
+    private Distrib targPageRanks;
     private TriadicProfile targTriadicProfile;
     
     private int bins;
@@ -70,9 +68,9 @@ public class EvoMix implements EvoGenCallbacks {
         
         // compute target distributions
         bins = 10;
-        targInDegrees = new InDegrees(sampleNet, bins);
-        targOutDegrees = new OutDegrees(sampleNet, bins);
-        targPageRanks = new PageRanks(sampleNet, bins);
+        targInDegrees = new Distrib(sampleNet.inDegSeq(), bins);
+        targOutDegrees = new Distrib(sampleNet.outDegSeq(), bins);
+        targPageRanks = new Distrib(sampleNet.prInSeq(), bins);
         targTriadicProfile = new TriadicProfile(sampleNet);
         
         computeRandomDistances();
@@ -99,9 +97,9 @@ public class EvoMix implements EvoGenCallbacks {
         
         for (int i = 0; i < samples; i++) {
             RandomNet rnet = new RandomNet(sampleNodeCount, sampleEdgeCount);
-            inDegreesRandomDist += (new InDegrees(rnet, bins)).emdDistance(targInDegrees);
-            outDegreesRandomDist += (new OutDegrees(rnet, bins)).emdDistance(targOutDegrees);
-            pageRanksRandomDist += (new PageRanks(rnet, bins)).emdDistance(targPageRanks);
+            inDegreesRandomDist += (new Distrib(rnet.inDegSeq(), bins, targInDegrees)).emdDistance(targInDegrees);
+            outDegreesRandomDist += (new Distrib(rnet.outDegSeq(), bins, targOutDegrees)).emdDistance(targOutDegrees);
+            pageRanksRandomDist += (new Distrib(rnet.prInSeq(), bins, targPageRanks)).emdDistance(targPageRanks);
             triadicProfileRandomDist += (new TriadicProfile(rnet)).emdDistance(targTriadicProfile);
         }
         
@@ -125,9 +123,9 @@ public class EvoMix implements EvoGenCallbacks {
         gen.run();
         Net net = gen.getNet();
         
-        double inDegreesDist = (new InDegrees(net, bins)).emdDistance(targInDegrees);
-        double outDegreesDist = (new OutDegrees(net, bins)).emdDistance(targOutDegrees);
-        double pageRanksDist = (new PageRanks(net, bins)).emdDistance(targPageRanks);
+        double inDegreesDist = (new Distrib(net.inDegSeq(), bins, targInDegrees)).emdDistance(targInDegrees);
+        double outDegreesDist = (new Distrib(net.outDegSeq(), bins, targOutDegrees)).emdDistance(targOutDegrees);
+        double pageRanksDist = (new Distrib(net.prInSeq(), bins, targPageRanks)).emdDistance(targPageRanks);
         double triadicProfileDist = (new TriadicProfile(net)).emdDistance(targTriadicProfile);
     
         gen.setMetric("inDegreesDist", inDegreesDist);
