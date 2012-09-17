@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
+	<classpathentry excluding="src/" kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.osgi_3.7.2.v20120110-1415.jar"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.core.commands_3.6.0.I20110111-0800.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.core.commands_3.6.0.I20110111-0800.jar"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.equinox.common_3.6.0.v20110523.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.equinox.common_3.6.0.v20110523.jar"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.equinox.registry_3.5.101.R37x_v20110810-1611.jar"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.core.runtime_3.7.0.v20110110.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.core.runtime_3.7.0.v20110110.jar"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.text_3.5.101.v20110928-1504.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.text_3.5.101.v20110928-1504.jar"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.swt.cocoa.macosx.x86_64_3.7.2.v3740f.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.swt.cocoa.macosx.x86_64_3.7.2.v3740f.jar"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.jface_3.7.0.v20110928-1505.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.jface_3.7.0.v20110928-1505.jar"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.jface.text_3.7.2.v20111213-1208.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.jface.text_3.7.2.v20111213-1208.jar"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.ui.workbench_3.7.1.v20120104-1859.jar"/>
 	<classpathentry kind="lib" path="/Applications/eclipse/plugins/com.ibm.icu_4.4.2.v20110823.jar" sourcepath="/Applications/eclipse/plugins/com.ibm.icu_4.4.2.v20110823.jar"/>
-	<classpathentry kind="lib" path="/Applications/eclipse/plugins/org.eclipse.ui.forms_3.5.101.v20111011-1919.jar" sourcepath="/Applications/eclipse/plugins/org.eclipse.ui.forms_3.5.101.v20111011-1919.jar"/>
 	<classpathentry kind="lib" path="libs/commons-cli-1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
