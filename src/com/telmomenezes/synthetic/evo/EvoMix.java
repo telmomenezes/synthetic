@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import com.telmomenezes.synthetic.Distrib;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.RandomNet;
-import com.telmomenezes.synthetic.generators.GPGen1P;
+import com.telmomenezes.synthetic.generators.GPGen1PSampler;
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
 import com.telmomenezes.synthetic.motifs.TriadicProfile;
@@ -62,7 +62,7 @@ public class EvoMix implements EvoGenCallbacks {
         sampleNodeCount = sampleNet.getNodeCount();
         sampleEdgeCount = sampleNet.getEdgeCount();
         
-        gen = new GPGen1P(sampleNodeCount, sampleEdgeCount);
+        gen = new GPGen1PSampler(sampleNodeCount, sampleEdgeCount);
         
         bestCount = 0;
         
@@ -132,14 +132,17 @@ public class EvoMix implements EvoGenCallbacks {
         gen.setMetric("outDegreesDist", outDegreesDist);
         gen.setMetric("pageRanksDist", pageRanksDist);
         gen.setMetric("triadicProfileDist", triadicProfileDist);
-
-        double d1a = inDegreesDist / inDegreesRandomDist;
-        double d1b = outDegreesDist / outDegreesRandomDist;
-        double d1 = (d1a + d1b) / 2;
-        double d2 = pageRanksDist / pageRanksRandomDist;
-        double d3 = triadicProfileDist / triadicProfileRandomDist;
         
-        return d1 + d2 + d3;
+        double verySmall = 0.0001;
+        if (inDegreesDist == 0) inDegreesDist = verySmall;
+        if (outDegreesDist == 0) outDegreesDist = verySmall;
+        if (pageRanksDist == 0) pageRanksDist = verySmall;
+        if (triadicProfileDist == 0) triadicProfileDist = verySmall;
+        
+        double dist = inDegreesDist * outDegreesDist * pageRanksDist * triadicProfileDist;
+        dist = Math.pow(dist, 1.0 / 4.0);
+        
+        return dist;
     }
     
     public void onNewBest(EvoGen evo) {
