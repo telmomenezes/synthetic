@@ -30,15 +30,11 @@ public class SynCLI {
     
     public void run(String[] args) {
         args = new String[]{"evo", "-inet", "wiki-Vote.snap", "-odir", "test"};
-        //args = new String[]{"emddist", "-inet", "wiki-Vote.snap", "-inet2", "bestnet22_gen362.txt"};
-        //args = new String[]{"emddist", "-inet", "wiki-Vote.snap", "-inet2", "bestnet21_gen359.txt"};
-        //args = new String[]{"gendrmap", "-inet", "bestnet22_gen362.txt", "-mimg", "dummy.png"};
         
         CommandLineParser parser = new GnuParser();
         options = new Options();
         options.addOption("inet", true, "input net file");
         options.addOption("inet2", true, "second input net file");
-        options.addOption("mimg", true, "file path to write map image to");
         options.addOption("odir", true, "output directory");
         options.addOption("prg", true, "generator program file");
         options.addOption("oprg", true, "generator output program file");
@@ -55,14 +51,8 @@ public class SynCLI {
             else if (cmd.equals("netstats")) {
                 cmdObj = new NetStats();
             }
-            else if (cmd.equals("gendrmap")) {
-                cmdObj = new GenDRMap();
-            }
             else if (cmd.equals("evo")) {
                 cmdObj = new Evolve();
-            }
-            else if (cmd.equals("emddist")) {
-                cmdObj = new EMDDist();
             }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");

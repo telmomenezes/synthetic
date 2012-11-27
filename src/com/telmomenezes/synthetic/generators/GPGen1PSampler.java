@@ -46,6 +46,7 @@ public class GPGen1PSampler extends Generator {
 
     @Override
     public void run() {
+    	System.out.println("running generator");
         // reset eval stats
         progset.clearEvalStats();
         
@@ -60,11 +61,12 @@ public class GPGen1PSampler extends Generator {
         int[] origArray = new int[samples];
         int[] targArray = new int[samples];
         for (int i = 0; i < nodeCount; i++) {
-            nodeArray[i] = net.addNodeWithId(i);
+            nodeArray[i] = net.addNode();
         }
 
         // create edges
         for (int i = 0; i < edgeCount; i++) {
+        	//System.out.println("creating edge: " + i);
             double totalWeight = 0;
             for (int j = 0; j < samples; j++) {
             	int origIndex = 0;
@@ -124,7 +126,9 @@ public class GPGen1PSampler extends Generator {
             net.addEdge(origNode, targNode, i);
             
             // update distances
-            DistMatrix.instance().updateDistances(origArray[k], targArray[k]);
+            DistMatrix.instance().updateDistancesSmart(net, origArray[k], targArray[k]);
+            
+            simulated = true;
         }
     }
     

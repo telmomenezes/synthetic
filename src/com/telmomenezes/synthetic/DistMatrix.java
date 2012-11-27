@@ -40,9 +40,10 @@ public class DistMatrix {
         }
 
         // clear matrices
+        int largeVal = 9999999;
         if (_nodes > 0) {
-            Arrays.fill(_umatrix, _nodes * _nodes);
-            Arrays.fill(_dmatrix, _nodes * _nodes);
+            Arrays.fill(_umatrix, largeVal);
+            Arrays.fill(_dmatrix, largeVal);
         }
     }
 
@@ -112,5 +113,44 @@ public class DistMatrix {
                 }
             }
         }
+    }
+    
+    
+    private void updateUDistanceTarg_r(Net net, int origPos, int targPos, int distance) {
+    	if (distance > 3)
+    		return;
+    	
+    	if (getUDist(origPos, targPos) <= distance)
+    		return;
+    	
+    	setUDist(origPos, targPos, distance);
+    	
+    	Node targ = net.getNodeById(targPos);
+    	
+    	for (Edge edge : targ.getOutEdges()) {
+    		updateUDistanceTarg_r(net, origPos, edge.getTarget().getId(), distance + 1);
+    	}
+    }
+    
+    
+    private void updateUDistanceOrig_r(Net net, int origPos, int targPos, int distance) {
+    	if (distance > 3)
+    		return;
+    	
+    	if (getUDist(origPos, targPos) <= distance)
+    		return;
+    	
+    	updateUDistanceTarg_r(net, origPos, targPos, distance);
+    	
+    	Node orig = net.getNodeById(origPos);
+    	
+    	for (Edge edge : orig.getInEdges()) {
+    		updateUDistanceOrig_r(net, origPos, edge.getOrigin().getId(), distance + 1);
+    	}
+    }
+    
+    
+    public void updateDistancesSmart(Net net, int origPos, int targPos) {
+    	updateUDistanceOrig_r(net, origPos, targPos, 1);
     }
 }

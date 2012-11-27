@@ -11,7 +11,7 @@ import com.telmomenezes.synthetic.io.NetFileType;
 
 
 public class Net implements Cloneable {
-    private static int CURID = 0;
+    private int CURID;
 
     private double minPRIn;
     private double minPROut;
@@ -26,12 +26,12 @@ public class Net implements Cloneable {
     private int edgeCount;
 
     private boolean selfEdges;
-    
-    private DRMap lastMap;
 
     private boolean pageRanksComputed;
     
     public Net() {
+    	CURID = 0;
+    	
         nodeCount = 0;
         edgeCount = 0;
         nodes = new Vector<Node>();
@@ -108,7 +108,7 @@ public class Net implements Cloneable {
         NetFile.saveNet(this, filePath, fileType);
     }
     
-    public Node addNode(Node node) {
+    private Node addNode(Node node) {
         nodeCount++;
         nodes.add(node);
         nodeMap.put(node.getId(), node);
@@ -117,15 +117,6 @@ public class Net implements Cloneable {
     
     public Node addNode() {
         Node node = new Node(CURID++);
-        addNode(node);
-        return node;
-    }
-
-    public Node addNodeWithId(int nid) {
-        if (nid >= CURID) {
-            CURID = nid + 1;
-        }
-        Node node = new Node(nid);
         addNode(node);
         return node;
     }
@@ -226,55 +217,6 @@ public class Net implements Cloneable {
     public Node getRandomNode() {
         int pos = RandomGenerator.instance().random.nextInt(nodeCount);
         return nodes.get(pos);
-    }
-
-    public DRMap getDRMap(int binNumber) {
-        return getDRMapWithLimit(binNumber, minPRIn, maxPRIn, minPROut,
-                maxPROut);
-    }
-
-    public DRMap getDRMapWithLimit(int binNumber, double minValHor, double maxValHor,
-            double minValVer, double maxValVer) {
-
-        double inervalHor = (maxValHor - minValHor) / ((double) binNumber);
-        double intervalVer = (maxValVer - minValVer) / ((double) binNumber);
-
-        DRMap map = new DRMap(binNumber, minValHor - inervalHor, maxValHor,
-                minValVer - intervalVer, maxValVer);
-
-        for (Node node : nodes) {
-            int x = 0;
-            int y = 0;
-            
-            if (!(new Double(node.getPrIn())).isInfinite()) {
-                if (node.getPrIn() <= minValHor) {
-                    x = 0;
-                } else if (node.getPrIn() >= maxValHor) {
-                    x = binNumber - 1;
-                } else {
-                    x = (int) Math.floor((node.getPrIn() - minValHor)
-                            / inervalHor);
-                }
-            }
-            if (!(new Double(node.getPrOut())).isInfinite()) {
-                if (node.getPrOut() <= minValVer) {
-                    y = 0;
-                } else if (node.getPrOut() >= maxValVer) {
-                    y = binNumber - 1;
-                } else {
-                    y = (int) Math.floor((node.getPrOut() - minValVer)
-                            / intervalVer);
-                }
-            }
-
-            if ((x >= 0)
-                    && (y >= 0)
-                    && ((node.getInDegree() != 0) || (node.getOutDegree() != 0))) {
-                map.incValue(x, y);
-            }
-        }
-
-        return map;
     }
 
     public void computePageranks() {
@@ -516,14 +458,6 @@ public class Net implements Cloneable {
 
     public int getEdgeCount() {
         return edgeCount;
-    }
-
-    DRMap getLastMap() {
-        return lastMap;
-    }
-
-    void setLastMap(DRMap lastMap) {
-        this.lastMap = lastMap;
     }
     
     public Vector<Edge> getEdges() {

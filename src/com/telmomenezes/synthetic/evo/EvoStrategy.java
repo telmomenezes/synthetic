@@ -12,7 +12,7 @@ import com.telmomenezes.synthetic.RandomGenerator;
  * 
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
-public class EvoStrategy implements PopGenerator {
+public class EvoStrategy {
 	
 	private int parents;
 	private int mixing;
@@ -32,14 +32,14 @@ public class EvoStrategy implements PopGenerator {
 	public Vector<Generator> newGeneration(EvoGen evo) {
 		
 		// send the parents to the start of the vector by sorting
-		Collections.shuffle(evo.population);
-		Collections.sort(evo.population);
+		Collections.shuffle(evo.getPopulation());
+		Collections.sort(evo.getPopulation());
 		
 		Vector<Generator> newPopulation = new Vector<Generator>();
 		
 		// place parents in new population
 		for (int i = 0; i < parents; i++)
-			newPopulation.add(evo.population.get(i));
+			newPopulation.add(evo.getPopulation().get(i));
 		
 		// generate offspring
 		for (int i = 0; i < children; i++) {

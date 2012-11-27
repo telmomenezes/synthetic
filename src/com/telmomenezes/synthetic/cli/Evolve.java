@@ -32,7 +32,8 @@ public class Evolve extends Command {
         String netfile = cline.getOptionValue("inet");
         String outdir = cline.getOptionValue("odir");
         
-        EvoMix callbacks = new EvoMix(Net.load(netfile), outdir, maxEffort);
+        Net net = Net.load(netfile);
+        EvoMix callbacks = new EvoMix(net, outdir, maxEffort);
         EvoStrategy popGen = new EvoStrategy(1, 1, 1);
         EvoGen evo = new EvoGen(popGen, callbacks, generations);
         

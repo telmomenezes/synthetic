@@ -1,5 +1,7 @@
 package com.telmomenezes.synthetic.evo;
 
+import java.util.Vector;
+
 import com.telmomenezes.synthetic.generators.Generator;
 
 
@@ -8,26 +10,32 @@ import com.telmomenezes.synthetic.generators.Generator;
  * 
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
-public class EvoGen extends Evo {
+public class EvoGen {
     
-	private PopGenerator popgen;
-	private EvoGenCallbacks callbacks;
+	private Vector<Generator> population;
+	private double bestFitness;
+	
+	private EvoStrategy popgen;
+	private EvoMix callbacks;
 	
     // parameters
 	private int generations;
 
     // state
 	private Generator bestGenerator;
-	protected int curgen;
-	protected double bestGenFitness;
-	protected double meanGenoSize;
-	protected double genTime;
-	protected double simTime;
-	protected double fitTime;
+	private int curgen;
+	private double bestGenFitness;
+	private double meanGenoSize;
+	private double genTime;
+	private double simTime;
+	private double fitTime;
 	
 	
-	public EvoGen(PopGenerator popgen, EvoGenCallbacks callbacks, int generations)
+	public EvoGen(EvoStrategy popgen, EvoMix callbacks, int generations)
 	{
+		population = new Vector<Generator>();
+		bestFitness = Double.MAX_VALUE;
+		
 		this.popgen = popgen;
 		this.callbacks = callbacks;
 		
@@ -96,10 +104,6 @@ public class EvoGen extends Evo {
 					callbacks.onNewBest(this);
 				}
 			}
-
-			if (postFitness != null) {
-				postFitness.postProcessFitness(this);
-			}
 			
 			meanGenoSize /= (double)popgen.popSize();
 
@@ -146,12 +150,6 @@ public class EvoGen extends Evo {
 		this.generations = generations;
 	}
 
-
-	public void setCallbacks(EvoGenCallbacks callbacks) {
-		this.callbacks = callbacks;
-	}
-
-
 	public int getCurgen() {
 		return curgen;
 	}
@@ -185,4 +183,12 @@ public class EvoGen extends Evo {
     public Generator getBestGenerator() {
         return bestGenerator;
     }
+
+	public Vector<Generator> getPopulation() {
+		return population;
+	}
+
+	public double getBestFitness() {
+		return bestFitness;
+	}
 }

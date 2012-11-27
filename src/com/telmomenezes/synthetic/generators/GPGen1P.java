@@ -55,7 +55,7 @@ public class GPGen1P extends Generator {
         Node[] nodeArray = new Node[nodeCount];
         double[][] weightArray = new double[nodeCount][nodeCount];
         for (int i = 0; i < nodeCount; i++) {
-            nodeArray[i] = net.addNodeWithId(i);
+            nodeArray[i] = net.addNode();
         }
 
         // create edges
