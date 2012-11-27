@@ -29,7 +29,6 @@ public abstract class Generator implements Comparable<Generator> {
     public boolean simulated;
 
     public double fitness;
-    public double postFitness;
 
     private Vector<ProgSet> executionPaths;
     protected boolean checkPaths;
@@ -50,7 +49,6 @@ public abstract class Generator implements Comparable<Generator> {
 		
 		// init fitness
 		fitness = 0.0;
-		postFitness = 0.0;
 
 		// misc
 		checkPaths = false;
@@ -276,11 +274,6 @@ public abstract class Generator implements Comparable<Generator> {
 
 	public void setSimulated(boolean simulated) {
 		this.simulated = simulated;
-	}
-
-
-	public double getPostFitness() {
-		return postFitness;
 	}
 
 

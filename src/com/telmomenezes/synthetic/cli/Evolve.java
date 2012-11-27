@@ -6,9 +6,7 @@ import java.io.FileWriter;
 import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.evo.EvoMix;
 import com.telmomenezes.synthetic.evo.EvoGen;
-import com.telmomenezes.synthetic.evo.EvoStrategy;
 
 
 public class Evolve extends Command {
@@ -16,7 +14,6 @@ public class Evolve extends Command {
     @Override
     public boolean run(CommandLine cline) {
         // TODO: make configurable
-        double maxEffort = 100000.0;
         int generations = 999999999;
         
         if(!cline.hasOption("inet")) {
@@ -33,9 +30,7 @@ public class Evolve extends Command {
         String outdir = cline.getOptionValue("odir");
         
         Net net = Net.load(netfile);
-        EvoMix callbacks = new EvoMix(net, outdir, maxEffort);
-        EvoStrategy popGen = new EvoStrategy(1, 1, 1);
-        EvoGen evo = new EvoGen(popGen, callbacks, generations);
+        EvoGen evo = new EvoGen(generations, net, outdir);
         
         System.out.println("target net: " + netfile);
         System.out.println(evo.infoString());
