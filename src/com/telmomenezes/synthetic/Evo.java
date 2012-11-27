@@ -1,4 +1,4 @@
-package com.telmomenezes.synthetic.evo;
+package com.telmomenezes.synthetic;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -18,7 +18,7 @@ import com.telmomenezes.synthetic.motifs.TriadicProfile;
  * 
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
-public class EvoGen {
+public class Evo {
     
 	private Vector<Generator> population;
 	private double bestFitness;
@@ -47,20 +47,10 @@ public class EvoGen {
     private int bins;
 	
 	
-	public EvoGen(int generations, Net targNet, String outDir)
+	public Evo(Net targNet, int generations, String outDir)
 	{
 		this.targNet = targNet;
 		this.outDir = outDir;
-		        
-		// down sampling if needed
-		// TODO: configure attenuation and maxNodes
-		/*
-		DownSampler sampler = new DownSampler(targNet, 5, 2000);
-		while (computeEffort(sampleNet) > maxEffort) {
-		sampleNet = sampler.sampleDown();
-		samplingRatio = sampler.getRatio();
-		System.out.println("sampling down: " + samplingRatio + "; max effort: " + maxEffort + "; current effort: " + computeEffort(sampleNet));
-		}*/
 		        
 		bestCount = 0;
 		        
@@ -143,7 +133,7 @@ public class EvoGen {
 				if (((curgen == 0) && (j == 0)) || (generator.fitness < bestFitness)) {
 					bestFitness = generator.fitness;
 					bestGenerator = generator;
-					onNewBest(this);
+					onNewBest();
 				}
 			}
 			
@@ -159,7 +149,7 @@ public class EvoGen {
 			fitTime /= 1000;
 			
 			// onGeneration callback
-			onGeneration(this);
+			onGeneration();
 		}
 	}
 	
@@ -213,9 +203,9 @@ public class EvoGen {
         return dist;
     }
     
-    private void onNewBest(EvoGen evo) {
+    private void onNewBest() {
         String suffix = "" + bestCount + "_gen" + curgen;
-        Generator bestGen = evo.bestGenerator;
+        Generator bestGen = bestGenerator;
         
         // write net
         bestGen.getNet().save(outDir + "/bestnet" + suffix + ".txt", NetFileType.SNAP);
@@ -227,8 +217,8 @@ public class EvoGen {
         bestCount++;
     }
 
-    private void onGeneration(EvoGen evo) {
-        Generator bestGen = evo.bestGenerator;
+    private void onGeneration() {
+        Generator bestGen = bestGenerator;
         double inDegreesDist = bestGen.getMetric("inDegreesDist");
         double outDegreesDist = bestGen.getMetric("outDegreesDist");
         double pageRanksDist = bestGen.getMetric("pageRanksDist");
@@ -238,14 +228,14 @@ public class EvoGen {
         try {
             FileWriter fwriter = new FileWriter(outDir + "/evo.csv", true);
             BufferedWriter writer = new BufferedWriter(fwriter);
-            writer.write("" + evo.curgen + ","
-                    + evo.bestFitness + ","
-                    + evo.bestGenFitness + ","
-                    + evo.bestGenerator.genotypeSize() + ","
-                    + evo.meanGenoSize + ","
-                    + evo.genTime + ","
-                    + evo.simTime + ","
-                    + evo.fitTime + ","
+            writer.write("" + curgen + ","
+                    + bestFitness + ","
+                    + bestGenFitness + ","
+                    + bestGenerator.genotypeSize() + ","
+                    + meanGenoSize + ","
+                    + genTime + ","
+                    + simTime + ","
+                    + fitTime + ","
                     + inDegreesDist + ","
                     + outDegreesDist + ","
                     + pageRanksDist + ","
@@ -256,7 +246,7 @@ public class EvoGen {
             e.printStackTrace();
         }
         
-        System.out.println(evo.genInfoString());
+        System.out.println(genInfoString());
         System.out.println("inDegreesDist: " + inDegreesDist + "; outDegreesDist: " + outDegreesDist + "; pageRanksDist: " + pageRanksDist + "; triadicProfileDist: " + triadicProfileDist );
     }
 	

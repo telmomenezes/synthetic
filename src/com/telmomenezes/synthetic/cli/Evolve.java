@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.evo.EvoGen;
+import com.telmomenezes.synthetic.Evo;
 
 
 public class Evolve extends Command {
@@ -30,7 +30,16 @@ public class Evolve extends Command {
         String outdir = cline.getOptionValue("odir");
         
         Net net = Net.load(netfile);
-        EvoGen evo = new EvoGen(generations, net, outdir);
+        // down sampling if needed
+     	// TODO: configure attenuation and maxNodes
+     	/*
+     	DownSampler sampler = new DownSampler(targNet, 5, 2000);
+     	while (computeEffort(sampleNet) > maxEffort) {
+     		sampleNet = sampler.sampleDown();
+     		samplingRatio = sampler.getRatio();
+     		System.out.println("sampling down: " + samplingRatio + "; max effort: " + maxEffort + "; current effort: " + computeEffort(sampleNet));
+     	}*/
+        Evo evo = new Evo(net, generations, outdir);
         
         System.out.println("target net: " + netfile);
         System.out.println(evo.infoString());
