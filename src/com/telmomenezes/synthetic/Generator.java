@@ -171,41 +171,7 @@ public class Generator implements Comparable<Generator> {
         }
     }
 
-   
-	public double distance(Generator generator) {
-        return 0;
-    }
-    
-    
-    /**
-     * Copies the generator in the parameter to this generator.
-     * 
-     * @param generator to copy from
-     */
-    public void copy(Generator generator) {}
 
-    
-	/**
-     * Creates a String with information about the parameterization of this
-     * generator.
-     * 
-     * @return string with parameters information
-     */
-    public String paramsString() {return "";}
-    
-    
-    /**
-     * Initializes the program set.
-     */
-	public void initProgs()
-	{
-		createProg();
-	}
-
-
-	/**
-     * Randomly initializes the program set.
-     */
 	public void initProgsRandom()
 	{
 		createProg();
@@ -213,13 +179,6 @@ public class Generator implements Comparable<Generator> {
 	}
 
 
-	/**
-     * Recombines the programs in this generator with the ones in the parameter
-     * generator, returning a new child generator.
-     * 
-     * @param parent2 the other parent generator
-     * @return new child generator
-     */
 	public Generator recombine(Generator parent2)
 	{
 		Generator generator = null;
@@ -229,11 +188,6 @@ public class Generator implements Comparable<Generator> {
 	}
 
 
-	/**
-     * Creates a new generator with a program set copied from this one.
-     * 
-     * @return new generator with cloned program set
-     */
 	public Generator cloneProgs()
 	{
 		Generator generator = null;
@@ -243,26 +197,6 @@ public class Generator implements Comparable<Generator> {
 	}
 
 
-	/**
-     * A measure of the genotype size for this generator.
-     * 
-     * Computes the total number of nodes in all the programs in the program set
-     * of this generator.
-     * 
-     * @return total number of nodes in program set
-     */
-	public int genotypeSize()
-	{
-		return prog.size();
-	}
-
-
-	/**
-     * Writes the program set to a text file.
-     * 
-     * @param filePath path to file where programs are to be written
-     * @throws IOException
-     */
 	public void writeProgs(String filePath) throws IOException {
 		FileOutputStream fos = new FileOutputStream(filePath);
 		OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8"); 
@@ -271,10 +205,6 @@ public class Generator implements Comparable<Generator> {
 		fos.close();
 	}
 
-	public void printProgs(boolean evalStats) { 
-        prog.print(evalStats);
-    }
-
 	public void loadProgs(String filePath) throws IOException
 	{
 		createProg();
@@ -282,45 +212,6 @@ public class Generator implements Comparable<Generator> {
 	}
 
 
-	public void dynPruning()
-    {
-		prog.dynPruning();
-    }
-	
-	
-	/**
-     * Reset branching information on the program set.
-     */
-	public void progsClearBranching()
-	{
-		prog.clearBranching();
-	}
-
-
-	/**
-     * Compare branching information between this and the parameter generator.
-     * 
-     * @param generator generator to compare branching information against
-     * @return true if branching is equal, false otherwise
-     */
-	public boolean progsCompareBranching(Generator generator)
-	{
-		return prog.compareBranching(generator.prog);
-	}
-
-
-	/**
-     * Feed a program set to the generator, for the purpose of maintaining a record
-     * of execution paths.
-     * 
-     * Checks if the program set passed in the parameter contains a new
-     * branching configuration. If so, adds it to the set of recorded execution
-     * paths. In any case, returns the index of the execution path in the
-     * program set.
-     * 
-     * @param ps Program set representing an execution path
-     * @return index of execution path in the generator record
-     */
 	public int executionPath(Prog tree)
 	{
 		int pos = 0;
@@ -336,9 +227,6 @@ public class Generator implements Comparable<Generator> {
 	}
 
 
-	/**
-     * Clears record of execution paths.
-     */
 	public void clearExecutionPaths()
 	{
 		executionPaths.clear();

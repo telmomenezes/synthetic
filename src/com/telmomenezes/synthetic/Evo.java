@@ -86,7 +86,7 @@ public class Evo {
 			for (int j = 0; j < 2; j++) {
 				generator = population.get(j);
 
-				meanGenoSize += generator.genotypeSize();
+				meanGenoSize += generator.getProg().size();
 
 				if (!generator.simulated) {
 					long time0 = System.currentTimeMillis();
@@ -205,7 +205,7 @@ public class Evo {
             writer.write("" + curgen + ","
                     + bestFitness + ","
                     + bestGenFitness + ","
-                    + bestGenerator.genotypeSize() + ","
+                    + bestGenerator.getProg().size() + ","
                     + meanGenoSize + ","
                     + genTime + ","
                     + simTime + ","
@@ -239,7 +239,7 @@ public class Evo {
 		String tmpstr = "gen #" + curgen
         	+ "; best fitness: " + bestFitness
         	+ "; best gen fitness: " + bestGenFitness
-        	+ "; best genotype size: " + bestGenerator.genotypeSize()
+        	+ "; best genotype size: " + bestGenerator.getProg().size()
         	+ "; mean genotype size: " + meanGenoSize
         	+ "; gen comp time: " + genTime + "s."
 			+ "; sim comp time: " + simTime + "s."
