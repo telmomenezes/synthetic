@@ -66,7 +66,7 @@ public class Evo {
 		population = new Vector<Generator>();
 		for (int i = 0; i < 2; i++) {
 			Generator gen = new Generator(targNet.getNodeCount(), targNet.getEdgeCount());
-			gen.initProgsRandom();
+			gen.initRandom();
 			population.add(gen);
 		}
 		
@@ -140,12 +140,10 @@ public class Evo {
 		newPopulation.add(parent);
 		
 		// generate offspring
-		Generator child = parent.cloneProgs();
+		Generator child = parent.clone();
 			
 		// mutate
-		Generator random = child.clone();
-		random.initProgsRandom();
-		newPopulation.add(child.recombine(random));
+		newPopulation.add(child.mutate());
 		
 		return newPopulation;
 	}

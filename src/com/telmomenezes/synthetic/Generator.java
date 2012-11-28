@@ -1,9 +1,6 @@
 package com.telmomenezes.synthetic;
 
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -16,16 +13,13 @@ import com.telmomenezes.synthetic.gp.Prog;
 
 
 /**
- * Abstract base class for a network generator.
+ * Network generator.
  * 
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
 public class Generator implements Comparable<Generator> {
     protected int nodeCount;
     protected int edgeCount;
-    
-    protected int cycle;
-    protected int curEdges;
     
 	protected Prog prog;
     public boolean simulated;
@@ -44,32 +38,18 @@ public class Generator implements Comparable<Generator> {
 	public Generator(int nodeCount, int edgeCount) {
 	    this.nodeCount = nodeCount;
 	    this.edgeCount = edgeCount;
-	    
-	    cycle = 0;
-	    
-		prog = null;
 
 		simulated = false;
 		
-		// init fitness
 		fitness = 0.0;
 
-		// misc
 		checkPaths = false;
 		
 		metricTable = new HashMap<String, Double>();
 		
 		samples = nodeCount;
-	}
-
-	
-	public Generator clone() {
-        return new Generator(nodeCount, edgeCount);
-    }
-	
-	
-	public void createProg() {
-        Vector<String> variableNames = new Vector<String>();
+		
+		Vector<String> variableNames = new Vector<String>();
         variableNames.add("origId");
         variableNames.add("targId");
         variableNames.add("origInDeg");
@@ -81,7 +61,15 @@ public class Generator implements Comparable<Generator> {
         variableNames.add("revDist");
         
         prog = new Prog(9, variableNames);
-    }
+	}
+	
+	
+	public Generator clone()
+	{
+		Generator generator = new Generator(nodeCount, edgeCount);
+		generator.prog = prog.clone();
+		return generator;
+	}
 	
     
 	public void run() {
@@ -172,48 +160,26 @@ public class Generator implements Comparable<Generator> {
     }
 
 
-	public void initProgsRandom()
-	{
-		createProg();
+	public void initRandom() {
 		prog.initRandom();
 	}
 
 
-	public Generator recombine(Generator parent2)
-	{
-		Generator generator = null;
-		generator = (Generator)clone();
+	public Generator recombine(Generator parent2) {
+		Generator generator = new Generator(nodeCount, edgeCount);
 		generator.prog = prog.recombine(parent2.prog);
 		return generator;
 	}
-
-
-	public Generator cloneProgs()
-	{
-		Generator generator = null;
-		generator = (Generator)clone();
-		generator.prog = prog.clone();
-		return generator;
+	
+	
+	public Generator mutate() {
+		Generator random = new Generator(nodeCount, edgeCount);
+		random.initRandom();
+		return recombine(random);
 	}
 
 
-	public void writeProgs(String filePath) throws IOException {
-		FileOutputStream fos = new FileOutputStream(filePath);
-		OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8"); 
-		prog.write(out, false);
-		out.close();
-		fos.close();
-	}
-
-	public void loadProgs(String filePath) throws IOException
-	{
-		createProg();
-		prog.load(filePath);
-	}
-
-
-	public int executionPath(Prog tree)
-	{
+	public int executionPath(Prog tree) {
 		int pos = 0;
 		for (Prog path : executionPaths) {
 			if (tree.compareBranching(path))
