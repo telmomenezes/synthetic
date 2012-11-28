@@ -6,7 +6,6 @@ import com.telmomenezes.synthetic.DistMatrix;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.RandomGenerator;
-import com.telmomenezes.synthetic.gp.GenericFunSet;
 import com.telmomenezes.synthetic.gp.ProgSet;
 
 
@@ -40,7 +39,6 @@ public class GPGen1PSampler extends Generator {
         progset = new ProgSet(progcount, variableNames);
         
         progset.varcounts.set(0, 9);
-        progset.funsets.set(0, GenericFunSet.instance().getFunset());
         progset.prognames.set(0, "Prog\n");
     }
 

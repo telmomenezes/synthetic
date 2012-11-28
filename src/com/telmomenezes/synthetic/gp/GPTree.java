@@ -3,7 +3,6 @@ package com.telmomenezes.synthetic.gp;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Vector;
 
 import com.telmomenezes.synthetic.RandomGenerator;
 
@@ -18,25 +17,15 @@ public class GPTree {
 	public double[] vars;
     private GPNode root;
     private int varcount;
-    private Vector<Integer> funset;
     
     private int parsePos;
     
     
-	public GPTree(int varcount, Vector<Integer> funset)
+	public GPTree(int varcount)
 	{
 		this.varcount = varcount;
-		this.funset = funset;
 		vars = new double[varcount];
 		root = null;
-	}
-
-
-	private void destroyGPNode(GPNode node)
-	{
-		for (int i = 0; i < node.arity; i++)
-			destroyGPNode(node.params[i]);
-		GPMemPool.instance().returnNode(node);
 	}
 
 
@@ -134,10 +123,6 @@ public class GPTree {
 					case GPFun.LOG:
                         val = Math.log(curnode.params[0].curval);
                         break;
-					case GPFun.ODD:
-					    long r = Math.round(curnode.params[0].curval);
-                        val = (double)(r % 2);
-                        break;
 					case GPFun.ABS:
                         val = Math.abs(curnode.params[0].curval);
                         break;
@@ -230,10 +215,8 @@ public class GPTree {
 		GPNode node;
 		double p = RandomGenerator.instance().random.nextDouble();
 		if (((!grow) || (p > probTerm)) && (depth < maxDepth)) {
-			int fun;
-			int pos = RandomGenerator.instance().random.nextInt(funset.size());
-			fun = funset.get(pos);
-			node = GPMemPool.instance().getNode();
+			int fun = RandomGenerator.instance().random.nextInt(GPFun.FUN_COUNT);
+			node = new GPNode();
 			node.initFun(fun, parent);
 			for (int i = 0; i < node.arity; i++)
 				node.params[i] = initRandom2(probTerm, node, maxDepth, grow, depth + 1);
@@ -241,7 +224,7 @@ public class GPTree {
 		else {
 			if (RandomGenerator.instance().random.nextBoolean() && (varcount > 0)) {
 				int var = RandomGenerator.instance().random.nextInt(varcount);
-				node = GPMemPool.instance().getNode();
+				node = new GPNode();
 				node.initVar(var, parent);
 			}
 			else {
@@ -257,7 +240,7 @@ public class GPTree {
 				    val = RandomGenerator.instance().random.nextDouble();
 				}
 				
-				node = GPMemPool.instance().getNode();
+				node = new GPNode();
 				node.initVal(val, parent);
 			}
 		}
@@ -279,7 +262,7 @@ public class GPTree {
 
 	private GPNode cloneGPNode(GPNode node, GPNode parent)
 	{
-		GPNode cnode = GPMemPool.instance().getNode();
+		GPNode cnode = new GPNode();
 		switch (node.type) {
 		case VAL:
 			cnode.initVal(node.val, parent);
@@ -303,7 +286,7 @@ public class GPTree {
 
 	public GPTree clone()
 	{
-		GPTree ctree = new GPTree(varcount, funset);
+		GPTree ctree = new GPTree(varcount);
 		ctree.root = cloneGPNode(root, null);
 		return ctree;
 	}
@@ -371,15 +354,14 @@ public class GPTree {
 
 		// remove sub-tree from child
 		// find point1 position in it's parent's param array
-		if (point1parent != null)
+		if (point1parent != null) {
 			for (i = 0; i < point1parent.arity; i++) {
 				if (point1parent.params[i] == point1) {
 					parampos = i;
 					break;
 				}
 			}
-
-		destroyGPNode(point1);
+		}
 
 		// copy sub-tree from parent 2 to parent 1
 		point2clone = cloneGPNode(point2, point1parent);
@@ -438,7 +420,7 @@ public class GPTree {
 		
 		String token = prog.substring(start, end);
 		
-		GPNode node = GPMemPool.instance().getNode();
+		GPNode node = new GPNode();
 
 		try {
 			double val = new Double(token);
@@ -472,8 +454,6 @@ public class GPTree {
                     fun = GPFun.EXP;
 				else if (token.equals("LOG"))
                     fun = GPFun.LOG;
-				else if (token.equals("ODD"))
-                    fun = GPFun.ODD;
 				else if (token.equals("ABS"))
                     fun = GPFun.ABS;
 				else if (token.equals("MIN"))
@@ -569,8 +549,6 @@ public class GPTree {
 			targNode.params[i] = origNode.params[i];
 			targNode.params[i].parent = targNode;
 		}
-
-		GPMemPool.instance().returnNode(origNode);
 	}
 
 
@@ -584,8 +562,6 @@ public class GPTree {
 	{
 		// nodes with constant value
 		if (node.dynStatus == GPNodeDynStatus.CONSTANT) {
-			for (int i = 0; i < node.arity; i++)
-				destroyGPNode(node.params[i]);
 			node.initVal(node.curval, node.parent);
 		}
 
@@ -602,10 +578,6 @@ public class GPTree {
 				branch = node.condpos;
 
 			if (branch > 0) {
-				for (int i = 0; i < node.arity; i++)
-					if (i != branch)
-						destroyGPNode(node.params[i]);
-
 				moveUp(node.params[branch], node);
 			}
 		}

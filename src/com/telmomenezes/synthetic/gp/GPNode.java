@@ -80,7 +80,6 @@ public class GPNode {
         switch (fun) {
         case GPFun.EXP:
         case GPFun.LOG:
-        case GPFun.ODD:
         case GPFun.ABS:
             return 1;
         case GPFun.SUM:
@@ -150,9 +149,6 @@ public class GPNode {
                 break;
             case GPFun.MAX:
                 out.write("MAX");
-                break;
-            case GPFun.ODD:
-                out.write("ODD");
                 break;
             default:
                 out.write("F??");

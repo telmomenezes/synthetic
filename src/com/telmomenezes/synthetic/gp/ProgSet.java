@@ -26,7 +26,6 @@ public class ProgSet {
 	public int progcount;
     public GPTree[] progs;
     public Vector<String> prognames;
-    public Vector<Vector<Integer>> funsets;
     public Vector<Integer> varcounts;
     private Vector<String> variableNames;
     private Map<String, Integer> variableIndices;
@@ -43,7 +42,6 @@ public class ProgSet {
     	}
     	
     	prognames = new Vector<String>();
-    	funsets = new Vector<Vector<Integer>>();
     	varcounts = new Vector<Integer>();
     	
     	// init progs
@@ -51,7 +49,6 @@ public class ProgSet {
     	for (int i = 0; i < progcount; i++) {
     		progs[i] = null;
     		prognames.add("?");
-    		funsets.add(null);
     		varcounts.add(0);
     	}
     }
@@ -60,7 +57,7 @@ public class ProgSet {
     public void init()
     {
     	for (int i = 0; i < progcount; i++)
-    		progs[i] = new GPTree(varcounts.get(i), funsets.get(i));
+    		progs[i] = new GPTree(varcounts.get(i));
     }
 
 
@@ -100,7 +97,6 @@ public class ProgSet {
 
     	for (int i = 0; i < progcount; i++) {
     		ps.prognames.set(i, prognames.get(i));
-    		ps.funsets.set(i, funsets.get(i));
     		ps.varcounts.set(i, varcounts.get(i));
     	}
 

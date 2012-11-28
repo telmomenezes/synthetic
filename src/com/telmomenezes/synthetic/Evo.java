@@ -5,12 +5,10 @@ import java.io.FileWriter;
 import java.util.Collections;
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.Distrib;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.generators.GPGen1PSampler;
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
-import com.telmomenezes.synthetic.motifs.TriadicProfile;
 
 
 /**
@@ -39,10 +37,7 @@ public class Evo {
 	private String outDir;
     private int bestCount;
     
-    private Distrib targInDegrees;
-    private Distrib targOutDegrees;
-    private Distrib targPageRanks;
-    private TriadicProfile targTriadicProfile;
+    private MetricsBag targBag;
     
     private int bins;
 	
@@ -50,54 +45,35 @@ public class Evo {
 	public Evo(Net targNet, int generations, String outDir)
 	{
 		this.targNet = targNet;
+		this.generations = generations;
 		this.outDir = outDir;
-		        
-		bestCount = 0;
-		        
-		// compute target distributions
+		
 		bins = 10;
-		targInDegrees = new Distrib(targNet.inDegSeq(), bins);
-		targOutDegrees = new Distrib(targNet.outDegSeq(), bins);
-		targPageRanks = new Distrib(targNet.prInSeq(), bins);
-		        
-		targTriadicProfile = new TriadicProfile(targNet);
-		        
-		// write header of evo.csv
-		try {
-			FileWriter fwriter = new FileWriter(outDir + "/evo.csv");
-		    BufferedWriter writer = new BufferedWriter(fwriter);
-		    writer.write("gen,best_fit,best_gen_fit,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,in_degrees_dist,out_degrees_dist,pageranks_dist,triadic_profile_dist\n");
-		    writer.close() ;
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		population = new Vector<Generator>();
+		targBag = new MetricsBag(targNet, bins);
+	}
+	
+	public void run()
+	{
+		// init state
+		meanGenoSize = 0;
+		genTime = 0;
+		simTime = 0;
+		fitTime = 0;
+		bestGenerator = null;
 		bestFitness = Double.MAX_VALUE;
-		
+		bestGenFitness = Double.MAX_VALUE;
+		bestCount = 0;
+		writeLogHeader();
+	
+		// init population
+		population = new Vector<Generator>();
 		for (int i = 0; i < 2; i++) {
 			Generator gen = new GPGen1PSampler(targNet.getNodeCount(), targNet.getEdgeCount());
 			gen.initProgsRandom();
 			population.add(gen);
 		}
 		
-		// default values
-		this.generations = generations;
-
-		// init state
-		bestGenerator = null;
-		curgen = 0;
-		bestFitness = Double.MAX_VALUE;
-		bestGenFitness = Double.MAX_VALUE;
-		meanGenoSize = 0;
-		genTime = 0;
-		simTime = 0;
-		fitTime = 0;
-	}
-	
-	public void run()
-	{
+		// evolve
 		for(curgen = 0; curgen < generations; curgen++) {
 
 			long startTime = System.currentTimeMillis();
@@ -181,26 +157,14 @@ public class Evo {
 	private double computeFitness(Generator gen) {
         Net net = gen.getNet();
         
-        double inDegreesDist = (new Distrib(net.inDegSeq(), bins, targInDegrees)).emdDistance(targInDegrees);
-        double outDegreesDist = (new Distrib(net.outDegSeq(), bins, targOutDegrees)).emdDistance(targOutDegrees);
-        double pageRanksDist = (new Distrib(net.prInSeq(), bins, targPageRanks)).emdDistance(targPageRanks);
-        double triadicProfileDist = (new TriadicProfile(net)).emdDistance(targTriadicProfile);
-    
-        gen.setMetric("inDegreesDist", inDegreesDist);
-        gen.setMetric("outDegreesDist", outDegreesDist);
-        gen.setMetric("pageRanksDist", pageRanksDist);
-        gen.setMetric("triadicProfileDist", triadicProfileDist);
+        MetricsBag genBag = new MetricsBag(net, bins, targBag);
+
+        gen.setMetric("inDegreesDist", genBag.getInDegreesDist());
+        gen.setMetric("outDegreesDist", genBag.getOutDegreesDist());
+        gen.setMetric("pageRanksDist", genBag.getPageRanksDist());
+        gen.setMetric("triadicProfileDist", genBag.getTriadicProfileDist());
         
-        double verySmall = 0.999;
-        if (inDegreesDist == 0) inDegreesDist = verySmall;
-        if (outDegreesDist == 0) outDegreesDist = verySmall;
-        if (pageRanksDist == 0) pageRanksDist = verySmall;
-        if (triadicProfileDist == 0) triadicProfileDist = verySmall;
-        
-        double dist = inDegreesDist * outDegreesDist * pageRanksDist * triadicProfileDist;
-        dist = Math.pow(dist, 1.0 / 4.0);
-        
-        return dist;
+        return genBag.getDistance();
     }
     
     private void onNewBest() {
@@ -217,6 +181,19 @@ public class Evo {
         bestCount++;
     }
 
+    private void writeLogHeader() {
+    	// write header of evo.csv
+    	try {
+    		FileWriter fwriter = new FileWriter(outDir + "/evo.csv");
+    		BufferedWriter writer = new BufferedWriter(fwriter);
+    		writer.write("gen,best_fit,best_gen_fit,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,in_degrees_dist,out_degrees_dist,pageranks_dist,triadic_profile_dist\n");
+    		writer.close() ;
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
+    
     private void onGeneration() {
         Generator bestGen = bestGenerator;
         double inDegreesDist = bestGen.getMetric("inDegreesDist");

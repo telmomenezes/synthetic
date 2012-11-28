@@ -7,6 +7,8 @@ package com.telmomenezes.synthetic.gp;
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
 public class GPFun {
+	public final static int FUN_COUNT = 13;
+	
 	public final static int SUM = 0;
 	public final static int SUB = 1;
 	public final static int MUL = 2;
@@ -20,5 +22,4 @@ public class GPFun {
 	public final static int ABS = 10;
 	public final static int MIN = 11;
 	public final static int MAX = 12;
-	public final static int ODD = 13;
 }
