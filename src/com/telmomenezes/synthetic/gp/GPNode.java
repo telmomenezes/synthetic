@@ -28,8 +28,11 @@ public class GPNode {
     
     public int evals;
     public int lastEval;
+    
+    private GPTree tree;
 
-    public GPNode() {
+    public GPNode(GPTree tree) {
+    	this.tree = tree;
         params = new GPNode[4];
     }
 
@@ -101,13 +104,13 @@ public class GPNode {
         }
     }
 
-    public void write(OutputStreamWriter out, ProgSet progSet, boolean evalStats)
+    public void write(OutputStreamWriter out, boolean evalStats)
             throws IOException {
         if (type == GPNodeType.VAL) {
             out.write("" + val);
         }
         else if (type == GPNodeType.VAR) {
-            out.write("$" + progSet.getVariableNames().get(var));
+            out.write("$" + tree.getVariableNames().get(var));
         }
         else if (type == GPNodeType.FUN) {
             switch (fun) {

@@ -1,8 +1,16 @@
 package com.telmomenezes.synthetic.gp;
 
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 import com.telmomenezes.synthetic.RandomGenerator;
 
@@ -20,12 +28,22 @@ public class GPTree {
     
     private int parsePos;
     
+    private Vector<String> variableNames;
+    private Map<String, Integer> variableIndices;
     
-	public GPTree(int varcount)
+    
+	public GPTree(int varcount, Vector<String> variableNames)
 	{
 		this.varcount = varcount;
 		vars = new double[varcount];
 		root = null;
+		
+		this.variableNames = variableNames;
+    	// initialize variable indices table
+    	variableIndices = new HashMap<String, Integer>();
+    	for (int i = 0; i < variableNames.size(); i++) {
+    	    variableIndices.put(variableNames.get(i), i);
+    	}
 	}
 
 
@@ -172,7 +190,7 @@ public class GPTree {
 	}
 
 
-	private void write2(GPNode node, int indent, OutputStreamWriter out, ProgSet progSet, boolean evalStats) throws IOException
+	private void write2(GPNode node, int indent, OutputStreamWriter out, boolean evalStats) throws IOException
 	{
 		int ind = indent;
 
@@ -185,11 +203,11 @@ public class GPTree {
 			ind++;
 		}
 
-		node.write(out, progSet, evalStats);
+		node.write(out, evalStats);
 
 		for (int i = 0; i < node.arity; i++) {
 			out.write(" ");
-			write2(node.params[i], ind, out, progSet, evalStats);
+			write2(node.params[i], ind, out, evalStats);
 		}
 
 		if (node.arity > 0) {
@@ -199,11 +217,60 @@ public class GPTree {
 	}
 
 
-	public void write(OutputStreamWriter out, ProgSet progSet, boolean evalStats) throws IOException
+	public void write(OutputStreamWriter out, boolean evalStats) throws IOException
 	{
-		write2(root, 0, out, progSet, evalStats);
+		write2(root, 0, out, evalStats);
 		out.write("\n");
 	}
+	
+	
+	public void write(String filePath) {
+        try {
+            FileOutputStream fstream = new FileOutputStream(filePath);
+            OutputStreamWriter out = new OutputStreamWriter(fstream);
+            write(out, false);
+            out.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void print(boolean evalStats) {
+        try {
+            write(new OutputStreamWriter(System.out), evalStats);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    public void load(String filePath) throws IOException
+    {
+        FileInputStream fstream = new FileInputStream(filePath);
+        DataInputStream in = new DataInputStream(fstream);
+        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        
+        String line = br.readLine();
+    	 
+    	while ((line.equals(""))
+    			|| (line.charAt(0) == '\n')
+    			|| (line.charAt(0) == '#'))
+    		line = br.readLine();
+        
+    	String prog = "";
+    	while (!line.equals("")
+    			&& (line.charAt(0) != '\n')
+    			&& (line.charAt(0) != '#')) {
+    		prog += line;
+    		line = br.readLine();
+    	}
+
+    	parse(prog);
+    		
+    	in.close();
+    }
 
 
 	private GPNode initRandom2(double probTerm,
@@ -216,7 +283,7 @@ public class GPTree {
 		double p = RandomGenerator.instance().random.nextDouble();
 		if (((!grow) || (p > probTerm)) && (depth < maxDepth)) {
 			int fun = RandomGenerator.instance().random.nextInt(GPFun.FUN_COUNT);
-			node = new GPNode();
+			node = new GPNode(this);
 			node.initFun(fun, parent);
 			for (int i = 0; i < node.arity; i++)
 				node.params[i] = initRandom2(probTerm, node, maxDepth, grow, depth + 1);
@@ -224,7 +291,7 @@ public class GPTree {
 		else {
 			if (RandomGenerator.instance().random.nextBoolean() && (varcount > 0)) {
 				int var = RandomGenerator.instance().random.nextInt(varcount);
-				node = new GPNode();
+				node = new GPNode(this);
 				node.initVar(var, parent);
 			}
 			else {
@@ -240,7 +307,7 @@ public class GPTree {
 				    val = RandomGenerator.instance().random.nextDouble();
 				}
 				
-				node = new GPNode();
+				node = new GPNode(this);
 				node.initVal(val, parent);
 			}
 		}
@@ -259,10 +326,14 @@ public class GPTree {
 		root = initRandom2(probTerm, null, max_depth, grow, 0);
 	}
 
+	public void initRandom()
+    {
+		initRandom(0.4, 2, 5);
+    }
 
 	private GPNode cloneGPNode(GPNode node, GPNode parent)
 	{
-		GPNode cnode = new GPNode();
+		GPNode cnode = new GPNode(this);
 		switch (node.type) {
 		case VAL:
 			cnode.initVal(node.val, parent);
@@ -286,7 +357,7 @@ public class GPTree {
 
 	public GPTree clone()
 	{
-		GPTree ctree = new GPTree(varcount);
+		GPTree ctree = new GPTree(varcount, variableNames);
 		ctree.root = cloneGPNode(root, null);
 		return ctree;
 	}
@@ -413,14 +484,14 @@ public class GPTree {
 	}
 
 
-	private GPNode parse2(String prog, GPNode parent, ProgSet progSet)
+	private GPNode parse2(String prog, GPNode parent)
 	{
 		int start = tokenStart(prog);
 		int end = tokenEnd(prog, start);
 		
 		String token = prog.substring(start, end);
 		
-		GPNode node = new GPNode();
+		GPNode node = new GPNode(this);
 
 		try {
 			double val = new Double(token);
@@ -429,7 +500,7 @@ public class GPTree {
 		catch (Exception e) {
 		
 			if (token.charAt(0) == '$') {
-				int var = progSet.getVariableIndices().get(token.substring(1));
+				int var = variableIndices.get(token.substring(1));
 				node.initVar(var, parent);
 			}
 			else {
@@ -466,7 +537,7 @@ public class GPTree {
 				parsePos = end;
 			
 				for (int i = 0; i < node.arity; i++) {
-					node.params[i] = parse2(prog, node, progSet);
+					node.params[i] = parse2(prog, node);
 				}
 
 				return node;
@@ -478,10 +549,10 @@ public class GPTree {
 	}
 
 
-	public void parse(String prog, ProgSet progSet)
+	public void parse(String prog)
 	{
 		parsePos = 0;
-		root = parse2(prog, null, progSet);
+		root = parse2(prog, null);
 	}
 
 
@@ -528,6 +599,12 @@ public class GPTree {
 		return distance;
 	}
 
+	
+	public boolean compareBranching(GPTree tree)
+    {
+		return (branchingDistance(tree) == 0);
+    }
+	
 
 	private void moveUp(GPNode origNode, GPNode targNode)
 	{
@@ -585,4 +662,9 @@ public class GPTree {
 		for (int i = 0; i < node.arity; i++)
 			dynPruning2(node.params[i]);
 	}
+	
+	
+	public Vector<String> getVariableNames() {
+        return variableNames;
+    }
 }

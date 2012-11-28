@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.gp.ProgSet;
+import com.telmomenezes.synthetic.gp.GPTree;
 
 
 /**
@@ -24,13 +24,13 @@ public abstract class Generator implements Comparable<Generator> {
     protected int cycle;
     protected int curEdges;
     
-	protected ProgSet progset;
+	protected GPTree prog;
     protected int progcount;
     public boolean simulated;
 
     public double fitness;
 
-    private Vector<ProgSet> executionPaths;
+    private Vector<GPTree> executionPaths;
     protected boolean checkPaths;
     
     protected Net net;
@@ -43,7 +43,7 @@ public abstract class Generator implements Comparable<Generator> {
 	    
 	    cycle = 0;
 	    
-		progset = null;
+		prog = null;
 
 		simulated = false;
 		
@@ -68,7 +68,7 @@ public abstract class Generator implements Comparable<Generator> {
 	/**
      * Creates the program set.
      */
-    public abstract void createProgSet();
+    public abstract void createProg();
 	
     
     /**
@@ -108,8 +108,7 @@ public abstract class Generator implements Comparable<Generator> {
      */
 	public void initProgs()
 	{
-		createProgSet();
-		progset.init();
+		createProg();
 	}
 
 
@@ -118,8 +117,8 @@ public abstract class Generator implements Comparable<Generator> {
      */
 	public void initProgsRandom()
 	{
-		createProgSet();
-		progset.initRandom();
+		createProg();
+		prog.initRandom();
 	}
 
 
@@ -134,7 +133,7 @@ public abstract class Generator implements Comparable<Generator> {
 	{
 		Generator generator = null;
 		generator = (Generator)clone();
-		generator.progset = progset.recombine(parent2.progset);
+		generator.prog = prog.recombine(parent2.prog);
 		return generator;
 	}
 
@@ -148,7 +147,7 @@ public abstract class Generator implements Comparable<Generator> {
 	{
 		Generator generator = null;
 		generator = (Generator)clone();
-		generator.progset = progset.clone(true);
+		generator.prog = prog.clone();
 		return generator;
 	}
 
@@ -163,7 +162,7 @@ public abstract class Generator implements Comparable<Generator> {
      */
 	public int genotypeSize()
 	{
-		return progset.size();
+		return prog.size();
 	}
 
 
@@ -176,25 +175,25 @@ public abstract class Generator implements Comparable<Generator> {
 	public void writeProgs(String filePath) throws IOException {
 		FileOutputStream fos = new FileOutputStream(filePath);
 		OutputStreamWriter out = new OutputStreamWriter(fos, "UTF-8"); 
-		progset.write(out, false);
+		prog.write(out, false);
 		out.close();
 		fos.close();
 	}
 
 	public void printProgs(boolean evalStats) { 
-        progset.print(evalStats);
+        prog.print(evalStats);
     }
 
 	public void loadProgs(String filePath) throws IOException
 	{
-		createProgSet();
-		progset.load(filePath);
+		createProg();
+		prog.load(filePath);
 	}
 
 
 	public void dynPruning()
     {
-		progset.dynPruning();
+		prog.dynPruning();
     }
 	
 	
@@ -203,7 +202,7 @@ public abstract class Generator implements Comparable<Generator> {
      */
 	public void progsClearBranching()
 	{
-		progset.clearBranching();
+		prog.clearBranching();
 	}
 
 
@@ -215,7 +214,7 @@ public abstract class Generator implements Comparable<Generator> {
      */
 	public boolean progsCompareBranching(Generator generator)
 	{
-		return progset.compareBranching(generator.progset);
+		return prog.compareBranching(generator.prog);
 	}
 
 
@@ -231,17 +230,17 @@ public abstract class Generator implements Comparable<Generator> {
      * @param ps Program set representing an execution path
      * @return index of execution path in the generator record
      */
-	public int executionPath(ProgSet ps)
+	public int executionPath(GPTree tree)
 	{
 		int pos = 0;
-		for (ProgSet path : executionPaths) {
-			if (ps.compareBranching(path))
+		for (GPTree path : executionPaths) {
+			if (tree.compareBranching(path))
 				return pos;
 
 			pos++;
 		}
 
-		executionPaths.add(ps.clone(true));
+		executionPaths.add(tree.clone());
 		return pos;
 	}
 
@@ -285,11 +284,11 @@ public abstract class Generator implements Comparable<Generator> {
 	public void setCheckPaths(boolean checkPaths) {
 		this.checkPaths = checkPaths;
 		if (checkPaths)
-			executionPaths = new Vector<ProgSet>();
+			executionPaths = new Vector<GPTree>();
 	}
 
 
-	public Vector<ProgSet> getExecutionPaths() {
+	public Vector<GPTree> getExecutionPaths() {
 		return executionPaths;
 	}
 
@@ -313,8 +312,8 @@ public abstract class Generator implements Comparable<Generator> {
         this.edgeCount = edgeCount;
     }
 
-    public ProgSet getProgset() {
-        return progset;
+    public GPTree getProg() {
+        return prog;
     }
     
     public Net getNet() {

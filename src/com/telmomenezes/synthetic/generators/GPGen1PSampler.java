@@ -6,7 +6,7 @@ import com.telmomenezes.synthetic.DistMatrix;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.RandomGenerator;
-import com.telmomenezes.synthetic.gp.ProgSet;
+import com.telmomenezes.synthetic.gp.GPTree;
 
 
 /**
@@ -22,7 +22,7 @@ public class GPGen1PSampler extends Generator {
     }
     
     @Override
-    public void createProgSet() {
+    public void createProg() {
         progcount = 1;
         
         Vector<String> variableNames = new Vector<String>();
@@ -36,17 +36,14 @@ public class GPGen1PSampler extends Generator {
         variableNames.add("dirDist");
         variableNames.add("revDist");
         
-        progset = new ProgSet(progcount, variableNames);
-        
-        progset.varcounts.set(0, 9);
-        progset.prognames.set(0, "Prog\n");
+        prog = new GPTree(9, variableNames);
     }
 
     @Override
     public void run() {
     	System.out.println("running generator");
         // reset eval stats
-        progset.clearEvalStats();
+        prog.clearEvalStats();
         
         // init DistMatrix
         DistMatrix.instance().setNodes(nodeCount);
@@ -81,17 +78,17 @@ public class GPGen1PSampler extends Generator {
                 double directDistance = DistMatrix.instance().getDDist(origNode.getId(), targNode.getId());
                 double reverseDistance = DistMatrix.instance().getDDist(targNode.getId(), origNode.getId());
                     
-                progset.progs[0].vars[0] = (double)origIndex;
-                progset.progs[0].vars[1] = (double)targIndex;
-                progset.progs[0].vars[2] = (double)origNode.getInDegree();
-                progset.progs[0].vars[3] = (double)origNode.getOutDegree();
-                progset.progs[0].vars[4] = (double)targNode.getInDegree();
-                progset.progs[0].vars[5] = (double)targNode.getOutDegree();
-                progset.progs[0].vars[6] = undirectedDistance;
-                progset.progs[0].vars[7] = directDistance;
-                progset.progs[0].vars[8] = reverseDistance;
+                prog.vars[0] = (double)origIndex;
+                prog.vars[1] = (double)targIndex;
+                prog.vars[2] = (double)origNode.getInDegree();
+                prog.vars[3] = (double)origNode.getOutDegree();
+                prog.vars[4] = (double)targNode.getInDegree();
+                prog.vars[5] = (double)targNode.getOutDegree();
+                prog.vars[6] = undirectedDistance;
+                prog.vars[7] = directDistance;
+                prog.vars[8] = reverseDistance;
                     
-                double weight = progset.progs[0].eval(i);
+                double weight = prog.eval(i);
                 if (weight < 0) {
                     weight = 0;
                 }
