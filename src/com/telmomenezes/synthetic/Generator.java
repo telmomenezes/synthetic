@@ -12,7 +12,7 @@ import com.telmomenezes.synthetic.DistMatrix;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.RandomGenerator;
-import com.telmomenezes.synthetic.gp.GPTree;
+import com.telmomenezes.synthetic.gp.Prog;
 
 
 /**
@@ -27,12 +27,12 @@ public class Generator implements Comparable<Generator> {
     protected int cycle;
     protected int curEdges;
     
-	protected GPTree prog;
+	protected Prog prog;
     public boolean simulated;
 
     public double fitness;
 
-    private Vector<GPTree> executionPaths;
+    private Vector<Prog> executionPaths;
     protected boolean checkPaths;
     
     protected Net net;
@@ -80,7 +80,7 @@ public class Generator implements Comparable<Generator> {
         variableNames.add("dirDist");
         variableNames.add("revDist");
         
-        prog = new GPTree(9, variableNames);
+        prog = new Prog(9, variableNames);
     }
 	
     
@@ -321,10 +321,10 @@ public class Generator implements Comparable<Generator> {
      * @param ps Program set representing an execution path
      * @return index of execution path in the generator record
      */
-	public int executionPath(GPTree tree)
+	public int executionPath(Prog tree)
 	{
 		int pos = 0;
-		for (GPTree path : executionPaths) {
+		for (Prog path : executionPaths) {
 			if (tree.compareBranching(path))
 				return pos;
 
@@ -375,11 +375,11 @@ public class Generator implements Comparable<Generator> {
 	public void setCheckPaths(boolean checkPaths) {
 		this.checkPaths = checkPaths;
 		if (checkPaths)
-			executionPaths = new Vector<GPTree>();
+			executionPaths = new Vector<Prog>();
 	}
 
 
-	public Vector<GPTree> getExecutionPaths() {
+	public Vector<Prog> getExecutionPaths() {
 		return executionPaths;
 	}
 
@@ -403,7 +403,7 @@ public class Generator implements Comparable<Generator> {
         this.edgeCount = edgeCount;
     }
 
-    public GPTree getProg() {
+    public Prog getProg() {
         return prog;
     }
     

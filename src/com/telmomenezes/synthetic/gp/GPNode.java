@@ -29,9 +29,9 @@ public class GPNode {
     public int evals;
     public int lastEval;
     
-    private GPTree tree;
+    private Prog tree;
 
-    public GPNode(GPTree tree) {
+    public GPNode(Prog tree) {
     	this.tree = tree;
         params = new GPNode[4];
     }

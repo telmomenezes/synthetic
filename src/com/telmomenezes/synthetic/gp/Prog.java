@@ -20,7 +20,7 @@ import com.telmomenezes.synthetic.RandomGenerator;
  * 
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
-public class GPTree {
+public class Prog {
 
 	public double[] vars;
     private GPNode root;
@@ -32,7 +32,7 @@ public class GPTree {
     private Map<String, Integer> variableIndices;
     
     
-	public GPTree(int varcount, Vector<String> variableNames)
+	public Prog(int varcount, Vector<String> variableNames)
 	{
 		this.varcount = varcount;
 		vars = new double[varcount];
@@ -355,9 +355,9 @@ public class GPTree {
 	}
 
 
-	public GPTree clone()
+	public Prog clone()
 	{
-		GPTree ctree = new GPTree(varcount, variableNames);
+		Prog ctree = new Prog(varcount, variableNames);
 		ctree.root = cloneGPNode(root, null);
 		return ctree;
 	}
@@ -407,9 +407,9 @@ public class GPTree {
 	}
 
 
-	public GPTree recombine(GPTree parent2)
+	public Prog recombine(Prog parent2)
 	{
-		GPTree child = clone();
+		Prog child = clone();
 		int size1 = size();
 		int size2 = parent2.size();
 		int pos1 = RandomGenerator.instance().random.nextInt(size1);
@@ -583,7 +583,7 @@ public class GPTree {
         clearEvalStats2(root);
     }
 
-	public int branchingDistance(GPTree tree)
+	public int branchingDistance(Prog tree)
 	{
 		return branchingDistance2(root, tree.root);
 	}
@@ -600,7 +600,7 @@ public class GPTree {
 	}
 
 	
-	public boolean compareBranching(GPTree tree)
+	public boolean compareBranching(Prog tree)
     {
 		return (branchingDistance(tree) == 0);
     }
