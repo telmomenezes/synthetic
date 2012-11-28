@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.generators.GPGen1PSampler;
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
 
@@ -68,7 +67,7 @@ public class Evo {
 		// init population
 		population = new Vector<Generator>();
 		for (int i = 0; i < 2; i++) {
-			Generator gen = new GPGen1PSampler(targNet.getNodeCount(), targNet.getEdgeCount());
+			Generator gen = new Generator(targNet.getNodeCount(), targNet.getEdgeCount());
 			gen.initProgsRandom();
 			population.add(gen);
 		}
