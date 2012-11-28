@@ -5,8 +5,6 @@ import java.io.FileWriter;
 import java.util.Collections;
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
 
 

@@ -1,4 +1,4 @@
-package com.telmomenezes.synthetic.generators;
+package com.telmomenezes.synthetic;
 
 
 import java.io.FileOutputStream;
