@@ -68,7 +68,7 @@ public class SNAPNetFile extends NetFile {
     
     static public void main(String[] args) {
         SNAPNetFile snf = new SNAPNetFile();
-        Net net = snf.load("wiki-Vote.txt");
+        Net net = snf.load("ownership.txt");
         System.out.println(net);
     }
 }

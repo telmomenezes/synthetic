@@ -48,6 +48,7 @@ public class Generator implements Comparable<Generator> {
 		metricTable = new HashMap<String, Double>();
 		
 		samples = nodeCount;
+		//samples = 1000;
 		
 		Vector<String> variableNames = new Vector<String>();
         variableNames.add("origId");
@@ -93,7 +94,7 @@ public class Generator implements Comparable<Generator> {
 
         // create edges
         for (int i = 0; i < edgeCount; i++) {
-        	//System.out.println("creating edge: " + i);
+        	//System.out.println("edge: " + i);
             double totalWeight = 0;
             for (int j = 0; j < samples; j++) {
             	int origIndex = 0;
@@ -121,6 +122,7 @@ public class Generator implements Comparable<Generator> {
                 prog.vars[8] = reverseDistance;
                     
                 double weight = prog.eval(i);
+                //double weight = 1.0;
                 if (weight < 0) {
                     weight = 0;
                 }

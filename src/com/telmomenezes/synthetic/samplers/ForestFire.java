@@ -28,7 +28,7 @@ public class ForestFire {
         List<Node> candidates = new LinkedList<Node>();
         for (Edge edge : node.getOutEdges()) {
             Node outNode = edge.getTarget();
-            if (!outNode.isFlag()) {
+            if (!outNode.getFlag()) {
                 candidates.add(outNode);
             }
         }
@@ -65,7 +65,7 @@ public class ForestFire {
         
         while (sampleNodeCount < targNodeCount) {
             Node node = origNet.getRandomNode();
-            if (!node.isFlag()) {
+            if (!node.getFlag()) {
                 node.setFlag(true);
                 sampleNodeCount++;
                 sampleRec(node);

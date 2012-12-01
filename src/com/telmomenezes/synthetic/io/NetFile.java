@@ -22,7 +22,11 @@ public abstract class NetFile {
         ext = ext.toLowerCase();
             
         Net net = null;
-        if (ext.equals("snap")) {
+        if (ext.equals("txt")) {
+            net = (new SNAPNetFile()).load(filePath);
+            return net;
+        }
+        else if (ext.equals("snap")) {
             net = (new SNAPNetFile()).load(filePath);
             return net;
         }

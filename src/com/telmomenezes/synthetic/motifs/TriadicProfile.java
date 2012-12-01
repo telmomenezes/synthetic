@@ -1,6 +1,7 @@
 package com.telmomenezes.synthetic.motifs;
 
 import com.telmomenezes.synthetic.Edge;
+import com.telmomenezes.synthetic.Generator;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.emd.JFastEMD;
@@ -107,19 +108,24 @@ public class TriadicProfile {
         Node[] triad = new Node[3];
         profile = new long[13];
 
-        for (int i = 0; i < 13; i++)
+        for (int i = 0; i < 13; i++) {
             profile[i] = 0;
+        }
 
         // search for triads starting on each node
+        int nodeCount = 0;
+        //while (net.getNodeCount() > 0) {
+        	//Node node = net.getNodes().get(0);
         for (Node node : net.getNodes()) {
             triad[0] = node;
             triadProfileRec(triad, 0, profile);
-            node.setFlag(false);
+            //System.out.println("* " + nodeCount);
+            nodeCount++;
+            //net.removeNode(node);
         }
     }
     
-    private Signature getEmdSignature()
-    {
+    private Signature getEmdSignature() {
         FeatureTriadic[] features = new FeatureTriadic[13];
         double[] weights = new double[13];
 
@@ -137,6 +143,7 @@ public class TriadicProfile {
         return signature;
     }
     
+    
     public double emdDistance(TriadicProfile profile) {
         Signature sig1 = getEmdSignature();
         Signature sig2 = profile.getEmdSignature();
@@ -144,8 +151,19 @@ public class TriadicProfile {
         return JFastEMD.distance(sig1, sig2, -1);
     }
     
+    
+    public long[] getProfile() {
+        return profile;
+    }
+    
+    
     static public void main(String[] args) {
-        Net net = Net.load("celegansneural.gml");
+    	Generator gen = new Generator(7115, 103689);
+        gen.initRandom();
+    	gen.run();
+    	Net net = gen.getNet();
+    	//Net net = Net.load("wiki-Vote.snap");
+    	System.out.println("computing triadic profile");
         TriadicProfile tp = new TriadicProfile(net);
         System.out.println(net);
         long[] profile = tp.getProfile();
@@ -153,9 +171,5 @@ public class TriadicProfile {
         for (long p : profile)
             System.out.print(" " + p);
         System.out.println();
-    }
-
-    public long[] getProfile() {
-        return profile;
     }
 }

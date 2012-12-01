@@ -9,7 +9,6 @@ public class Node implements Cloneable {
     private Set<Edge> outEdges;
     private int inDegree;
     private int outDegree;
-    private int birth;
 
     // pageranks
     private double prIn;
@@ -28,7 +27,6 @@ public class Node implements Cloneable {
         this.id = id;
         inDegree = 0;
         outDegree = 0;
-        birth = -1;
         inEdges = new HashSet<Edge>();
         outEdges = new HashSet<Edge>();
     }
@@ -58,14 +56,6 @@ public class Node implements Cloneable {
 
     public int getOutDegree() {
         return outDegree;
-    }
-
-    public int getBirth() {
-        return birth;
-    }
-
-    public void setBirth(int birth) {
-        this.birth = birth;
     }
 
     public double getPrIn() {
@@ -108,7 +98,7 @@ public class Node implements Cloneable {
         this.genweight = genweight;
     }
 
-    public boolean isFlag() {
+    public boolean getFlag() {
         return flag;
     }
 

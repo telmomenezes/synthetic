@@ -33,19 +33,29 @@ public class MetricsBag {
     
     MetricsBag(Net net, int bins, MetricsBag bag) {
     	this.bins = bins;
+    	//System.out.println("#A");
 		inDegrees = new Distrib(net.inDegSeq(), this.bins, bag.inDegrees);
+		//System.out.println("#B");
 		outDegrees = new Distrib(net.outDegSeq(), this.bins, bag.outDegrees);
+		//System.out.println("#C");
 		pageRanks = new Distrib(net.prInSeq(), this.bins, bag.pageRanks);
+		//System.out.println("#D");
 		triadicProfile = new TriadicProfile(net);
+		//System.out.println("#E");
 		
 		calcDistances(bag);
     }
     
     private void calcDistances(MetricsBag bag) {
+    	//System.out.println("#1");
         inDegreesDist = inDegrees.emdDistance(bag.inDegrees);
-        outDegreesDist = outDegrees.emdDistance(outDegrees);
+        //System.out.println("#2");
+        outDegreesDist = outDegrees.emdDistance(bag.outDegrees);
+        //System.out.println("#3");
         pageRanksDist = pageRanks.emdDistance(bag.pageRanks);
+        //System.out.println("#4");
         triadicProfileDist = triadicProfile.emdDistance(bag.triadicProfile);
+        //System.out.println("#5");
         
         double verySmall = 0.999;
         if (inDegreesDist == 0) inDegreesDist = verySmall;
@@ -55,6 +65,7 @@ public class MetricsBag {
         
         distance = inDegreesDist * outDegreesDist * pageRanksDist * triadicProfileDist;
         distance = Math.pow(distance, 1.0 / 4.0);
+        //System.out.println("#6");
     }
 
 	public double getDistance() {

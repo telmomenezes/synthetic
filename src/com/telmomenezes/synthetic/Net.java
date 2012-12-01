@@ -77,7 +77,7 @@ public class Net implements Cloneable {
         
         // clone nodes
         for (Node node : nodes) {
-            if (node.isFlag()) {
+            if (node.getFlag()) {
                 clonedNet.addNode(node.clone());
             }
         }
@@ -87,7 +87,7 @@ public class Net implements Cloneable {
             Node orig = edge.getOrigin();
             Node targ = edge.getTarget();
             
-            if (orig.isFlag() && targ.isFlag()) {
+            if (orig.getFlag() && targ.getFlag()) {
                 long timestamp = edge.getTimestamp();
             
                 Node corig = clonedNet.getNodeById(orig.getId());
@@ -200,18 +200,6 @@ public class Net implements Cloneable {
         nodes.remove(node);
         nodeMap.remove(node.getId());
         nodeCount--;
-    }
-    
-    public void removeNonFlaggedNodes() {
-        List<Node> remNodes = new LinkedList<Node>();
-        for (Node n : nodes) {
-            if (!n.isFlag()) {
-                remNodes.add(n);
-            }
-        }
-        for (Node n : remNodes) {
-            removeNode(n);
-        }
     }
 
     public Node getRandomNode() {
