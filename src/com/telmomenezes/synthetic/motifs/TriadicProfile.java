@@ -1,7 +1,6 @@
 package com.telmomenezes.synthetic.motifs;
 
 import com.telmomenezes.synthetic.Edge;
-import com.telmomenezes.synthetic.Generator;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.emd.JFastEMD;
@@ -113,15 +112,9 @@ public class TriadicProfile {
         }
 
         // search for triads starting on each node
-        int nodeCount = 0;
-        //while (net.getNodeCount() > 0) {
-        	//Node node = net.getNodes().get(0);
         for (Node node : net.getNodes()) {
             triad[0] = node;
             triadProfileRec(triad, 0, profile);
-            //System.out.println("* " + nodeCount);
-            nodeCount++;
-            //net.removeNode(node);
         }
     }
     
@@ -157,6 +150,7 @@ public class TriadicProfile {
     }
     
     
+    /*
     static public void main(String[] args) {
     	Generator gen = new Generator(7115, 103689);
         gen.initRandom();
@@ -171,5 +165,5 @@ public class TriadicProfile {
         for (long p : profile)
             System.out.print(" " + p);
         System.out.println();
-    }
+    }*/
 }

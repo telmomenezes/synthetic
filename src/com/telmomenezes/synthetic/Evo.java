@@ -15,7 +15,7 @@ import com.telmomenezes.synthetic.io.NetFileType;
  */
 public class Evo {
     
-	private Vector<Generator> population;
+	private Vector<Generator2> population;
 	private double bestFitness;
 	
     // parameters
@@ -23,7 +23,7 @@ public class Evo {
 	private int generations;
 
     // state
-	private Generator bestGenerator;
+	private Generator2 bestGenerator;
 	private int curgen;
 	private double bestGenFitness;
 	private double meanGenoSize;
@@ -63,9 +63,9 @@ public class Evo {
 		writeLogHeader();
 	
 		// init population
-		population = new Vector<Generator>();
+		population = new Vector<Generator2>();
 		for (int i = 0; i < 2; i++) {
-			Generator gen = new Generator(targNet.getNodeCount(), targNet.getEdgeCount());
+			Generator2 gen = new Generator2(targNet.getNodeCount(), targNet.getEdgeCount());
 			gen.initRandom();
 			population.add(gen);
 		}
@@ -81,7 +81,7 @@ public class Evo {
 
 			bestGenFitness = Double.MAX_VALUE;
 			
-			Generator generator;
+			Generator2 generator;
 			boolean first = false;
 			for (int j = 0; j < 2; j++) {
 				generator = population.get(j);
@@ -127,20 +127,20 @@ public class Evo {
 	}
 	
 
-	private Vector<Generator> newGeneration() {
+	private Vector<Generator2> newGeneration() {
 		
 		// send the parents to the start of the vector by sorting
 		Collections.sort(population);
-		Generator parent = population.get(0);
+		Generator2 parent = population.get(0);
 		
-		Vector<Generator> newPopulation = new Vector<Generator>();
+		Vector<Generator2> newPopulation = new Vector<Generator2>();
 		
 		
 		// place parent in new population
 		newPopulation.add(parent);
 		
 		// generate offspring
-		Generator child = parent.clone();
+		Generator2 child = parent.clone();
 			
 		// mutate
 		newPopulation.add(child.mutate());
@@ -149,22 +149,19 @@ public class Evo {
 	}
 	
 	
-	private double computeFitness(Generator gen) {
+	private double computeFitness(Generator2 gen) {
         Net net = gen.getNet();
         
         MetricsBag genBag = new MetricsBag(net, bins, targBag);
 
-        gen.setMetric("inDegreesDist", genBag.getInDegreesDist());
-        gen.setMetric("outDegreesDist", genBag.getOutDegreesDist());
-        gen.setMetric("pageRanksDist", genBag.getPageRanksDist());
-        gen.setMetric("triadicProfileDist", genBag.getTriadicProfileDist());
-        
+        gen.setMetricsBag(genBag);
+
         return genBag.getDistance();
     }
     
     private void onNewBest() {
         String suffix = "" + bestCount + "_gen" + curgen;
-        Generator bestGen = bestGenerator;
+        Generator2 bestGen = bestGenerator;
         
         // write net
         bestGen.getNet().save(outDir + "/bestnet" + suffix + ".txt", NetFileType.SNAP);
@@ -190,11 +187,12 @@ public class Evo {
     }
     
     private void onGeneration() {
-        Generator bestGen = bestGenerator;
-        double inDegreesDist = bestGen.getMetric("inDegreesDist");
-        double outDegreesDist = bestGen.getMetric("outDegreesDist");
-        double pageRanksDist = bestGen.getMetric("pageRanksDist");
-        double triadicProfileDist = bestGen.getMetric("triadicProfileDist");
+        Generator2 bestGen = bestGenerator;
+        double inDegreesDist = bestGen.getMetricsBag().getInDegreesDist();
+        double outDegreesDist = bestGen.getMetricsBag().getOutDegreesDist();
+        double inPageRanksDist = bestGen.getMetricsBag().getInPageRanksDist();
+        double outPageRanksDist = bestGen.getMetricsBag().getOutPageRanksDist();
+        double triadicProfileDist = bestGen.getMetricsBag().getInDegreesDist();
         
         // write evo log
         try {
@@ -210,7 +208,8 @@ public class Evo {
                     + fitTime + ","
                     + inDegreesDist + ","
                     + outDegreesDist + ","
-                    + pageRanksDist + ","
+                    + inPageRanksDist + ","
+                    + outPageRanksDist + ","
                     + triadicProfileDist + "\n");
             writer.close();
         }
@@ -219,7 +218,7 @@ public class Evo {
         }
         
         System.out.println(genInfoString());
-        System.out.println("inDegreesDist: " + inDegreesDist + "; outDegreesDist: " + outDegreesDist + "; pageRanksDist: " + pageRanksDist + "; triadicProfileDist: " + triadicProfileDist );
+        System.out.println("inDegreesDist: " + inDegreesDist + "; outDegreesDist: " + outDegreesDist + "; inPageRanksDist: " + inPageRanksDist + "; outPageRanksDist: " + outPageRanksDist + "; triadicProfileDist: " + triadicProfileDist );
     }
 	
 	

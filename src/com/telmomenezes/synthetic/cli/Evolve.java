@@ -7,6 +7,7 @@ import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Evo;
+import com.telmomenezes.synthetic.samplers.DownSampler;
 
 
 public class Evolve extends Command {
@@ -30,16 +31,18 @@ public class Evolve extends Command {
         String outdir = cline.getOptionValue("odir");
         
         Net net = Net.load(netfile);
+        
         // down sampling if needed
      	// TODO: configure attenuation and maxNodes
-     	/*
-     	DownSampler sampler = new DownSampler(targNet, 5, 2000);
-     	while (computeEffort(sampleNet) > maxEffort) {
+        Net sampleNet = net;
+     	DownSampler sampler = new DownSampler(net, 5, 200000);
+     	while (sampleNet.getEdgeCount() > 1000000) {
      		sampleNet = sampler.sampleDown();
-     		samplingRatio = sampler.getRatio();
-     		System.out.println("sampling down: " + samplingRatio + "; max effort: " + maxEffort + "; current effort: " + computeEffort(sampleNet));
-     	}*/
-        Evo evo = new Evo(net, generations, outdir);
+     		double samplingRatio = sampler.getRatio();
+     		System.out.println("sampling down: " + samplingRatio + "; nodes: " + sampleNet.getNodeCount() + "; edges: " + sampleNet.getEdgeCount());
+     	}
+        
+        Evo evo = new Evo(sampleNet, generations, outdir);
         
         System.out.println("target net: " + netfile);
         System.out.println(evo.infoString());
