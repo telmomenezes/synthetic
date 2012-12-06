@@ -56,11 +56,10 @@ public class Generator implements Comparable<Generator> {
         variableNames.add("origOutDeg");
         variableNames.add("targInDeg");
         variableNames.add("targOutDeg");
-        variableNames.add("undirDist");
         variableNames.add("dirDist");
         variableNames.add("revDist");
         
-        prog = new Prog(9, variableNames);
+        prog = new Prog(8, variableNames);
 	}
 	
 	
@@ -72,13 +71,13 @@ public class Generator implements Comparable<Generator> {
 	
     
 	public void run() {
-		System.out.println("running generator; trials: " + trials);
+		//System.out.println("running generator; trials: " + trials);
 		
         // reset eval stats
         prog.clearEvalStats();
         
         // init DistMatrix
-        DistMatrix.instance().setNodes(nodeCount);
+        DistMatrix distMatrix = new DistMatrix(nodeCount);
 
         net = new Net();
 
@@ -100,7 +99,7 @@ public class Generator implements Comparable<Generator> {
             	int targIndex = -1;
             	
             	while ((origIndex == targIndex)
-            			|| (DistMatrix.instance().getDDist(origIndex, targIndex) < 2)) {
+            			|| (distMatrix.getDist(origIndex, targIndex) < 2)) {
             		origIndex = RandomGenerator.instance().random.nextInt(nodeCount);
             		targIndex = RandomGenerator.instance().random.nextInt(nodeCount);
             	}
@@ -108,9 +107,8 @@ public class Generator implements Comparable<Generator> {
             	Node origNode = nodeArray[origIndex];
             	Node targNode = nodeArray[targIndex];
         
-            	double undirectedDistance = DistMatrix.instance().getUDist(origNode.getId(), targNode.getId());
-            	double directDistance = DistMatrix.instance().getDDist(origNode.getId(), targNode.getId());
-            	double reverseDistance = DistMatrix.instance().getDDist(targNode.getId(), origNode.getId());
+            	double directDistance = distMatrix.getDist(origNode.getId(), targNode.getId());
+            	double reverseDistance = distMatrix.getDist(targNode.getId(), origNode.getId());
                     
             	prog.vars[0] = (double)origIndex;
             	prog.vars[1] = (double)targIndex;
@@ -118,16 +116,17 @@ public class Generator implements Comparable<Generator> {
             	prog.vars[3] = (double)origNode.getOutDegree();
             	prog.vars[4] = (double)targNode.getInDegree();
             	prog.vars[5] = (double)targNode.getOutDegree();
-            	prog.vars[6] = undirectedDistance;
-            	prog.vars[7] = directDistance;
-            	prog.vars[8] = reverseDistance;
+            	prog.vars[6] = directDistance;
+            	prog.vars[7] = reverseDistance;
                     
             	double weight = prog.eval(i);
             	if (weight < 0) {
             		weight = 0;
             	}
         
+            	//System.out.println("weight: " + weight + "; bestWeight: " + bestWeight);
             	if (weight > bestWeight) {
+            		//System.out.println("* best weight");
             		bestWeight = weight;
             		bestOrigIndex = origIndex;
             		bestTargIndex = targIndex;
@@ -140,7 +139,7 @@ public class Generator implements Comparable<Generator> {
             net.addEdge(origNode, targNode, i);
             
             // update distances
-            DistMatrix.instance().updateDistancesSmart(net, bestOrigIndex, bestTargIndex);
+            distMatrix.updateDistances(net, bestOrigIndex, bestTargIndex);
             
             simulated = true;
         }
