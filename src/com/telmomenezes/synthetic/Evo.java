@@ -15,7 +15,7 @@ import com.telmomenezes.synthetic.io.NetFileType;
  */
 public class Evo {
     
-	private Vector<Generator2> population;
+	private Vector<Generator> population;
 	private double bestFitness;
 	
     // parameters
@@ -23,7 +23,7 @@ public class Evo {
 	private int generations;
 
     // state
-	private Generator2 bestGenerator;
+	private Generator bestGenerator;
 	private int curgen;
 	private double bestGenFitness;
 	private double meanGenoSize;
@@ -63,9 +63,9 @@ public class Evo {
 		writeLogHeader();
 	
 		// init population
-		population = new Vector<Generator2>();
+		population = new Vector<Generator>();
 		for (int i = 0; i < 2; i++) {
-			Generator2 gen = new Generator2(targNet.getNodeCount(), targNet.getEdgeCount());
+			Generator gen = new Generator(targNet.getNodeCount(), targNet.getEdgeCount());
 			gen.initRandom();
 			population.add(gen);
 		}
@@ -81,7 +81,7 @@ public class Evo {
 
 			bestGenFitness = Double.MAX_VALUE;
 			
-			Generator2 generator;
+			Generator generator;
 			boolean first = false;
 			for (int j = 0; j < 2; j++) {
 				generator = population.get(j);
@@ -127,20 +127,20 @@ public class Evo {
 	}
 	
 
-	private Vector<Generator2> newGeneration() {
+	private Vector<Generator> newGeneration() {
 		
 		// send the parents to the start of the vector by sorting
 		Collections.sort(population);
-		Generator2 parent = population.get(0);
+		Generator parent = population.get(0);
 		
-		Vector<Generator2> newPopulation = new Vector<Generator2>();
+		Vector<Generator> newPopulation = new Vector<Generator>();
 		
 		
 		// place parent in new population
 		newPopulation.add(parent);
 		
 		// generate offspring
-		Generator2 child = parent.clone();
+		Generator child = parent.clone();
 			
 		// mutate
 		newPopulation.add(child.mutate());
@@ -149,7 +149,7 @@ public class Evo {
 	}
 	
 	
-	private double computeFitness(Generator2 gen) {
+	private double computeFitness(Generator gen) {
         Net net = gen.getNet();
         
         MetricsBag genBag = new MetricsBag(net, bins, targBag);
@@ -161,7 +161,7 @@ public class Evo {
     
     private void onNewBest() {
         String suffix = "" + bestCount + "_gen" + curgen;
-        Generator2 bestGen = bestGenerator;
+        Generator bestGen = bestGenerator;
         
         // write net
         bestGen.getNet().save(outDir + "/bestnet" + suffix + ".txt", NetFileType.SNAP);
@@ -187,7 +187,7 @@ public class Evo {
     }
     
     private void onGeneration() {
-        Generator2 bestGen = bestGenerator;
+        Generator bestGen = bestGenerator;
         double inDegreesDist = bestGen.getMetricsBag().getInDegreesDist();
         double outDegreesDist = bestGen.getMetricsBag().getOutDegreesDist();
         double inPageRanksDist = bestGen.getMetricsBag().getInPageRanksDist();
