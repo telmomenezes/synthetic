@@ -20,7 +20,7 @@ public class DownSampler {
         ratio = 1.0;
     }
     
-    public Net sampleDown() {
+    private Net sampleDown() {
         while (true) {
             step += 1.0;
             ratio = Math.exp(-step / attenuation);
@@ -30,6 +30,18 @@ public class DownSampler {
                 return sample;
             }
         }
+    }
+    
+    public static Net sample(Net net, int maxNodes, int maxEdges) {
+    	Net sampleNet = net;
+     	DownSampler sampler = new DownSampler(net, 5, maxNodes);
+     	while ((sampleNet.getNodeCount() > maxNodes) || (sampleNet.getEdgeCount() > maxEdges)) {
+     		sampleNet = sampler.sampleDown();
+     		double samplingRatio = sampler.getRatio();
+     		System.out.println("sampling down: " + samplingRatio + "; nodes: " + sampleNet.getNodeCount() + "; edges: " + sampleNet.getEdgeCount());
+     	}
+     	
+     	return sampleNet;
     }
 
     public double getRatio() {

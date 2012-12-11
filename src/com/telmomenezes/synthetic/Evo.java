@@ -41,14 +41,14 @@ public class Evo {
     private int bins;
 	
 	
-	public Evo(Net targNet, int generations, Generator baseGenerator, String outDir)
+	public Evo(Net targNet, int generations, int bins, Generator baseGenerator, String outDir)
 	{
 		this.targNet = targNet;
 		this.generations = generations;
 		this.baseGenerator = baseGenerator;
 		this.outDir = outDir;
 		
-		bins = 10;
+		this.bins = bins;
 		targBag = new MetricsBag(targNet, bins);
 	}
 	

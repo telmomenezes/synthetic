@@ -17,9 +17,6 @@ public class Evolve extends Command {
 
     @Override
     public boolean run(CommandLine cline) {
-        // TODO: make configurable
-        int generations = 999999999;
-        
         if(!cline.hasOption("inet")) {
             setErrorMessage("input network file must be specified");
             return false;
@@ -40,17 +37,24 @@ public class Evolve extends Command {
             }
         }
         
+        int generations = 999999999;
+        if(cline.hasOption("gens")) {
+            generations = new Integer(cline.getOptionValue("gens"));
+        }
+        
         Net net = Net.load(netfile);
         
         // down sampling if needed
      	// TODO: configure attenuation and maxNodes
-        Net sampleNet = net;
-     	DownSampler sampler = new DownSampler(net, 5, 200000);
-     	while (sampleNet.getEdgeCount() > 1000000) {
-     		sampleNet = sampler.sampleDown();
-     		double samplingRatio = sampler.getRatio();
-     		System.out.println("sampling down: " + samplingRatio + "; nodes: " + sampleNet.getNodeCount() + "; edges: " + sampleNet.getEdgeCount());
-     	}
+        int maxNodes = 999999999;
+        int maxEdges = 999999999;
+        if(cline.hasOption("maxnodes")) {
+            maxNodes = new Integer(cline.getOptionValue("maxnodes"));
+        }
+        if(cline.hasOption("maxedges")) {
+            maxEdges = new Integer(cline.getOptionValue("maxedges"));
+        }
+        Net sampleNet = DownSampler.sample(net, maxNodes, maxEdges);
         
      	Generator baseGenerator = null;
      	if (fastGen) {
@@ -60,7 +64,12 @@ public class Evolve extends Command {
      		baseGenerator = new FullGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount());
      	}
      	
-        Evo evo = new Evo(sampleNet, generations, baseGenerator, outdir);
+     	int bins = 10;
+     	if(cline.hasOption("bins")) {
+            bins = new Integer(cline.getOptionValue("bins"));
+        }
+     	
+        Evo evo = new Evo(sampleNet, generations, bins, baseGenerator, outdir);
         
         System.out.println("target net: " + netfile);
         System.out.println(evo.infoString());
