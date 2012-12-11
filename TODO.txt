@@ -1,5 +1,5 @@
-* make full/fast generator selectable from the CLI
 * export all relevant parameters to the CLI
 * make sampler controllable from the CLI
 * create network repository
 * parameterize max distance on DistMatrix
+* make sure all experiment parameters are recorded in a file

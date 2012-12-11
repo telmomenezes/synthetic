@@ -130,4 +130,10 @@ public class FullGenerator extends Generator {
             simulated = true;
         }
     }
+	
+	
+	@Override
+	public String toString() {
+		return "using full generator"; 
+	}
 }

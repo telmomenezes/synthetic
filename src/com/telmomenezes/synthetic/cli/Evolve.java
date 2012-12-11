@@ -7,6 +7,7 @@ import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Evo;
+import com.telmomenezes.synthetic.generators.FastGenerator;
 import com.telmomenezes.synthetic.generators.FullGenerator;
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.samplers.DownSampler;
@@ -32,6 +33,13 @@ public class Evolve extends Command {
         String netfile = cline.getOptionValue("inet");
         String outdir = cline.getOptionValue("odir");
         
+        boolean fastGen = true;
+        if(cline.hasOption("gentype")) {
+            if (cline.getOptionValue("gentype").equals("full")) {
+            	fastGen = false;
+            }
+        }
+        
         Net net = Net.load(netfile);
         
         // down sampling if needed
@@ -44,11 +52,19 @@ public class Evolve extends Command {
      		System.out.println("sampling down: " + samplingRatio + "; nodes: " + sampleNet.getNodeCount() + "; edges: " + sampleNet.getEdgeCount());
      	}
         
-     	Generator baseGenerator = new FullGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount());
+     	Generator baseGenerator = null;
+     	if (fastGen) {
+     		baseGenerator = new FastGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount());
+     	}
+     	else {
+     		baseGenerator = new FullGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount());
+     	}
+     	
         Evo evo = new Evo(sampleNet, generations, baseGenerator, outdir);
         
         System.out.println("target net: " + netfile);
         System.out.println(evo.infoString());
+        System.out.println(baseGenerator);
         
         // write experiment params to file
         try {
