@@ -15,7 +15,7 @@ import com.telmomenezes.synthetic.gp.Prog;
  * 
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
-public class Generator implements Comparable<Generator> {
+public class FastGenerator implements Comparable<Generator> {
     protected int nodeCount;
     protected int edgeCount;
     
@@ -34,7 +34,7 @@ public class Generator implements Comparable<Generator> {
     private MetricsBag metricsBag;
     
     
-	public Generator(int nodeCount, int edgeCount) {
+	public FastGenerator(int nodeCount, int edgeCount) {
 	    this.nodeCount = nodeCount;
 	    this.edgeCount = edgeCount;
 
