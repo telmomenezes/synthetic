@@ -230,6 +230,7 @@ public class Evo {
 		String str = "generations: " + generations + "\n";
 		str += "target net node count: " + targNet.getNodeCount() + "\n";
         str += "target net edge count: " + targNet.getEdgeCount() + "\n";
+        str += "distribution bins: " + bins + "\n";
 		return str;
 	}
 
