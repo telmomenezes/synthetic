@@ -38,7 +38,7 @@ public class Generator implements Comparable<Generator> {
 	    this.nodeCount = nodeCount;
 	    this.edgeCount = edgeCount;
 
-	    double trialRatio = 0.001;
+	    double trialRatio = 0.01;
 	    trials = (int)((nodeCount * nodeCount) * trialRatio * trialRatio);
 	    
 		simulated = false;

@@ -1,0 +1,4 @@
+* Recreate full generator (vs. sampling generator)
+* export all relevant parameters to the CLI
+* make sampler controllable from the CLI
+* create network repository
