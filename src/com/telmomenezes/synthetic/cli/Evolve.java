@@ -7,6 +7,8 @@ import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Evo;
+import com.telmomenezes.synthetic.generators.FullGenerator;
+import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.samplers.DownSampler;
 
 
@@ -42,7 +44,8 @@ public class Evolve extends Command {
      		System.out.println("sampling down: " + samplingRatio + "; nodes: " + sampleNet.getNodeCount() + "; edges: " + sampleNet.getEdgeCount());
      	}
         
-        Evo evo = new Evo(sampleNet, generations, outdir);
+     	Generator baseGenerator = new FullGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount());
+        Evo evo = new Evo(sampleNet, generations, baseGenerator, outdir);
         
         System.out.println("target net: " + netfile);
         System.out.println(evo.infoString());

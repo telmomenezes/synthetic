@@ -1,13 +1,10 @@
-package com.telmomenezes.synthetic;
+package com.telmomenezes.synthetic.generators;
 
-
-import java.util.Vector;
 
 import com.telmomenezes.synthetic.DistMatrix;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.RandomGenerator;
-import com.telmomenezes.synthetic.gp.Prog;
 
 
 /**
@@ -15,61 +12,34 @@ import com.telmomenezes.synthetic.gp.Prog;
  * 
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
-public class FastGenerator implements Comparable<Generator> {
-    protected int nodeCount;
-    protected int edgeCount;
-    
-	protected Prog prog;
-    public boolean simulated;
+public class FastGenerator extends Generator {
 
-    public double fitness;
-
-    private Vector<Prog> executionPaths;
-    protected boolean checkPaths;
-    
-    protected Net net;
-    
-    private int trials;
-    
-    private MetricsBag metricsBag;
-    
-    
+	private int trials;
+	
 	public FastGenerator(int nodeCount, int edgeCount) {
-	    this.nodeCount = nodeCount;
-	    this.edgeCount = edgeCount;
+		super(nodeCount, edgeCount);
 
 	    double trialRatio = 0.01;
 	    trials = (int)((nodeCount * nodeCount) * trialRatio * trialRatio);
-	    
-		simulated = false;
-		
-		fitness = 0.0;
-
-		checkPaths = false;
-		
-		metricsBag = null;
-		
-		Vector<String> variableNames = new Vector<String>();
-        variableNames.add("origId");
-        variableNames.add("targId");
-        variableNames.add("origInDeg");
-        variableNames.add("origOutDeg");
-        variableNames.add("targInDeg");
-        variableNames.add("targOutDeg");
-        variableNames.add("dirDist");
-        variableNames.add("revDist");
-        
-        prog = new Prog(8, variableNames);
 	}
 	
 	
+	@Override
+	public Generator instance() {
+		Generator generator = new FastGenerator(nodeCount, edgeCount);
+		return generator;
+	}
+	
+	
+	@Override
 	public Generator clone() {
-		Generator generator = new Generator(nodeCount, edgeCount);
+		Generator generator = new FastGenerator(nodeCount, edgeCount);
 		generator.prog = prog.clone();
 		return generator;
 	}
 	
     
+	@Override
 	public void run() {
 		//System.out.println("running generator; trials: " + trials);
 		
@@ -144,119 +114,4 @@ public class FastGenerator implements Comparable<Generator> {
             simulated = true;
         }
     }
-
-
-	public void initRandom() {
-		prog.initRandom();
-	}
-
-
-	public Generator recombine(Generator parent2) {
-		Generator generator = new Generator(nodeCount, edgeCount);
-		generator.prog = prog.recombine(parent2.prog);
-		return generator;
-	}
-	
-	
-	public Generator mutate() {
-		Generator random = new Generator(nodeCount, edgeCount);
-		random.initRandom();
-		return recombine(random);
-	}
-
-
-	public int executionPath(Prog tree) {
-		int pos = 0;
-		for (Prog path : executionPaths) {
-			if (tree.compareBranching(path))
-				return pos;
-
-			pos++;
-		}
-
-		executionPaths.add(tree.clone());
-		return pos;
-	}
-
-
-	public void clearExecutionPaths() {
-		executionPaths.clear();
-	}
-	
-	
-	
-	public int compareTo(Generator generator) {
-		
-        if (fitness < generator.fitness)
-        	return -1;
-        else if (fitness > generator.fitness)
-        	return 1;
-        else
-        	return 0;
-	}
-
-
-	public boolean isSimulated() {
-		return simulated;
-	}
-
-
-	public void setSimulated(boolean simulated) {
-		this.simulated = simulated;
-	}
-
-
-	public double getFitness() {
-		return fitness;
-	}
-
-
-	public void setCheckPaths(boolean checkPaths) {
-		this.checkPaths = checkPaths;
-		if (checkPaths)
-			executionPaths = new Vector<Prog>();
-	}
-
-
-	public Vector<Prog> getExecutionPaths() {
-		return executionPaths;
-	}
-
-
-    public int getNodeCount() {
-        return nodeCount;
-    }
-
-
-    public void setNodeCount(int nodeCount) {
-        this.nodeCount = nodeCount;
-    }
-
-
-    public int getEdgeCount() {
-        return edgeCount;
-    }
-
-
-    public void setEdgeCount(int edgeCount) {
-        this.edgeCount = edgeCount;
-    }
-
-    public Prog getProg() {
-        return prog;
-    }
-    
-    public Net getNet() {
-        return net;
-    }
-
-
-	public MetricsBag getMetricsBag() {
-		return metricsBag;
-	}
-
-
-	public void setMetricsBag(MetricsBag metricsBag) {
-		this.metricsBag = metricsBag;
-	}
 }

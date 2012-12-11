@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.util.Collections;
 import java.util.Vector;
 
+import com.telmomenezes.synthetic.generators.FastGenerator;
+import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
 
 
@@ -21,6 +23,7 @@ public class Evo {
     // parameters
 	private Net targNet;
 	private int generations;
+	private Generator baseGenerator;
 
     // state
 	private Generator bestGenerator;
@@ -39,10 +42,11 @@ public class Evo {
     private int bins;
 	
 	
-	public Evo(Net targNet, int generations, String outDir)
+	public Evo(Net targNet, int generations, Generator baseGenerator, String outDir)
 	{
 		this.targNet = targNet;
 		this.generations = generations;
+		this.baseGenerator = baseGenerator;
 		this.outDir = outDir;
 		
 		bins = 10;
@@ -65,7 +69,7 @@ public class Evo {
 		// init population
 		population = new Vector<Generator>();
 		for (int i = 0; i < 2; i++) {
-			Generator gen = new Generator(targNet.getNodeCount(), targNet.getEdgeCount());
+			Generator gen = baseGenerator.instance();
 			gen.initRandom();
 			population.add(gen);
 		}
