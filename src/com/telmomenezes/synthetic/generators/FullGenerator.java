@@ -84,41 +84,46 @@ public class FullGenerator extends Generator {
             			if (weight < 0) {
             				weight = 0;
             			}
-            			
-            			weights[origIndex][targIndex] = weight;
-            			
-            			totalWeight += weight;
             		}
+            			
+            		weights[origIndex][targIndex] = weight;
+            			
+            		totalWeight += weight;
             	}
             }
             
             double targWeight = RandomGenerator.instance().random.nextDouble() * totalWeight;
-            totalWeight = 0;
             
             int selectedOrigIndex = -1;
             int selectedTargIndex = -1;
             
             if (totalWeight > 0) {
+            	//System.out.println("#A total weight: " + totalWeight);
+            	//System.out.println("targ weight: " + targWeight);
+            	totalWeight = 0;
             	boolean selected = false;
             	for (int origIndex = 0; (origIndex < nodeCount) && (!selected); origIndex++) {
             		for (int targIndex = 0; (targIndex < nodeCount) && (!selected); targIndex++) {
+            			totalWeight += weights[origIndex][targIndex];
+            			
             			if (totalWeight >= targWeight) {
             				selectedOrigIndex = origIndex;
             				selectedTargIndex = targIndex;
             				selected = true;
             			}
-            		
-            			totalWeight += weights[origIndex][targIndex];
             		}
             	}
             }
             else {
+            	//System.out.println("#B");
             	while (selectedOrigIndex == selectedTargIndex) {
             		selectedOrigIndex = RandomGenerator.instance().random.nextInt(nodeCount);
             		selectedTargIndex = RandomGenerator.instance().random.nextInt(nodeCount);
             	}
             }
 
+            //System.out.println("selectedOrigIndex: " + selectedOrigIndex);
+            //System.out.println("selectedTargIndex: " + selectedTargIndex);
             Node origNode = nodeArray[selectedOrigIndex];
             Node targNode = nodeArray[selectedTargIndex];
 
