@@ -18,7 +18,7 @@ public class FullGenerator extends Generator {
 		super(nodeCount, edgeCount);
 	}
 	
-	
+	 
 	@Override
 	public Generator instance() {
 		Generator generator = new FullGenerator(nodeCount, edgeCount);
@@ -84,6 +84,10 @@ public class FullGenerator extends Generator {
             			if (weight < 0) {
             				weight = 0;
             			}
+            			
+            			if (Double.isNaN(weight)) {
+                    		weight = 0;
+                    	}
             		}
             			
             		weights[origIndex][targIndex] = weight;

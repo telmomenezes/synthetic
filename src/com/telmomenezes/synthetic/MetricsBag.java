@@ -61,7 +61,7 @@ public class MetricsBag {
         if (triadicProfileDist == 0) triadicProfileDist = verySmall;
         
         distance = inDegreesDist * outDegreesDist * inPageRanksDist * outPageRanksDist * triadicProfileDist;
-        distance = Math.pow(distance, 1.0 / 4.0);
+        distance = Math.pow(distance, 1.0 / 5.0);
     }
 
 	public double getDistance() {

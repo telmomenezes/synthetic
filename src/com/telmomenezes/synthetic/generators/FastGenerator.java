@@ -20,7 +20,7 @@ public class FastGenerator extends Generator {
 	public FastGenerator(int nodeCount, int edgeCount) {
 		super(nodeCount, edgeCount);
 
-	    trialRatio = 0.01;
+	    trialRatio = 0.1;
 	    trials = (int)((nodeCount * nodeCount) * trialRatio * trialRatio);
 	}
 	
@@ -92,6 +92,10 @@ public class FastGenerator extends Generator {
                     
             	double weight = prog.eval(i);
             	if (weight < 0) {
+            		weight = 0;
+            	}
+            	
+            	if (Double.isNaN(weight)) {
             		weight = 0;
             	}
         
