@@ -139,7 +139,12 @@ public class Prog {
                         val = Math.exp(curnode.params[0].curval);
                         break;
 					case GPFun.LOG:
-                        val = Math.log(curnode.params[0].curval);
+						if (curnode.params[0].curval == 0) {
+							val = 0;
+						}
+						else {
+							val = Math.log(curnode.params[0].curval);
+						}
                         break;
 					case GPFun.ABS:
                         val = Math.abs(curnode.params[0].curval);

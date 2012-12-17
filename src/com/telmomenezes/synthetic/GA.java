@@ -2,19 +2,13 @@ package com.telmomenezes.synthetic;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.Collections;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
 
 
-/**
- * Basic generation based evolutionary algorithm.
- * 
- * @author Telmo Menezes (telmo@telmomenezes.com)
- */
-public class Evo {
+public class GA {
     
 	private Vector<Generator> population;
 	private double bestFitness;
@@ -22,6 +16,7 @@ public class Evo {
     // parameters
 	private Net targNet;
 	private int generations;
+	private int popSize;
 	private Generator baseGenerator;
 
     // state
@@ -41,9 +36,10 @@ public class Evo {
     private int bins;
 	
 	
-	public Evo(Net targNet, int generations, int bins, Generator baseGenerator, String outDir)
+	public GA(Net targNet, int popSize, int generations, int bins, Generator baseGenerator, String outDir)
 	{
 		this.targNet = targNet;
+		this.popSize = popSize;
 		this.generations = generations;
 		this.baseGenerator = baseGenerator;
 		this.outDir = outDir;
@@ -67,7 +63,7 @@ public class Evo {
 	
 		// init population
 		population = new Vector<Generator>();
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < popSize; i++) {
 			Generator gen = baseGenerator.instance();
 			gen.initRandom();
 			population.add(gen);
@@ -86,7 +82,7 @@ public class Evo {
 			
 			Generator generator;
 			boolean first = false;
-			for (int j = 0; j < 2; j++) {
+			for (int j = 0; j < popSize; j++) {
 				generator = population.get(j);
 
 				meanGenoSize += generator.getProg().size();
@@ -113,10 +109,7 @@ public class Evo {
 				}
 			}
 			
-			System.out.println(targBag.getOutDegrees());
-			System.out.println(bestGenerator.getMetricsBag().getOutDegrees());
-			
-			meanGenoSize /= 2.0;
+			meanGenoSize /= (double)popSize;
 
 			// assign new population
 			population = newGeneration();
@@ -132,24 +125,38 @@ public class Evo {
 		}
 	}
 	
+	
+	private Generator selectParent() {
+		Generator parent = null;
+		
+		for (int i = 0; i < 7; i++) {
+			int candidateIndex = RandomGenerator.instance().random.nextInt(popSize);
+			Generator candidate = population.get(candidateIndex);
+			if ((parent == null) || (parent.fitness < candidate.fitness)) {
+				parent = candidate;
+			}
+		}
+		
+		return parent;
+	}
+	
 
 	private Vector<Generator> newGeneration() {
-		
-		// send the parents to the start of the vector by sorting
-		Collections.sort(population);
-		Generator parent = population.get(0);
-		
 		Vector<Generator> newPopulation = new Vector<Generator>();
 		
-		
-		// place parent in new population
-		newPopulation.add(parent);
-		
-		// generate offspring
-		Generator child = parent.clone();
+		for (int i = 0; i < popSize; i++) {
+			Generator parent1 = selectParent();
+			Generator parent2 = selectParent();
 			
-		// mutate
-		newPopulation.add(child.mutate());
+			Generator child = parent1.recombine(parent2);
+			
+			if (RandomGenerator.instance().random.nextDouble() < 0.2) {
+				child = child.mutate();
+			}
+			
+			// place parent in new population
+			newPopulation.add(child);
+		}
 		
 		return newPopulation;
 	}
@@ -161,7 +168,7 @@ public class Evo {
         MetricsBag genBag = new MetricsBag(net, bins, targBag);
 
         gen.setMetricsBag(genBag);
-        
+
         return genBag.getDistance();
     }
     

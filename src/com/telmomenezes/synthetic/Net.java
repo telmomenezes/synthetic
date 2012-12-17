@@ -328,8 +328,8 @@ public class Net implements Cloneable {
                 maxPROut));
     }
 
-    public double[] inDegSeq() {
-        double seq[] = new double[nodeCount];
+    public int[] inDegSeq() {
+        int seq[] = new int[nodeCount];
         int i = 0;
         for (Node curnode : nodes) {
             seq[i] = curnode.getInDegree();
@@ -339,8 +339,8 @@ public class Net implements Cloneable {
         return seq;
     }
 
-    public double[] outDegSeq() {
-        double seq[] = new double[nodeCount];
+    public int[] outDegSeq() {
+    	int seq[] = new int[nodeCount];
         int i = 0;
         for (Node curnode : nodes) {
             seq[i] = curnode.getOutDegree();
@@ -372,52 +372,6 @@ public class Net implements Cloneable {
         }
 
         return seq;
-    }
-
-    void genDegreeSeq(Net refNet) {
-        double[] inDegSeq = refNet.inDegSeq();
-        double[] outDegSeq = refNet.outDegSeq();
-
-        int totalDegree = refNet.edgeCount;
-
-        // create nodes
-        Node[] newNodes = new Node[refNet.nodeCount];
-        for (int i = 0; i < refNet.nodeCount; i++) {
-            newNodes[i] = addNode();
-        }
-
-        // create edges
-        int stable = 0;
-        while (stable < 1000) {
-            //System.out.println("totalDegree: " + totalDegree);
-            int origPos = RandomGenerator.instance().random.nextInt(totalDegree);
-            int targPos = RandomGenerator.instance().random.nextInt(totalDegree);
-
-            int curpos = 0;
-            int origIndex = -1;
-            while (curpos <= origPos) {
-                origIndex++;
-                curpos += outDegSeq[origIndex];
-            }
-
-            curpos = 0;
-            int targIndex = -1;
-            while (curpos <= targPos) {
-                targIndex++;
-                curpos += inDegSeq[targIndex];
-            }
-            //System.out.println("" + inDegSeq[targIndex]);
-                
-            //System.out.println("orig: " + origIndex + "; targ: " + targIndex);
-            
-            if (addEdge(newNodes[origIndex], newNodes[targIndex], 0)) {
-                outDegSeq[origIndex]--;
-                inDegSeq[targIndex]--;
-                totalDegree--;
-                stable = 0;
-            }
-            stable++;
-        }
     }
 
     double getMinPRIn() {

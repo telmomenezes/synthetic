@@ -65,7 +65,7 @@ public class Evolve extends Command {
      		baseGenerator = new FullGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount());
      	}
      	
-     	int bins = 10;
+     	int bins = 20;
      	if(cline.hasOption("bins")) {
             bins = new Integer(cline.getOptionValue("bins"));
         }

@@ -12,15 +12,16 @@ public class Distrib {
     private double max;
     private double interval;
     
-    public Distrib() {}
     
     public Distrib(double[] valueSeq, int bins) {
         init(valueSeq, bins);
     }
     
+    
     public Distrib(double[] valueSeq, int bins, double min, double max) {
         init(valueSeq, bins, min, max);
     }
+    
     
     public Distrib(double[] valueSeq, int bins, Distrib distrib) {
         if (distrib == null) {
@@ -30,6 +31,7 @@ public class Distrib {
             init(valueSeq, bins, distrib.getMin(), distrib.getMax());
         }
     }
+    
     
     protected void init(double[] valueSeq, int bins, double min, double max) {
         this.min = min;
@@ -57,6 +59,7 @@ public class Distrib {
         }
     }
     
+    
     protected void init(double[] valueSeq, int bins) {
         min = Double.POSITIVE_INFINITY;
         max = Double.NEGATIVE_INFINITY;
@@ -73,6 +76,7 @@ public class Distrib {
         init(valueSeq, bins, min, max);
     }
     
+    
     public double total() {
         double t = 0;
         for (double x : freqs) {
@@ -80,6 +84,7 @@ public class Distrib {
         }
         return t;
     }
+    
     
     private Signature getEmdSignature() {
         int n = 0;
@@ -111,6 +116,7 @@ public class Distrib {
         return signature;
     }
     
+    
     public double emdDistance(Distrib fd)
     {
         double infinity = Double.MAX_VALUE;
@@ -125,27 +131,35 @@ public class Distrib {
         return JFastEMD.distance(sig1, sig2, -1);
     }
     
-    public void print() {
+    
+    @Override
+    public String toString() {
+    	String str = "";
         for (int i = 0; i < bins; i++) {
             double start = min + (interval * i);
             double end = start + interval;
-            System.out.println("bin " + i + " [" + start + ", " + end + "] -> \t" + freqs[i]);
+            str += "[" + start + ", " + end + "] -> " + freqs[i] + " ";
         }
+        
+        return str;
     }
+    
     
     public static void main(String[] args) {
         double[] seq1 = {0, 0, 0, 1, 1, 1, 10};
         double[] seq2 = {0, 0, 0, 0, 0, 10, 10};
         Distrib d1 = new Distrib(seq1, 10);
         Distrib d2 = new Distrib(seq2, 10);
-        d1.print();
+        System.out.println(d1);
         System.out.println("EMD dist: " + d1.emdDistance(d2));
     }
 
+    
     public double getMin() {
         return min;
     }
 
+    
     public double getMax() {
         return max;
     }

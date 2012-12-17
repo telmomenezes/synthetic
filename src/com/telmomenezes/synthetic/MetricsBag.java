@@ -4,8 +4,8 @@ package com.telmomenezes.synthetic;
 import com.telmomenezes.synthetic.motifs.TriadicProfile;
 
 public class MetricsBag {
-	private Distrib inDegrees;
-    private Distrib outDegrees;
+	private DiscreteDistrib inDegrees;
+    private DiscreteDistrib outDegrees;
     private Distrib inPageRanks;
     private Distrib outPageRanks;
     private TriadicProfile triadicProfile;
@@ -21,8 +21,8 @@ public class MetricsBag {
     
     MetricsBag(Net net, int bins) {
     	this.bins = bins;
-		inDegrees = new Distrib(net.inDegSeq(), this.bins);
-		outDegrees = new Distrib(net.outDegSeq(), this.bins);
+		inDegrees = new DiscreteDistrib(net.inDegSeq());
+		outDegrees = new DiscreteDistrib(net.outDegSeq());
 		inPageRanks = new Distrib(net.prInSeq(), this.bins);
 		outPageRanks = new Distrib(net.prOutSeq(), this.bins);
 		triadicProfile = new TriadicProfile(net);
@@ -37,8 +37,8 @@ public class MetricsBag {
     
     MetricsBag(Net net, int bins, MetricsBag bag) {
     	this.bins = bins;
-		inDegrees = new Distrib(net.inDegSeq(), this.bins, bag.inDegrees);
-		outDegrees = new Distrib(net.outDegSeq(), this.bins, bag.outDegrees);
+		inDegrees = new DiscreteDistrib(net.inDegSeq(), bag.inDegrees);
+		outDegrees = new DiscreteDistrib(net.outDegSeq(), bag.outDegrees);
 		inPageRanks = new Distrib(net.prInSeq(), this.bins, bag.inPageRanks);
 		outPageRanks = new Distrib(net.prOutSeq(), this.bins, bag.outPageRanks);
 		triadicProfile = new TriadicProfile(net);
@@ -86,5 +86,17 @@ public class MetricsBag {
 
 	public double getTriadicProfileDist() {
 		return triadicProfileDist;
+	}
+
+	public DiscreteDistrib getInDegrees() {
+		return inDegrees;
+	}
+
+	public Distrib getInPageRanks() {
+		return inPageRanks;
+	}
+
+	public DiscreteDistrib getOutDegrees() {
+		return outDegrees;
 	}
 }
