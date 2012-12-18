@@ -62,6 +62,29 @@ public class MetricsBag {
         
         distance = inDegreesDist * outDegreesDist * inPageRanksDist * outPageRanksDist * triadicProfileDist;
         distance = Math.pow(distance, 1.0 / 5.0);
+        
+        //distance = outDegreesDist;
+    }
+    
+    
+    public boolean paretoDominates(MetricsBag bag) {
+    	if (inDegreesDist < bag.inDegreesDist) {
+    		return true;
+    	}
+    	if (outDegreesDist < bag.outDegreesDist) {
+    		return true;
+    	}
+    	if (inPageRanksDist < bag.inPageRanksDist) {
+    		return true;
+    	}
+    	if (outPageRanksDist < bag.outPageRanksDist) {
+    		return true;
+    	}
+    	if (triadicProfileDist < bag.triadicProfileDist) {
+    		return true;
+    	}
+    	
+    	return false;
     }
 
 	public double getDistance() {
@@ -98,5 +121,16 @@ public class MetricsBag {
 
 	public DiscreteDistrib getOutDegrees() {
 		return outDegrees;
+	}
+	
+	@Override
+	public String toString() {
+		String str = "inDegreesDist: " + inDegreesDist;
+		str += "outDegreesDist: " + outDegreesDist;
+		str += "inPageRanksDist: " + inPageRanksDist;
+		str += "outPageRanksDist: " + outPageRanksDist;
+		str += "triadicProfileDist: " + triadicProfileDist;
+		
+		return str;
 	}
 }

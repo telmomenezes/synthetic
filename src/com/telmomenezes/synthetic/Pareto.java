@@ -2,21 +2,15 @@ package com.telmomenezes.synthetic;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.Collections;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
 
 
-/**
- * Basic generation based evolutionary algorithm.
- * 
- * @author Telmo Menezes (telmo@telmomenezes.com)
- */
-public class Evo {
+public class Pareto {
     
-	private Vector<Generator> population;
+	private Vector<Generator> paretoFront;
 	private double bestFitness;
 	
     // parameters
@@ -41,7 +35,7 @@ public class Evo {
     private int bins;
 	
 	
-	public Evo(Net targNet, int generations, int bins, Generator baseGenerator, String outDir)
+	public Pareto(Net targNet, int generations, int bins, Generator baseGenerator, String outDir)
 	{
 		this.targNet = targNet;
 		this.generations = generations;
@@ -65,61 +59,52 @@ public class Evo {
 		bestCount = 0;
 		writeLogHeader();
 	
-		// init population
-		population = new Vector<Generator>();
-		for (int i = 0; i < 2; i++) {
-			Generator gen = baseGenerator.instance();
-			gen.initRandom();
-			population.add(gen);
-		}
+		// init pareto front
+		paretoFront = new Vector<Generator>();
+		Generator gen = baseGenerator.instance();
+		gen.initRandom();
+		gen.run();
+		gen.fitness = computeFitness(gen);
+		bestGenFitness = gen.getFitness();
+		paretoFront.add(gen);
 		
 		// evolve
 		for(curgen = 0; curgen < generations; curgen++) {
-
 			long startTime = System.currentTimeMillis();
 			meanGenoSize = 0;
 			
 			simTime = 0;
 			fitTime = 0;
 
-			bestGenFitness = Double.MAX_VALUE;
+			Generator parent1 = paretoFront.get(RandomGenerator.instance().random.nextInt(paretoFront.size()));
 			
-			Generator generator;
-			boolean first = false;
-			for (int j = 0; j < 2; j++) {
-				generator = population.get(j);
-
-				meanGenoSize += generator.getProg().size();
-
-				if (!generator.simulated) {
-					long time0 = System.currentTimeMillis();
-					generator.run();
-					simTime += System.currentTimeMillis() - time0;
-					time0 = System.currentTimeMillis();
-					generator.fitness = computeFitness(generator);
-					fitTime += System.currentTimeMillis() - time0;
-				
-				    if (first || (generator.fitness < bestGenFitness)) {
-				        first = false;
-				        bestGenFitness = generator.fitness;
-				    }
-				    generator.simulated = true;
-				}
-
-				if (((curgen == 0) && (j == 0)) || (generator.fitness < bestFitness)) {
-					bestFitness = generator.fitness;
-					bestGenerator = generator;
-					onNewBest();
-				}
+			Generator child = null;
+			
+			if (paretoFront.size() == 1) {
+				child = parent1.clone().mutate();
+			}
+			else {
+				Generator parent2 = paretoFront.get(RandomGenerator.instance().random.nextInt(paretoFront.size()));
+				child = parent1.recombine(parent2).mutate();
 			}
 			
-			System.out.println(targBag.getOutDegrees());
-			System.out.println(bestGenerator.getMetricsBag().getOutDegrees());
-			
-			meanGenoSize /= 2.0;
+			long time0 = System.currentTimeMillis();
+			child.run();
+			simTime += System.currentTimeMillis() - time0;
+			time0 = System.currentTimeMillis();
+			child.fitness = computeFitness(child);
+			fitTime += System.currentTimeMillis() - time0;
 
-			// assign new population
-			population = newGeneration();
+			if (child.fitness < bestFitness) {
+				bestFitness = child.fitness;
+				bestGenerator = child;
+				onNewBest();
+			}
+			
+			updateParetoFront(child);
+			
+			//System.out.println(targBag.getOutDegrees());
+			//System.out.println(bestGenerator.getMetricsBag().getOutDegrees());
 
 			// time it took to compute the generation
 			genTime = System.currentTimeMillis() - startTime;
@@ -129,29 +114,9 @@ public class Evo {
 			
 			// onGeneration callback
 			onGeneration();
-		}
-	}
-	
-
-	private Vector<Generator> newGeneration() {
-		
-		// send the parents to the start of the vector by sorting
-		Collections.sort(population);
-		Generator parent = population.get(0);
-		
-		Vector<Generator> newPopulation = new Vector<Generator>();
-		
-		
-		// place parent in new population
-		newPopulation.add(parent);
-		
-		// generate offspring
-		Generator child = parent.clone();
 			
-		// mutate
-		newPopulation.add(child.mutate());
-		
-		return newPopulation;
+			printBestMetrics();
+		}
 	}
 	
 	
@@ -165,6 +130,36 @@ public class Evo {
         return genBag.getDistance();
     }
     
+	
+	private void updateParetoFront(Generator gen) {
+		paretoFront.add(gen);
+		
+		Vector<Generator> newFront = new Vector<Generator>();
+		
+		for (Generator g : paretoFront) {
+			if (paretoDominates(g)) {
+				newFront.add(g);
+			}
+		}
+		
+		paretoFront = newFront;
+		System.out.println("pareto front size: " + paretoFront.size());
+	}
+	
+	
+	private boolean paretoDominates(Generator gen) {
+		for (Generator g : paretoFront) {
+			if (g != gen) {
+				if (!gen.getMetricsBag().paretoDominates(g.getMetricsBag())) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	
     private void onNewBest() {
         String suffix = "" + bestCount + "_gen" + curgen;
         Generator bestGen = bestGenerator;
@@ -249,5 +244,42 @@ public class Evo {
 			+ "; sim comp time: " + simTime + "s."
 			+ "; fit comp time: " + fitTime + "s.";
         	return tmpstr;
+	}
+	
+	
+	private void printBestMetrics() {
+		double bestInDegreesDist = Double.POSITIVE_INFINITY;
+		double bestOutDegreesDist = Double.POSITIVE_INFINITY;
+		double bestInPageRanksDist = Double.POSITIVE_INFINITY;
+		double bestOutPageRanksDist = Double.POSITIVE_INFINITY;
+		double bestTriadicProfileDist = Double.POSITIVE_INFINITY;
+	    
+		for (Generator g : paretoFront) {
+			MetricsBag bag = g.getMetricsBag();
+			
+			if (bag.getInDegreesDist() < bestInDegreesDist) {
+				bestInDegreesDist = bag.getInDegreesDist();
+			}
+			if (bag.getOutDegreesDist() < bestOutDegreesDist) {
+				bestOutDegreesDist = bag.getOutDegreesDist();
+			}
+			if (bag.getInPageRanksDist() < bestInPageRanksDist) {
+				bestInPageRanksDist = bag.getInPageRanksDist();
+			}
+			if (bag.getOutPageRanksDist() < bestOutPageRanksDist) {
+				bestOutPageRanksDist = bag.getOutPageRanksDist();
+			}
+			if (bag.getTriadicProfileDist() < bestTriadicProfileDist) {
+				bestTriadicProfileDist = bag.getTriadicProfileDist();
+			}
+		}
+		
+		String str = "bestInDegreesDist: " + bestInDegreesDist;
+		str += "; bestOutDegreesDist: " + bestOutDegreesDist;
+		str += "; bestInPageRanksDist: " + bestInPageRanksDist;
+		str += "; bestOutPageRanksDist: " + bestOutPageRanksDist;
+		str += "; bestTriadicProfileDist: " + bestTriadicProfileDist;
+		
+		System.out.println(str);
 	}
 }

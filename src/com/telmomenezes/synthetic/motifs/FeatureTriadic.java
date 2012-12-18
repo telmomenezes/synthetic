@@ -17,6 +17,7 @@ public class FeatureTriadic implements Feature {
             return 0;
         }
         
+        
         if (triad1 > triad2) {
             int aux = triad2;
             triad2 = triad1;

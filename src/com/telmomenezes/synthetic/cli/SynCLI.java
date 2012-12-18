@@ -32,7 +32,8 @@ public class SynCLI {
         //args = new String[]{"evo", "-inet", "ownership.txt", "-odir", "test"};
     	//args = new String[]{"evo", "-inet", "/Users/telmo/Desktop/Networks/polblogs/polblogs.gml", "-odir", "test"};
     	args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir", "test"};//, "-gentype", "full"};
-        
+    	//args = new String[]{"evo", "-inet", "ownership.txt", "-odir", "test"};
+    	
         CommandLineParser parser = new GnuParser();
         options = new Options();
         options.addOption("inet", true, "input net file");

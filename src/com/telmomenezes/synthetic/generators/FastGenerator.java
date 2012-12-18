@@ -20,8 +20,9 @@ public class FastGenerator extends Generator {
 	public FastGenerator(int nodeCount, int edgeCount) {
 		super(nodeCount, edgeCount);
 
-	    trialRatio = 0.1;
-	    trials = (int)((nodeCount * nodeCount) * trialRatio * trialRatio);
+	    //trialRatio = 0.01;
+	    //trials = (int)((nodeCount * nodeCount) * trialRatio * trialRatio);
+		trials = 10;
 	}
 	
 	
