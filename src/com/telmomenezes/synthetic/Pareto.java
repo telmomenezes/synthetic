@@ -103,6 +103,8 @@ public class Pareto {
 			
 			updateParetoFront(child);
 			
+			//writeParetoFront();
+			
 			//System.out.println(targBag.getOutDegrees());
 			//System.out.println(bestGenerator.getMetricsBag().getOutDegrees());
 
@@ -253,9 +255,25 @@ public class Pareto {
 		double bestInPageRanksDist = Double.POSITIVE_INFINITY;
 		double bestOutPageRanksDist = Double.POSITIVE_INFINITY;
 		double bestTriadicProfileDist = Double.POSITIVE_INFINITY;
+		
+		double avgInDegreesDist = 0;
+		double avgOutDegreesDist = 0;
+		double avgInPageRanksDist = 0;
+		double avgOutPageRanksDist = 0;
+		double avgTriadicProfileDist = 0;
 	    
+		double count = 0;
+		
 		for (Generator g : paretoFront) {
 			MetricsBag bag = g.getMetricsBag();
+			
+			count += 1.0;
+			
+			avgInDegreesDist += bag.getInDegreesDist();
+			avgOutDegreesDist += bag.getOutDegreesDist();
+			avgInPageRanksDist += bag.getInPageRanksDist();
+			avgOutPageRanksDist += bag.getOutPageRanksDist();
+			avgTriadicProfileDist += bag.getTriadicProfileDist();
 			
 			if (bag.getInDegreesDist() < bestInDegreesDist) {
 				bestInDegreesDist = bag.getInDegreesDist();
@@ -274,6 +292,12 @@ public class Pareto {
 			}
 		}
 		
+		avgInDegreesDist /= count;
+		avgOutDegreesDist /= count;
+		avgInPageRanksDist /= count;
+		avgOutPageRanksDist /= count;
+		avgTriadicProfileDist /= count;
+		
 		String str = "bestInDegreesDist: " + bestInDegreesDist;
 		str += "; bestOutDegreesDist: " + bestOutDegreesDist;
 		str += "; bestInPageRanksDist: " + bestInPageRanksDist;
@@ -281,5 +305,41 @@ public class Pareto {
 		str += "; bestTriadicProfileDist: " + bestTriadicProfileDist;
 		
 		System.out.println(str);
+		
+		str = "avgInDegreesDist: " + avgInDegreesDist;
+		str += "; avgOutDegreesDist: " + avgOutDegreesDist;
+		str += "; avgInPageRanksDist: " + avgInPageRanksDist;
+		str += "; avgOutPageRanksDist: " + avgOutPageRanksDist;
+		str += "; avgTriadicProfileDist: " + avgTriadicProfileDist;
+		
+		System.out.println(str);
 	}
+	
+	private void writeParetoFront() {
+    	try {
+    		FileWriter fwriter = new FileWriter(outDir + "/pareto.csv");
+    		BufferedWriter writer = new BufferedWriter(fwriter);
+    		writer.write("fit, geno_size, in_degrees_dist, out_degrees_dist, in_pageranks_dist, out_pageranks_dist, triadic_profile_dist\n");
+    		
+    		for (Generator gen : paretoFront) {
+    			MetricsBag bag = gen.getMetricsBag();
+    			
+    			String str = "" + gen.fitness;
+    			str += ", " + gen.getProg().size();
+    			str += ", " + bag.getInDegreesDist();
+    			str += ", " + bag.getOutDegreesDist();
+    			str += ", " + bag.getInPageRanksDist();
+    			str += ", " + bag.getOutPageRanksDist();
+    			str += ", " + bag.getTriadicProfileDist();
+    			str += "\n";
+    			
+    			writer.write(str);
+    		}
+    		
+    		writer.close() ;
+    	}
+    	catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
 }

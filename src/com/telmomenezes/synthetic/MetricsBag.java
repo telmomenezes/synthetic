@@ -61,9 +61,10 @@ public class MetricsBag {
         if (triadicProfileDist == 0) triadicProfileDist = verySmall;
         
         distance = inDegreesDist * outDegreesDist * inPageRanksDist * outPageRanksDist * triadicProfileDist;
+        //distance = Math.log(inDegreesDist) * Math.log(outDegreesDist) * Math.log(inPageRanksDist) * Math.log(outPageRanksDist) * Math.log(triadicProfileDist);
         distance = Math.pow(distance, 1.0 / 5.0);
         
-        //distance = outDegreesDist;
+        //distance = triadicProfileDist;
     }
     
     
@@ -132,5 +133,9 @@ public class MetricsBag {
 		str += "triadicProfileDist: " + triadicProfileDist;
 		
 		return str;
+	}
+
+	public TriadicProfile getTriadicProfile() {
+		return triadicProfile;
 	}
 }

@@ -112,6 +112,14 @@ public class DiscreteDistrib {
         Signature sig2 = fd.getEmdSignature();
         
         return JFastEMD.distance(sig1, sig2, -1);
+    	
+    	
+    	/*double dist = 0;
+    	for (int i = 0; i < freqs.length; i++) {
+    		dist += Math.abs(freqs[i] - fd.freqs[i]);
+    	}
+    	
+    	return dist;*/
     }
     
     

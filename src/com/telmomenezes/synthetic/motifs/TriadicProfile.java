@@ -118,12 +118,20 @@ public class TriadicProfile {
         }
     }
     
+    public long total() {
+    	long total = 0;
+    	for (int i = 0; i < 13; i++) {
+    		total += profile[i];
+    	}
+    	return total;
+    }
+    
     private Signature getEmdSignature() {
         FeatureTriadic[] features = new FeatureTriadic[13];
         double[] weights = new double[13];
 
         for (int i = 0; i < 13; i++) {
-            FeatureTriadic f = new FeatureTriadic(i);
+            FeatureTriadic f = new FeatureTriadic(i + 1);
             features[i] = f;
             weights[i] = profile[i];
         }
@@ -137,16 +145,51 @@ public class TriadicProfile {
     }
     
     
-    public double emdDistance(TriadicProfile profile) {
+    public double emdDistance(TriadicProfile tp) {
         Signature sig1 = getEmdSignature();
-        Signature sig2 = profile.getEmdSignature();
+        Signature sig2 = tp.getEmdSignature();
         
         return JFastEMD.distance(sig1, sig2, -1);
+    	
+    	/*
+        double total1 = total();
+        double total2 = tp.total();
+    	
+    	double distance = 1;
+    	for (int i = 0; i < 13; i++) {
+            double x1 = profile[i];
+            //x1 /= total1;
+            
+            double x2 = tp.profile[i];
+            if (x2 == 0) {
+            	x2 = 0.0001;
+            }
+            
+            //x2 /= total2;
+            
+            double error = Math.abs(x1 - x2);
+            
+            double d = error / x2;
+            distance += d;
+        }
+    	
+    	return distance;*/
     }
     
     
     public long[] getProfile() {
         return profile;
+    }
+    
+    @Override
+    public String toString() {
+    	String str = "";
+    			
+    	for (int i = 0; i < 13; i++) {
+    		str += "[" + (i + 1) + "]:" + profile[i] + " ";
+    	}
+    	
+    	return str;
     }
     
     

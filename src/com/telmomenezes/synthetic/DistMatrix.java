@@ -6,15 +6,19 @@ import java.util.Arrays;
 public class DistMatrix {
     int[] dmatrix;
     int nodes;
+    int maxDist;
 
     
     public DistMatrix(int nodes) {
-        this.nodes = nodes;
+    	maxDist = 3;
+    	
+    	this.nodes = nodes;
         
         dmatrix = new int[nodes * nodes];
 
         // clear matrices
         int largeVal = 9999999;
+        //int largeVal = maxDist + 1;
         Arrays.fill(dmatrix, largeVal);
     }
     
@@ -33,7 +37,7 @@ public class DistMatrix {
     
     
     private void updateDistanceTarg_r(Net net, int origPos, int targPos, int distance) {
-    	if (distance > 3)
+    	if (distance > maxDist)
     		return;
     	
     	if (getDist(origPos, targPos) <= distance)
@@ -50,7 +54,7 @@ public class DistMatrix {
     
     
     private void updateDDistanceOrig_r(Net net, int origPos, int targPos, int distance) {
-    	if (distance > 3)
+    	if (distance > maxDist)
     		return;
     	
     	if (getDist(origPos, targPos) <= distance)

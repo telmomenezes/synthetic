@@ -102,8 +102,6 @@ public abstract class Generator implements Comparable<Generator> {
 		executionPaths.clear();
 	}
 	
-	
-	
 	public int compareTo(Generator generator) {
 		
         if (fitness < generator.fitness)

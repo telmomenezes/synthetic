@@ -64,7 +64,7 @@ public class FullGenerator extends Generator {
             	for (int targIndex = 0; targIndex < nodeCount; targIndex++) {
             		double weight = 0;
             	
-            		if (distMatrix.getDist(origIndex, targIndex) < 2) {
+            		if (distMatrix.getDist(origIndex, targIndex) > 2) {
             			Node origNode = nodeArray[origIndex];
             			Node targNode = nodeArray[targIndex];
         

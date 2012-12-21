@@ -22,7 +22,7 @@ public class FastGenerator extends Generator {
 
 	    //trialRatio = 0.01;
 	    //trials = (int)((nodeCount * nodeCount) * trialRatio * trialRatio);
-		trials = 10;
+		trials = 50;
 	}
 	
 	
