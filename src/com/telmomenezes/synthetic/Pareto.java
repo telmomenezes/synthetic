@@ -315,7 +315,7 @@ public class Pareto {
 		System.out.println(str);
 	}
 	
-	private void writeParetoFront() {
+	public void writeParetoFront() {
     	try {
     		FileWriter fwriter = new FileWriter(outDir + "/pareto.csv");
     		BufferedWriter writer = new BufferedWriter(fwriter);

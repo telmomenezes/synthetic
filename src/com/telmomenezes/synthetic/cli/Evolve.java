@@ -61,7 +61,11 @@ public class Evolve extends Command {
         
      	Generator baseGenerator = null;
      	if (fastGen) {
-     		baseGenerator = new FastGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount());
+     		int trials = 50;
+     		if(cline.hasOption("trials")) {
+                trials = new Integer(cline.getOptionValue("trials"));
+            }
+     		baseGenerator = new FastGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), trials);
      	}
      	else {
      		baseGenerator = new FullGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount());

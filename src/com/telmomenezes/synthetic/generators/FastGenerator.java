@@ -14,28 +14,24 @@ import com.telmomenezes.synthetic.RandomGenerator;
  */
 public class FastGenerator extends Generator {
 
-	private double trialRatio;
 	private int trials;
 	
-	public FastGenerator(int nodeCount, int edgeCount) {
+	public FastGenerator(int nodeCount, int edgeCount, int trials) {
 		super(nodeCount, edgeCount);
-
-	    //trialRatio = 0.01;
-	    //trials = (int)((nodeCount * nodeCount) * trialRatio * trialRatio);
-		trials = 50;
+		this.trials = trials;
 	}
 	
 	
 	@Override
 	public Generator instance() {
-		Generator generator = new FastGenerator(nodeCount, edgeCount);
+		Generator generator = new FastGenerator(nodeCount, edgeCount, trials);
 		return generator;
 	}
 	
 	
 	@Override
 	public Generator clone() {
-		Generator generator = new FastGenerator(nodeCount, edgeCount);
+		Generator generator = new FastGenerator(nodeCount, edgeCount, trials);
 		generator.prog = prog.clone();
 		return generator;
 	}
@@ -124,6 +120,6 @@ public class FastGenerator extends Generator {
 	
 	@Override
 	public String toString() {
-		return "using fast generator; trialRatio: " + trialRatio + "; trials: " + trials; 
+		return "using fast generator; trials: " + trials; 
 	}
 }
