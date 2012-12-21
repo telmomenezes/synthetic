@@ -1,5 +1,8 @@
 package com.telmomenezes.synthetic;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
 import com.telmomenezes.synthetic.emd.Feature1D;
 import com.telmomenezes.synthetic.emd.JFastEMD;
 import com.telmomenezes.synthetic.emd.Signature;
@@ -142,6 +145,24 @@ public class Distrib {
         }
         
         return str;
+    }
+    
+    
+    public void write(String filePath) {
+    	try{ 
+            FileWriter fstream = new FileWriter(filePath);
+            BufferedWriter out = new BufferedWriter(fstream);
+            
+            double x = min;
+            for (int i = 0; i < freqs.length; i++) {
+                out.write("" + x + "," + freqs[i] + '\n');
+                x += interval;
+            }
+            out.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     
     

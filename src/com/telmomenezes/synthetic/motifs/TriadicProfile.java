@@ -1,5 +1,8 @@
 package com.telmomenezes.synthetic.motifs;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+
 import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
@@ -177,9 +180,21 @@ public class TriadicProfile {
     }
     
     
-    public long[] getProfile() {
-        return profile;
+    public void write(String filePath) {
+    	try{ 
+            FileWriter fstream = new FileWriter(filePath);
+            BufferedWriter out = new BufferedWriter(fstream);
+            
+            for (int i = 0; i < 13; i++) {
+                out.write("" + i + "," + profile[i] + '\n');
+            }
+            out.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+    
     
     @Override
     public String toString() {
@@ -190,6 +205,11 @@ public class TriadicProfile {
     	}
     	
     	return str;
+    }
+    
+    
+    public long[] getProfile() {
+        return profile;
     }
     
     

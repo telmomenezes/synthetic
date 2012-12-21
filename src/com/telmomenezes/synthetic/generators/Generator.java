@@ -159,9 +159,11 @@ public abstract class Generator implements Comparable<Generator> {
         this.edgeCount = edgeCount;
     }
 
+    
     public Prog getProg() {
         return prog;
     }
+    
     
     public Net getNet() {
         return net;

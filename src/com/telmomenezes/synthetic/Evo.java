@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
+import com.telmomenezes.synthetic.motifs.TriadicProfile;
 
 
 /**
@@ -50,6 +51,7 @@ public class Evo {
 		
 		this.bins = bins;
 		targBag = new MetricsBag(targNet, bins);
+		writeDistribs(targNet, targBag.getTriadicProfile(), "targ");
 	}
 	
 	public void run()
@@ -171,6 +173,7 @@ public class Evo {
         return genBag.getDistance();
     }
     
+	
     private void onNewBest() {
         String suffix = "" + bestCount + "_gen" + curgen;
         Generator bestGen = bestGenerator;
@@ -182,6 +185,10 @@ public class Evo {
         // write progs
         bestGen.getProg().write(outDir + "/bestprog" + suffix + ".txt");
         bestGen.getProg().write(outDir + "/bestprog" + ".txt");
+        
+        // write distribs
+        writeDistribs(bestGen.getNet(), bestGen.getMetricsBag().getTriadicProfile(), "best");
+        
         bestCount++;
     }
 
@@ -190,12 +197,26 @@ public class Evo {
     	try {
     		FileWriter fwriter = new FileWriter(outDir + "/evo.csv");
     		BufferedWriter writer = new BufferedWriter(fwriter);
-    		writer.write("gen,best_fit,best_gen_fit,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,in_degrees_dist,out_degrees_dist,pageranks_dist,triadic_profile_dist\n");
+    		writer.write("gen,best_fit,best_gen_fit,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,in_degrees_dist,out_degrees_dist,in_pageranks_dist,out_pageranks_dist,triadic_profile_dist\n");
     		writer.close() ;
     	}
     	catch (Exception e) {
     		e.printStackTrace();
     	}
+    }
+    
+    
+    private void writeDistribs(Net net, TriadicProfile tp, String prefix) {
+    	DiscreteDistrib inDegrees = new DiscreteDistrib(net.inDegSeq());
+    	DiscreteDistrib outDegrees = new DiscreteDistrib(net.outDegSeq());
+    	Distrib inPageRank = new Distrib(net.prInSeq(), bins);
+    	Distrib outPageRank = new Distrib(net.prOutSeq(), bins);
+    	
+    	inDegrees.write(outDir + "/" + prefix + "_in_degrees.csv");
+    	outDegrees.write(outDir + "/" + prefix + "_out_degrees.csv");
+    	inPageRank.write(outDir + "/" + prefix + "_in_pagerank.csv");
+    	outPageRank.write(outDir + "/" + prefix + "_out_pagerank.csv");
+    	tp.write(outDir + "/" + prefix + "_triadic_profile.csv");
     }
     
     private void onGeneration() {
