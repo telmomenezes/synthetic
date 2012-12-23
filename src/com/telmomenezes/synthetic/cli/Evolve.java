@@ -7,8 +7,6 @@ import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Evo;
-//import com.telmomenezes.synthetic.GA;
-//import com.telmomenezes.synthetic.Pareto;
 import com.telmomenezes.synthetic.generators.FastGenerator;
 import com.telmomenezes.synthetic.generators.FullGenerator;
 import com.telmomenezes.synthetic.generators.Generator;
@@ -77,8 +75,6 @@ public class Evolve extends Command {
         }
      	
         Evo evo = new Evo(sampleNet, generations, bins, baseGenerator, outdir);
-        //GA evo = new GA(sampleNet, 200, generations, bins, baseGenerator, outdir);
-        //Pareto evo = new Pareto(sampleNet, generations, bins, baseGenerator, outdir);
         
         System.out.println("target net: " + netfile);
         System.out.println(evo.infoString());
