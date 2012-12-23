@@ -115,14 +115,14 @@ public class Evo {
 				}
 			}
 			
-			System.out.println(targBag.getInDegrees());
-			System.out.println(bestGenerator.getMetricsBag().getInDegrees());
+			//System.out.println(targBag.getInDegrees());
+			//System.out.println(bestGenerator.getMetricsBag().getInDegrees());
 			
-			System.out.println(targBag.getOutDegrees());
-			System.out.println(bestGenerator.getMetricsBag().getOutDegrees());
+			//System.out.println(targBag.getOutDegrees());
+			//System.out.println(bestGenerator.getMetricsBag().getOutDegrees());
 			
-			System.out.println(targBag.getTriadicProfile());
-			System.out.println(bestGenerator.getMetricsBag().getTriadicProfile());
+			//System.out.println(targBag.getTriadicProfile());
+			//System.out.println(bestGenerator.getMetricsBag().getTriadicProfile());
 			
 			meanGenoSize /= 2.0;
 

@@ -31,7 +31,7 @@ public class SynCLI {
     public void run(String[] args) {
         //args = new String[]{"evo", "-inet", "ownership.txt", "-odir", "test"};
     	//args = new String[]{"evo", "-inet", "/Users/telmo/Desktop/Networks/polblogs/polblogs.gml", "-odir", "test"};
-    	args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir", "test"};//, "-gentype", "full"};
+    	//args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir", "test"};//, "-gentype", "full"};
     	//args = new String[]{"evo", "-inet", "wiki-Vote.snap", "-odir", "test", "-maxnodes", "100"};//, "-gentype", "full"};
     	
         CommandLineParser parser = new GnuParser();
