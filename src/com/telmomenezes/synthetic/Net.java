@@ -13,11 +13,6 @@ import com.telmomenezes.synthetic.io.NetFileType;
 public class Net implements Cloneable {
     private int CURID;
 
-    private double minPRIn;
-    private double minPROut;
-    private double maxPRIn;
-    private double maxPROut;
-
     protected Vector<Node> nodes;
     protected Vector<Edge> edges;
     protected Map<Integer, Node> nodeMap;
@@ -219,113 +214,80 @@ public class Net implements Cloneable {
         double drag = 0.999;
 
         for (Node node : nodes) {
-            node.setPrInLast(1);
-            node.setPrOutLast(1);
+            node.setPrDLast(1);
+            node.setPrULast(1);
         }
 
         int i = 0;
 
-        // double delta_pr_in = 999;
-        // double delta_pr_out = 999;
-        // double zero_test = 0.0001;
+        double deltaPrD = 999;
+        double deltaPrU = 999;
+        double zero_test = 0.0001;
 
-        // while (((delta_pr_in > zero_test) || (delta_pr_out > zero_test)) &&
-        // (i < max_iter)) {
-        while (i < maxIter) {
-            double accPRIn = 0;
-            double accPROut = 0;
+        while (((deltaPrD > zero_test) || (deltaPrU > zero_test)) && (i < maxIter)) {
+            double accPRD = 0;
+            double accPRU = 0;
 
             for (Node node : nodes) {
-                node.setPrIn(0);
+                // update directed page ranks
+            	node.setPrD(0);
                 for (Edge origin : node.getInEdges()) {
-                    node.setPrIn(node.getPrIn()
-                            + origin.getOrigin().getPrInLast()
-                            / ((double) origin.getOrigin().getOutDegree()));
+                    node.setPrD(node.getPrD()
+                            + origin.getOrigin().getPrDLast()
+                            / ((double)origin.getOrigin().getOutDegree()));
                 }
 
-                node.setPrIn(node.getPrIn() * drag);
-                node.setPrIn(node.getPrIn() + (1.0 - drag)
+                node.setPrD(node.getPrD() * drag);
+                node.setPrD(node.getPrD() + (1.0 - drag)
                         / ((double) nodeCount));
 
-                accPRIn += node.getPrIn();
+                accPRD += node.getPrD();
 
-                node.setPrOut(0);
+                // update undirected page ranks
+                node.setPrU(0);
+                for (Edge origin : node.getInEdges()) {
+                    node.setPrU(node.getPrU()
+                            + origin.getOrigin().getPrULast()
+                            / ((double)origin.getOrigin().getDegree()));
+                }
                 for (Edge target : node.getOutEdges()) {
-                    node.setPrOut(node.getPrOut()
-                            + target.getTarget().getPrOutLast()
-                            / ((double) target.getTarget().getInDegree()));
+                    node.setPrU(node.getPrU()
+                            + target.getTarget().getPrULast()
+                            / ((double)target.getTarget().getDegree()));
                 }
 
-                node.setPrOut(node.getPrOut() * drag);
-                node.setPrOut(node.getPrOut() + (1.0 - drag)
-                        / ((double) nodeCount));
+                node.setPrU(node.getPrU() * drag);
+                node.setPrU(node.getPrU() + (1.0 - drag)
+                        / ((double)nodeCount));
 
-                accPROut += node.getPrOut();
+                accPRU += node.getPrU();
             }
 
-            // delta_pr_in = 0;
-            // delta_pr_out = 0;
+            deltaPrD = 0;
+            deltaPrU = 0;
 
             for (Node node : nodes) {
-                node.setPrIn(node.getPrIn() / accPRIn);
-                node.setPrOut(node.getPrOut() / accPROut);
-                // delta_pr_in += Math.abs(node.pr_in - node.pr_in_last);
-                // delta_pr_out += Math.abs(node.pr_out - node.pr_out_last);
-                node.setPrInLast(node.getPrIn());
-                node.setPrOutLast(node.getPrOut());
+                node.setPrD(node.getPrD() / accPRD);
+                node.setPrU(node.getPrU() / accPRU);
+                deltaPrD += Math.abs(node.getPrD() - node.getPrDLast());
+                deltaPrU += Math.abs(node.getPrU() - node.getPrULast());
+                node.setPrDLast(node.getPrD());
+                node.setPrULast(node.getPrU());
             }
 
             i++;
         }
 
-        // relative pr
-        double basePR = 1.0 / ((double) nodeCount);
-        for (Node node : nodes) {
-            node.setPrIn(node.getPrIn() / basePR);
-            node.setPrOut(node.getPrOut() / basePR);
-        }
-
         // use log scale
         for (Node node : nodes) {
-            node.setPrIn(Math.log(node.getPrIn()));
-            node.setPrOut(Math.log(node.getPrOut()));
-        }
-
-        // compute min/max EVC in and out
-        minPRIn = 0;
-        minPROut = 0;
-        maxPRIn = 0;
-        maxPROut = 0;
-        boolean first = true;
-        for (Node node : nodes) {
-            if ((!(new Double(node.getPrIn())).isInfinite())
-                    && (first || (node.getPrIn() < minPRIn))) {
-                minPRIn = node.getPrIn();
-            }
-            if ((!(new Double(node.getPrOut())).isInfinite())
-                    && (first || (node.getPrOut() < minPROut))) {
-                minPROut = node.getPrOut();
-            }
-            if ((!(new Double(node.getPrIn())).isInfinite())
-                    && (first || (node.getPrIn() > maxPRIn))) {
-                maxPRIn = node.getPrIn();
-            }
-            if ((!(new Double(node.getPrOut())).isInfinite())
-                    && (first || (node.getPrOut() > maxPROut))) {
-                maxPROut = node.getPrOut();
-            }
-
-            first = false;
+            node.setPrD(Math.log(node.getPrD()));
+            node.setPrU(Math.log(node.getPrU()));
         }
     }
 
     public void printNetInfo() {
         System.out.println("node number: " + nodeCount);
         System.out.println("edge number: " + edgeCount);
-        System.out.println(String.format("log(pr_in): [%f, %f]\n", minPRIn,
-                maxPRIn));
-        System.out.println(String.format("log(pr_out): [%f, %f]\n", minPROut,
-                maxPROut));
     }
 
     public int[] inDegSeq() {
@@ -350,44 +312,28 @@ public class Net implements Cloneable {
         return seq;
     }
     
-    public double[] prInSeq() {
+    public double[] prDSeq() {
         computePageranks();
         double seq[] = new double[nodeCount];
         int i = 0;
         for (Node curnode : nodes) {
-            seq[i] = curnode.getPrIn();
+            seq[i] = curnode.getPrD();
             i++;
         }
 
         return seq;
     }
     
-    public double[] prOutSeq() {
+    public double[] prUSeq() {
         computePageranks();
         double seq[] = new double[nodeCount];
         int i = 0;
         for (Node curnode : nodes) {
-            seq[i] = curnode.getPrOut();
+            seq[i] = curnode.getPrU();
             i++;
         }
 
         return seq;
-    }
-
-    double getMinPRIn() {
-        return minPRIn;
-    }
-
-    double getMinPROut() {
-        return minPROut;
-    }
-
-    double getMaxPRIn() {
-        return maxPRIn;
-    }
-
-    double getMaxPROut() {
-        return maxPROut;
     }
 
     public Vector<Node> getNodes() {

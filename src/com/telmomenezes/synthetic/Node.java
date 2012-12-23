@@ -11,10 +11,10 @@ public class Node implements Cloneable {
     private int outDegree;
 
     // pageranks
-    private double prIn;
-    private double prInLast;
-    private double prOut;
-    private double prOutLast;
+    private double prD;
+    private double prDLast;
+    private double prU;
+    private double prULast;
 
     // for generators
     private double genweight;
@@ -57,37 +57,41 @@ public class Node implements Cloneable {
     public int getOutDegree() {
         return outDegree;
     }
-
-    public double getPrIn() {
-        return prIn;
+    
+    public int getDegree() {
+        return inDegree + outDegree;
     }
 
-    public void setPrIn(double prIn) {
-        this.prIn = prIn;
+    public double getPrD() {
+        return prD;
     }
 
-    double getPrInLast() {
-        return prInLast;
+    public void setPrD(double prD) {
+        this.prD = prD;
     }
 
-    void setPrInLast(double prInLast) {
-        this.prInLast = prInLast;
+    double getPrDLast() {
+        return prDLast;
     }
 
-    public double getPrOut() {
-        return prOut;
+    void setPrDLast(double prDLast) {
+        this.prDLast = prDLast;
     }
 
-    public void setPrOut(double prOut) {
-        this.prOut = prOut;
+    public double getPrU() {
+        return prU;
     }
 
-    double getPrOutLast() {
-        return prOutLast;
+    public void setPrU(double prU) {
+        this.prU = prU;
     }
 
-    void setPrOutLast(double prOutLast) {
-        this.prOutLast = prOutLast;
+    double getPrULast() {
+        return prULast;
+    }
+
+    void setPrULast(double prULast) {
+        this.prULast = prULast;
     }
 
     public double getGenweight() {
