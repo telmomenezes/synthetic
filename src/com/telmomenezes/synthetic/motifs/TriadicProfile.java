@@ -185,6 +185,7 @@ public class TriadicProfile {
             FileWriter fstream = new FileWriter(filePath);
             BufferedWriter out = new BufferedWriter(fstream);
             
+            out.write("motif,freq\n");
             for (int i = 0; i < 13; i++) {
                 out.write("" + i + "," + profile[i] + '\n');
             }

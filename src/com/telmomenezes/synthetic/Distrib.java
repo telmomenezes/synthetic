@@ -153,6 +153,7 @@ public class Distrib {
             FileWriter fstream = new FileWriter(filePath);
             BufferedWriter out = new BufferedWriter(fstream);
             
+            out.write("value,freq\n");
             double x = min;
             for (int i = 0; i < freqs.length; i++) {
                 out.write("" + x + "," + freqs[i] + '\n');
