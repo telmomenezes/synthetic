@@ -12,7 +12,6 @@ public class MetricsBag {
     
     private int bins;
     
-    private double distance;
     private double inDegreesDist;
     private double outDegreesDist;
     private double dPageRanksDist;
@@ -27,7 +26,6 @@ public class MetricsBag {
 		uPageRanks = new Distrib(net.prUSeq(), this.bins);
 		triadicProfile = new TriadicProfile(net);
 		
-		distance = 0;
 	    inDegreesDist = 0;
 	    outDegreesDist = 0;
 	    dPageRanksDist = 0;
@@ -59,11 +57,6 @@ public class MetricsBag {
         if (dPageRanksDist == 0) dPageRanksDist = verySmall;
         if (uPageRanksDist == 0) uPageRanksDist = verySmall;
         if (triadicProfileDist == 0) triadicProfileDist = verySmall;
-        
-        distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist * triadicProfileDist;
-        distance = Math.pow(distance, 1.0 / 5.0);
-        
-        //distance = triadicProfileDist;
     }
     
     
@@ -86,10 +79,6 @@ public class MetricsBag {
     	
     	return false;
     }
-
-	public double getDistance() {
-		return distance;
-	}
 
 	public double getInDegreesDist() {
 		return inDegreesDist;
@@ -117,6 +106,10 @@ public class MetricsBag {
 
 	public Distrib getDPageRanks() {
 		return dPageRanks;
+	}
+	
+	public Distrib getUPageRanks() {
+		return uPageRanks;
 	}
 
 	public DiscreteDistrib getOutDegrees() {

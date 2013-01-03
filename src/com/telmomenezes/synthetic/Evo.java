@@ -170,7 +170,24 @@ public class Evo {
 
         gen.setMetricsBag(genBag);
         
-        return genBag.getDistance();
+        double inDegreesDist = genBag.getInDegreesDist();
+        double outDegreesDist = genBag.getOutDegreesDist();
+        double dPageRanksDist = genBag.getDPageRanksDist();
+        double uPageRanksDist = genBag.getUPageRanksDist();
+        double triadicProfileDist = genBag.getTriadicProfileDist();
+        
+        double genSize = gen.getProg().size();
+        
+        if (genSize < 2) {
+        	genSize = 2;
+        }
+        
+        genSize = Math.log(genSize);
+        
+        double distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist * triadicProfileDist * genSize;
+        distance = Math.pow(distance, 1.0 / 6.0);
+        
+        return distance;
     }
     
 	
