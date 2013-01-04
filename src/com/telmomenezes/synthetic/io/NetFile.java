@@ -30,10 +30,6 @@ public abstract class NetFile {
             net = (new SNAPNetFile()).load(filePath);
             return net;
         }
-        else if (ext.equals("mat")) {
-            net = (new MatrixFile()).load(filePath);
-            return net;
-        }
         else if (ext.equals("gml")) {
             net = (new GMLNetFile()).load(filePath);
             return net;
@@ -47,9 +43,6 @@ public abstract class NetFile {
         switch (fileType) {
         case SNAP:
             (new SNAPNetFile()).save(net, filePath);
-            break;
-        case MAT:
-            (new MatrixFile()).save(net, filePath);
             break;
         case GML:
             (new GMLNetFile()).save(net, filePath);
