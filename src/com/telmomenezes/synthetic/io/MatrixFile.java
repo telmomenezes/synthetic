@@ -44,10 +44,10 @@ public class MatrixFile extends NetFile {
             while ((line = in.readLine()) != null) {
                 tokens = line.split(",");
                 for (int j = 0; j < nodes.size(); j++) {
-                    double val = Double.parseDouble(tokens[j + 1]);
+                    //double val = Double.parseDouble(tokens[j + 1]);
                     Node orig = nodeMap.get(tokens[0]);
                     if (orig != null) {
-                        net.addEdge(orig, nodes.get(j), val);
+                        net.addEdge(orig, nodes.get(j));
                     }
                 }
             }

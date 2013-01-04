@@ -37,7 +37,7 @@ public class SNAPNetFile extends NetFile {
                                 nodes.put(t, net.addNode());
                             }
                         }
-                        net.addEdge(nodes.get(tokens[0]), nodes.get(tokens[1]), 0);
+                        net.addEdge(nodes.get(tokens[0]), nodes.get(tokens[1]));
                     }
                 }
             }

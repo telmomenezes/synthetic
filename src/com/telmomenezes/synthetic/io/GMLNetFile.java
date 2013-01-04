@@ -72,7 +72,7 @@ public class GMLNetFile extends NetFile {
                         }
                     }
                     else if (line.startsWith("]")) {
-                        net.addEdge(nodes.get(source), nodes.get(target), 0);
+                        net.addEdge(nodes.get(source), nodes.get(target));
                         state = State.GRAPH;
                     }
                     break;

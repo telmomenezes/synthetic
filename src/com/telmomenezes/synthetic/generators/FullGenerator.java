@@ -131,7 +131,7 @@ public class FullGenerator extends Generator {
             Node origNode = nodeArray[selectedOrigIndex];
             Node targNode = nodeArray[selectedTargIndex];
 
-            net.addEdge(origNode, targNode, i);
+            net.addEdge(origNode, targNode);
             
             // update distances
             distMatrix.updateDistances(net, selectedOrigIndex, selectedTargIndex);

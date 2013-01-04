@@ -108,7 +108,7 @@ public class FastGenerator extends Generator {
             Node origNode = nodeArray[bestOrigIndex];
             Node targNode = nodeArray[bestTargIndex];
 
-            net.addEdge(origNode, targNode, i);
+            net.addEdge(origNode, targNode);
             
             // update distances
             distMatrix.updateDistances(net, bestOrigIndex, bestTargIndex);

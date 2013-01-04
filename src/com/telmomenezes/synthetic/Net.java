@@ -55,12 +55,11 @@ public class Net implements Cloneable {
         for (Edge edge : edges) {
             Node orig = edge.getOrigin();
             Node targ = edge.getTarget();
-            long timestamp = edge.getTimestamp();
             
             Node corig = clonedNet.getNodeById(orig.getId());
             Node ctarg = clonedNet.getNodeById(targ.getId());
             
-            clonedNet.addEdge(corig, ctarg, timestamp);
+            clonedNet.addEdge(corig, ctarg);
         }
         
         return clonedNet;
@@ -83,12 +82,10 @@ public class Net implements Cloneable {
             Node targ = edge.getTarget();
             
             if (orig.getFlag() && targ.getFlag()) {
-                long timestamp = edge.getTimestamp();
-            
                 Node corig = clonedNet.getNodeById(orig.getId());
                 Node ctarg = clonedNet.getNodeById(targ.getId());
             
-                clonedNet.addEdge(corig, ctarg, timestamp);
+                clonedNet.addEdge(corig, ctarg);
             }
         }
         
@@ -120,7 +117,7 @@ public class Net implements Cloneable {
         return nodeMap.get(id);
     }
     
-    public boolean addEdge(Node origin, Node target, double weight, long timestamp) {
+    public boolean addEdge(Node origin, Node target) {
         if ((!selfEdges) && (origin == target)) {
             return false;
         }
@@ -129,7 +126,7 @@ public class Net implements Cloneable {
             return false;
         }
 
-        Edge edge = new Edge(origin, target, timestamp);
+        Edge edge = new Edge(origin, target);
         edges.add(edge);
         origin.addOutEdge(edge);
         target.addInEdge(edge);
@@ -137,18 +134,6 @@ public class Net implements Cloneable {
         edgeCount++;
         
         return true;
-    }
-    
-    public boolean addEdge(Node origin, Node target) {
-        return addEdge(origin, target, 0.0, 0l);
-    }
-    
-    public boolean addEdge(Node origin, Node target, double weight) {
-        return addEdge(origin, target, weight, 0l);
-    }
-    
-    public boolean addEdge(Node origin, Node target, long timestamp) {
-        return addEdge(origin, target, 0.0, timestamp);
     }
 
     public boolean edgeExists(Node origin, Node target) {
