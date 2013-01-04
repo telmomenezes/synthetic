@@ -40,10 +40,10 @@ public class Random extends Command {
         randomNet.save(outDir + "/randomnet.txt", NetFileType.SNAP);
         
         // write distributions
-        DiscreteDistrib inDegrees = new DiscreteDistrib(net.inDegSeq());
-    	DiscreteDistrib outDegrees = new DiscreteDistrib(net.outDegSeq());
-    	Distrib dPageRank = new Distrib(net.prDSeq(), bins);
-    	Distrib uPageRank = new Distrib(net.prUSeq(), bins);
+        DiscreteDistrib inDegrees = new DiscreteDistrib(randomNet.inDegSeq());
+    	DiscreteDistrib outDegrees = new DiscreteDistrib(randomNet.outDegSeq());
+    	Distrib dPageRank = new Distrib(randomNet.prDSeq(), bins);
+    	Distrib uPageRank = new Distrib(randomNet.prUSeq(), bins);
     	
     	inDegrees.write(outDir + "/random_in_degrees.csv");
     	outDegrees.write(outDir + "/random_out_degrees.csv");
