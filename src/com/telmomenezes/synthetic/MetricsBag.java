@@ -18,7 +18,7 @@ public class MetricsBag {
     private double uPageRanksDist;
     private double triadicProfileDist;
     
-    MetricsBag(Net net, int bins) {
+    public MetricsBag(Net net, int bins) {
     	this.bins = bins;
 		inDegrees = new DiscreteDistrib(net.inDegSeq());
 		outDegrees = new DiscreteDistrib(net.outDegSeq());

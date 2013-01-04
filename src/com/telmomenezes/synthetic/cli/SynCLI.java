@@ -64,6 +64,9 @@ public class SynCLI {
             else if (cmd.equals("evo")) {
                 cmdObj = new Evolve();
             }
+            else if (cmd.equals("random")) {
+                cmdObj = new Random();
+            }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
             }
