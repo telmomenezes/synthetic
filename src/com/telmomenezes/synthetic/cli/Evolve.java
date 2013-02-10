@@ -37,6 +37,13 @@ public class Evolve extends Command {
             }
         }
         
+        boolean antiBloat = true;
+        if(cline.hasOption("antibloat")) {
+            if (cline.getOptionValue("antibloat").equals("off")) {
+            	antiBloat = false;
+            }
+        }
+        
         int generations = 999999999;
         if(cline.hasOption("gens")) {
             generations = new Integer(cline.getOptionValue("gens"));
@@ -74,7 +81,7 @@ public class Evolve extends Command {
             bins = new Integer(cline.getOptionValue("bins"));
         }
      	
-        Evo evo = new Evo(sampleNet, generations, bins, baseGenerator, outdir);
+        Evo evo = new Evo(sampleNet, generations, bins, baseGenerator, outdir, antiBloat);
         
         System.out.println("target net: " + netfile);
         System.out.println(evo.infoString());

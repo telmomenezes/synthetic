@@ -24,7 +24,9 @@ public class Evo {
 	private Net targNet;
 	private int generations;
 	private Generator baseGenerator;
-
+	private String outDir;
+	private boolean antiBloat;
+	
     // state
 	private Generator bestGenerator;
 	private int curgen;
@@ -34,7 +36,6 @@ public class Evo {
 	private double simTime;
 	private double fitTime;
 	
-	private String outDir;
     private int bestCount;
     
     private MetricsBag targBag;
@@ -42,20 +43,19 @@ public class Evo {
     private int bins;
 	
 	
-	public Evo(Net targNet, int generations, int bins, Generator baseGenerator, String outDir)
-	{
+	public Evo(Net targNet, int generations, int bins, Generator baseGenerator, String outDir, boolean antiBloat) {
 		this.targNet = targNet;
 		this.generations = generations;
 		this.baseGenerator = baseGenerator;
 		this.outDir = outDir;
+		this.antiBloat = antiBloat;
 		
 		this.bins = bins;
 		targBag = new MetricsBag(targNet, bins);
 		writeDistribs(targNet, targBag.getTriadicProfile(), "targ");
 	}
 	
-	public void run()
-	{
+	public void run() {
 		// init state
 		meanGenoSize = 0;
 		genTime = 0;
@@ -114,15 +114,6 @@ public class Evo {
 					onNewBest();
 				}
 			}
-			
-			//System.out.println(targBag.getInDegrees());
-			//System.out.println(bestGenerator.getMetricsBag().getInDegrees());
-			
-			//System.out.println(targBag.getOutDegrees());
-			//System.out.println(bestGenerator.getMetricsBag().getOutDegrees());
-			
-			//System.out.println(targBag.getTriadicProfile());
-			//System.out.println(bestGenerator.getMetricsBag().getTriadicProfile());
 			
 			meanGenoSize /= 2.0;
 
@@ -184,8 +175,16 @@ public class Evo {
         
         genSize = Math.log(genSize);
         
-        double distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist * triadicProfileDist * genSize;
-        distance = Math.pow(distance, 1.0 / 6.0);
+        double distance;
+        
+        if (antiBloat) {
+        	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist * triadicProfileDist * genSize;
+        	distance = Math.pow(distance, 1.0 / 6.0);
+        }
+        else {
+        	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist * triadicProfileDist;
+        	distance = Math.pow(distance, 1.0 / 5.0);
+        }
         
         return distance;
     }
@@ -278,6 +277,7 @@ public class Evo {
 		str += "target net node count: " + targNet.getNodeCount() + "\n";
         str += "target net edge count: " + targNet.getEdgeCount() + "\n";
         str += "distribution bins: " + bins + "\n";
+        str += "anti bloat: " + antiBloat + "\n";
 		return str;
 	}
 
