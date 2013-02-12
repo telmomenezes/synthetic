@@ -125,7 +125,7 @@ public class Net implements Cloneable {
         if (edgeExists(origin, target)) {
             return false;
         }
-
+        
         Edge edge = new Edge(origin, target);
         edges.add(edge);
         origin.addOutEdge(edge);

@@ -33,11 +33,13 @@ public class SynCLI {
     	//args = new String[]{"evo", "-inet", "/Users/telmo/Desktop/Networks/polblogs/polblogs.gml", "-odir", "test"};
     	//args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir", "test", "-antibloat", "off"};
     	//args = new String[]{"evo", "-inet", "wiki-Vote.snap", "-odir", "test", "-maxnodes", "100"};//, "-gentype", "full"};
+    	//args = new String[]{"netstats", "-inet", "polblogs.gml"};
     	
         CommandLineParser parser = new GnuParser();
         options = new Options();
         options.addOption("inet", true, "input net file");
         options.addOption("inet2", true, "second input net file");
+        options.addOption("onet", true, "output net file");
         options.addOption("odir", true, "output directory");
         options.addOption("prg", true, "generator program file");
         options.addOption("oprg", true, "generator output program file");
@@ -67,6 +69,9 @@ public class SynCLI {
             }
             else if (cmd.equals("random")) {
                 cmdObj = new Random();
+            }
+            else if (cmd.equals("convert")) {
+                cmdObj = new Convert();
             }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
