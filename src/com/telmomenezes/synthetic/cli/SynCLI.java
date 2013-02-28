@@ -73,6 +73,9 @@ public class SynCLI {
             else if (cmd.equals("convert")) {
                 cmdObj = new Convert();
             }
+            else if (cmd.equals("run")) {
+                cmdObj = new Run();
+            }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
             }

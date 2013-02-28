@@ -34,6 +34,10 @@ public abstract class NetFile {
             net = (new GMLNetFile()).load(filePath);
             return net;
         }
+        else if (ext.equals("mitab")) {
+            net = (new MITAB25NetFile()).load(filePath);
+            return net;
+        }
         else {
             return null;
         }

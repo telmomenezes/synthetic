@@ -1,6 +1,7 @@
 package com.telmomenezes.synthetic.generators;
 
 
+import java.io.IOException;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.MetricsBag;
@@ -53,6 +54,16 @@ public abstract class Generator implements Comparable<Generator> {
         variableNames.add("revDist");
         
         prog = new Prog(8, variableNames);
+	}
+	
+	
+	public void load(String filePath) {
+		try {
+			prog.load(filePath);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
