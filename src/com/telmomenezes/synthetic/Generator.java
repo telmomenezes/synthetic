@@ -1,10 +1,15 @@
-package com.telmomenezes.synthetic.generators;
+package com.telmomenezes.synthetic;
 
+
+import java.io.IOException;
+import java.util.Vector;
 
 import com.telmomenezes.synthetic.DistMatrix;
+import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.RandomGenerator;
+import com.telmomenezes.synthetic.gp.Prog;
 
 
 /**
@@ -12,32 +17,88 @@ import com.telmomenezes.synthetic.RandomGenerator;
  * 
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
-public class FastGenerator extends Generator {
+public class Generator implements Comparable<Generator> {
+    protected int nodeCount;
+    protected int edgeCount;
+    protected boolean directed;
+    private int trials;
+    
+	protected Prog prog;
+    public boolean simulated;
 
-	private int trials;
-	
-	public FastGenerator(int nodeCount, int edgeCount, boolean directed, int trials) {
-		super(nodeCount, edgeCount, directed);
-		this.trials = trials;
+    public double fitness;
+
+    private Vector<Prog> executionPaths;
+    protected boolean checkPaths;
+    
+    protected Net net;
+    
+    private MetricsBag metricsBag;
+    
+    
+	public Generator(int nodeCount, int edgeCount, boolean directed, int trials) {
+	    this.nodeCount = nodeCount;
+	    this.edgeCount = edgeCount;
+	    this.directed = directed;
+	    this.trials = trials;
+	    
+		simulated = false;
+		
+		fitness = 0.0;
+
+		checkPaths = false;
+		
+		metricsBag = null;
+		
+		Vector<String> variableNames = new Vector<String>();
+		
+		if (directed) {
+			variableNames.add("origId");
+			variableNames.add("targId");
+			variableNames.add("origInDeg");
+			variableNames.add("origOutDeg");
+			variableNames.add("targInDeg");
+			variableNames.add("targOutDeg");
+			variableNames.add("dist");
+			variableNames.add("dirDist");
+			variableNames.add("revDist");
+        
+			prog = new Prog(9, variableNames);
+		}
+		else {
+			variableNames.add("origId");
+			variableNames.add("targId");
+			variableNames.add("origDeg");
+			variableNames.add("targDeg");
+			variableNames.add("dist");
+        
+			prog = new Prog(5, variableNames);
+		}
 	}
 	
 	
-	@Override
+	public void load(String filePath) {
+		try {
+			prog.load(filePath);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	public Generator instance() {
-		Generator generator = new FastGenerator(nodeCount, edgeCount, directed, trials);
-		return generator;
+		return new Generator(nodeCount, edgeCount, directed, trials);
 	}
 	
 	
-	@Override
 	public Generator clone() {
-		Generator generator = new FastGenerator(nodeCount, edgeCount, directed, trials);
+		Generator generator = new Generator(nodeCount, edgeCount, directed, trials);
 		generator.prog = prog.clone();
 		return generator;
 	}
 	
     
-	@Override
 	public void run() {
 		//System.out.println("running generator; trials: " + trials);
 		
@@ -144,10 +205,125 @@ public class FastGenerator extends Generator {
             simulated = true;
         }
     }
+
+
+	public void initRandom() {
+		prog.initRandom();
+	}
+
+
+	public Generator recombine(Generator parent2) {
+		Generator generator = instance();
+		generator.prog = prog.recombine(parent2.prog);
+		return generator;
+	}
+	
+	
+	public Generator mutate() {
+		Generator random = instance();
+		random.initRandom();
+		return recombine(random);
+	}
+
+
+	public int executionPath(Prog tree) {
+		int pos = 0;
+		for (Prog path : executionPaths) {
+			if (tree.compareBranching(path))
+				return pos;
+
+			pos++;
+		}
+
+		executionPaths.add(tree.clone());
+		return pos;
+	}
+
+
+	public void clearExecutionPaths() {
+		executionPaths.clear();
+	}
+	
+	public int compareTo(Generator generator) {
+		
+        if (fitness < generator.fitness)
+        	return -1;
+        else if (fitness > generator.fitness)
+        	return 1;
+        else
+        	return 0;
+	}
+
+
+	public boolean isSimulated() {
+		return simulated;
+	}
+
+
+	public void setSimulated(boolean simulated) {
+		this.simulated = simulated;
+	}
+
+
+	public double getFitness() {
+		return fitness;
+	}
+
+
+	public void setCheckPaths(boolean checkPaths) {
+		this.checkPaths = checkPaths;
+		if (checkPaths)
+			executionPaths = new Vector<Prog>();
+	}
+
+
+	public Vector<Prog> getExecutionPaths() {
+		return executionPaths;
+	}
+
+
+    public int getNodeCount() {
+        return nodeCount;
+    }
+
+
+    public void setNodeCount(int nodeCount) {
+        this.nodeCount = nodeCount;
+    }
+
+
+    public int getEdgeCount() {
+        return edgeCount;
+    }
+
+
+    public void setEdgeCount(int edgeCount) {
+        this.edgeCount = edgeCount;
+    }
+
+    
+    public Prog getProg() {
+        return prog;
+    }
+    
+    
+    public Net getNet() {
+        return net;
+    }
+
+
+	public MetricsBag getMetricsBag() {
+		return metricsBag;
+	}
+
+
+	public void setMetricsBag(MetricsBag metricsBag) {
+		this.metricsBag = metricsBag;
+	}
 	
 	
 	@Override
 	public String toString() {
-		return "using fast generator; trials: " + trials; 
+		return "Generator-> trials: " + trials; 
 	}
 }

@@ -7,8 +7,7 @@ import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Evo;
-import com.telmomenezes.synthetic.generators.FastGenerator;
-import com.telmomenezes.synthetic.generators.Generator;
+import com.telmomenezes.synthetic.Generator;
 import com.telmomenezes.synthetic.samplers.DownSampler;
 
 
@@ -62,7 +61,7 @@ public class Evolve extends Command {
             trials = new Integer(cline.getOptionValue("trials"));
         }
      	boolean directed = true;
-     	baseGenerator = new FastGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, trials);
+     	baseGenerator = new Generator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, trials);
      	
      	int bins = 100;
      	if(cline.hasOption("bins")) {

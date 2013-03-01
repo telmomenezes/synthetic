@@ -5,7 +5,7 @@ import org.apache.commons.cli.CommandLine;
 import com.telmomenezes.synthetic.DiscreteDistrib;
 import com.telmomenezes.synthetic.Distrib;
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.generators.RandomNet;
+import com.telmomenezes.synthetic.RandomNet;
 import com.telmomenezes.synthetic.io.NetFileType;
 import com.telmomenezes.synthetic.motifs.TriadicProfile;
 
