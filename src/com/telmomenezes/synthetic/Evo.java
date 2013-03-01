@@ -51,7 +51,7 @@ public class Evo {
 		
 		this.bins = bins;
 		targBag = new MetricsBag(targNet, bins);
-		writeDistribs(targNet, targBag.getTriadicProfile(), "targ");
+		writeDistribs(targBag, "targ");
 	}
 	
 	public void run() {
@@ -156,7 +156,8 @@ public class Evo {
 	private double computeFitness(Generator gen) {
         Net net = gen.getNet();
         
-        MetricsBag genBag = new MetricsBag(net, bins, targBag);
+        MetricsBag genBag = new MetricsBag(net, gen.getDistMatrixD(), gen.getDistMatrixU(), bins, targBag);
+        gen.clean();
 
         gen.setMetricsBag(genBag);
         
@@ -165,6 +166,8 @@ public class Evo {
         double dPageRanksDist = genBag.getDPageRanksDist();
         double uPageRanksDist = genBag.getUPageRanksDist();
         double triadicProfileDist = genBag.getTriadicProfileDist();
+        double dDistsDist = genBag.getdDistsDist();
+        double uDistsDist = genBag.getuDistsDist();
         
         double genSize = gen.getProg().size();
         
@@ -177,12 +180,14 @@ public class Evo {
         double distance;
         
         if (antiBloat) {
-        	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist * triadicProfileDist * genSize;
-        	distance = Math.pow(distance, 1.0 / 6.0);
+        	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist 
+        			* triadicProfileDist * dDistsDist * uDistsDist * genSize;
+        	distance = Math.pow(distance, 1.0 / 8.0);
         }
         else {
-        	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist * triadicProfileDist;
-        	distance = Math.pow(distance, 1.0 / 5.0);
+        	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist
+        			* triadicProfileDist * dDistsDist * uDistsDist;
+        	distance = Math.pow(distance, 1.0 / 7.0);
         }
         
         return distance;
@@ -202,7 +207,7 @@ public class Evo {
         bestGen.getProg().write(outDir + "/bestprog" + ".txt");
         
         // write distribs
-        writeDistribs(bestGen.getNet(), bestGen.getMetricsBag().getTriadicProfile(), "best");
+        writeDistribs(bestGen.getMetricsBag(), "best");
         
         bestCount++;
     }
@@ -212,7 +217,7 @@ public class Evo {
     	try {
     		FileWriter fwriter = new FileWriter(outDir + "/evo.csv");
     		BufferedWriter writer = new BufferedWriter(fwriter);
-    		writer.write("gen,best_fit,best_gen_fit,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,in_degrees_dist,out_degrees_dist,d_pageranks_dist,u_pageranks_dist,triadic_profile_dist\n");
+    		writer.write("gen,best_fit,best_gen_fit,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,in_degrees_dist,out_degrees_dist,d_pageranks_dist,u_pageranks_dist,triadic_profile_dist,d_dists_dist,u_dists_dist\n");
     		writer.close() ;
     	}
     	catch (Exception e) {
@@ -221,17 +226,14 @@ public class Evo {
     }
     
     
-    private void writeDistribs(Net net, TriadicProfile tp, String prefix) {
-    	DiscreteDistrib inDegrees = new DiscreteDistrib(net.inDegSeq());
-    	DiscreteDistrib outDegrees = new DiscreteDistrib(net.outDegSeq());
-    	Distrib dPageRank = new Distrib(net.prDSeq(), bins);
-    	Distrib uPageRank = new Distrib(net.prUSeq(), bins);
-    	
-    	inDegrees.write(outDir + "/" + prefix + "_in_degrees.csv");
-    	outDegrees.write(outDir + "/" + prefix + "_out_degrees.csv");
-    	dPageRank.write(outDir + "/" + prefix + "_d_pagerank.csv");
-    	uPageRank.write(outDir + "/" + prefix + "_u_pagerank.csv");
-    	tp.write(outDir + "/" + prefix + "_triadic_profile.csv");
+    private void writeDistribs(MetricsBag bag, String prefix) {
+    	bag.getInDegrees().write(outDir + "/" + prefix + "_in_degrees.csv");
+    	bag.getOutDegrees().write(outDir + "/" + prefix + "_out_degrees.csv");
+    	bag.getDPageRanks().write(outDir + "/" + prefix + "_d_pagerank.csv");
+    	bag.getUPageRanks().write(outDir + "/" + prefix + "_u_pagerank.csv");
+    	bag.getTriadicProfile().write(outDir + "/" + prefix + "_triadic_profile.csv");
+    	bag.getdDists().write(outDir + "/" + prefix + "_d_dists.csv");
+    	bag.getuDists().write(outDir + "/" + prefix + "_u_dists.csv");
     }
     
     private void onGeneration() {
@@ -241,6 +243,8 @@ public class Evo {
         double dPageRanksDist = bestGen.getMetricsBag().getDPageRanksDist();
         double uPageRanksDist = bestGen.getMetricsBag().getUPageRanksDist();
         double triadicProfileDist = bestGen.getMetricsBag().getTriadicProfileDist();
+        double dDistsDist = bestGen.getMetricsBag().getdDistsDist();
+        double uDistsDist = bestGen.getMetricsBag().getuDistsDist();
         
         // write evo log
         try {
@@ -258,6 +262,8 @@ public class Evo {
                     + outDegreesDist + ","
                     + dPageRanksDist + ","
                     + uPageRanksDist + ","
+                    + dDistsDist + ","
+            		+ uDistsDist + ","
                     + triadicProfileDist + "\n");
             writer.close();
         }
@@ -265,8 +271,13 @@ public class Evo {
             e.printStackTrace();
         }
         
+        System.out.println(targBag.getdDists());
+        System.out.println(bestGen.getMetricsBag().getdDists());
+        System.out.println(targBag.getuDists());
+        System.out.println(bestGen.getMetricsBag().getuDists());
+        
         System.out.println(genInfoString());
-        System.out.println("inDegreesDist: " + inDegreesDist + "; outDegreesDist: " + outDegreesDist + "; dPageRanksDist: " + dPageRanksDist + "; uPageRanksDist: " + uPageRanksDist + "; triadicProfileDist: " + triadicProfileDist );
+        System.out.println("inDegreesDist: " + inDegreesDist + "; outDegreesDist: " + outDegreesDist + "; dPageRanksDist: " + dPageRanksDist + "; uPageRanksDist: " + uPageRanksDist + "; triadicProfileDist: " + triadicProfileDist + "; dDistsDist: " + dDistsDist + "; uDistsDist: " + uDistsDist);
     }
 	
 	

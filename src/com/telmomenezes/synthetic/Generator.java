@@ -18,22 +18,25 @@ import com.telmomenezes.synthetic.gp.Prog;
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
 public class Generator implements Comparable<Generator> {
-    protected int nodeCount;
-    protected int edgeCount;
-    protected boolean directed;
+    private int nodeCount;
+    private int edgeCount;
+    private boolean directed;
     private int trials;
     
-	protected Prog prog;
+	private Prog prog;
     public boolean simulated;
 
     public double fitness;
 
     private Vector<Prog> executionPaths;
-    protected boolean checkPaths;
+    //private boolean checkPaths;
     
-    protected Net net;
+    private Net net;
     
     private MetricsBag metricsBag;
+    
+    DistMatrix distMatrixD;
+    DistMatrix distMatrixU;
     
     
 	public Generator(int nodeCount, int edgeCount, boolean directed, int trials) {
@@ -46,7 +49,7 @@ public class Generator implements Comparable<Generator> {
 		
 		fitness = 0.0;
 
-		checkPaths = false;
+		//checkPaths = false;
 		
 		metricsBag = null;
 		
@@ -106,11 +109,11 @@ public class Generator implements Comparable<Generator> {
         prog.clearEvalStats();
         
         // init DistMatrix
-        DistMatrix distMatrixD = null;
+        distMatrixD = null;
         if (directed) {
         	distMatrixD = new DistMatrix(nodeCount, true);
         }
-        DistMatrix distMatrixU = new DistMatrix(nodeCount, false);
+        distMatrixU = new DistMatrix(nodeCount, false);
 
         net = new Net();
 
@@ -205,6 +208,12 @@ public class Generator implements Comparable<Generator> {
             simulated = true;
         }
     }
+	
+	
+	public void clean() {
+		distMatrixD = null;
+		distMatrixU = null;
+	}
 
 
 	public void initRandom() {
@@ -270,11 +279,12 @@ public class Generator implements Comparable<Generator> {
 	}
 
 
+	/*
 	public void setCheckPaths(boolean checkPaths) {
 		this.checkPaths = checkPaths;
 		if (checkPaths)
 			executionPaths = new Vector<Prog>();
-	}
+	}*/
 
 
 	public Vector<Prog> getExecutionPaths() {
@@ -322,6 +332,16 @@ public class Generator implements Comparable<Generator> {
 	}
 	
 	
+	public DistMatrix getDistMatrixD() {
+		return distMatrixD;
+	}
+
+
+	public DistMatrix getDistMatrixU() {
+		return distMatrixU;
+	}
+
+
 	@Override
 	public String toString() {
 		return "Generator-> trials: " + trials; 

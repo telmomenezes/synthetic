@@ -381,4 +381,8 @@ public class Net implements Cloneable {
             node.setFlag(false);
         }
     }
+
+	public boolean isDirected() {
+		return directed;
+	}
 }

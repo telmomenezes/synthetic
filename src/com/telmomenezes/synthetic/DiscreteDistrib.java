@@ -24,6 +24,11 @@ public class DiscreteDistrib {
     }
     
     
+    public DiscreteDistrib(int[][] valueMat, int max) {
+        init(valueMat, max);
+    }
+    
+    
     public DiscreteDistrib(int[] valueSeq, DiscreteDistrib distrib) {
         if (distrib == null) {
             init(valueSeq);
@@ -47,6 +52,25 @@ public class DiscreteDistrib {
             }
 
             freqs[x]++;
+        }
+    }
+    
+    
+    protected void init(int[][] valueMatrix, int max) {
+        this.max = max;
+        
+        freqs = new int[max + 1];
+        
+        for (int[] seq : valueMatrix) {
+        	for (int x0 : seq) {
+        		int x = x0;
+            
+        		if (x > max) {
+        			x = max;
+        		}
+
+        		freqs[x]++;
+        	}
         }
     }
     
@@ -146,10 +170,14 @@ public class DiscreteDistrib {
     @Override
     public String toString() {
     	String str = "";
-        for (int i = 0; i < (max + 1); i++) {
+        int sum = 0;
+    	for (int i = 0; i < (max + 1); i++) {
             str += "[" + i + "] -> " + freqs[i] + " ";
+            sum += freqs[i];
         }
         
+    	str += "sum: " + sum;
+    	
         return str;
     }
     

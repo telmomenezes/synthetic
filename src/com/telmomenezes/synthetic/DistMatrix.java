@@ -1,6 +1,7 @@
 package com.telmomenezes.synthetic;
 
 import java.util.Arrays;
+import java.util.Vector;
 
 
 public class DistMatrix {
@@ -22,6 +23,9 @@ public class DistMatrix {
         int largeVal = 9999999;
         //int largeVal = maxDist + 1;
         Arrays.fill(dmatrix, largeVal);
+        for (int i = 0; i < nodes; i++) {
+        	dmatrix[(i * nodes) + i] = 0;
+        }
     }
     
     
@@ -93,5 +97,20 @@ public class DistMatrix {
     
     public void updateDistances(Net net, int origPos, int targPos) {
     	updateDistanceOrig(net, origPos, targPos, 1);
+    }
+    
+    
+    public void calc(Net net) {
+    	Vector<Edge> edges = net.getEdges();
+    	
+    	for (Edge edge : edges) {
+    		updateDistances(net, edge.getOrigin().getId(), edge.getTarget().getId());
+    	}
+    }
+    
+    
+    public DiscreteDistrib getDistrib() {
+    	DiscreteDistrib distrib = new DiscreteDistrib(dmatrix, maxDist);
+    	return distrib;
     }
 }
