@@ -17,6 +17,7 @@ import com.telmomenezes.synthetic.gp.Prog;
 public abstract class Generator implements Comparable<Generator> {
     protected int nodeCount;
     protected int edgeCount;
+    protected boolean directed;
     
 	protected Prog prog;
     public boolean simulated;
@@ -31,9 +32,10 @@ public abstract class Generator implements Comparable<Generator> {
     private MetricsBag metricsBag;
     
     
-	public Generator(int nodeCount, int edgeCount) {
+	public Generator(int nodeCount, int edgeCount, boolean directed) {
 	    this.nodeCount = nodeCount;
 	    this.edgeCount = edgeCount;
+	    this.directed = directed;
 	    
 		simulated = false;
 		
@@ -44,16 +46,29 @@ public abstract class Generator implements Comparable<Generator> {
 		metricsBag = null;
 		
 		Vector<String> variableNames = new Vector<String>();
-        variableNames.add("origId");
-        variableNames.add("targId");
-        variableNames.add("origInDeg");
-        variableNames.add("origOutDeg");
-        variableNames.add("targInDeg");
-        variableNames.add("targOutDeg");
-        variableNames.add("dirDist");
-        variableNames.add("revDist");
+		
+		if (directed) {
+			variableNames.add("origId");
+			variableNames.add("targId");
+			variableNames.add("origInDeg");
+			variableNames.add("origOutDeg");
+			variableNames.add("targInDeg");
+			variableNames.add("targOutDeg");
+			variableNames.add("dist");
+			variableNames.add("dirDist");
+			variableNames.add("revDist");
         
-        prog = new Prog(8, variableNames);
+			prog = new Prog(9, variableNames);
+		}
+		else {
+			variableNames.add("origId");
+			variableNames.add("targId");
+			variableNames.add("origDeg");
+			variableNames.add("targDeg");
+			variableNames.add("dist");
+        
+			prog = new Prog(5, variableNames);
+		}
 	}
 	
 	

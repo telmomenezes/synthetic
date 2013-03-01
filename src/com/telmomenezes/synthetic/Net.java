@@ -20,6 +20,7 @@ public class Net implements Cloneable {
     private int nodeCount;
     private int edgeCount;
 
+    private boolean directed;
     private boolean selfEdges;
 
     private boolean pageRanksComputed;
@@ -32,12 +33,17 @@ public class Net implements Cloneable {
         nodes = new Vector<Node>();
         edges = new Vector<Edge>();
         nodeMap = new HashMap<Integer, Node>();
+        
+        // defaults
+        directed = true;
         selfEdges = false;
+        
         pageRanksComputed = false;
     }
     
-    public Net(boolean selfEdges) {
+    public Net(boolean directed, boolean selfEdges) {
         this();
+        this.directed = directed;
         this.selfEdges = selfEdges;
     }
     
@@ -45,6 +51,9 @@ public class Net implements Cloneable {
     public Net clone()
     {
         Net clonedNet = new Net();
+        
+        clonedNet.directed = directed;
+        clonedNet.selfEdges = selfEdges;
         
         // clone all nodes
         for (Node node : nodes) {
@@ -68,6 +77,9 @@ public class Net implements Cloneable {
     public Net cloneFlagged()
     {
         Net clonedNet = new Net();
+        
+        clonedNet.directed = directed;
+        clonedNet.selfEdges = selfEdges;
         
         // clone nodes
         for (Node node : nodes) {
@@ -140,6 +152,15 @@ public class Net implements Cloneable {
         for (Edge edge : origin.getOutEdges()) {
             if (edge.getTarget() == target) {
                 return true;
+            }
+        }
+        
+        // If net is undirected, we must also check the reverse edge
+        if (!directed) {
+        	for (Edge edge : target.getOutEdges()) {
+                if (edge.getTarget() == origin) {
+                    return true;
+                }
             }
         }
 
@@ -291,6 +312,17 @@ public class Net implements Cloneable {
         int i = 0;
         for (Node curnode : nodes) {
             seq[i] = curnode.getOutDegree();
+            i++;
+        }
+
+        return seq;
+    }
+    
+    public int[] degSeq() {
+    	int seq[] = new int[nodeCount];
+        int i = 0;
+        for (Node curnode : nodes) {
+            seq[i] = curnode.getDegree();
             i++;
         }
 

@@ -16,22 +16,22 @@ public class FastGenerator extends Generator {
 
 	private int trials;
 	
-	public FastGenerator(int nodeCount, int edgeCount, int trials) {
-		super(nodeCount, edgeCount);
+	public FastGenerator(int nodeCount, int edgeCount, boolean directed, int trials) {
+		super(nodeCount, edgeCount, directed);
 		this.trials = trials;
 	}
 	
 	
 	@Override
 	public Generator instance() {
-		Generator generator = new FastGenerator(nodeCount, edgeCount, trials);
+		Generator generator = new FastGenerator(nodeCount, edgeCount, directed, trials);
 		return generator;
 	}
 	
 	
 	@Override
 	public Generator clone() {
-		Generator generator = new FastGenerator(nodeCount, edgeCount, trials);
+		Generator generator = new FastGenerator(nodeCount, edgeCount, directed, trials);
 		generator.prog = prog.clone();
 		return generator;
 	}
@@ -45,7 +45,11 @@ public class FastGenerator extends Generator {
         prog.clearEvalStats();
         
         // init DistMatrix
-        DistMatrix distMatrix = new DistMatrix(nodeCount);
+        DistMatrix distMatrixD = null;
+        if (directed) {
+        	distMatrixD = new DistMatrix(nodeCount, true);
+        }
+        DistMatrix distMatrixU = new DistMatrix(nodeCount, false);
 
         net = new Net();
 
@@ -63,29 +67,50 @@ public class FastGenerator extends Generator {
             int bestOrigIndex = -1;
             int bestTargIndex = -1;
             for (int j = 0; j < trials; j++) {
+            	Node origNode = null;
+            	Node targNode = null;
             	int origIndex = -1;
             	int targIndex = -1;
+            	boolean found = false;
             	
-            	while ((origIndex == targIndex)
-            			|| (distMatrix.getDist(origIndex, targIndex) < 2)) {
+            	while (!found) {
             		origIndex = RandomGenerator.instance().random.nextInt(nodeCount);
             		targIndex = RandomGenerator.instance().random.nextInt(nodeCount);
-            	}
             		
-            	Node origNode = nodeArray[origIndex];
-            	Node targNode = nodeArray[targIndex];
+            		if (origIndex != targIndex) {
+            			origNode = nodeArray[origIndex];
+            			targNode = nodeArray[targIndex];
+            			
+            			if (!net.edgeExists(origNode, targNode)) {
+            				found = true;
+            			}
+            		}
+            	}
+            	
         
-            	double directDistance = distMatrix.getDist(origNode.getId(), targNode.getId());
-            	double reverseDistance = distMatrix.getDist(targNode.getId(), origNode.getId());
+            	double distance = distMatrixU.getDist(origNode.getId(), targNode.getId());
+            	
+            	if (directed) {
+            		double directDistance = distMatrixD.getDist(origNode.getId(), targNode.getId());
+            		double reverseDistance = distMatrixD.getDist(targNode.getId(), origNode.getId());
                     
-            	prog.vars[0] = (double)origIndex;
-            	prog.vars[1] = (double)targIndex;
-            	prog.vars[2] = (double)origNode.getInDegree();
-            	prog.vars[3] = (double)origNode.getOutDegree();
-            	prog.vars[4] = (double)targNode.getInDegree();
-            	prog.vars[5] = (double)targNode.getOutDegree();
-            	prog.vars[6] = directDistance;
-            	prog.vars[7] = reverseDistance;
+            		prog.vars[0] = (double)origIndex;
+            		prog.vars[1] = (double)targIndex;
+            		prog.vars[2] = (double)origNode.getInDegree();
+            		prog.vars[3] = (double)origNode.getOutDegree();
+            		prog.vars[4] = (double)targNode.getInDegree();
+            		prog.vars[5] = (double)targNode.getOutDegree();
+            		prog.vars[6] = distance;
+            		prog.vars[7] = directDistance;
+            		prog.vars[8] = reverseDistance;
+            	}
+            	else {
+            		prog.vars[0] = (double)origIndex;
+            		prog.vars[1] = (double)targIndex;
+            		prog.vars[2] = (double)origNode.getDegree();
+            		prog.vars[3] = (double)targNode.getDegree();
+            		prog.vars[4] = distance;
+            	}
                     
             	double weight = prog.eval(i);
             	if (weight < 0) {
@@ -111,7 +136,10 @@ public class FastGenerator extends Generator {
             net.addEdge(origNode, targNode);
             
             // update distances
-            distMatrix.updateDistances(net, bestOrigIndex, bestTargIndex);
+            if (directed) {
+            	distMatrixD.updateDistances(net, bestOrigIndex, bestTargIndex);
+            }
+            distMatrixU.updateDistances(net, bestOrigIndex, bestTargIndex);
             
             simulated = true;
         }

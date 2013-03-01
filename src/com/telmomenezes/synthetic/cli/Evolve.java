@@ -8,7 +8,6 @@ import org.apache.commons.cli.CommandLine;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Evo;
 import com.telmomenezes.synthetic.generators.FastGenerator;
-import com.telmomenezes.synthetic.generators.FullGenerator;
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.samplers.DownSampler;
 
@@ -29,13 +28,6 @@ public class Evolve extends Command {
         
         String netfile = cline.getOptionValue("inet");
         String outdir = cline.getOptionValue("odir");
-        
-        boolean fastGen = true;
-        if(cline.hasOption("gentype")) {
-            if (cline.getOptionValue("gentype").equals("full")) {
-            	fastGen = false;
-            }
-        }
         
         boolean antiBloat = true;
         if(cline.hasOption("antibloat")) {
@@ -65,16 +57,12 @@ public class Evolve extends Command {
         Net sampleNet = DownSampler.sample(net, maxNodes, maxEdges);
         
      	Generator baseGenerator = null;
-     	if (fastGen) {
-     		int trials = 50;
-     		if(cline.hasOption("trials")) {
-                trials = new Integer(cline.getOptionValue("trials"));
-            }
-     		baseGenerator = new FastGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), trials);
-     	}
-     	else {
-     		baseGenerator = new FullGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount());
-     	}
+     	int trials = 50;
+     	if(cline.hasOption("trials")) {
+            trials = new Integer(cline.getOptionValue("trials"));
+        }
+     	boolean directed = true;
+     	baseGenerator = new FastGenerator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, trials);
      	
      	int bins = 100;
      	if(cline.hasOption("bins")) {

@@ -44,7 +44,6 @@ public class SynCLI {
         options.addOption("prg", true, "generator program file");
         options.addOption("oprg", true, "generator output program file");
         
-        options.addOption("gentype", true, "generator type (FAST / full)");
         options.addOption("gens", true, "number of generations");
         options.addOption("bins", true, "number of distribution bins");
         options.addOption("maxnodes", true, "max nodes (sampling)");

@@ -4,15 +4,17 @@ import java.util.Arrays;
 
 
 public class DistMatrix {
-    int[] dmatrix;
-    int nodes;
-    int maxDist;
+    private int[] dmatrix;
+    private int nodes;
+    private boolean directed;
+    private int maxDist;
 
     
-    public DistMatrix(int nodes) {
+    public DistMatrix(int nodes, boolean directed) {
     	maxDist = 3;
     	
     	this.nodes = nodes;
+    	this.directed = directed;
         
         dmatrix = new int[nodes * nodes];
 
@@ -33,44 +35,63 @@ public class DistMatrix {
     
     public void setDist(int x, int y, int d) {
         dmatrix[(y * nodes) + x] = d;
+        
+        if (!directed) {
+        	dmatrix[(x * nodes) + y] = d;
+        }
     }
     
     
-    private void updateDistanceTarg_r(Net net, int origPos, int targPos, int distance) {
-    	if (distance > maxDist)
+    private void updateDistanceTarg(Net net, int origPos, int targPos, int distance) {
+    	if (distance > maxDist) {
     		return;
+    	}
     	
-    	if (getDist(origPos, targPos) <= distance)
+    	if (getDist(origPos, targPos) <= distance) {
     		return;
+    	}
     	
     	setDist(origPos, targPos, distance);
     	
     	Node targ = net.getNodeById(targPos);
     	
     	for (Edge edge : targ.getOutEdges()) {
-    		updateDistanceTarg_r(net, origPos, edge.getTarget().getId(), distance + 1);
+    		updateDistanceTarg(net, origPos, edge.getTarget().getId(), distance + 1);
+    	}
+    	
+    	if (!directed) {
+    		for (Edge edge : targ.getInEdges()) {
+        		updateDistanceTarg(net, origPos, edge.getOrigin().getId(), distance + 1);
+        	}	
     	}
     }
     
     
-    private void updateDDistanceOrig_r(Net net, int origPos, int targPos, int distance) {
+    private void updateDistanceOrig(Net net, int origPos, int targPos, int distance) {
     	if (distance > maxDist)
     		return;
     	
     	if (getDist(origPos, targPos) <= distance)
     		return;
     	
-    	updateDistanceTarg_r(net, origPos, targPos, distance);
+    	updateDistanceTarg(net, origPos, targPos, distance);
     	
     	Node orig = net.getNodeById(origPos);
     	
     	for (Edge edge : orig.getInEdges()) {
-    		updateDDistanceOrig_r(net, origPos, edge.getOrigin().getId(), distance + 1);
+    		//updateDDistanceOrig_r(net, origPos, edge.getOrigin().getId(), distance + 1, directed);
+    		updateDistanceOrig(net, edge.getOrigin().getId(), origPos, distance + 1);
+    	}
+    	
+    	if (!directed) {
+    		for (Edge edge : orig.getOutEdges()) {
+        		updateDistanceOrig(net, edge.getTarget().getId(), origPos, distance + 1);
+        	}
     	}
     }
     
     
     public void updateDistances(Net net, int origPos, int targPos) {
-    	updateDDistanceOrig_r(net, origPos, targPos, 1);
+    	updateDistanceOrig(net, origPos, targPos, 1);
     }
 }
