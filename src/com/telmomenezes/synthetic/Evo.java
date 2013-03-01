@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.io.NetFileType;
-import com.telmomenezes.synthetic.motifs.TriadicProfile;
 
 
 /**

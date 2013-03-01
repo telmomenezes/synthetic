@@ -82,6 +82,16 @@ public class Prog {
                                 curnode.curpos++;
                             }
                         break;
+					case GPFun.MOD:
+						long d1 = Math.round(curnode.params[0].curval);
+						long d2 = Math.round(curnode.params[1].curval);
+                        if ((d1 % d2) == 0)
+                            curnode.stoppos = 3;
+                            else {
+                                curnode.stoppos = 4;
+                                curnode.curpos++;
+                            }
+                        break;
 					case GPFun.ZER:
 						if (curnode.params[0].curval == 0)
 							curnode.stoppos = 2;
@@ -536,6 +546,8 @@ public class Prog {
                     fun = GPFun.MIN;
 				else if (token.equals("MAX"))
                     fun = GPFun.MAX;
+				else if (token.equals("MOD"))
+                    fun = GPFun.MOD;
 			
 				node.initFun(fun, parent);
 
