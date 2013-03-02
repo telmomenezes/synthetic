@@ -216,8 +216,8 @@ public class Net implements Cloneable {
         pageRanksComputed = true;
         
         // TODO: config
-        int maxIter = 10;
-        double drag = 0.999;
+        int maxIter = 100;
+        double damping = 0.85;
 
         for (Node node : nodes) {
             node.setPrDLast(1);
@@ -243,8 +243,8 @@ public class Net implements Cloneable {
                             / ((double)origin.getOrigin().getOutDegree()));
                 }
 
-                node.setPrD(node.getPrD() * drag);
-                node.setPrD(node.getPrD() + (1.0 - drag)
+                node.setPrD(node.getPrD() * damping);
+                node.setPrD(node.getPrD() + (1.0 - damping)
                         / ((double) nodeCount));
 
                 accPRD += node.getPrD();
@@ -262,8 +262,8 @@ public class Net implements Cloneable {
                             / ((double)target.getTarget().getDegree()));
                 }
 
-                node.setPrU(node.getPrU() * drag);
-                node.setPrU(node.getPrU() + (1.0 - drag)
+                node.setPrU(node.getPrU() * damping);
+                node.setPrU(node.getPrU() + (1.0 - damping)
                         / ((double)nodeCount));
 
                 accPRU += node.getPrU();

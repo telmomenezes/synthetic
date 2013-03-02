@@ -35,7 +35,7 @@ public class Evolve extends Command {
             }
         }
         
-        int generations = 999999999;
+        int generations = 10000;
         if(cline.hasOption("gens")) {
             generations = new Integer(cline.getOptionValue("gens"));
         }

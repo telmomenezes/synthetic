@@ -74,8 +74,10 @@ public class Evo {
 		}
 		
 		// evolve
-		for(curgen = 0; curgen < generations; curgen++) {
-
+		int stableGens = 0;
+		for(curgen = 0; stableGens < generations; curgen++) {
+			stableGens++;
+			
 			long startTime = System.currentTimeMillis();
 			meanGenoSize = 0;
 			
@@ -110,6 +112,7 @@ public class Evo {
 					bestFitness = generator.fitness;
 					bestGenerator = generator;
 					onNewBest();
+					stableGens = 0;
 				}
 			}
 			
@@ -124,9 +127,12 @@ public class Evo {
 			simTime /= 1000;
 			fitTime /= 1000;
 			
+			System.out.println("stable generation: " + stableGens);
 			// onGeneration callback
 			onGeneration();
 		}
+		
+		System.out.println("Done.");
 	}
 	
 
@@ -270,10 +276,10 @@ public class Evo {
             e.printStackTrace();
         }
         
-        System.out.println(targBag.getdDists());
-        System.out.println(bestGen.getMetricsBag().getdDists());
-        System.out.println(targBag.getuDists());
-        System.out.println(bestGen.getMetricsBag().getuDists());
+        //System.out.println(targBag.getdDists());
+        //System.out.println(bestGen.getMetricsBag().getdDists());
+        //System.out.println(targBag.getuDists());
+        //System.out.println(bestGen.getMetricsBag().getuDists());
         
         System.out.println(genInfoString());
         System.out.println("inDegreesDist: " + inDegreesDist + "; outDegreesDist: " + outDegreesDist + "; dPageRanksDist: " + dPageRanksDist + "; uPageRanksDist: " + uPageRanksDist + "; triadicProfileDist: " + triadicProfileDist + "; dDistsDist: " + dDistsDist + "; uDistsDist: " + uDistsDist);
@@ -282,7 +288,7 @@ public class Evo {
 	
 	public String infoString()
 	{
-		String str = "generations: " + generations + "\n";
+		String str = "stable generations: " + generations + "\n";
 		str += "target net node count: " + targNet.getNodeCount() + "\n";
         str += "target net edge count: " + targNet.getEdgeCount() + "\n";
         str += "distribution bins: " + bins + "\n";

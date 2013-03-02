@@ -85,7 +85,7 @@ public class Prog {
 					case GPFun.MOD:
 						long d1 = Math.round(curnode.params[0].curval);
 						long d2 = Math.round(curnode.params[1].curval);
-                        if ((d1 % d2) == 0)
+                        if ((d2 != 0) && ((d1 % d2) == 0))
                             curnode.stoppos = 3;
                             else {
                                 curnode.stoppos = 4;
