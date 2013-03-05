@@ -2,8 +2,7 @@ package com.telmomenezes.synthetic.cli;
 
 import org.apache.commons.cli.CommandLine;
 
-import com.telmomenezes.synthetic.DiscreteDistrib;
-import com.telmomenezes.synthetic.Distrib;
+import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.RandomNet;
 import com.telmomenezes.synthetic.io.NetFileType;
@@ -31,26 +30,44 @@ public class Random extends Command {
             bins = new Integer(cline.getOptionValue("bins"));
         }
         
+     	int runs = 1;
+     	if(cline.hasOption("runs")) {
+            runs = new Integer(cline.getOptionValue("runs"));
+        }
+     	
         int nodeCount = net.getNodeCount();
         int edgeCount = net.getEdgeCount();
         
-        Net randomNet = RandomNet.generate(nodeCount, edgeCount);
+        System.out.println(net);
         
-        // write net
-        randomNet.save(outDir + "/randomnet.txt", NetFileType.SNAP);
+        MetricsBag realBag = new MetricsBag(net, bins);
         
-        // write distributions
-        DiscreteDistrib inDegrees = new DiscreteDistrib(randomNet.inDegSeq());
-    	DiscreteDistrib outDegrees = new DiscreteDistrib(randomNet.outDegSeq());
-    	Distrib dPageRank = new Distrib(randomNet.prDSeq(), bins);
-    	Distrib uPageRank = new Distrib(randomNet.prUSeq(), bins);
+        boolean append = false;
+        for (int i = 0; i < runs; i++) {
+        	System.out.println("run #" + i);
+        
+        	Net randomNet = RandomNet.generate(nodeCount, edgeCount);
+        
+        	// write net
+        	randomNet.save(outDir + "/randomnet.txt", NetFileType.SNAP);
+        
+        	// compute distribs
+        	MetricsBag bag = new MetricsBag(randomNet, null, null, bins, realBag);
+        
+        	// write distributions
+        	bag.getInDegrees().write(outDir + "/random_in_degrees.csv", append);
+        	bag.getOutDegrees().write(outDir + "/random_out_degrees.csv", append);
+        	bag.getDPageRanks().write(outDir + "/random_d_pagerank.csv", append);
+        	bag.getUPageRanks().write(outDir + "/random_u_pagerank.csv", append);
+        	(new TriadicProfile(randomNet)).write(outDir + "/random_triadic_profile.csv", append);
+        	bag.getdDists().write(outDir + "/random_d_dists.csv", append);
+        	bag.getuDists().write(outDir + "/random_u_dists.csv", append);
+        	
+        	append = true;
+        }
+        
+        System.out.println("done.");
     	
-    	inDegrees.write(outDir + "/random_in_degrees.csv", false);
-    	outDegrees.write(outDir + "/random_out_degrees.csv", false);
-    	dPageRank.write(outDir + "/random_d_pagerank.csv", false);
-    	uPageRank.write(outDir + "/random_u_pagerank.csv", false);
-    	(new TriadicProfile(randomNet)).write(outDir + "/random_triadic_profile.csv", false);
-        
         return true;
     }
 }

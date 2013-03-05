@@ -52,7 +52,7 @@ public class MetricsBag {
 	    uDistsDist = 0;
     }
     
-    MetricsBag(Net net, DistMatrix dDistMat, DistMatrix uDistMat, int bins, MetricsBag bag) {
+    public MetricsBag(Net net, DistMatrix dDistMat, DistMatrix uDistMat, int bins, MetricsBag bag) {
     	this.bins = bins;
 		inDegrees = new DiscreteDistrib(net.inDegSeq(), bag.inDegrees);
 		outDegrees = new DiscreteDistrib(net.outDegSeq(), bag.outDegrees);
@@ -63,9 +63,18 @@ public class MetricsBag {
 			dDists = dDistMat.getDistrib();
 		}
 		else {
-			dDists = null;
+			DistMatrix dMatrix = new DistMatrix(net.getNodeCount(), true);
+			dMatrix.calc(net);
+			dDists = dMatrix.getDistrib();
 		}
-		uDists = uDistMat.getDistrib();
+		if (uDistMat != null) {
+			uDists = uDistMat.getDistrib();
+		}
+		else {
+			DistMatrix uMatrix = new DistMatrix(net.getNodeCount(), false);
+			uMatrix.calc(net);
+			uDists = uMatrix.getDistrib();
+		}
 		
 		calcDistances(bag);
     }
