@@ -195,7 +195,7 @@ public class TriadicProfile {
             BufferedWriter out = new BufferedWriter(fstream);
             
             if(header) {
-            	out.write("motif,freq\n");
+            	out.write("value,freq\n");
             }
 
             for (int i = 0; i < 13; i++) {
