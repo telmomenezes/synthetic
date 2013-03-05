@@ -49,6 +49,9 @@ public class Run extends Command {
         
         boolean directed = true;
         
+        Distrib dPageRankReal = new Distrib(net.prDSeq(), bins);
+    	Distrib uPageRankReal = new Distrib(net.prUSeq(), bins);
+        
         System.out.println(net);
         
         boolean append = false;
@@ -66,8 +69,8 @@ public class Run extends Command {
         	// write distributions
         	DiscreteDistrib inDegrees = new DiscreteDistrib(syntNet.inDegSeq());
         	DiscreteDistrib outDegrees = new DiscreteDistrib(syntNet.outDegSeq());
-        	Distrib dPageRank = new Distrib(syntNet.prDSeq(), bins);
-        	Distrib uPageRank = new Distrib(syntNet.prUSeq(), bins);
+        	Distrib dPageRank = new Distrib(syntNet.prDSeq(), bins, dPageRankReal);
+        	Distrib uPageRank = new Distrib(syntNet.prUSeq(), bins, uPageRankReal);
         	DiscreteDistrib dDistsDist = gen.getDistMatrixD().getDistrib();
         	DiscreteDistrib uDistsDist = gen.getDistMatrixU().getDistrib();
     	
