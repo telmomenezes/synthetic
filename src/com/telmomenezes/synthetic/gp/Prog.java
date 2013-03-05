@@ -93,12 +93,25 @@ public class Prog {
                             }
                         break;
 					case GPFun.ZER:
-						if (curnode.params[0].curval == 0)
+						if (curnode.params[0].curval == 0) {
 							curnode.stoppos = 2;
-							else {
-								curnode.stoppos = 3;
-								curnode.curpos++;
-							}
+						}
+						else {
+							curnode.stoppos = 3;
+							curnode.curpos++;
+						}
+						break;
+					case GPFun.GRP:
+						long g = Math.round(curnode.params[0].curval);
+						long id1 = Math.round(vars[0]);
+						long id2 = Math.round(vars[1]);
+						if ((g == 0) || ((id1 % g) == (id2 % g))) {
+							curnode.stoppos = 2;
+						}
+						else {
+							curnode.stoppos = 3;
+							curnode.curpos++;
+						}
 						break;
 					default:
 						break;
@@ -163,6 +176,8 @@ public class Prog {
 					case GPFun.GRT:
 					case GPFun.LRT:
 					case GPFun.ZER:
+					case GPFun.MOD:
+					case GPFun.GRP:
 						val = curnode.params[curnode.stoppos - 1].curval;
 						break;
 					// this should not happen
@@ -275,7 +290,7 @@ public class Prog {
     		line = br.readLine();
         
     	String prog = "";
-    	while (!line.equals("")
+    	while ((line != null)
     			&& (line.charAt(0) != '\n')
     			&& (line.charAt(0) != '#')) {
     		prog += line;
@@ -546,8 +561,10 @@ public class Prog {
                     fun = GPFun.MIN;
 				else if (token.equals("MAX"))
                     fun = GPFun.MAX;
-				else if (token.equals("MOD"))
+				else if (token.equals("%"))
                     fun = GPFun.MOD;
+				else if (token.equals("GRP"))
+                    fun = GPFun.GRP;
 			
 				node.initFun(fun, parent);
 

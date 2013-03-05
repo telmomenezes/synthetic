@@ -232,13 +232,13 @@ public class Evo {
     
     
     private void writeDistribs(MetricsBag bag, String prefix) {
-    	bag.getInDegrees().write(outDir + "/" + prefix + "_in_degrees.csv");
-    	bag.getOutDegrees().write(outDir + "/" + prefix + "_out_degrees.csv");
-    	bag.getDPageRanks().write(outDir + "/" + prefix + "_d_pagerank.csv");
-    	bag.getUPageRanks().write(outDir + "/" + prefix + "_u_pagerank.csv");
-    	bag.getTriadicProfile().write(outDir + "/" + prefix + "_triadic_profile.csv");
-    	bag.getdDists().write(outDir + "/" + prefix + "_d_dists.csv");
-    	bag.getuDists().write(outDir + "/" + prefix + "_u_dists.csv");
+    	bag.getInDegrees().write(outDir + "/" + prefix + "_in_degrees.csv", false);
+    	bag.getOutDegrees().write(outDir + "/" + prefix + "_out_degrees.csv", false);
+    	bag.getDPageRanks().write(outDir + "/" + prefix + "_d_pagerank.csv", false);
+    	bag.getUPageRanks().write(outDir + "/" + prefix + "_u_pagerank.csv", false);
+    	bag.getTriadicProfile().write(outDir + "/" + prefix + "_triadic_profile.csv", false);
+    	bag.getdDists().write(outDir + "/" + prefix + "_d_dists.csv", false);
+    	bag.getuDists().write(outDir + "/" + prefix + "_u_dists.csv", false);
     }
     
     private void onGeneration() {

@@ -34,6 +34,7 @@ public class SynCLI {
     	//args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir", "test"};
     	//args = new String[]{"evo", "-inet", "wiki-Vote.snap", "-odir", "test", "-maxnodes", "100"};//, "-gentype", "full"};
     	//args = new String[]{"netstats", "-inet", "polblogs.gml"};
+    	//args = new String[]{"run", "-inet", "celegansneural.gml", "-prg", "prog.txt", "-odir", "test", "-runs", "30"};
     	
         CommandLineParser parser = new GnuParser();
         options = new Options();
@@ -50,6 +51,7 @@ public class SynCLI {
         options.addOption("maxedges", true, "max edges (sampling)");
         options.addOption("trials", true, "number of trials for the fast generator");
         options.addOption("antibloat", true, "anti bloat (ON / off)");
+        options.addOption("runs", true, "number of generator runs");
         
         try {
             cline = parser.parse(options, args);

@@ -2,6 +2,7 @@ package com.telmomenezes.synthetic;
 
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 
 import com.telmomenezes.synthetic.emd.Feature1D;
@@ -150,12 +151,23 @@ public class DiscreteDistrib {
     }
     
     
-    public void write(String filePath) {
-    	try{ 
-            FileWriter fstream = new FileWriter(filePath);
+    public void write(String filePath, boolean append) {
+    	try{
+    		boolean header = !append;
+    		if (append) {
+    			File f = new File(filePath);
+    			if(f.exists()) {
+    				header = false;
+    			}
+    		}
+    		
+            FileWriter fstream = new FileWriter(filePath, append);
             BufferedWriter out = new BufferedWriter(fstream);
             
-            out.write("value,freq\n");
+            if(header) {
+            	out.write("value,freq\n");
+            }
+            
             for (int i = 0; i < freqs.length; i++) {
                 out.write("" + i + "," + freqs[i] + '\n');
             }
@@ -184,5 +196,15 @@ public class DiscreteDistrib {
 
     public int getMax() {
         return max;
+    }
+    
+    
+    public static void main(String[] args) {
+    	int[] seq1 = {0, 0, 1, 1, 2, 2};
+    	int[] seq2 = {0, 0, 0, 0, 0, 0};
+    	
+    	DiscreteDistrib d1 = new DiscreteDistrib(seq1);
+    	DiscreteDistrib d2 = new DiscreteDistrib(seq2);
+    	System.out.println(d1.emdDistance(d2));
     }
 }

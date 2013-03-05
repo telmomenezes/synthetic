@@ -1,6 +1,7 @@
 package com.telmomenezes.synthetic.motifs;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 
 import com.telmomenezes.synthetic.Edge;
@@ -180,12 +181,23 @@ public class TriadicProfile {
     }
     
     
-    public void write(String filePath) {
-    	try{ 
-            FileWriter fstream = new FileWriter(filePath);
+    public void write(String filePath, boolean append) {
+    	try{
+    		boolean header = !append;
+    		if (append) {
+    			File f = new File(filePath);
+    			if(f.exists()) {
+    				header = false;
+    			}
+    		}
+    		
+            FileWriter fstream = new FileWriter(filePath, append);
             BufferedWriter out = new BufferedWriter(fstream);
             
-            out.write("motif,freq\n");
+            if(header) {
+            	out.write("motif,freq\n");
+            }
+
             for (int i = 0; i < 13; i++) {
                 out.write("" + i + "," + profile[i] + '\n');
             }

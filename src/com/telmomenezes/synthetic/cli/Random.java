@@ -45,11 +45,11 @@ public class Random extends Command {
     	Distrib dPageRank = new Distrib(randomNet.prDSeq(), bins);
     	Distrib uPageRank = new Distrib(randomNet.prUSeq(), bins);
     	
-    	inDegrees.write(outDir + "/random_in_degrees.csv");
-    	outDegrees.write(outDir + "/random_out_degrees.csv");
-    	dPageRank.write(outDir + "/random_d_pagerank.csv");
-    	uPageRank.write(outDir + "/random_u_pagerank.csv");
-    	(new TriadicProfile(randomNet)).write(outDir + "/random_triadic_profile.csv");
+    	inDegrees.write(outDir + "/random_in_degrees.csv", false);
+    	outDegrees.write(outDir + "/random_out_degrees.csv", false);
+    	dPageRank.write(outDir + "/random_d_pagerank.csv", false);
+    	uPageRank.write(outDir + "/random_u_pagerank.csv", false);
+    	(new TriadicProfile(randomNet)).write(outDir + "/random_triadic_profile.csv", false);
         
         return true;
     }

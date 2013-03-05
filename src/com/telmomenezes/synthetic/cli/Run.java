@@ -4,8 +4,8 @@ import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.DiscreteDistrib;
 import com.telmomenezes.synthetic.Distrib;
+import com.telmomenezes.synthetic.Generator;
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.RandomNet;
 import com.telmomenezes.synthetic.io.NetFileType;
 import com.telmomenezes.synthetic.motifs.TriadicProfile;
 
@@ -28,32 +28,61 @@ public class Run extends Command {
         String netfile = cline.getOptionValue("inet");
         Net net = Net.load(netfile);
 
+        String progFile = cline.getOptionValue("prg");
+        
         String outDir = cline.getOptionValue("odir");
         
         int bins = 100;
      	if(cline.hasOption("bins")) {
             bins = new Integer(cline.getOptionValue("bins"));
         }
+     	
+     	int trials = 50;
+     	if(cline.hasOption("trials")) {
+            trials = new Integer(cline.getOptionValue("trials"));
+        }
+     	
+     	int runs = 1;
+     	if(cline.hasOption("runs")) {
+            runs = new Integer(cline.getOptionValue("runs"));
+        }
         
-        int nodeCount = net.getNodeCount();
-        int edgeCount = net.getEdgeCount();
+        boolean directed = true;
         
-        Net randomNet = RandomNet.generate(nodeCount, edgeCount);
+        System.out.println(net);
         
-        // write net
-        randomNet.save(outDir + "/randomnet.txt", NetFileType.SNAP);
+        boolean append = false;
+        for (int i = 0; i < runs; i++) {
+        	System.out.println("run #" + i);
+        	
+        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, trials);
+        	gen.load(progFile);
+        	gen.run();
+        	Net syntNet = gen.getNet();
         
-        // write distributions
-        DiscreteDistrib inDegrees = new DiscreteDistrib(randomNet.inDegSeq());
-    	DiscreteDistrib outDegrees = new DiscreteDistrib(randomNet.outDegSeq());
-    	Distrib dPageRank = new Distrib(randomNet.prDSeq(), bins);
-    	Distrib uPageRank = new Distrib(randomNet.prUSeq(), bins);
+        	// write net
+        	syntNet.save(outDir + "/syntnet" + i + ".txt", NetFileType.SNAP);
+        
+        	// write distributions
+        	DiscreteDistrib inDegrees = new DiscreteDistrib(syntNet.inDegSeq());
+        	DiscreteDistrib outDegrees = new DiscreteDistrib(syntNet.outDegSeq());
+        	Distrib dPageRank = new Distrib(syntNet.prDSeq(), bins);
+        	Distrib uPageRank = new Distrib(syntNet.prUSeq(), bins);
+        	DiscreteDistrib dDistsDist = gen.getDistMatrixD().getDistrib();
+        	DiscreteDistrib uDistsDist = gen.getDistMatrixU().getDistrib();
     	
-    	inDegrees.write(outDir + "/random_in_degrees.csv");
-    	outDegrees.write(outDir + "/random_out_degrees.csv");
-    	dPageRank.write(outDir + "/random_d_pagerank.csv");
-    	uPageRank.write(outDir + "/random_u_pagerank.csv");
-    	(new TriadicProfile(randomNet)).write(outDir + "/random_triadic_profile.csv");
+        	inDegrees.write(outDir + "/in_degrees.csv", append);
+        	outDegrees.write(outDir + "/out_degrees.csv", append);
+        	dPageRank.write(outDir + "/d_pagerank.csv", append);
+        	uPageRank.write(outDir + "/u_pagerank.csv", append);
+        	(new TriadicProfile(syntNet)).write(outDir + "/triadic_profile.csv", append);
+        	dDistsDist.write(outDir + "/d_dists.csv", append);
+        	uDistsDist.write(outDir + "/u_dists.csv", append);
+        	
+        	append = true;
+        }
+    	
+        System.out.println("done.");
         
         return true;
     }

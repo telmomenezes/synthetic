@@ -1,6 +1,7 @@
 package com.telmomenezes.synthetic;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 
 import com.telmomenezes.synthetic.emd.Feature1D;
@@ -148,12 +149,23 @@ public class Distrib {
     }
     
     
-    public void write(String filePath) {
-    	try{ 
-            FileWriter fstream = new FileWriter(filePath);
+    public void write(String filePath, boolean append) {
+    	try{
+    		boolean header = !append;
+    		if (append) {
+    			File f = new File(filePath);
+    			if(f.exists()) {
+    				header = false;
+    			}
+    		}
+    		
+            FileWriter fstream = new FileWriter(filePath, append);
             BufferedWriter out = new BufferedWriter(fstream);
             
-            out.write("value,freq\n");
+            if(header) {
+            	out.write("value,freq\n");
+            }
+
             double x = min;
             for (int i = 0; i < freqs.length; i++) {
                 out.write("" + x + "," + freqs[i] + '\n');
