@@ -101,18 +101,6 @@ public class Prog {
 							curnode.curpos++;
 						}
 						break;
-					case GPFun.GRP:
-						long g = Math.round(curnode.params[0].curval);
-						long id1 = Math.round(vars[0]);
-						long id2 = Math.round(vars[1]);
-						if ((g == 0) || ((id1 % g) == (id2 % g))) {
-							curnode.stoppos = 2;
-						}
-						else {
-							curnode.stoppos = 3;
-							curnode.curpos++;
-						}
-						break;
 					default:
 						break;
 					}
@@ -177,7 +165,6 @@ public class Prog {
 					case GPFun.LRT:
 					case GPFun.ZER:
 					case GPFun.MOD:
-					case GPFun.GRP:
 						val = curnode.params[curnode.stoppos - 1].curval;
 						break;
 					// this should not happen
@@ -563,8 +550,6 @@ public class Prog {
                     fun = GPFun.MAX;
 				else if (token.equals("%"))
                     fun = GPFun.MOD;
-				else if (token.equals("GRP"))
-                    fun = GPFun.GRP;
 			
 				node.initFun(fun, parent);
 
