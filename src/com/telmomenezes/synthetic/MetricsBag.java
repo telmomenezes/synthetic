@@ -170,10 +170,20 @@ public class MetricsBag {
 
 	@Override
 	public String toString() {
-		String str = "inDegreesDist: " + inDegreesDist;
-		str += "outDegreesDist: " + outDegreesDist;
+		String str = "";
+		
+		str += triadicProfile;
+		str += "\n";
+		
+		str += "inDegreesDist: " + inDegreesDist;
+		str += " outDegreesDist: " + outDegreesDist;
+		str += "\n";
 		str += "dPageRanksDist: " + dPageRanksDist;
-		str += "uPageRanksDist: " + uPageRanksDist;
+		str += " uPageRanksDist: " + uPageRanksDist;
+		str += "\n";
+		str += "dDistsDist: " + dDistsDist;
+		str += " uDistsDist: " + uDistsDist;
+		str += "\n";
 		str += "triadicProfileDist: " + triadicProfileDist;
 		
 		return str;

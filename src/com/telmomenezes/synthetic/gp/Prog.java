@@ -150,6 +150,9 @@ public class Prog {
 					case GPFun.ABS:
                         val = Math.abs(curnode.params[0].curval);
                         break;
+					case GPFun.RAND:
+						val = RandomGenerator.instance().random.nextDouble();
+						break;
 					case GPFun.EQ:
 					case GPFun.GRT:
 					case GPFun.LRT:
@@ -537,6 +540,8 @@ public class Prog {
                     fun = GPFun.MIN;
 				else if (token.equals("MAX"))
                     fun = GPFun.MAX;
+				else if (token.equals("RAND"))
+                    fun = GPFun.RAND;
 			
 				node.initFun(fun, parent);
 
