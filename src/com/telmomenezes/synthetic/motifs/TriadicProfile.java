@@ -154,30 +154,6 @@ public class TriadicProfile {
         Signature sig2 = tp.getEmdSignature();
         
         return JFastEMD.distance(sig1, sig2, -1);
-    	
-    	/*
-        double total1 = total();
-        double total2 = tp.total();
-    	
-    	double distance = 1;
-    	for (int i = 0; i < 13; i++) {
-            double x1 = profile[i];
-            //x1 /= total1;
-            
-            double x2 = tp.profile[i];
-            if (x2 == 0) {
-            	x2 = 0.0001;
-            }
-            
-            //x2 /= total2;
-            
-            double error = Math.abs(x1 - x2);
-            
-            double d = error / x2;
-            distance += d;
-        }
-    	
-    	return distance;*/
     }
     
     

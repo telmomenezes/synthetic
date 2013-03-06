@@ -12,7 +12,7 @@ public class DistMatrix {
 
     
     public DistMatrix(int nodes, boolean directed) {
-    	maxDist = 4;
+    	maxDist = 3;
     	
     	this.nodes = nodes;
     	this.directed = directed;

@@ -73,7 +73,6 @@ public class GPNode {
         case GPFun.EQ:
         case GPFun.GRT:
         case GPFun.LRT:
-        case GPFun.MOD:
             return 2;
         default:
             return -1;
@@ -98,7 +97,6 @@ public class GPNode {
         case GPFun.EQ:
         case GPFun.GRT:
         case GPFun.LRT:
-        case GPFun.MOD:
             return 4;
         // this should not happen
         default:
@@ -154,9 +152,6 @@ public class GPNode {
                 break;
             case GPFun.MAX:
                 out.write("MAX");
-                break;
-            case GPFun.MOD:
-                out.write("%");
                 break;
             default:
                 out.write("F??");
