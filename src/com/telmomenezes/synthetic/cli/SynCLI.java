@@ -36,7 +36,7 @@ public class SynCLI {
     	//args = new String[]{"netstats", "-inet", "polblogs.gml"};
     	//args = new String[]{"run", "-inet", "celegansneural.gml", "-prg", "prog.txt", "-odir", "test", "-runs", "30"};
     	//args = new String[]{"evo", "-inet", "syntnet.txt", "-odir", "test"};
-    	args = new String[]{"compare", "-inet", "syntnet0.txt", "-inet2", "syntnet1.txt"};
+    	//args = new String[]{"compare", "-inet", "syntnet0.txt", "-inet2", "syntnet1.txt"};
     	
         CommandLineParser parser = new GnuParser();
         options = new Options();

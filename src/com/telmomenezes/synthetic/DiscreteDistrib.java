@@ -98,25 +98,15 @@ public class DiscreteDistrib {
     
     
     private Signature getEmdSignature() {
-        int n = 0;
-        for (int x = 0; x < (max + 1); x++) {
-            if (freqs[x] > 0) {
-                n++;
-            }
-        }
+        int n = max + 1;
 
         Feature1D[] features = new Feature1D[n];
         double[] weights = new double[n];
 
-        int i = 0;
-        for (int x = 0; x < (max + 1); x++) {
-            double val = freqs[x];
-            if (val > 0) {
-                Feature1D f = new Feature1D(x);
-                features[i] = f;
-                weights[i] = val;
-                i++;
-            }
+        for (int i = 0; i < n; i++) {
+            Feature1D f = new Feature1D(i);
+            features[i] = f;
+            weights[i] = freqs[i];
         }
 
         Signature signature = new Signature();
@@ -148,6 +138,17 @@ public class DiscreteDistrib {
     	}
     	
     	return dist;*/
+    }
+    
+    
+    public double simpleDistance(DiscreteDistrib fd)
+    {
+        double dist = 0;
+    	for (int i = 0; i < freqs.length; i++) {
+    		dist += Math.abs(freqs[i] - fd.freqs[i]) * (i + 1);
+    	}
+    	
+    	return dist;
     }
     
     
@@ -200,8 +201,8 @@ public class DiscreteDistrib {
     
     
     public static void main(String[] args) {
-    	int[] seq1 = {0, 0, 1, 1, 2, 2};
-    	int[] seq2 = {0, 0, 0, 0, 0, 0};
+    	int[] seq1 = {1, 1, 0, 0, 0, 0};
+    	int[] seq2 = {1, 0, 0, 0, 5, 5};
     	
     	DiscreteDistrib d1 = new DiscreteDistrib(seq1);
     	DiscreteDistrib d2 = new DiscreteDistrib(seq2);

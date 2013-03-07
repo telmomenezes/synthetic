@@ -150,9 +150,6 @@ public class Prog {
 					case GPFun.ABS:
                         val = Math.abs(curnode.params[0].curval);
                         break;
-					case GPFun.RAND:
-						val = RandomGenerator.instance().random.nextDouble();
-						break;
 					case GPFun.EQ:
 					case GPFun.GRT:
 					case GPFun.LRT:
@@ -418,14 +415,26 @@ public class Prog {
 
 	public Prog recombine(Prog parent2)
 	{
-		Prog child = clone();
-		int size1 = size();
-		int size2 = parent2.size();
+		Prog parentA = null;
+		Prog parentB = null;
+		
+		if ((RandomGenerator.instance().random.nextInt() % 2) == 0) {
+			parentA = parent2.clone();
+			parentB = clone();
+		}
+		else {
+			parentB = parent2.clone();
+			parentA = clone();
+		}
+		
+		Prog child = parentA.clone();
+		int size1 = parentA.size();
+		int size2 = parentB.size();
 		int pos1 = RandomGenerator.instance().random.nextInt(size1);
 		int pos2 = RandomGenerator.instance().random.nextInt(size2);
 
 		GPNode point1 = child.GPNodeByPos(pos1);
-		GPNode point2 = parent2.GPNodeByPos(pos2);
+		GPNode point2 = parentB.GPNodeByPos(pos2);
 		GPNode point1parent = point1.parent;
 		GPNode point2clone;
 
@@ -540,8 +549,6 @@ public class Prog {
                     fun = GPFun.MIN;
 				else if (token.equals("MAX"))
                     fun = GPFun.MAX;
-				else if (token.equals("RAND"))
-                    fun = GPFun.RAND;
 			
 				node.initFun(fun, parent);
 

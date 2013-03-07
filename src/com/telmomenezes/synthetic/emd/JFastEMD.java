@@ -352,4 +352,31 @@ public class JFastEMD {
         
         return dist;
     }
+    
+    
+    public static void main(String[] args) {
+    	int n = 5;
+    	
+    	double[] w1 = {0, 1, 0, 0, 0};
+    	double[] w2 = {1, 0, 0, 0, 0};
+    	
+    	Feature1D[] f1 = new Feature1D[n];
+    	Feature1D[] f2 = new Feature1D[n];
+    	for (int i = 0; i < n; i++) {
+    		f1[i] = new Feature1D(i);
+    		f2[i] = new Feature1D(i);
+    	}
+    	
+    	Signature signature1 = new Signature();
+        signature1.setNumberOfFeatures(n);
+        signature1.setFeatures(f1);
+        signature1.setWeights(w1);
+        
+        Signature signature2 = new Signature();
+        signature2.setNumberOfFeatures(n);
+        signature2.setFeatures(f2);
+        signature2.setWeights(w2);
+        
+        System.out.println(distance(signature1, signature2, -1));
+    }
 }

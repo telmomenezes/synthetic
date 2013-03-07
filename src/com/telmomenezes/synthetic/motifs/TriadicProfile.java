@@ -137,6 +137,7 @@ public class TriadicProfile {
         for (int i = 0; i < 13; i++) {
             FeatureTriadic f = new FeatureTriadic(i + 1);
             features[i] = f;
+            //weights[i] = Math.log(profile[i]);
             weights[i] = profile[i];
         }
 
@@ -154,6 +155,17 @@ public class TriadicProfile {
         Signature sig2 = tp.getEmdSignature();
         
         return JFastEMD.distance(sig1, sig2, -1);
+    }
+    
+    
+    public double simpleDistance(TriadicProfile tp) {
+    	double distance = 0;
+    	
+        for (int i = 0; i < 13; i++) {
+            distance += Math.abs(profile[i] - tp.profile[i]) * (i + 1);
+        }
+
+        return distance;
     }
     
     

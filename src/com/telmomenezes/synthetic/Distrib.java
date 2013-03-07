@@ -91,25 +91,15 @@ public class Distrib {
     
     
     private Signature getEmdSignature() {
-        int n = 0;
-        for (int x = 0; x < bins; x++) {
-            if (freqs[x] > 0) {
-                n++;
-            }
-        }
+        int n = bins;
 
         Feature1D[] features = new Feature1D[n];
         double[] weights = new double[n];
 
-        int i = 0;
-        for (int x = 0; x < bins; x++) {
-            double val = freqs[x];
-            if (val > 0) {
-                Feature1D f = new Feature1D(x);
-                features[i] = f;
-                weights[i] = val;
-                i++;
-            }
+        for (int i = 0; i < n; i++) {
+            Feature1D f = new Feature1D(i);
+            features[i] = f;
+            weights[i] = freqs[i];
         }
 
         Signature signature = new Signature();
@@ -133,6 +123,17 @@ public class Distrib {
         Signature sig2 = fd.getEmdSignature();
         
         return JFastEMD.distance(sig1, sig2, -1);
+    }
+    
+    
+    public double simpleDistance(Distrib fd) {
+        double distance = 0;
+
+        for (int i = 0; i < bins; i++) {
+            distance += Math.abs(freqs[i] - fd.freqs[i]) * (i + 1);
+        }
+
+        return distance;
     }
     
     

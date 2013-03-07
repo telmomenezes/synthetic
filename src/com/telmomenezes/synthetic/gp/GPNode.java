@@ -81,8 +81,6 @@ public class GPNode {
 
     private int funArity(int fun) {
         switch (fun) {
-        case GPFun.RAND:
-        	return 0;
         case GPFun.EXP:
         case GPFun.LOG:
         case GPFun.ABS:
@@ -154,9 +152,6 @@ public class GPNode {
                 break;
             case GPFun.MAX:
                 out.write("MAX");
-                break;
-            case GPFun.RAND:
-                out.write("RAND");
                 break;
             default:
                 out.write("F??");
