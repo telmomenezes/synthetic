@@ -2,6 +2,7 @@ package com.telmomenezes.synthetic;
 
 
 import com.telmomenezes.synthetic.motifs.TriadicProfile;
+import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 
 public class MetricsBag {
 	private DiscreteDistrib inDegrees;
@@ -32,16 +33,18 @@ public class MetricsBag {
 		
 		// distances
 		if (net.isDirected()) {
-			DistMatrix dMatrix = new DistMatrix(net.getNodeCount(), true);
-			dMatrix.calc(net);
-			dDists = dMatrix.getDistrib();
+			RandomWalkers dRW = new RandomWalkers(net, true);
+			dRW.allSteps();
+			dDists = dRW.getDistrib();
+			System.out.println(dDists);
 		}
 		else {
 			dDists = null;
 		}
-		DistMatrix uMatrix = new DistMatrix(net.getNodeCount(), false);
-		uMatrix.calc(net);
-		uDists = uMatrix.getDistrib();
+		RandomWalkers uRW = new RandomWalkers(net, false);
+		uRW.allSteps();
+		uDists = uRW.getDistrib();
+		System.out.println(uDists);
 		
 	    inDegreesDist = 0;
 	    outDegreesDist = 0;
@@ -52,23 +55,23 @@ public class MetricsBag {
 	    uDistsDist = 0;
     }
     
-    public MetricsBag(Net net, DistMatrix dDistMat, DistMatrix uDistMat, int bins, MetricsBag bag) {
+    public MetricsBag(Net net, RandomWalkers dRW, RandomWalkers uRW, int bins, MetricsBag bag) {
     	this.bins = bins;
 		inDegrees = new DiscreteDistrib(net.inDegSeq(), bag.inDegrees);
 		outDegrees = new DiscreteDistrib(net.outDegSeq(), bag.outDegrees);
 		dPageRanks = new Distrib(net.prDSeq(), this.bins, bag.dPageRanks);
 		uPageRanks = new Distrib(net.prUSeq(), this.bins, bag.uPageRanks);
 		triadicProfile = new TriadicProfile(net);
-		if (dDistMat != null) {
-			dDists = dDistMat.getDistrib();
+		if (dRW != null) {
+			dDists = dRW.getDistrib();
 		}
 		else {
 			DistMatrix dMatrix = new DistMatrix(net.getNodeCount(), true);
 			dMatrix.calc(net);
 			dDists = dMatrix.getDistrib();
 		}
-		if (uDistMat != null) {
-			uDists = uDistMat.getDistrib();
+		if (uRW != null) {
+			uDists = uRW.getDistrib();
 		}
 		else {
 			DistMatrix uMatrix = new DistMatrix(net.getNodeCount(), false);
@@ -84,14 +87,14 @@ public class MetricsBag {
         outDegreesDist = outDegrees.emdDistance(bag.outDegrees);
         dPageRanksDist = dPageRanks.emdDistance(bag.dPageRanks);
         uPageRanksDist = uPageRanks.emdDistance(bag.uPageRanks);
-        triadicProfileDist = triadicProfile.emdDistance(bag.triadicProfile);
+        triadicProfileDist = triadicProfile.proportionalDistance(bag.triadicProfile);
         if (dDists != null) {
-        	dDistsDist = dDists.emdDistance(bag.dDists);
+        	dDistsDist = dDists.proportionalDistance(bag.dDists);
         }
         else {
         	dDistsDist = 0;
         }
-        uDistsDist = uDists.emdDistance(bag.uDists);
+        uDistsDist = uDists.proportionalDistance(bag.uDists);
         
         double verySmall = 0.999;
         if (inDegreesDist == 0) inDegreesDist = verySmall;

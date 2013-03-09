@@ -152,6 +152,21 @@ public class DiscreteDistrib {
     }
     
     
+    public double proportionalDistance(DiscreteDistrib fd)
+    {
+        double dist = 0;
+    	for (int i = 0; i < freqs.length; i++) {
+    		double d = fd.freqs[i];
+    		if (d == 0) {
+    			d = 1;
+    		}
+    		dist += Math.abs(freqs[i] - fd.freqs[i]) / d;
+    	}
+    	
+    	return dist;
+    }
+    
+    
     public void write(String filePath, boolean append) {
     	try{
     		boolean header = !append;

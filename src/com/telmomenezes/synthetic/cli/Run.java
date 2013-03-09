@@ -71,8 +71,8 @@ public class Run extends Command {
         	DiscreteDistrib outDegrees = new DiscreteDistrib(syntNet.outDegSeq());
         	Distrib dPageRank = new Distrib(syntNet.prDSeq(), bins, dPageRankReal);
         	Distrib uPageRank = new Distrib(syntNet.prUSeq(), bins, uPageRankReal);
-        	DiscreteDistrib dDistsDist = gen.getDistMatrixD().getDistrib();
-        	DiscreteDistrib uDistsDist = gen.getDistMatrixU().getDistrib();
+        	DiscreteDistrib dDistsDist = gen.getDRandomWalkers().getDistrib();
+        	DiscreteDistrib uDistsDist = gen.getURandomWalkers().getDistrib();
     	
         	inDegrees.write(outDir + "/in_degrees.csv", append);
         	outDegrees.write(outDir + "/out_degrees.csv", append);

@@ -169,6 +169,56 @@ public class TriadicProfile {
     }
     
     
+    private double motifEdges(int motif) {
+    	switch (motif) {
+    	case 1:
+    		return 2;
+    	case 2:
+    		return 2;
+    	case 3:
+    		return 2;
+    	case 4:
+    		return 3;
+    	case 5:
+    		return 3;
+    	case 6:
+    		return 4;
+    	case 7:
+    		return 3;
+    	case 8:
+    		return 3;
+    	case 9:
+    		return 4;
+    	case 10:
+    		return 4;
+    	case 11:
+    		return 4;
+    	case 12:
+    		return 5;
+    	case 13:
+    		return 6;
+    	default:
+    		return 0;
+    	}
+    }
+    
+    
+    public double proportionalDistance(TriadicProfile tp) {
+    	double distance = 0;
+    	
+        for (int i = 0; i < 13; i++) {
+        	double d = tp.profile[i];
+            if (d <= 0) {
+            	d = 1;
+            }
+            
+            distance += (Math.abs(profile[i] - tp.profile[i]) / d) * motifEdges(i + 1);
+        }
+
+        return distance;
+    }
+    
+    
     public void write(String filePath, boolean append) {
     	try{
     		boolean header = !append;

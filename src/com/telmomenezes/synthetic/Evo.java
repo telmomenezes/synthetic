@@ -161,7 +161,7 @@ public class Evo {
 	private double computeFitness(Generator gen) {
         Net net = gen.getNet();
         
-        MetricsBag genBag = new MetricsBag(net, gen.getDistMatrixD(), gen.getDistMatrixU(), bins, targBag);
+        MetricsBag genBag = new MetricsBag(net, gen.getDRandomWalkers(), gen.getURandomWalkers(), bins, targBag);
         gen.clean();
 
         gen.setMetricsBag(genBag);
@@ -188,6 +188,8 @@ public class Evo {
         	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist 
         			* triadicProfileDist * dDistsDist * uDistsDist * genSize;
         	distance = Math.pow(distance, 1.0 / 8.0);
+        	
+        	//distance = triadicProfileDist;
         }
         else {
         	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist

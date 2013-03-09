@@ -137,6 +137,22 @@ public class Distrib {
     }
     
     
+    public double proportionalDistance(Distrib fd) {
+        double distance = 0;
+
+        for (int i = 0; i < bins; i++) {
+        	double d = fd.freqs[i];
+        	if (d == 0) {
+        		d = 1;
+        	}
+        	
+            distance += Math.abs(freqs[i] - fd.freqs[i]) / d;
+        }
+
+        return distance;
+    }
+    
+    
     @Override
     public String toString() {
     	String str = "";

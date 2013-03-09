@@ -129,4 +129,63 @@ public class Node implements Cloneable {
         outEdges.remove(edge);
         outDegree--;
     }
+    
+    public Node getRandomOutputNode() {
+    	if (outEdges.size() == 0) {
+    		return null;
+    	}
+    	
+    	int size = outEdges.size();
+    	int index = RandomGenerator.instance().random.nextInt(size);
+    	int i = 0;
+    	for(Edge edge : outEdges)
+    	{
+    	    if (i == index) {
+    	        return edge.getTarget();
+    	    }
+    	    i++;
+    	}
+    	
+    	return null;
+    }
+    
+    
+    public Node getRandomInputNode() {
+    	if (inEdges.size() == 0) {
+    		return null;
+    	}
+    	
+    	int size = inEdges.size();
+    	int index = RandomGenerator.instance().random.nextInt(size);
+    	int i = 0;
+    	for(Edge edge : inEdges)
+    	{
+    	    if (i == index) {
+    	        return edge.getOrigin();
+    	    }
+    	    i++;
+    	}
+    	
+    	return null;
+    }
+    
+    
+    public Node getRandomNeighbour() {
+    	double ins = inDegree;
+    	double outs = outDegree;
+    	double total = ins + outs;
+    	
+    	if (total <= 0) {
+    		return null;
+    	}
+    	
+    	double probIn = ins / total;
+    	
+    	if (RandomGenerator.instance().random.nextDouble() < probIn) {
+    		return getRandomInputNode();
+    	}
+    	else {
+    		return getRandomOutputNode();
+    	}
+    }
 }

@@ -12,7 +12,7 @@ public class DistMatrix {
 
     
     public DistMatrix(int nodes, boolean directed) {
-    	maxDist = 4;
+    	maxDist = 2;
     	
     	this.nodes = nodes;
     	this.directed = directed;
@@ -51,11 +51,9 @@ public class DistMatrix {
     		return;
     	}
     	
-    	if (getDist(origPos, targPos) <= distance) {
-    		return;
+    	if (getDist(origPos, targPos) > distance) {
+    		setDist(origPos, targPos, distance);
     	}
-    	
-    	setDist(origPos, targPos, distance);
     	
     	Node targ = net.getNodeById(targPos);
     	
@@ -73,9 +71,6 @@ public class DistMatrix {
     
     private void updateDistanceOrig(Net net, int origPos, int targPos, int distance) {
     	if (distance > maxDist)
-    		return;
-    	
-    	if (getDist(origPos, targPos) <= distance)
     		return;
     	
     	updateDistanceTarg(net, origPos, targPos, distance);
