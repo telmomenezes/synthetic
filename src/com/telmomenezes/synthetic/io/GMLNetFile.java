@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.Node;
+import com.telmomenezes.synthetic.NetBuilder;
+
 
 public class GMLNetFile extends NetFile {
 
@@ -17,8 +18,8 @@ public class GMLNetFile extends NetFile {
     
     @Override
     public Net load(String filePath) {
-        Net net = new Net();
-        Map<String, Node> nodes = new HashMap<String, Node>();
+        NetBuilder nb = new NetBuilder();
+        Map<String, Integer> nodes = new HashMap<String, Integer>();
         
         try {
             State state = State.START;
@@ -44,14 +45,14 @@ public class GMLNetFile extends NetFile {
                         state = State.EDGE;
                     }
                     else if (line.startsWith("]")) {
-                        return net;
+                        return nb.buildNet();
                     }
                     break;
                 case NODE:
                     if (line.startsWith("id")) {
                         String[] tokens = line.split(" ");
                         if (tokens.length >= 2) {
-                            nodes.put(tokens[1], net.addNode());
+                            nodes.put(tokens[1], nb.addNode());
                         }
                     }
                     else if (line.startsWith("]")) {
@@ -72,7 +73,7 @@ public class GMLNetFile extends NetFile {
                         }
                     }
                     else if (line.startsWith("]")) {
-                        net.addEdge(nodes.get(source), nodes.get(target));
+                        nb.addEdge(nodes.get(source), nodes.get(target));
                         state = State.GRAPH;
                     }
                     break;
@@ -84,7 +85,7 @@ public class GMLNetFile extends NetFile {
             e.printStackTrace();
         }
 
-        return net;
+        return nb.buildNet();
     }
 
     @Override

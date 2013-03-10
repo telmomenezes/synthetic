@@ -1,12 +1,13 @@
 package com.telmomenezes.synthetic;
 
-import java.util.HashSet;
-import java.util.Set;
+
+import java.util.Vector;
+
 
 public class Node implements Cloneable {
     private int id;
-    private Set<Edge> inEdges;
-    private Set<Edge> outEdges;
+    private Vector<Edge> inEdges;
+    private Vector<Edge> outEdges;
     private int inDegree;
     private int outDegree;
 
@@ -27,8 +28,8 @@ public class Node implements Cloneable {
         this.id = id;
         inDegree = 0;
         outDegree = 0;
-        inEdges = new HashSet<Edge>();
-        outEdges = new HashSet<Edge>();
+        inEdges = new Vector<Edge>();
+        outEdges = new Vector<Edge>();
     }
     
     @Override
@@ -42,11 +43,11 @@ public class Node implements Cloneable {
         return id;
     }
 
-    public Set<Edge> getInEdges() {
+    public Vector<Edge> getInEdges() {
         return inEdges;
     }
     
-    public Set<Edge> getOutEdges() {
+    public Vector<Edge> getOutEdges() {
         return outEdges;
     }
 
@@ -131,42 +132,26 @@ public class Node implements Cloneable {
     }
     
     public Node getRandomOutputNode() {
-    	if (outEdges.size() == 0) {
+    	int size = outEdges.size();
+    	
+    	if (size == 0) {
     		return null;
     	}
     	
-    	int size = outEdges.size();
     	int index = RandomGenerator.instance().random.nextInt(size);
-    	int i = 0;
-    	for(Edge edge : outEdges)
-    	{
-    	    if (i == index) {
-    	        return edge.getTarget();
-    	    }
-    	    i++;
-    	}
-    	
-    	return null;
+    	return outEdges.get(index).getTarget();
     }
     
     
     public Node getRandomInputNode() {
-    	if (inEdges.size() == 0) {
+    	int size = inEdges.size();
+    	
+    	if (size == 0) {
     		return null;
     	}
     	
-    	int size = inEdges.size();
     	int index = RandomGenerator.instance().random.nextInt(size);
-    	int i = 0;
-    	for(Edge edge : inEdges)
-    	{
-    	    if (i == index) {
-    	        return edge.getOrigin();
-    	    }
-    	    i++;
-    	}
-    	
-    	return null;
+    	return inEdges.get(index).getOrigin();
     }
     
     

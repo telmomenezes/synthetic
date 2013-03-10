@@ -9,6 +9,7 @@ import com.telmomenezes.synthetic.Node;
 
 public class RandomWalkers {
 	private int maxLength;
+	private int steps;
 	
 	private Net net;
 	private boolean directed;
@@ -20,7 +21,8 @@ public class RandomWalkers {
     
     
     public RandomWalkers(Net net, boolean directed) {
-    	maxLength = 5;
+    	maxLength = 10;
+    	steps = 10;
     	
     	this.net = net;
     	this.directed = directed;
@@ -84,7 +86,7 @@ public class RandomWalkers {
     
     public void allSteps() {
     	for (int i = 0; i < net.getEdgeCount(); i++) {
-    		for (int j = 0; j < 10; j++) {
+    		for (int j = 0; j < steps; j++) {
     			step();
     		}
     	}

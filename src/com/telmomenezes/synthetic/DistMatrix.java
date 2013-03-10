@@ -1,7 +1,6 @@
 package com.telmomenezes.synthetic;
 
 import java.util.Arrays;
-import java.util.Vector;
 
 
 public class DistMatrix {
@@ -96,7 +95,7 @@ public class DistMatrix {
     
     
     public void calc(Net net) {
-    	Vector<Edge> edges = net.getEdges();
+    	Edge[] edges = net.getEdges();
     	
     	for (Edge edge : edges) {
     		updateDistances(net, edge.getOrigin().getId(), edge.getTarget().getId());

@@ -6,16 +6,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.Node;
+import com.telmomenezes.synthetic.NetBuilder;
+
 
 public class MITAB25NetFile extends NetFile {
 
-	private Net net;
-	private Map<String, Node> nodeMap;
+	private NetBuilder nb;
+	private Map<String, Integer> nodeMap;
 	
 	
-	private Node getNode(String namesStr) {
-		Node node = null;
+	private int getNode(String namesStr) {
+		int node = -1;
 		
 		String[] names = namesStr.split("\\|");
 		
@@ -26,8 +27,8 @@ public class MITAB25NetFile extends NetFile {
 			}
 		}
 		
-		if (node == null) {
-			node = net.addNode();
+		if (node == -1) {
+			node = nb.addNode();
 		}
 		
 		for (String name : names) {
@@ -40,8 +41,8 @@ public class MITAB25NetFile extends NetFile {
 	
 	@Override
 	public Net load(String filePath) {
-		net = new Net();
-		nodeMap = new HashMap<String, Node>();
+		nb = new NetBuilder();
+		nodeMap = new HashMap<String, Integer>();
 		
 		BufferedReader br;
 		try {
@@ -50,9 +51,9 @@ public class MITAB25NetFile extends NetFile {
 			while ((line = br.readLine()) != null) {
 			   String[] cols = line.split("\t");
 			   
-			   Node origNode = getNode(cols[0]);
-			   Node targNode = getNode(cols[1]);
-			   net.addEdge(origNode, targNode);
+			   int origNode = getNode(cols[0]);
+			   int targNode = getNode(cols[1]);
+			   nb.addEdge(origNode, targNode);
 			}
 			br.close();
 		}
@@ -60,7 +61,7 @@ public class MITAB25NetFile extends NetFile {
 			e.printStackTrace();
 		}
 		
-		return net;
+		return nb.buildNet();
 	}
 
 	@Override

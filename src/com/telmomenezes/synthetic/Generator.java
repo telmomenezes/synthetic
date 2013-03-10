@@ -147,12 +147,14 @@ public class Generator implements Comparable<Generator> {
 			nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
 		}
 		
+		//nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
+		
 		return nodeId;
 	}
 	
     
 	public void run() {
-		net = new Net();
+		net = new Net(nodeCount, edgeCount);
 		
         // reset eval stats
         prog.clearEvalStats();
@@ -194,7 +196,7 @@ public class Generator implements Comparable<Generator> {
             			origNode = nodeArray[origIndex];
             			targNode = nodeArray[targIndex];
             			
-            			if (!net.edgeExists(origNode, targNode)) {
+            			if (!net.edgeExists(origIndex, targIndex)) {
             				found = true;
             			}
             		}

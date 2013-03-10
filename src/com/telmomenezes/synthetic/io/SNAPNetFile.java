@@ -13,7 +13,8 @@ import java.util.Map;
 
 import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.Node;
+import com.telmomenezes.synthetic.NetBuilder;
+
 
 /**
  * @author telmo
@@ -22,8 +23,8 @@ import com.telmomenezes.synthetic.Node;
 public class SNAPNetFile extends NetFile {
     @Override
     public Net load(String filePath) {
-        Net net = new Net();
-        Map<String, Node> nodes = new HashMap<String, Node>();
+        NetBuilder nb = new NetBuilder();
+        Map<String, Integer> nodes = new HashMap<String, Integer>();
         
         try {
             BufferedReader in = new BufferedReader(new FileReader(filePath));
@@ -34,10 +35,10 @@ public class SNAPNetFile extends NetFile {
                     if (tokens.length == 2) {
                         for (String t : tokens) {
                             if (!nodes.containsKey(t)) {
-                                nodes.put(t, net.addNode());
+                                nodes.put(t, nb.addNode());
                             }
                         }
-                        net.addEdge(nodes.get(tokens[0]), nodes.get(tokens[1]));
+                        nb.addEdge(nodes.get(tokens[0]), nodes.get(tokens[1]));
                     }
                 }
             }
@@ -47,7 +48,7 @@ public class SNAPNetFile extends NetFile {
             e.printStackTrace();
         }
 
-        return net;
+        return nb.buildNet();
     }
 
     @Override

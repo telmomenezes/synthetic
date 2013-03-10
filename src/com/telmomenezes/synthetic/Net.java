@@ -1,21 +1,14 @@
 package com.telmomenezes.synthetic;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
 
 import com.telmomenezes.synthetic.io.NetFile;
 import com.telmomenezes.synthetic.io.NetFileType;
 
 
 public class Net implements Cloneable {
-    private int CURID;
-
-    protected Vector<Node> nodes;
-    protected Vector<Edge> edges;
-    protected Map<Integer, Node> nodeMap;
+    protected Node[] nodes;
+    protected Edge[] edges;
+    protected boolean[][] adjMatrix;
     
     private int nodeCount;
     private int edgeCount;
@@ -25,14 +18,12 @@ public class Net implements Cloneable {
 
     private boolean pageRanksComputed;
     
-    public Net() {
-    	CURID = 0;
-    	
+    public Net(int maxNodeCount, int maxEdgeCount) {
         nodeCount = 0;
         edgeCount = 0;
-        nodes = new Vector<Node>();
-        edges = new Vector<Edge>();
-        nodeMap = new HashMap<Integer, Node>();
+        nodes = new Node[maxNodeCount];
+        edges = new Edge[maxEdgeCount];
+        adjMatrix = new boolean[maxNodeCount][maxNodeCount];
         
         // defaults
         directed = true;
@@ -41,8 +32,8 @@ public class Net implements Cloneable {
         pageRanksComputed = false;
     }
     
-    public Net(boolean directed, boolean selfEdges) {
-        this();
+    public Net(int maxNodeCount, int maxEdgeCount, boolean directed, boolean selfEdges) {
+        this(maxNodeCount, maxEdgeCount);
         this.directed = directed;
         this.selfEdges = selfEdges;
     }
@@ -50,7 +41,7 @@ public class Net implements Cloneable {
     @Override
     public Net clone()
     {
-        Net clonedNet = new Net();
+        Net clonedNet = new Net(nodeCount, edgeCount);
         
         clonedNet.directed = directed;
         clonedNet.selfEdges = selfEdges;
@@ -76,7 +67,7 @@ public class Net implements Cloneable {
     
     public Net cloneFlagged()
     {
-        Net clonedNet = new Net();
+        Net clonedNet = new Net(nodeCount, edgeCount);
         
         clonedNet.directed = directed;
         clonedNet.selfEdges = selfEdges;
@@ -113,20 +104,19 @@ public class Net implements Cloneable {
     }
     
     private Node addNode(Node node) {
-        nodeCount++;
-        nodes.add(node);
-        nodeMap.put(node.getId(), node);
+        nodes[nodeCount] = node;
+    	nodeCount++;
         return node;
     }
     
     public Node addNode() {
-        Node node = new Node(CURID++);
+        Node node = new Node(nodeCount);
         addNode(node);
         return node;
     }
     
     public Node getNodeById(int id) {
-        return nodeMap.get(id);
+        return nodes[id];
     }
     
     public boolean addEdge(Node origin, Node target) {
@@ -139,33 +129,38 @@ public class Net implements Cloneable {
         }
         
         Edge edge = new Edge(origin, target);
-        edges.add(edge);
+        edges[edgeCount] = edge;
         origin.addOutEdge(edge);
         target.addInEdge(edge);
+        
+        adjMatrix[origin.getId()][target.getId()] = true;
 
         edgeCount++;
         
         return true;
     }
 
-    public boolean edgeExists(Node origin, Node target) {
-        for (Edge edge : origin.getOutEdges()) {
-            if (edge.getTarget() == target) {
-                return true;
-            }
+    
+    public boolean edgeExists(int origin, int target) {
+        if (adjMatrix[origin][target]) {
+        	return true;
         }
         
         // If net is undirected, we must also check the reverse edge
         if (!directed) {
-        	for (Edge edge : target.getOutEdges()) {
-                if (edge.getTarget() == origin) {
-                    return true;
-                }
+        	if (adjMatrix[target][origin]) {
+            	return true;
             }
         }
 
         return false;
     }
+    
+    
+    public boolean edgeExists(Node origin, Node target) {
+    	return edgeExists(origin.getId(), target.getId());
+    }
+    
     
     public Edge getEdge(Node origin, Node target) {
         for (Edge edge : origin.getOutEdges()) {
@@ -181,13 +176,15 @@ public class Net implements Cloneable {
         return getEdge(edge.getTarget(), edge.getOrigin());
     }
     
+    /*
     public void removeEdge(Edge edge) {
         edge.getOrigin().removeOutput(edge);
         edge.getTarget().removeInput(edge);
         edges.remove(edge);
         edgeCount--;
-    }
+    }*/
     
+    /*
     public void removeNode(Node node) {
         List<Edge> remEdges = new LinkedList<Edge>(node.getInEdges());
         for (Edge e : remEdges) {
@@ -201,13 +198,15 @@ public class Net implements Cloneable {
         nodes.remove(node);
         nodeMap.remove(node.getId());
         nodeCount--;
-    }
+    }*/
 
+    
     public Node getRandomNode() {
         int pos = RandomGenerator.instance().random.nextInt(nodeCount);
-        return nodes.get(pos);
+        return nodes[pos];
     }
 
+    
     public void computePageranks() {
         if (pageRanksComputed) {
             return;
@@ -353,7 +352,7 @@ public class Net implements Cloneable {
         return seq;
     }
 
-    public Vector<Node> getNodes() {
+    public Node[] getNodes() {
         return nodes;
     }
 
@@ -365,7 +364,7 @@ public class Net implements Cloneable {
         return edgeCount;
     }
     
-    public Vector<Edge> getEdges() {
+    public Edge[] getEdges() {
         return edges;
     }
     

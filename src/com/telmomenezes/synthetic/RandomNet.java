@@ -9,7 +9,7 @@ import com.telmomenezes.synthetic.RandomGenerator;
 
 public class RandomNet {
 	public static Net generate(int nodeCount, int edgeCount) {
-		Net net = new Net();
+		Net net = new Net(nodeCount, edgeCount);
 		
 		Vector<Node> nodes = new Vector<Node>();
 		

@@ -4,6 +4,7 @@ package com.telmomenezes.synthetic;
 import com.telmomenezes.synthetic.motifs.TriadicProfile;
 import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 
+
 public class MetricsBag {
 	private DiscreteDistrib inDegrees;
     private DiscreteDistrib outDegrees;
@@ -36,7 +37,7 @@ public class MetricsBag {
 			RandomWalkers dRW = new RandomWalkers(net, true);
 			dRW.allSteps();
 			dDists = dRW.getDistrib();
-			System.out.println(dDists);
+			//System.out.println(dDists);
 		}
 		else {
 			dDists = null;
@@ -44,7 +45,7 @@ public class MetricsBag {
 		RandomWalkers uRW = new RandomWalkers(net, false);
 		uRW.allSteps();
 		uDists = uRW.getDistrib();
-		System.out.println(uDists);
+		//System.out.println(uDists);
 		
 	    inDegreesDist = 0;
 	    outDegreesDist = 0;
@@ -66,17 +67,17 @@ public class MetricsBag {
 			dDists = dRW.getDistrib();
 		}
 		else {
-			DistMatrix dMatrix = new DistMatrix(net.getNodeCount(), true);
-			dMatrix.calc(net);
-			dDists = dMatrix.getDistrib();
+			RandomWalkers walkers = new RandomWalkers(net, true);
+			walkers.allSteps();
+			dDists = walkers.getDistrib();
 		}
 		if (uRW != null) {
 			uDists = uRW.getDistrib();
 		}
 		else {
-			DistMatrix uMatrix = new DistMatrix(net.getNodeCount(), false);
-			uMatrix.calc(net);
-			uDists = uMatrix.getDistrib();
+			RandomWalkers walkers = new RandomWalkers(net, false);
+			walkers.allSteps();
+			uDists = walkers.getDistrib();
 		}
 		
 		calcDistances(bag);
@@ -89,12 +90,12 @@ public class MetricsBag {
         uPageRanksDist = uPageRanks.emdDistance(bag.uPageRanks);
         triadicProfileDist = triadicProfile.proportionalDistance(bag.triadicProfile);
         if (dDists != null) {
-        	dDistsDist = dDists.proportionalDistance(bag.dDists);
+        	dDistsDist = dDists.emdDistance(bag.dDists);
         }
         else {
         	dDistsDist = 0;
         }
-        uDistsDist = uDists.proportionalDistance(bag.uDists);
+        uDistsDist = uDists.emdDistance(bag.uDists);
         
         double verySmall = 0.999;
         if (inDegreesDist == 0) inDegreesDist = verySmall;
