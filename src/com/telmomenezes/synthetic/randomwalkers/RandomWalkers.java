@@ -22,7 +22,7 @@ public class RandomWalkers {
     
     public RandomWalkers(Net net, boolean directed) {
     	maxLength = 10;
-    	steps = 10;
+    	steps = 1;
     	
     	this.net = net;
     	this.directed = directed;
@@ -31,9 +31,14 @@ public class RandomWalkers {
     	
         dmatrix = new int[nodes * nodes];
 
-        // clear matrices
+        init();
+    }
+    
+    
+    public void init() {
+    	// clear matrices
         int largeVal = 9999999;
-        //int largeVal = maxDist + 1;
+        //int largeVal = maxLength + 1;
         Arrays.fill(dmatrix, largeVal);
         for (int i = 0; i < nodes; i++) {
         	dmatrix[(i * nodes) + i] = 0;
@@ -72,24 +77,26 @@ public class RandomWalkers {
     
     public void step() {
     	for (int i = 0; i < nodes; i++) {
-    		RandomWalker walker = walkers[i];
-    		walker.step();
-    		if (walker.isForward()) {
-    			setDist(walker.getOrig().getId(), walker.getTarg().getId(), walker.getLength());
-    		}
-    		else {
-    			setDist(walker.getTarg().getId(), walker.getOrig().getId(), walker.getLength());
+    		for (int j = 0; j < steps; j++) {
+    			RandomWalker walker = walkers[i];
+    			walker.step();
+    			if (walker.isForward()) {
+    				setDist(walker.getOrig().getId(), walker.getTarg().getId(), walker.getLength());
+    			}
+    			else {
+    				setDist(walker.getTarg().getId(), walker.getOrig().getId(), walker.getLength());
+    			}
     		}
     	}
     }
     
     
-    public void allSteps() {
+    public RandomWalkers allSteps() {
     	for (int i = 0; i < net.getEdgeCount(); i++) {
-    		for (int j = 0; j < steps; j++) {
-    			step();
-    		}
+    		step();
     	}
+    	
+    	return this;
     }
     
     

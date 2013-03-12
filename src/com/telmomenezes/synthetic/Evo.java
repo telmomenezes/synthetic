@@ -188,8 +188,6 @@ public class Evo {
         	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist 
         			* triadicProfileDist * dDistsDist * uDistsDist * genSize;
         	distance = Math.pow(distance, 1.0 / 8.0);
-        	
-        	//distance = triadicProfileDist;
         }
         else {
         	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist

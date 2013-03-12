@@ -18,7 +18,7 @@ public class RandomGenerator {
 	
 	private RandomGenerator()
 	{
-		random = new Random();
+		random = new MTRandom();
 	}
 	
 	public static RandomGenerator instance()

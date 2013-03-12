@@ -138,7 +138,6 @@ public class Generator implements Comparable<Generator> {
 	
 	private int getRandomNode() {
 		int nodeId = -1;
-		nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
 		
 		if (((RandomGenerator.instance().random.nextInt() % 2) == 0) && (activeNodes.size() == ACTIVE_NODES)) {
 			nodeId = getRandomActiveNode();
@@ -147,7 +146,7 @@ public class Generator implements Comparable<Generator> {
 			nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
 		}
 		
-		//nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
+		nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
 		
 		return nodeId;
 	}
@@ -259,9 +258,9 @@ public class Generator implements Comparable<Generator> {
             	dRandomWalkers.step();
             }
             uRandomWalkers.step();
-            
-            simulated = true;
         }
+        
+        simulated = true;
     }
 	
 	
