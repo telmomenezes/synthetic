@@ -146,6 +146,8 @@ public class Generator implements Comparable<Generator> {
 			nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
 		}
 		
+		//nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
+		
 		return nodeId;
 	}
 	

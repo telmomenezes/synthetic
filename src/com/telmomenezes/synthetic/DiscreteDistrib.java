@@ -145,7 +145,7 @@ public class DiscreteDistrib {
     {
         double dist = 0;
     	for (int i = 0; i < freqs.length; i++) {
-    		dist += Math.abs(freqs[i] - fd.freqs[i]) * (i + 1);
+    		dist += Math.abs(freqs[i] - fd.freqs[i]);// * (i + 1);
     	}
     	
     	return dist;
@@ -160,7 +160,7 @@ public class DiscreteDistrib {
     		if (d == 0) {
     			d = 1;
     		}
-    		dist += (Math.abs(freqs[i] - fd.freqs[i]) / d);
+    		dist += (Math.abs(freqs[i] - fd.freqs[i]) / d);// * (i + 1);
     	}
     	
     	return dist;
