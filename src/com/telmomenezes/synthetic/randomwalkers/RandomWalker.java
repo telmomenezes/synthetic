@@ -1,7 +1,7 @@
 package com.telmomenezes.synthetic.randomwalkers;
 
 import com.telmomenezes.synthetic.Node;
-import com.telmomenezes.synthetic.RandomGenerator;
+import com.telmomenezes.synthetic.random.RandomGenerator;
 
 
 public class RandomWalker {

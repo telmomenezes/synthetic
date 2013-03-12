@@ -3,6 +3,8 @@ package com.telmomenezes.synthetic;
 
 import java.util.Vector;
 
+import com.telmomenezes.synthetic.random.RandomGenerator;
+
 
 public class Node implements Cloneable {
     private int id;

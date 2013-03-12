@@ -4,7 +4,7 @@ import java.util.Vector;
 
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
-import com.telmomenezes.synthetic.RandomGenerator;
+import com.telmomenezes.synthetic.random.RandomGenerator;
 
 
 public class RandomNet {

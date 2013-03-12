@@ -1,4 +1,4 @@
-package com.telmomenezes.synthetic;
+package com.telmomenezes.synthetic.random;
 
 import java.util.Random;
 

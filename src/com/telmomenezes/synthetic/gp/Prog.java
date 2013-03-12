@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.RandomGenerator;
+import com.telmomenezes.synthetic.random.RandomGenerator;
 
 
 /**

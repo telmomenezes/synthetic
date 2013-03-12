@@ -8,7 +8,7 @@ import java.util.Vector;
 import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
-import com.telmomenezes.synthetic.RandomGenerator;
+import com.telmomenezes.synthetic.random.RandomGenerator;
 import com.telmomenezes.synthetic.gp.Prog;
 import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 
@@ -145,8 +145,6 @@ public class Generator implements Comparable<Generator> {
 		else {
 			nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
 		}
-		
-		nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
 		
 		return nodeId;
 	}
