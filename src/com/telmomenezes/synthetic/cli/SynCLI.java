@@ -82,6 +82,9 @@ public class SynCLI {
             else if (cmd.equals("compare")) {
                 cmdObj = new Compare();
             }
+            else if (cmd.equals("prune")) {
+                cmdObj = new Prune();
+            }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
             }

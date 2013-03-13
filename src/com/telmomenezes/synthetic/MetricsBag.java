@@ -90,12 +90,12 @@ public class MetricsBag {
         uPageRanksDist = uPageRanks.emdDistance(bag.uPageRanks);
         triadicProfileDist = triadicProfile.proportionalDistance(bag.triadicProfile);
         if (dDists != null) {
-        	dDistsDist = dDists.emdDistance(bag.dDists);
+        	dDistsDist = dDists.proportionalDistance(bag.dDists);
         }
         else {
         	dDistsDist = 0;
         }
-        uDistsDist = uDists.emdDistance(bag.uDists);
+        uDistsDist = uDists.proportionalDistance(bag.uDists);
         
         double verySmall = 0.999;
         if (inDegreesDist == 0) inDegreesDist = verySmall;

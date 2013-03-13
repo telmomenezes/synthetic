@@ -96,10 +96,12 @@ public class Prog {
 					}
 
 					// update branching info
-					if (curnode.branching < 0)
+					if (curnode.branching < 0) {
 						curnode.branching = curnode.stoppos;
-					else if (curnode.branching != curnode.stoppos)
-							curnode.branching = 0;
+					}
+					else if (curnode.branching != curnode.stoppos) {
+						curnode.branching = 0;
+					}
 				}
 
 				curnode = curnode.params[curnode.curpos];
