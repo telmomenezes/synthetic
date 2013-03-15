@@ -6,7 +6,7 @@ import com.telmomenezes.synthetic.Generator;
 import com.telmomenezes.synthetic.Net;
 
 
-public class Prune extends Command {
+public class EvalStats extends Command {
     public boolean run(CommandLine cline) {
         if(!cline.hasOption("inet")) {
             setErrorMessage("input network file must be specified");
@@ -40,8 +40,7 @@ public class Prune extends Command {
         gen.load(progFile);
         gen.run();
         
-        gen.getProg().dynPruning();
-        gen.getProg().write(outProg, false);
+        gen.getProg().write(outProg, true);
     	
         System.out.println("done.");
         

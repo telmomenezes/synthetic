@@ -10,10 +10,10 @@ import com.telmomenezes.synthetic.Net;
  *
  */
 public abstract class NetFile {
-    abstract public Net load(String filePath);
+    abstract public Net load(String filePath, boolean directed);
     abstract public void save(Net net, String filePath);
     
-    public static Net loadNet(String filePath) {
+    public static Net loadNet(String filePath, boolean directed) {
         int dotpos = filePath.lastIndexOf(".");
         String ext = "";
         if (dotpos > 0) {
@@ -23,19 +23,19 @@ public abstract class NetFile {
             
         Net net = null;
         if (ext.equals("txt")) {
-            net = (new SNAPNetFile()).load(filePath);
+            net = (new SNAPNetFile()).load(filePath, directed);
             return net;
         }
         else if (ext.equals("snap")) {
-            net = (new SNAPNetFile()).load(filePath);
+            net = (new SNAPNetFile()).load(filePath, directed);
             return net;
         }
         else if (ext.equals("gml")) {
-            net = (new GMLNetFile()).load(filePath);
+            net = (new GMLNetFile()).load(filePath, directed);
             return net;
         }
         else if (ext.equals("mitab")) {
-            net = (new MITAB25NetFile()).load(filePath);
+            net = (new MITAB25NetFile()).load(filePath, directed);
             return net;
         }
         else {

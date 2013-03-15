@@ -54,6 +54,7 @@ public class SynCLI {
         options.addOption("trials", true, "number of trials for the fast generator");
         options.addOption("antibloat", true, "anti bloat (ON / off)");
         options.addOption("runs", true, "number of generator runs");
+        options.addOption("undir", false, "undirected network");
         
         try {
             cline = parser.parse(options, args);
@@ -84,6 +85,9 @@ public class SynCLI {
             }
             else if (cmd.equals("prune")) {
                 cmdObj = new Prune();
+            }
+            else if (cmd.equals("evalstats")) {
+                cmdObj = new EvalStats();
             }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");

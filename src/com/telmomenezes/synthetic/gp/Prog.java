@@ -232,11 +232,11 @@ public class Prog {
 	}
 	
 	
-	public void write(String filePath) {
+	public void write(String filePath, boolean evalStats) {
         try {
             FileOutputStream fstream = new FileOutputStream(filePath);
             OutputStreamWriter out = new OutputStreamWriter(fstream);
-            write(out, false);
+            write(out, evalStats);
             out.close();
         }
         catch (IOException e) {

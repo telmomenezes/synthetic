@@ -40,7 +40,12 @@ public class Evolve extends Command {
             generations = new Integer(cline.getOptionValue("gens"));
         }
         
-        Net net = Net.load(netfile);
+        boolean directed = true;
+        if(cline.hasOption("undir")) {
+            directed = false;
+        }
+        
+        Net net = Net.load(netfile, directed);
         
         // down sampling if needed
      	// TODO: configure attenuation and maxNodes
@@ -60,7 +65,6 @@ public class Evolve extends Command {
      	if(cline.hasOption("trials")) {
             trials = new Integer(cline.getOptionValue("trials"));
         }
-     	boolean directed = true;
      	baseGenerator = new Generator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, trials);
      	
      	int bins = 100;

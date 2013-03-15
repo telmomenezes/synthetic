@@ -22,8 +22,8 @@ import com.telmomenezes.synthetic.NetBuilder;
  */
 public class SNAPNetFile extends NetFile {
     @Override
-    public Net load(String filePath) {
-        NetBuilder nb = new NetBuilder();
+    public Net load(String filePath, boolean directed) {
+        NetBuilder nb = new NetBuilder(directed, false);
         Map<String, Integer> nodes = new HashMap<String, Integer>();
         
         try {
@@ -69,7 +69,7 @@ public class SNAPNetFile extends NetFile {
     
     static public void main(String[] args) {
         SNAPNetFile snf = new SNAPNetFile();
-        Net net = snf.load("ownership.txt");
+        Net net = snf.load("ownership.txt", true);
         System.out.println(net);
     }
 }

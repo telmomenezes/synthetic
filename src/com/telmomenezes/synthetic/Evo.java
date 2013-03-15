@@ -47,8 +47,8 @@ public class Evo {
 		this.baseGenerator = baseGenerator;
 		this.outDir = outDir;
 		this.antiBloat = antiBloat;
-		
 		this.bins = bins;
+		
 		targBag = new MetricsBag(targNet, bins);
 		writeDistribs(targBag, "targ");
 	}
@@ -159,6 +159,18 @@ public class Evo {
 	
 	
 	private double computeFitness(Generator gen) {
+		Net net = gen.getNet();
+		
+		if (net.isDirected()) {
+			return computeFitnessDirected(gen);
+		}
+		else {
+			return computeFitnessUndirected(gen);
+		}
+	}
+	
+	
+	private double computeFitnessDirected(Generator gen) {
         Net net = gen.getNet();
         
         MetricsBag genBag = new MetricsBag(net, gen.getDRandomWalkers(), gen.getURandomWalkers(), bins, targBag);
@@ -197,6 +209,42 @@ public class Evo {
         
         return distance;
     }
+	
+	
+	private double computeFitnessUndirected(Generator gen) {
+        Net net = gen.getNet();
+        
+        MetricsBag genBag = new MetricsBag(net, gen.getDRandomWalkers(), gen.getURandomWalkers(), bins, targBag);
+        gen.clean();
+
+        gen.setMetricsBag(genBag);
+        
+        double degreesDist = genBag.getDegreesDist();
+        double uPageRanksDist = genBag.getUPageRanksDist();
+        double triadicProfileDist = genBag.getTriadicProfileDist();
+        double uDistsDist = genBag.getuDistsDist();
+        
+        double genSize = gen.getProg().size();
+        
+        if (genSize < 2) {
+        	genSize = 2;
+        }
+        
+        genSize = Math.log(genSize);
+        
+        double distance;
+        
+        if (antiBloat) {
+        	distance = degreesDist * uPageRanksDist * triadicProfileDist * uDistsDist * genSize;
+        	distance = Math.pow(distance, 1.0 / 5.0);
+        }
+        else {
+        	distance = degreesDist * uPageRanksDist * triadicProfileDist * uDistsDist;
+        	distance = Math.pow(distance, 1.0 / 4.0);
+        }
+        
+        return distance;
+    }
     
 	
     private void onNewBest() {
@@ -208,8 +256,8 @@ public class Evo {
         bestGen.getNet().save(outDir + "/bestnet" + ".txt", NetFileType.SNAP);
         
         // write progs
-        bestGen.getProg().write(outDir + "/bestprog" + suffix + ".txt");
-        bestGen.getProg().write(outDir + "/bestprog" + ".txt");
+        bestGen.getProg().write(outDir + "/bestprog" + suffix + ".txt", false);
+        bestGen.getProg().write(outDir + "/bestprog" + ".txt", false);
         
         // write distribs
         writeDistribs(bestGen.getMetricsBag(), "best");

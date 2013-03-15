@@ -6,6 +6,10 @@ import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 
 
 public class MetricsBag {
+	private Net net;
+	private int bins;
+	
+	private DiscreteDistrib degrees;
 	private DiscreteDistrib inDegrees;
     private DiscreteDistrib outDegrees;
     private Distrib dPageRanks;
@@ -14,8 +18,7 @@ public class MetricsBag {
     private DiscreteDistrib dDists;
     private DiscreteDistrib uDists;
     
-    private int bins;
-    
+    private double degreesDist;
     private double inDegreesDist;
     private double outDegreesDist;
     private double dPageRanksDist;
@@ -25,28 +28,37 @@ public class MetricsBag {
     private double uDistsDist;
     
     public MetricsBag(Net net, int bins) {
+    	this.net = net;
     	this.bins = bins;
-		inDegrees = new DiscreteDistrib(net.inDegSeq());
-		outDegrees = new DiscreteDistrib(net.outDegSeq());
-		dPageRanks = new Distrib(net.prDSeq(), this.bins);
+		
 		uPageRanks = new Distrib(net.prUSeq(), this.bins);
 		triadicProfile = new TriadicProfile(net);
 		
 		// distances
 		if (net.isDirected()) {
+			inDegrees = new DiscreteDistrib(net.inDegSeq());
+			outDegrees = new DiscreteDistrib(net.outDegSeq());
+			dPageRanks = new Distrib(net.prDSeq(), this.bins);
+			
 			RandomWalkers dRW = new RandomWalkers(net, true);
 			dRW.allSteps();
 			dDists = dRW.getDistrib();
-			//System.out.println(dDists);
+			
+			degrees = null;
 		}
 		else {
+			degrees = new DiscreteDistrib(net.degSeq());
+			
+			inDegrees = null;
+			outDegrees = null;
+			dPageRanks = null;
 			dDists = null;
 		}
 		RandomWalkers uRW = new RandomWalkers(net, false);
 		uRW.allSteps();
 		uDists = uRW.getDistrib();
-		//System.out.println(uDists);
 		
+		degreesDist = 0;
 	    inDegreesDist = 0;
 	    outDegreesDist = 0;
 	    dPageRanksDist = 0;
@@ -56,21 +68,38 @@ public class MetricsBag {
 	    uDistsDist = 0;
     }
     
+    
     public MetricsBag(Net net, RandomWalkers dRW, RandomWalkers uRW, int bins, MetricsBag bag) {
+    	this.net = net;
     	this.bins = bins;
-		inDegrees = new DiscreteDistrib(net.inDegSeq(), bag.inDegrees);
-		outDegrees = new DiscreteDistrib(net.outDegSeq(), bag.outDegrees);
-		dPageRanks = new Distrib(net.prDSeq(), this.bins, bag.dPageRanks);
-		uPageRanks = new Distrib(net.prUSeq(), this.bins, bag.uPageRanks);
+    	
+    	uPageRanks = new Distrib(net.prUSeq(), this.bins, bag.uPageRanks);
 		triadicProfile = new TriadicProfile(net);
-		if (dRW != null) {
-			dDists = dRW.getDistrib();
-		}
-		else {
-			RandomWalkers walkers = new RandomWalkers(net, true);
-			walkers.allSteps();
-			dDists = walkers.getDistrib();
-		}
+    	
+    	if (net.isDirected()) {
+    		inDegrees = new DiscreteDistrib(net.inDegSeq(), bag.inDegrees);
+    		outDegrees = new DiscreteDistrib(net.outDegSeq(), bag.outDegrees);
+    		dPageRanks = new Distrib(net.prDSeq(), this.bins, bag.dPageRanks);
+    		
+    		if (dRW != null) {
+    			dDists = dRW.getDistrib();
+    		}
+    		else {
+    			RandomWalkers walkers = new RandomWalkers(net, true);
+    			walkers.allSteps();
+    			dDists = walkers.getDistrib();
+    		}
+    	}
+    	else {
+    		degrees = new DiscreteDistrib(net.degSeq());
+			
+			inDegrees = null;
+			outDegrees = null;
+			dPageRanks = null;
+			dDists = null;
+    	}
+		
+		
 		if (uRW != null) {
 			uDists = uRW.getDistrib();
 		}
@@ -83,95 +112,93 @@ public class MetricsBag {
 		calcDistances(bag);
     }
     
+    
     private void calcDistances(MetricsBag bag) {
-        inDegreesDist = inDegrees.emdDistance(bag.inDegrees);
-        outDegreesDist = outDegrees.emdDistance(bag.outDegrees);
-        dPageRanksDist = dPageRanks.emdDistance(bag.dPageRanks);
-        uPageRanksDist = uPageRanks.emdDistance(bag.uPageRanks);
+    	double verySmall = 0.999;
+    	
+    	uPageRanksDist = uPageRanks.emdDistance(bag.uPageRanks);
         triadicProfileDist = triadicProfile.proportionalDistance(bag.triadicProfile);
-        if (dDists != null) {
-        	dDistsDist = dDists.proportionalDistance(bag.dDists);
-        }
-        else {
-        	dDistsDist = 0;
-        }
         uDistsDist = uDists.proportionalDistance(bag.uDists);
         
-        double verySmall = 0.999;
-        if (inDegreesDist == 0) inDegreesDist = verySmall;
-        if (outDegreesDist == 0) outDegreesDist = verySmall;
-        if (dPageRanksDist == 0) dPageRanksDist = verySmall;
+        
         if (uPageRanksDist == 0) uPageRanksDist = verySmall;
         if (triadicProfileDist == 0) triadicProfileDist = verySmall;
-        if (dDistsDist == 0) dDistsDist = verySmall;
         if (uDistsDist == 0) uDistsDist = verySmall;
+        
+    	if (net.isDirected()) {
+    		inDegreesDist = inDegrees.emdDistance(bag.inDegrees);
+            outDegreesDist = outDegrees.emdDistance(bag.outDegrees);
+            dPageRanksDist = dPageRanks.emdDistance(bag.dPageRanks);
+            dDistsDist = dDists.proportionalDistance(bag.dDists);
+            
+            if (inDegreesDist == 0) inDegreesDist = verySmall;
+            if (outDegreesDist == 0) outDegreesDist = verySmall;
+            if (dPageRanksDist == 0) dPageRanksDist = verySmall;
+            if (dDistsDist == 0) dDistsDist = verySmall;
+    	}
+    	else {
+    		degreesDist = degrees.emdDistance(bag.inDegrees);
+    		
+    		if (inDegreesDist == 0) inDegreesDist = verySmall;
+    	}
     }
     
-    
-    public boolean paretoDominates(MetricsBag bag) {
-    	if (inDegreesDist < bag.inDegreesDist) {
-    		return true;
-    	}
-    	if (outDegreesDist < bag.outDegreesDist) {
-    		return true;
-    	}
-    	if (dPageRanksDist < bag.dPageRanksDist) {
-    		return true;
-    	}
-    	if (uPageRanksDist < bag.uPageRanksDist) {
-    		return true;
-    	}
-    	if (triadicProfileDist < bag.triadicProfileDist) {
-    		return true;
-    	}
-    	
-    	return false;
-    }
 
 	public double getInDegreesDist() {
 		return inDegreesDist;
 	}
 
+	
 	public double getOutDegreesDist() {
 		return outDegreesDist;
 	}
 
+	
 	public double getDPageRanksDist() {
 		return dPageRanksDist;
 	}
+	
 	
 	public double getUPageRanksDist() {
 		return uPageRanksDist;
 	}
 
+	
 	public double getTriadicProfileDist() {
 		return triadicProfileDist;
 	}
 
+	
 	public DiscreteDistrib getInDegrees() {
 		return inDegrees;
 	}
 
+	
 	public Distrib getDPageRanks() {
 		return dPageRanks;
 	}
+	
 	
 	public Distrib getUPageRanks() {
 		return uPageRanks;
 	}
 
+	
 	public DiscreteDistrib getOutDegrees() {
 		return outDegrees;
 	}
+	
 	
 	public double getdDistsDist() {
 		return dDistsDist;
 	}
 
+	
 	public double getuDistsDist() {
 		return uDistsDist;
 	}
 
+	
 	@Override
 	public String toString() {
 		String str = "";
@@ -193,15 +220,23 @@ public class MetricsBag {
 		return str;
 	}
 
+	
 	public TriadicProfile getTriadicProfile() {
 		return triadicProfile;
 	}
 
+	
 	public DiscreteDistrib getdDists() {
 		return dDists;
 	}
 
+	
 	public DiscreteDistrib getuDists() {
 		return uDists;
+	}
+
+
+	public double getDegreesDist() {
+		return degreesDist;
 	}
 }

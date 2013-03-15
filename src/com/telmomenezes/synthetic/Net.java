@@ -96,13 +96,21 @@ public class Net implements Cloneable {
         return clonedNet;
     }
     
+    
     public static Net load(String filePath) {
-        return NetFile.loadNet(filePath);
+        return load(filePath, true);
+    }
+    
+    
+    public static Net load(String filePath, boolean directed) {
+        return NetFile.loadNet(filePath, directed);
     }
 
+    
     public void save(String filePath, NetFileType fileType) {
         NetFile.saveNet(this, filePath, fileType);
     }
+    
     
     private Node addNode(Node node) {
         nodes[nodeCount] = node;
@@ -177,30 +185,6 @@ public class Net implements Cloneable {
         return getEdge(edge.getTarget(), edge.getOrigin());
     }
     
-    /*
-    public void removeEdge(Edge edge) {
-        edge.getOrigin().removeOutput(edge);
-        edge.getTarget().removeInput(edge);
-        edges.remove(edge);
-        edgeCount--;
-    }*/
-    
-    /*
-    public void removeNode(Node node) {
-        List<Edge> remEdges = new LinkedList<Edge>(node.getInEdges());
-        for (Edge e : remEdges) {
-            removeEdge(e);
-        }
-        remEdges = new LinkedList<Edge>(node.getOutEdges());
-        for (Edge e : remEdges) {
-            removeEdge(e);
-        }
-        
-        nodes.remove(node);
-        nodeMap.remove(node.getId());
-        nodeCount--;
-    }*/
-
     
     public Node getRandomNode() {
         int pos = RandomGenerator.instance().random.nextInt(nodeCount);
@@ -373,6 +357,7 @@ public class Net implements Cloneable {
     public String toString() {
         String str = "node count: " + nodeCount + "\n";
         str += "edge count: " + edgeCount + "\n";
+        str += "directed: " + directed + "\n";
         return str;
     }
     

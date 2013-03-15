@@ -200,7 +200,6 @@ public class Generator implements Comparable<Generator> {
             			}
             		}
             	}
-            	
         
             	double distance = uRandomWalkers.getDist(origNode.getId(), targNode.getId());
             	
@@ -259,6 +258,14 @@ public class Generator implements Comparable<Generator> {
             }
             uRandomWalkers.step();
         }
+        
+        /*
+        if (directed) {
+        	dRandomWalkers.init();
+        	dRandomWalkers.allSteps();
+        }
+        uRandomWalkers.init();
+        uRandomWalkers.allSteps();*/
         
         simulated = true;
     }

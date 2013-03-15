@@ -17,8 +17,8 @@ public class GMLNetFile extends NetFile {
     }
     
     @Override
-    public Net load(String filePath) {
-        NetBuilder nb = new NetBuilder();
+    public Net load(String filePath, boolean directed) {
+        NetBuilder nb = new NetBuilder(directed, false);
         Map<String, Integer> nodes = new HashMap<String, Integer>();
         
         try {
@@ -96,7 +96,7 @@ public class GMLNetFile extends NetFile {
 
     static public void main(String[] args) {
         GMLNetFile nf = new GMLNetFile();
-        Net net = nf.load("celegansneural.gml");
+        Net net = nf.load("celegansneural.gml", true);
         System.out.println(net);
     }
 }

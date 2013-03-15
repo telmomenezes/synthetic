@@ -104,8 +104,11 @@ public class GPNode {
         }
     }
 
-    public void write(OutputStreamWriter out, boolean evalStats)
-            throws IOException {
+    public void write(OutputStreamWriter out, boolean evalStats) throws IOException {
+    	if (evalStats) {
+    		out.write("[ " + evals + "] ");
+    	}
+    	
         if (type == GPNodeType.VAL) {
             out.write("" + val);
         }
