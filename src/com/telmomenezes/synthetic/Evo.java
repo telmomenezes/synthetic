@@ -173,7 +173,7 @@ public class Evo {
 	private double computeFitnessDirected(Generator gen) {
         Net net = gen.getNet();
         
-        MetricsBag genBag = new MetricsBag(net, gen.getDRandomWalkers(), gen.getURandomWalkers(), bins, targBag);
+        MetricsBag genBag = new MetricsBag(net, gen.getDDistMatrix(), gen.getUDistMatrix(), bins, targBag);
         gen.clean();
 
         gen.setMetricsBag(genBag);
@@ -214,7 +214,7 @@ public class Evo {
 	private double computeFitnessUndirected(Generator gen) {
         Net net = gen.getNet();
         
-        MetricsBag genBag = new MetricsBag(net, gen.getDRandomWalkers(), gen.getURandomWalkers(), bins, targBag);
+        MetricsBag genBag = new MetricsBag(net, gen.getDDistMatrix(), gen.getUDistMatrix(), bins, targBag);
         gen.clean();
 
         gen.setMetricsBag(genBag);

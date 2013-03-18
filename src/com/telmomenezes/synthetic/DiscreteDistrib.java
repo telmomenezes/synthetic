@@ -160,7 +160,7 @@ public class DiscreteDistrib {
     		if (d == 0) {
     			d = 1;
     		}
-    		dist += (Math.abs(freqs[i] - fd.freqs[i]) / d);// * (i + 1);
+    		dist += (Math.abs(freqs[i] - fd.freqs[i]) / d) * (i + 1);
     	}
     	
     	return dist;

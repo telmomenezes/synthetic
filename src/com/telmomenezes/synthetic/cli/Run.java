@@ -8,7 +8,6 @@ import com.telmomenezes.synthetic.Generator;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.io.NetFileType;
 import com.telmomenezes.synthetic.motifs.TriadicProfile;
-import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 
 
 public class Run extends Command {
@@ -72,10 +71,8 @@ public class Run extends Command {
         	DiscreteDistrib outDegrees = new DiscreteDistrib(syntNet.outDegSeq());
         	Distrib dPageRank = new Distrib(syntNet.prDSeq(), bins, dPageRankReal);
         	Distrib uPageRank = new Distrib(syntNet.prUSeq(), bins, uPageRankReal);
-        	DiscreteDistrib dDistsDist = (new RandomWalkers(syntNet, true)).allSteps().getDistrib();
-        	//DiscreteDistrib dDistsDist = gen.getDRandomWalkers().getDistrib();
-        	DiscreteDistrib uDistsDist = (new RandomWalkers(syntNet, false)).allSteps().getDistrib();
-        	//DiscreteDistrib uDistsDist = gen.getURandomWalkers().getDistrib();
+        	DiscreteDistrib dDistsDist = gen.getDDistMatrix().getDistrib();
+        	DiscreteDistrib uDistsDist = gen.getUDistMatrix().getDistrib();
     	
         	inDegrees.write(outDir + "/in_degrees.csv", append);
         	outDegrees.write(outDir + "/out_degrees.csv", append);

@@ -146,7 +146,7 @@ public class Distrib {
         		d = 1;
         	}
         	
-            distance += Math.abs(freqs[i] - fd.freqs[i]) / d;
+            distance += Math.abs(freqs[i] - fd.freqs[i]) * (i + 1);
         }
 
         return distance;

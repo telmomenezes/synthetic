@@ -23,7 +23,7 @@ import com.telmomenezes.synthetic.random.RandomGenerator;
 public class Prog {
 
 	public double[] vars;
-    private GPNode root;
+    public GPNode root;
     private int varcount;
     
     private int parsePos;
@@ -53,37 +53,62 @@ public class Prog {
 		curnode.curpos = -1;
 		double val = 0;
 
+		root.clearPath();
+		
 		while (curnode != null) {
 			curnode.curpos++;
 			if (curnode.curpos < curnode.stoppos) {
 				if (curnode.curpos == curnode.condpos) {
 					switch(curnode.fun) {
 					case GPFun.EQ:
-						if (curnode.params[0].val == curnode.params[1].curval)
+						if (curnode.params[0].val == curnode.params[1].curval) {
 							curnode.stoppos = 3;
-							else {
-								curnode.stoppos = 4;
-								curnode.curpos++;
-							}
+							curnode.params[3].path = false;
+						}
+						else {
+							curnode.stoppos = 4;
+							curnode.curpos++;
+							curnode.params[2].path = false;
+						}
 						break;
 					case GPFun.GRT:
-						if (curnode.params[0].curval > curnode.params[1].curval)
+						if (curnode.params[0].curval > curnode.params[1].curval) {
 							curnode.stoppos = 3;
-							else {
-								curnode.stoppos = 4;
-								curnode.curpos++;
-							}
+							curnode.params[3].path = false;
+						}
+						else {
+							curnode.stoppos = 4;
+							curnode.curpos++;
+							curnode.params[2].path = false;
+						}
 						break;
 					case GPFun.LRT:
-                        if (curnode.params[0].curval < curnode.params[1].curval)
+                        if (curnode.params[0].curval < curnode.params[1].curval) {
                             curnode.stoppos = 3;
-                            else {
-                                curnode.stoppos = 4;
-                                curnode.curpos++;
-                            }
+                            curnode.params[3].path = false;
+                        }
+                        else {
+                            curnode.stoppos = 4;
+                            curnode.curpos++;
+                            curnode.params[2].path = false;
+                        }
                         break;
 					case GPFun.ZER:
 						if (curnode.params[0].curval == 0) {
+							curnode.stoppos = 2;
+							curnode.params[2].path = false;
+						}
+						else {
+							curnode.stoppos = 3;
+							curnode.curpos++;
+							curnode.params[1].path = false;
+						}
+						break;
+					case GPFun.AFF:
+						long g = Math.round(curnode.params[0].curval);
+						long id1 = Math.round(vars[0]);
+						long id2 = Math.round(vars[1]);
+						if ((g == 0) || ((id1 % g) == (id2 % g))) {
 							curnode.stoppos = 2;
 						}
 						else {
@@ -125,17 +150,33 @@ public class Prog {
 							val = 0;
 						else
 							val = curnode.params[0].curval / curnode.params[1].curval;
-							break;
+						break;
+					case GPFun.MOD:
+						long d1 = Math.round(curnode.params[0].curval);
+						long d2 = Math.round(curnode.params[1].curval);
+						if (d2 == 0)
+							val = 0;
+						else
+							val = d1 % d2;
+						break;
 					case GPFun.MIN:
-                        val = curnode.params[0].curval;
+						val = curnode.params[0].curval;
                         if (curnode.params[1].curval < val) {
                             val = curnode.params[1].curval;
+                            curnode.params[0].path = false;
+                        }
+                        else {
+                        	curnode.params[1].path = false;
                         }
                         break;
 					case GPFun.MAX:
                         val = curnode.params[0].curval;
                         if (curnode.params[1].curval > val) {
                             val = curnode.params[1].curval;
+                            curnode.params[0].path = false;
+                        }
+                        else {
+                        	curnode.params[1].path = false;
                         }
                         break;
 					case GPFun.EXP:
@@ -156,6 +197,7 @@ public class Prog {
 					case GPFun.GRT:
 					case GPFun.LRT:
 					case GPFun.ZER:
+					case GPFun.AFF:
 						val = curnode.params[curnode.stoppos - 1].curval;
 						break;
 					// this should not happen
@@ -184,15 +226,13 @@ public class Prog {
 					break;
 				}
 				
-				// update eval stats
-				curnode.evals += 1;
-				curnode.lastEval = cycle;
-				
 				// update and move to next node
 				curnode.curval = val;
 				curnode = curnode.parent;
 			}
 		}
+		
+		root.updateEvals(cycle);
 
 		return val;
 	}
@@ -551,6 +591,10 @@ public class Prog {
                     fun = GPFun.MIN;
 				else if (token.equals("MAX"))
                     fun = GPFun.MAX;
+				else if (token.equals("%"))
+                    fun = GPFun.MOD;
+				else if (token.equals("AFF"))
+                    fun = GPFun.AFF;
 			
 				node.initFun(fun, parent);
 
@@ -575,6 +619,11 @@ public class Prog {
 		root = parse2(prog, null);
 	}
 
+	
+	public void clearEvals() {
+		root.clearEvals();
+	}
+	
 
 	private void clearBranching2(GPNode node)
 	{
@@ -588,29 +637,14 @@ public class Prog {
 	{
 		clearBranching2(root);
 	}
+	
 
-	private void clearEvalStats2(GPNode node)
-    {
-        node.evals = 0;
-        node.lastEval = -1;
-        for (int i = 0; i < node.arity; i++) {
-            clearEvalStats2(node.params[i]);
-        }
-    }
-
-    public void clearEvalStats()
-    {
-        clearEvalStats2(root);
-    }
-
-	public int branchingDistance(Prog tree)
-	{
+	public int branchingDistance(Prog tree) {
 		return branchingDistance2(root, tree.root);
 	}
 
 
-	private int branchingDistance2(GPNode node1, GPNode node2)
-	{
+	private int branchingDistance2(GPNode node1, GPNode node2) {
 		int distance = 0;
 		if (node1.branching != node2.branching)
 			distance += 1;
@@ -620,14 +654,12 @@ public class Prog {
 	}
 
 	
-	public boolean compareBranching(Prog tree)
-    {
+	public boolean compareBranching(Prog tree) {
 		return (branchingDistance(tree) == 0);
     }
 	
 
-	private void moveUp(GPNode origNode, GPNode targNode)
-	{
+	private void moveUp(GPNode origNode, GPNode targNode) {
 		switch (origNode.type) {
 		case VAL:
 			targNode.initVal(origNode.val, origNode.parent);
@@ -649,14 +681,12 @@ public class Prog {
 	}
 
 
-	public void dynPruning()
-	{
+	public void dynPruning() {
 		dynPruning2(root);
 	}
 
 
-	private void dynPruning2(GPNode node)
-	{
+	private void dynPruning2(GPNode node) {
 		// nodes with constant value
 		if (node.dynStatus == GPNodeDynStatus.CONSTANT) {
 			node.initVal(node.curval, node.parent);

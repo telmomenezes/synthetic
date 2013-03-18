@@ -26,8 +26,12 @@ public class GPNode {
     public int branching;
     public GPNodeDynStatus dynStatus;
     
+    public boolean path;
+    public boolean winPath;
     public int evals;
     public int lastEval;
+    public int winEvals;
+    public int winLastEval;
     
     private Prog tree;
 
@@ -69,6 +73,7 @@ public class GPNode {
     private int funCondPos(int fun) {
         switch (fun) {
         case GPFun.ZER:
+        case GPFun.AFF:
             return 1;
         case GPFun.EQ:
         case GPFun.GRT:
@@ -91,8 +96,10 @@ public class GPNode {
         case GPFun.DIV:
         case GPFun.MIN:
         case GPFun.MAX:
+        case GPFun.MOD:
             return 2;
         case GPFun.ZER:
+        case GPFun.AFF:
             return 3;
         case GPFun.EQ:
         case GPFun.GRT:
@@ -103,10 +110,11 @@ public class GPNode {
             return 0;
         }
     }
+    
 
     public void write(OutputStreamWriter out, boolean evalStats) throws IOException {
     	if (evalStats) {
-    		out.write("[ " + evals + "] ");
+    		out.write(" [" + winEvals + "; " + winLastEval + "] ");
     	}
     	
         if (type == GPNodeType.VAL) {
@@ -156,6 +164,12 @@ public class GPNode {
             case GPFun.MAX:
                 out.write("MAX");
                 break;
+            case GPFun.MOD:
+                out.write("%");
+                break;
+            case GPFun.AFF:
+                out.write("AFF");
+                break;
             default:
                 out.write("F??");
                 break;
@@ -164,9 +178,62 @@ public class GPNode {
         else {
             out.write("???");
         }
-        
-        if (evalStats) {
-            out.write(" " + evals + " " + lastEval);
+    }
+    
+    
+    public void clearPath() {
+    	path = true;
+    	
+    	for (int i = 0; i < arity; i++) {
+    		params[i].clearPath();
+    	}
+    }
+    
+    
+    public void setWinPath() {
+    	winPath = path;
+    	
+    	for (int i = 0; i < arity; i++) {
+    		params[i].setWinPath();
+    	}
+    }
+    
+    
+    public void clearEvals() {
+        evals = 0;
+        lastEval = -1;
+        winEvals = 0;
+        winLastEval = -1;
+        for (int i = 0; i < arity; i++) {
+        	params[i].clearEvals();
         }
+    }
+    
+    
+    public void updateEvals(int cycle) {
+    	if (!path) {
+    		return;
+    	}
+    	
+    	evals += 1;
+		lastEval = cycle;
+		
+		for (int i = 0; i < arity; i++) {
+    		params[i].updateEvals(cycle);
+    	}
+    }
+    
+    
+    public void updateWinEvals(int cycle) {
+    	if (!winPath) {
+    		return;
+    	}
+    	
+    	winEvals += 1;
+		winLastEval = cycle;
+		
+		for (int i = 0; i < arity; i++) {
+    		params[i].updateWinEvals(cycle);
+    	}
     }
 }

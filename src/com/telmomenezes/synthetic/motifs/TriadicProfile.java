@@ -219,6 +219,26 @@ public class TriadicProfile {
     }
     
     
+    public double maxError(TriadicProfile tp) {
+    	double maxError = 0;
+    	
+        for (int i = 0; i < 13; i++) {
+        	double d = tp.profile[i];
+            if (d <= 0) {
+            	d = 1;
+            }
+            
+            double error = (Math.abs(profile[i] - tp.profile[i]) / d);
+            
+            if (error > maxError) {
+            	maxError = error;
+            }
+        }
+
+        return maxError;
+    }
+    
+    
     public void write(String filePath, boolean append) {
     	try{
     		boolean header = !append;

@@ -2,7 +2,6 @@ package com.telmomenezes.synthetic;
 
 
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.MetricsBag;
@@ -10,7 +9,6 @@ import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.random.RandomGenerator;
 import com.telmomenezes.synthetic.gp.Prog;
-import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 
 
 /**
@@ -19,8 +17,6 @@ import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
  * @author Telmo Menezes (telmo@telmomenezes.com)
  */
 public class Generator implements Comparable<Generator> {
-	private static int ACTIVE_NODES = 10;
-	
     private int nodeCount;
     private int edgeCount;
     private boolean directed;
@@ -38,10 +34,8 @@ public class Generator implements Comparable<Generator> {
     
     private MetricsBag metricsBag;
     
-    RandomWalkers dRandomWalkers;
-    RandomWalkers uRandomWalkers;
-    
-    LinkedList<Integer> activeNodes;
+    DistMatrix dDistMatrix;
+    DistMatrix uDistMatrix;
     
     
 	public Generator(int nodeCount, int edgeCount, boolean directed, int trials) {
@@ -70,6 +64,7 @@ public class Generator implements Comparable<Generator> {
 			variableNames.add("dist");
 			variableNames.add("dirDist");
 			variableNames.add("revDist");
+			//variableNames.add("idDist");
         
 			prog = new Prog(9, variableNames);
 		}
@@ -107,48 +102,8 @@ public class Generator implements Comparable<Generator> {
 	}
 	
 	
-	private void initActiveNodes() {
-		activeNodes = new LinkedList<Integer>();
-		
-		while (activeNodes.size() < ACTIVE_NODES) {
-			int nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
-			addActiveNode(nodeId);
-		}
-	}
-	
-	
-	private void addActiveNode(int nodeId) {
-		if (activeNodes.contains(nodeId)) {
-			activeNodes.remove(new Integer(nodeId));
-		}
-		
-		activeNodes.add(nodeId);
-		
-		if (activeNodes.size() > ACTIVE_NODES) {
-			activeNodes.removeFirst();
-		}
-	}
-	
-	
-	private int getRandomActiveNode() {
-		int index = RandomGenerator.instance().random.nextInt(ACTIVE_NODES);
-		return activeNodes.get(index);
-	}
-	
-	
 	private int getRandomNode() {
-		int nodeId = -1;
-		
-		if (((RandomGenerator.instance().random.nextInt() % 2) == 0) && (activeNodes.size() == ACTIVE_NODES)) {
-			nodeId = getRandomActiveNode();
-		}
-		else {
-			nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
-		}
-		
-		//nodeId = RandomGenerator.instance().random.nextInt(nodeCount);
-		
-		return nodeId;
+		return RandomGenerator.instance().random.nextInt(nodeCount);
 	}
 	
     
@@ -156,7 +111,7 @@ public class Generator implements Comparable<Generator> {
 		net = new Net(nodeCount, edgeCount);
 		
         // reset eval stats
-        prog.clearEvalStats();
+        prog.clearEvals();
         
         // create nodes
         Node[] nodeArray = new Node[nodeCount];
@@ -166,13 +121,11 @@ public class Generator implements Comparable<Generator> {
         }
         
         // init DistMatrix
-        dRandomWalkers = null;
+        dDistMatrix = null;
         if (directed) {
-        	dRandomWalkers = new RandomWalkers(net, true);
+        	dDistMatrix = new DistMatrix(nodeCount, true);
         }
-        uRandomWalkers = new RandomWalkers(net, false);
-        
-        initActiveNodes();
+        uDistMatrix = new DistMatrix(nodeCount, false);
 
         // create edges
         for (int i = 0; i < edgeCount; i++) {
@@ -201,11 +154,11 @@ public class Generator implements Comparable<Generator> {
             		}
             	}
         
-            	double distance = uRandomWalkers.getDist(origNode.getId(), targNode.getId());
+            	double distance = uDistMatrix.getDist(origNode.getId(), targNode.getId());
             	
             	if (directed) {
-            		double directDistance = dRandomWalkers.getDist(origNode.getId(), targNode.getId());
-            		double reverseDistance = dRandomWalkers.getDist(targNode.getId(), origNode.getId());
+            		double directDistance = dDistMatrix.getDist(origNode.getId(), targNode.getId());
+            		double reverseDistance = dDistMatrix.getDist(targNode.getId(), origNode.getId());
                     
             		prog.vars[0] = (double)origIndex;
             		prog.vars[1] = (double)targIndex;
@@ -216,6 +169,7 @@ public class Generator implements Comparable<Generator> {
             		prog.vars[6] = distance;
             		prog.vars[7] = directDistance;
             		prog.vars[8] = reverseDistance;
+            		//prog.vars[9] = Math.abs(origIndex - targIndex);
             	}
             	else {
             		prog.vars[0] = (double)origIndex;
@@ -240,6 +194,7 @@ public class Generator implements Comparable<Generator> {
             		bestWeight = weight;
             		bestOrigIndex = origIndex;
             		bestTargIndex = targIndex;
+            		prog.root.setWinPath();
             	}
             }
 
@@ -248,32 +203,23 @@ public class Generator implements Comparable<Generator> {
 
             net.addEdge(origNode, targNode);
             
-            // add both participants to active nodes
-            addActiveNode(origNode.getId());
-            addActiveNode(targNode.getId());
-            
-            // random walks step
+            // update distances
             if (directed) {
-            	dRandomWalkers.step();
+            	dDistMatrix.updateDistances(net, bestOrigIndex, bestTargIndex);
             }
-            uRandomWalkers.step();
+            uDistMatrix.updateDistances(net, bestOrigIndex, bestTargIndex);
+            
+            // update win evals
+            prog.root.updateWinEvals(i);
         }
-        
-        /*
-        if (directed) {
-        	dRandomWalkers.init();
-        	dRandomWalkers.allSteps();
-        }
-        uRandomWalkers.init();
-        uRandomWalkers.allSteps();*/
         
         simulated = true;
     }
 	
 	
 	public void clean() {
-		dRandomWalkers = null;
-		uRandomWalkers = null;
+		dDistMatrix = null;
+		uDistMatrix = null;
 	}
 
 
@@ -393,13 +339,13 @@ public class Generator implements Comparable<Generator> {
 	}
 	
 	
-	public RandomWalkers getDRandomWalkers() {
-		return dRandomWalkers;
+	public DistMatrix getDDistMatrix() {
+		return dDistMatrix;
 	}
 
 
-	public RandomWalkers getURandomWalkers() {
-		return uRandomWalkers;
+	public DistMatrix getUDistMatrix() {
+		return uDistMatrix;
 	}
 
 
