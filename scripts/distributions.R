@@ -4,7 +4,10 @@ library(scales)
 library(gridExtra)
 
 
-dir <- "test"
+args <- commandArgs(TRUE)
+
+dir <- args[1]
+pdfOut <- args[2]
 
 
 plot3 <- function(distr, xlabel, logX, logY, bars, legend) {
@@ -56,6 +59,12 @@ plot3 <- function(distr, xlabel, logX, logY, bars, legend) {
   p <- p + xlab(xlabel)
   p <- p + ylab("")
 
+  p <- p + opts(axis.line = theme_segment(colour = "black"),
+    panel.grid.major = theme_blank(),
+    panel.grid.minor = theme_blank(),
+    panel.border = theme_blank(),
+    panel.background = theme_blank()) 
+
   if (logX) {
     if (minX == 0) {
       minX <- 1
@@ -95,5 +104,5 @@ p7 <- plot3("triadic_profile", "motif", F, T, T, T)
 
 first6 = arrangeGrob(p1, p2, p3, p4, p5, p6)
 
-pdf(file="graph.pdf", height=8, width=6)
+pdf(file=pdfOut, height=8, width=6)
 grid.arrange(first6, p7, heights=c(3/4,1/4), nrow=2)
