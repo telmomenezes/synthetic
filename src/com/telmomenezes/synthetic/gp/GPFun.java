@@ -23,5 +23,4 @@ public class GPFun {
 	public final static int MIN = 11;
 	public final static int MAX = 12;
 	public final static int AFF = 13;
-	public final static int MOD = 14;
 }
