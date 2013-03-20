@@ -59,7 +59,7 @@ public class Random extends Command {
         	bag.getOutDegrees().write(outDir + "/random_out_degrees.csv", append);
         	bag.getDPageRanks().write(outDir + "/random_d_pagerank.csv", append);
         	bag.getUPageRanks().write(outDir + "/random_u_pagerank.csv", append);
-        	(new TriadicProfile(randomNet)).write(outDir + "/random_triadic_profile.csv", append);
+        	(TriadicProfile.create(randomNet)).write(outDir + "/random_triadic_profile.csv", append);
         	bag.getdDists().write(outDir + "/random_d_dists.csv", append);
         	bag.getuDists().write(outDir + "/random_u_dists.csv", append);
         	

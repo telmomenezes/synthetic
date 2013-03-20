@@ -7,61 +7,53 @@ import java.io.FileWriter;
 import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
-import com.telmomenezes.synthetic.emd.JFastEMD;
-import com.telmomenezes.synthetic.emd.Signature;
 
 
-public class TriadicProfile {
+public abstract class TriadicProfile {
     
-    private Net net;
-    private long[] profile;
+	protected Net net;
+    protected long[] profile;
+    protected int numberOfMotifs;
+
     
     public TriadicProfile(Net net) {
         this.net = net;
-        triadProfile();
     }
     
-    private int triadType(Node a, Node b, Node c) {
-        int type = -1;
 
-        boolean ab = net.edgeExists(a, b);
-        boolean ac = net.edgeExists(a, c);
-        boolean ba = net.edgeExists(b, a);
-        boolean bc = net.edgeExists(b, c);
-        boolean ca = net.edgeExists(c, a);
-        boolean cb = net.edgeExists(c, b);
-
-        if (ab && ac && !ba && !bc && !ca && !cb)
-            type = 1;
-        else if (!ab && !ac && ba && !bc && ca && !cb)
-            type = 2;
-        else if (!ab && !ac && !ba && bc && ca && !cb)
-            type = 3;
-        else if (!ab && ac && ba && !bc && ca && !cb)
-            type = 4;
-        else if (ab && ac && ba && !bc && !ca && !cb)
-            type = 5;
-        else if (ab && ac && ba && !bc && ca && !cb)
-            type = 6;
-        else if (ab && ac && !ba && bc && !ca && !cb)
-            type = 7;
-        else if (!ab && ac && ba && !bc && !ca && cb)
-            type = 8;
-        else if (ab && ac && !ba && bc && !ca && cb)
-            type = 9;
-        else if (!ab && !ac && ba && bc && ca && cb)
-            type = 10;
-        else if (ab && ac && !ba && bc && ca && !cb)
-            type = 11;
-        else if (!ab && ac && ba && bc && ca && cb)
-            type = 12;
-        else if (ab && ac && ba && bc && ca && cb)
-            type = 13;
-
-        return type;
+    public static TriadicProfile create(Net net) {
+    	if (net.isDirected()) {
+    		return new DTriadicProfile(net);
+    	}
+    	else {
+    		return new UTriadicProfile(net);
+    	}
     }
+    
+    
+    protected abstract int triadType(Node a, Node b, Node c);
+    
+    
+    protected abstract double motifEdges(int motif);
 
-    private void updateTriadProfile(Node[] triad, long[] profile) {
+    
+    protected void triadProfile() {
+        Node[] triad = new Node[3];
+        profile = new long[numberOfMotifs];
+
+        for (int i = 0; i < numberOfMotifs; i++) {
+            profile[i] = 0;
+        }
+
+        // search for triads starting on each node
+        for (Node node : net.getNodes()) {
+            triad[0] = node;
+            triadProfileRec(triad, 0, profile);
+        }
+    }
+    
+    
+    protected void updateTriadProfile(Node[] triad, long[] profile) {
         int type = triadType(triad[0], triad[1], triad[2]);
         if (type < 0)
             type = triadType(triad[0], triad[2], triad[1]);
@@ -81,8 +73,9 @@ public class TriadicProfile {
 
         profile[type - 1]++;
     }
-
-    private void triadProfileRec(Node[] triad, int depth, long[] profile) {
+    
+    
+    protected void triadProfileRec(Node[] triad, int depth, long[] profile) {
         if (depth == 2) {
             updateTriadProfile(triad, profile);
             return;
@@ -106,62 +99,21 @@ public class TriadicProfile {
             }
         }
     }
-
-    private void triadProfile() {
-        Node[] triad = new Node[3];
-        profile = new long[13];
-
-        for (int i = 0; i < 13; i++) {
-            profile[i] = 0;
-        }
-
-        // search for triads starting on each node
-        for (Node node : net.getNodes()) {
-            triad[0] = node;
-            triadProfileRec(triad, 0, profile);
-        }
-    }
+    
     
     public long total() {
     	long total = 0;
-    	for (int i = 0; i < 13; i++) {
+    	for (int i = 0; i < numberOfMotifs; i++) {
     		total += profile[i];
     	}
     	return total;
-    }
-    
-    private Signature getEmdSignature() {
-        FeatureTriadic[] features = new FeatureTriadic[13];
-        double[] weights = new double[13];
-
-        for (int i = 0; i < 13; i++) {
-            FeatureTriadic f = new FeatureTriadic(i + 1);
-            features[i] = f;
-            //weights[i] = Math.log(profile[i]);
-            weights[i] = profile[i];
-        }
-
-        Signature signature = new Signature();
-        signature.setNumberOfFeatures(13);
-        signature.setFeatures(features);
-        signature.setWeights(weights);
-
-        return signature;
-    }
-    
-    
-    public double emdDistance(TriadicProfile tp) {
-        Signature sig1 = getEmdSignature();
-        Signature sig2 = tp.getEmdSignature();
-        
-        return JFastEMD.distance(sig1, sig2, -1);
     }
     
     
     public double simpleDistance(TriadicProfile tp) {
     	double distance = 0;
     	
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i < numberOfMotifs; i++) {
             distance += Math.abs(profile[i] - tp.profile[i]) * (i + 1);
         }
 
@@ -169,44 +121,10 @@ public class TriadicProfile {
     }
     
     
-    private double motifEdges(int motif) {
-    	switch (motif) {
-    	case 1:
-    		return 2;
-    	case 2:
-    		return 2;
-    	case 3:
-    		return 2;
-    	case 4:
-    		return 3;
-    	case 5:
-    		return 3;
-    	case 6:
-    		return 4;
-    	case 7:
-    		return 3;
-    	case 8:
-    		return 3;
-    	case 9:
-    		return 4;
-    	case 10:
-    		return 4;
-    	case 11:
-    		return 4;
-    	case 12:
-    		return 5;
-    	case 13:
-    		return 6;
-    	default:
-    		return 0;
-    	}
-    }
-    
-    
     public double proportionalDistance(TriadicProfile tp) {
     	double distance = 0;
     	
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i < numberOfMotifs; i++) {
         	double d = tp.profile[i];
             if (d <= 0) {
             	d = 1;
@@ -222,7 +140,7 @@ public class TriadicProfile {
     public double maxError(TriadicProfile tp) {
     	double maxError = 0;
     	
-        for (int i = 0; i < 13; i++) {
+        for (int i = 0; i < numberOfMotifs; i++) {
         	double d = tp.profile[i];
             if (d <= 0) {
             	d = 1;
@@ -256,7 +174,7 @@ public class TriadicProfile {
             	out.write("value,freq\n");
             }
 
-            for (int i = 0; i < 13; i++) {
+            for (int i = 0; i < numberOfMotifs; i++) {
                 out.write("" + i + "," + profile[i] + '\n');
             }
             out.close();
@@ -271,7 +189,7 @@ public class TriadicProfile {
     public String toString() {
     	String str = "";
     			
-    	for (int i = 0; i < 13; i++) {
+    	for (int i = 0; i < numberOfMotifs; i++) {
     		str += "[" + (i + 1) + "]:" + profile[i] + " ";
     	}
     	
@@ -282,22 +200,4 @@ public class TriadicProfile {
     public long[] getProfile() {
         return profile;
     }
-    
-    
-    /*
-    static public void main(String[] args) {
-    	Generator gen = new Generator(7115, 103689);
-        gen.initRandom();
-    	gen.run();
-    	Net net = gen.getNet();
-    	//Net net = Net.load("wiki-Vote.snap");
-    	System.out.println("computing triadic profile");
-        TriadicProfile tp = new TriadicProfile(net);
-        System.out.println(net);
-        long[] profile = tp.getProfile();
-        
-        for (long p : profile)
-            System.out.print(" " + p);
-        System.out.println();
-    }*/
 }

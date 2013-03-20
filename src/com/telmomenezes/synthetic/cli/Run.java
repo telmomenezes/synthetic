@@ -78,7 +78,7 @@ public class Run extends Command {
         	outDegrees.write(outDir + "/out_degrees.csv", append);
         	dPageRank.write(outDir + "/d_pagerank.csv", append);
         	uPageRank.write(outDir + "/u_pagerank.csv", append);
-        	(new TriadicProfile(syntNet)).write(outDir + "/triadic_profile.csv", append);
+        	(TriadicProfile.create(syntNet)).write(outDir + "/triadic_profile.csv", append);
         	dDistsDist.write(outDir + "/d_dists.csv", append);
         	uDistsDist.write(outDir + "/u_dists.csv", append);
         	
