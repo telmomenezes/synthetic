@@ -46,6 +46,7 @@ public class Evolve extends Command {
         }
         
         Net net = Net.load(netfile, directed);
+        //System.out.println(net);
         
         // down sampling if needed
      	// TODO: configure attenuation and maxNodes

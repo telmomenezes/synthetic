@@ -136,7 +136,7 @@ public class MetricsBag {
             if (dDistsDist == 0) dDistsDist = verySmall;
     	}
     	else {
-    		degreesDist = degrees.emdDistance(bag.inDegrees);
+    		degreesDist = degrees.emdDistance(bag.degrees);
     		
     		if (inDegreesDist == 0) inDegreesDist = verySmall;
     	}
@@ -185,6 +185,11 @@ public class MetricsBag {
 	
 	public DiscreteDistrib getOutDegrees() {
 		return outDegrees;
+	}
+	
+	
+	public DiscreteDistrib getDegrees() {
+		return degrees;
 	}
 	
 	

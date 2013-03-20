@@ -43,7 +43,12 @@ public class NetBuilder {
 
     
     public boolean edgeExists(int origin, int target) {
-    	return adjMatrix.get(origin).contains(target);
+    	if (directed) {
+    		return adjMatrix.get(origin).contains(target);
+    	}
+    	else {
+    		return adjMatrix.get(origin).contains(target) || adjMatrix.get(target).contains(origin);
+    	}
     }
     
     

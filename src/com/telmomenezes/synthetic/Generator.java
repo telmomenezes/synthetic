@@ -64,7 +64,6 @@ public class Generator implements Comparable<Generator> {
 			variableNames.add("dist");
 			variableNames.add("dirDist");
 			variableNames.add("revDist");
-			//variableNames.add("idDist");
         
 			prog = new Prog(9, variableNames);
 		}
@@ -108,7 +107,7 @@ public class Generator implements Comparable<Generator> {
 	
     
 	public void run() {
-		net = new Net(nodeCount, edgeCount);
+		net = new Net(nodeCount, edgeCount, directed, false);
 		
         // reset eval stats
         prog.clearEvals();
@@ -169,7 +168,6 @@ public class Generator implements Comparable<Generator> {
             		prog.vars[6] = distance;
             		prog.vars[7] = directDistance;
             		prog.vars[8] = reverseDistance;
-            		//prog.vars[9] = Math.abs(origIndex - targIndex);
             	}
             	else {
             		prog.vars[0] = (double)origIndex;
