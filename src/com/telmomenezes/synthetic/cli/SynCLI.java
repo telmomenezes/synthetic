@@ -38,15 +38,22 @@ public class SynCLI {
     	//args = new String[]{"evo", "-inet", "syntnet.txt", "-odir", "test"};
     	//args = new String[]{"compare", "-inet", "syntnet0.txt", "-inet2", "syntnet1.txt"};
     	//args = new String[]{"evo", "-inet", "Hsapi20120818CR.mitab", "-odir", "test", "-undir"};
+    	//args = new String[]{"evo", "-inet", "power.gml", "-odir", "test", "-undir"};
+    	//args = new String[]{"comprun", "-inet", "celegansneural.gml", "-dir", "/Users/telmo/amazon_syn6/celegansprogs", "-out", "distances.csv"};
+    	//args = new String[]{"comprun", "-inet", "polblogs.gml", "-dir", "/Users/telmo/amazon_syn6/polblogsprogs"};
+    	//args = new String[]{"fit", "-inet", "celegansneural.gml", "-prg", "/Users/telmo/amazon_syn6/celegans6/bestprog.txt", "-runs", "30"};
     	
         CommandLineParser parser = new GnuParser();
         options = new Options();
         options.addOption("inet", true, "input net file");
         options.addOption("inet2", true, "second input net file");
         options.addOption("onet", true, "output net file");
+        options.addOption("dir", true, "directory");
         options.addOption("odir", true, "output directory");
         options.addOption("prg", true, "generator program file");
+        options.addOption("prg2", true, "second generator program file");
         options.addOption("oprg", true, "generator output program file");
+        options.addOption("out", true, "output file");
         
         options.addOption("gens", true, "number of generations");
         options.addOption("bins", true, "number of distribution bins");
@@ -89,6 +96,12 @@ public class SynCLI {
             }
             else if (cmd.equals("evalstats")) {
                 cmdObj = new EvalStats();
+            }
+            else if (cmd.equals("comprun")) {
+                cmdObj = new CompRun();
+            }
+            else if (cmd.equals("fit")) {
+                cmdObj = new Fit();
             }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");

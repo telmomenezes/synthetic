@@ -62,7 +62,7 @@ public class SNAPNetFile extends NetFile {
             }
             out.close();
         }
-        catch (Exception e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
     }

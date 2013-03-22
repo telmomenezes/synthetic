@@ -19,6 +19,11 @@ public class Net implements Cloneable {
 
     private boolean pageRanksComputed;
     
+    public MetricsBag metricsBag;
+    public DistMatrix dDistMatrix;
+    public DistMatrix uDistMatrix;
+    
+    
     public Net(int maxNodeCount, int maxEdgeCount) {
         nodeCount = 0;
         edgeCount = 0;
@@ -352,6 +357,13 @@ public class Net implements Cloneable {
     public Edge[] getEdges() {
         return edges;
     }
+    
+    
+    public void clean() {
+		dDistMatrix = null;
+		uDistMatrix = null;
+	}
+    
     
     @Override
     public String toString() {

@@ -98,7 +98,8 @@ public class Evo {
 					generator.run();
 					simTime += System.currentTimeMillis() - time0;
 					time0 = System.currentTimeMillis();
-					generator.fitness = computeFitness(generator);
+					generator.computeFitness(targBag, bins, antiBloat);
+					generator.getNet().clean();
 					fitTime += System.currentTimeMillis() - time0;
 				
 				    if (first || (generator.fitness < bestGenFitness)) {
@@ -156,93 +157,6 @@ public class Evo {
 		
 		return newPopulation;
 	}
-	
-	
-	private double computeFitness(Generator gen) {
-		if (isDirected()) {
-			return computeFitnessDirected(gen);
-		}
-		else {
-			return computeFitnessUndirected(gen);
-		}
-	}
-	
-	
-	private double computeFitnessDirected(Generator gen) {
-        Net net = gen.getNet();
-        
-        MetricsBag genBag = new MetricsBag(net, gen.getDDistMatrix(), gen.getUDistMatrix(), bins, targBag);
-        gen.clean();
-
-        gen.setMetricsBag(genBag);
-        
-        double inDegreesDist = genBag.getInDegreesDist();
-        double outDegreesDist = genBag.getOutDegreesDist();
-        double dPageRanksDist = genBag.getDPageRanksDist();
-        double uPageRanksDist = genBag.getUPageRanksDist();
-        double triadicProfileDist = genBag.getTriadicProfileDist();
-        double dDistsDist = genBag.getdDistsDist();
-        double uDistsDist = genBag.getuDistsDist();
-        
-        double genSize = gen.getProg().size();
-        
-        if (genSize < 2) {
-        	genSize = 2;
-        }
-        
-        genSize = Math.log(genSize);
-        
-        double distance;
-        
-        if (antiBloat) {
-        	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist 
-        			* triadicProfileDist * dDistsDist * uDistsDist * genSize;
-        	distance = Math.pow(distance, 1.0 / 8.0);
-        }
-        else {
-        	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist
-        			* triadicProfileDist * dDistsDist * uDistsDist;
-        	distance = Math.pow(distance, 1.0 / 7.0);
-        }
-        
-        return distance;
-    }
-	
-	
-	private double computeFitnessUndirected(Generator gen) {
-        Net net = gen.getNet();
-        
-        MetricsBag genBag = new MetricsBag(net, null, gen.getUDistMatrix(), bins, targBag);
-        gen.clean();
-
-        gen.setMetricsBag(genBag);
-        
-        double degreesDist = genBag.getDegreesDist();
-        double uPageRanksDist = genBag.getUPageRanksDist();
-        double triadicProfileDist = genBag.getTriadicProfileDist();
-        double uDistsDist = genBag.getuDistsDist();
-        
-        double genSize = gen.getProg().size();
-        
-        if (genSize < 2) {
-        	genSize = 2;
-        }
-        
-        genSize = Math.log(genSize);
-        
-        double distance;
-        
-        if (antiBloat) {
-        	distance = degreesDist * uPageRanksDist * triadicProfileDist * uDistsDist * genSize;
-        	distance = Math.pow(distance, 1.0 / 5.0);
-        }
-        else {
-        	distance = degreesDist * uPageRanksDist * triadicProfileDist * uDistsDist;
-        	distance = Math.pow(distance, 1.0 / 4.0);
-        }
-        
-        return distance;
-    }
     
 	
     private void onNewBest() {
@@ -258,7 +172,7 @@ public class Evo {
         bestGen.getProg().write(outDir + "/bestprog" + ".txt", false);
         
         // write distribs
-        writeDistribs(bestGen.getMetricsBag(), "best");
+        writeDistribs(bestGen.getNet().metricsBag, "best");
         
         bestCount++;
     }
@@ -310,13 +224,13 @@ public class Evo {
     
     private void onGenerationDirected() {
         Generator bestGen = bestGenerator;
-        double inDegreesDist = bestGen.getMetricsBag().getInDegreesDist();
-        double outDegreesDist = bestGen.getMetricsBag().getOutDegreesDist();
-        double dPageRanksDist = bestGen.getMetricsBag().getDPageRanksDist();
-        double uPageRanksDist = bestGen.getMetricsBag().getUPageRanksDist();
-        double triadicProfileDist = bestGen.getMetricsBag().getTriadicProfileDist();
-        double dDistsDist = bestGen.getMetricsBag().getdDistsDist();
-        double uDistsDist = bestGen.getMetricsBag().getuDistsDist();
+        double inDegreesDist = bestGen.getNet().metricsBag.getInDegreesDist();
+        double outDegreesDist = bestGen.getNet().metricsBag.getOutDegreesDist();
+        double dPageRanksDist = bestGen.getNet().metricsBag.getDPageRanksDist();
+        double uPageRanksDist = bestGen.getNet().metricsBag.getUPageRanksDist();
+        double triadicProfileDist = bestGen.getNet().metricsBag.getTriadicProfileDist();
+        double dDistsDist = bestGen.getNet().metricsBag.getdDistsDist();
+        double uDistsDist = bestGen.getNet().metricsBag.getuDistsDist();
         
         // write evo log
         try {
@@ -350,10 +264,10 @@ public class Evo {
     
     private void onGenerationUndirected() {
         Generator bestGen = bestGenerator;
-        double degreesDist = bestGen.getMetricsBag().getDegreesDist();
-        double uPageRanksDist = bestGen.getMetricsBag().getUPageRanksDist();
-        double triadicProfileDist = bestGen.getMetricsBag().getTriadicProfileDist();
-        double uDistsDist = bestGen.getMetricsBag().getuDistsDist();
+        double degreesDist = bestGen.getNet().metricsBag.getDegreesDist();
+        double uPageRanksDist = bestGen.getNet().metricsBag.getUPageRanksDist();
+        double triadicProfileDist = bestGen.getNet().metricsBag.getTriadicProfileDist();
+        double uDistsDist = bestGen.getNet().metricsBag.getuDistsDist();
         
         // write evo log
         try {
