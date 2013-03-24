@@ -66,6 +66,7 @@ public class Fit extends Command {
         	}
         	
         	System.out.println("fitness: " + fit);
+        	System.out.println(gen.getGenBag());
         }
     	
         meanFit /= runs;

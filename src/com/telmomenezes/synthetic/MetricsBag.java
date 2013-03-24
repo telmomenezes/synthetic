@@ -207,19 +207,13 @@ public class MetricsBag {
 	public String toString() {
 		String str = "";
 		
-		str += triadicProfile;
-		str += "\n";
-		
 		str += "inDegreesDist: " + inDegreesDist;
-		str += " outDegreesDist: " + outDegreesDist;
-		str += "\n";
-		str += "dPageRanksDist: " + dPageRanksDist;
-		str += " uPageRanksDist: " + uPageRanksDist;
-		str += "\n";
-		str += "dDistsDist: " + dDistsDist;
-		str += " uDistsDist: " + uDistsDist;
-		str += "\n";
-		str += "triadicProfileDist: " + triadicProfileDist;
+		str += "; outDegreesDist: " + outDegreesDist;
+		str += "; dPageRanksDist: " + dPageRanksDist;
+		str += "; uPageRanksDist: " + uPageRanksDist;
+		str += "; dDistsDist: " + dDistsDist;
+		str += "; uDistsDist: " + uDistsDist;
+		str += "; triadicProfileDist: " + triadicProfileDist;
 		
 		return str;
 	}

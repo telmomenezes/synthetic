@@ -38,6 +38,8 @@ public class Generator implements Comparable<Generator> {
     private int[] sampleOrigs;
     private int[] sampleTargs;
     
+    private MetricsBag genBag;
+    
     
 	public Generator(int nodeCount, int edgeCount, boolean directed, int trials) {
 	    this.nodeCount = nodeCount;
@@ -392,7 +394,7 @@ public class Generator implements Comparable<Generator> {
 	
 	
 	private double computeFitnessDirected(MetricsBag targBag, int bins, boolean antiBloat) {
-        MetricsBag genBag = new MetricsBag(net, net.dDistMatrix, net.uDistMatrix, bins, targBag);
+        genBag = new MetricsBag(net, net.dDistMatrix, net.uDistMatrix, bins, targBag);
 
         net.metricsBag = genBag;
         
@@ -547,6 +549,11 @@ public class Generator implements Comparable<Generator> {
     public Net getNet() {
         return net;
     }
+
+
+	public MetricsBag getGenBag() {
+		return genBag;
+	}
 
 
 	@Override
