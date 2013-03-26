@@ -89,7 +89,8 @@ public class CompFit extends Command {
             	
         			double fit = gen.computeFitness(targBag, bins, false);
             	
-        			out.write(progFile + "," + fit + "\n");
+        			String[] tokens = progFile.split("\\.");
+        			out.write(tokens[0] + "," + fit + "\n");
         		}
         	}
         
