@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic.cli;
 
-import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.DiscreteDistrib;
 import com.telmomenezes.synthetic.Distrib;
@@ -11,43 +10,16 @@ import com.telmomenezes.synthetic.motifs.TriadicProfile;
 
 
 public class Run extends Command {
-    public boolean run(CommandLine cline) {
-        if(!cline.hasOption("inet")) {
-            setErrorMessage("input network file must be specified");
-            return false;
-        }
-        if(!cline.hasOption("odir")) {
-            setErrorMessage("output directory must be specified");
-            return false;
-        }
-        if(!cline.hasOption("prg")) {
-            setErrorMessage("program file must be specified");
-            return false;
-        }
+    public boolean run() throws SynCliException {
+    	String netfile = getStringParam("inet");
+        String outDir = getStringParam("odir");
+        String progFile = getStringParam("prg");
+        int bins = getIntegerParam("bins", 100);
+        int trials = getIntegerParam("trials", 50);
+        int runs = getIntegerParam("runs", 1);
+        boolean directed = !paramExists("undir");
         
-        String netfile = cline.getOptionValue("inet");
-        Net net = Net.load(netfile);
-
-        String progFile = cline.getOptionValue("prg");
-        
-        String outDir = cline.getOptionValue("odir");
-        
-        int bins = 100;
-     	if(cline.hasOption("bins")) {
-            bins = new Integer(cline.getOptionValue("bins"));
-        }
-     	
-     	int trials = 50;
-     	if(cline.hasOption("trials")) {
-            trials = new Integer(cline.getOptionValue("trials"));
-        }
-     	
-     	int runs = 1;
-     	if(cline.hasOption("runs")) {
-            runs = new Integer(cline.getOptionValue("runs"));
-        }
-        
-        boolean directed = true;
+        Net net = Net.load(netfile, directed);
         
         Distrib dPageRankReal = new Distrib(net.prDSeq(), bins);
     	Distrib uPageRankReal = new Distrib(net.prUSeq(), bins);

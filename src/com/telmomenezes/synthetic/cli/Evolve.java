@@ -3,8 +3,6 @@ package com.telmomenezes.synthetic.cli;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-import org.apache.commons.cli.CommandLine;
-
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Evo;
 import com.telmomenezes.synthetic.Generator;
@@ -14,64 +12,24 @@ import com.telmomenezes.synthetic.samplers.DownSampler;
 public class Evolve extends Command {
 
     @Override
-    public boolean run(CommandLine cline) {
-        if(!cline.hasOption("inet")) {
-            setErrorMessage("input network file must be specified");
-            return false;
-        }
+    public boolean run() throws SynCliException {
         
-        if(!cline.hasOption("odir")) {
-            setErrorMessage("output directory must be specified");
-            return false;
-        }
-        
-        String netfile = cline.getOptionValue("inet");
-        String outdir = cline.getOptionValue("odir");
-        
-        boolean antiBloat = true;
-        if(cline.hasOption("antibloat")) {
-            if (cline.getOptionValue("antibloat").equals("off")) {
-            	antiBloat = false;
-            }
-        }
-        
-        int generations = 10000;
-        if(cline.hasOption("gens")) {
-            generations = new Integer(cline.getOptionValue("gens"));
-        }
-        
-        boolean directed = true;
-        if(cline.hasOption("undir")) {
-            directed = false;
-        }
+        String netfile = getStringParam("inet");
+        String outdir = getStringParam("odir");
+        int generations = getIntegerParam("gens", 10000);
+        int trials = getIntegerParam("trials", 50);
+        int bins = getIntegerParam("bins", 100);
+        int maxNodes = getIntegerParam("maxnodes", 999999999);
+        int maxEdges = getIntegerParam("maxedges", 999999999);
+        boolean directed = !paramExists("undir");
+        boolean antiBloat = !paramExists("antibloat");
         
         Net net = Net.load(netfile, directed);
-        //System.out.println(net);
         
         // down sampling if needed
-     	// TODO: configure attenuation and maxNodes
-        int maxNodes = 999999999;
-        int maxEdges = 999999999;
-        if(cline.hasOption("maxnodes")) {
-        	System.out.println("maxNodes: " + cline.getOptionValue("maxnodes"));
-            maxNodes = new Integer(cline.getOptionValue("maxnodes"));
-        }
-        if(cline.hasOption("maxedges")) {
-            maxEdges = new Integer(cline.getOptionValue("maxedges"));
-        }
         Net sampleNet = DownSampler.sample(net, maxNodes, maxEdges);
         
-     	Generator baseGenerator = null;
-     	int trials = 50;
-     	if(cline.hasOption("trials")) {
-            trials = new Integer(cline.getOptionValue("trials"));
-        }
-     	baseGenerator = new Generator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, trials);
-     	
-     	int bins = 100;
-     	if(cline.hasOption("bins")) {
-            bins = new Integer(cline.getOptionValue("bins"));
-        }
+     	Generator baseGenerator = new Generator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, trials);
      	
         Evo evo = new Evo(sampleNet, generations, bins, baseGenerator, outdir, antiBloat);
         

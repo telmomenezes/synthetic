@@ -1,2 +1,2 @@
 #!/bin/sh
-java -jar /usr/local/bin/synt.jar $@
+java -Xmx1500m -jar /usr/local/bin/synt.jar $@

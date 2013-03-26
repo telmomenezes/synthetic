@@ -24,7 +24,12 @@ public class SynCLI {
     }
     
     private void printErrorMessage(String msg) {
-        System.err.println(msg);
+    	if (msg == null) {
+    		System.err.println("unkown error.");
+    	}
+    	else {
+    		System.err.println(msg);
+    	}
         printHelpMessage();
     }
     
@@ -60,7 +65,7 @@ public class SynCLI {
         options.addOption("maxnodes", true, "max nodes (sampling)");
         options.addOption("maxedges", true, "max edges (sampling)");
         options.addOption("trials", true, "number of trials for the fast generator");
-        options.addOption("antibloat", true, "anti bloat (ON / off)");
+        options.addOption("noantibloat", false, "no anti bloat");
         options.addOption("runs", true, "number of generator runs");
         options.addOption("undir", false, "undirected network");
         
@@ -111,18 +116,18 @@ public class SynCLI {
             }
             
             if (cmdObj != null) {
-                if (!cmdObj.run(cline)) {
+            	cmdObj.setCline(cline);
+                if (!cmdObj.run()) {
                     printErrorMessage(cmdObj.getErrorMessage());
                 }
             }
         }
         catch (ParseException e) {
-           String msg = e.getMessage();
-           if (msg == null) {
-               msg = "unkown error";
-           }
-           printErrorMessage(msg);
+           printErrorMessage(e.getMessage());
         }
+        catch (SynCliException e) {
+            printErrorMessage(e.getMessage());
+         }
         
         System.exit(0);
     }

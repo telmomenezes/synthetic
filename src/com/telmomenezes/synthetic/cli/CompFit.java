@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.cli.CommandLine;
-
 import com.telmomenezes.synthetic.Generator;
 import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
@@ -28,44 +26,16 @@ public class CompFit extends Command {
 		return textFiles;
 	}
 	
-    public boolean run(CommandLine cline) {
-        if(!cline.hasOption("inet")) {
-            setErrorMessage("input network file must be specified");
-            return false;
-        }
-        if(!cline.hasOption("dir")) {
-            setErrorMessage("directory must be specified");
-            return false;
-        }
-        if(!cline.hasOption("out")) {
-            setErrorMessage("out file must be specified");
-            return false;
-        }
+    public boolean run() throws SynCliException {
+        String netfile = getStringParam("inet");
+        String dir = getStringParam("dir");
+        String outFile = getStringParam("out");
+        int trials = getIntegerParam("trials", 50);
+        int bins = getIntegerParam("bins", 100);
+        int runs = getIntegerParam("runs", 1);
+        boolean directed = !paramExists("undir");
         
-        
-        String netfile = cline.getOptionValue("inet");
-        Net net = Net.load(netfile);
-
-        String dir = cline.getOptionValue("dir");
-        
-        String outFile = cline.getOptionValue("out");
-     	
-     	int trials = 50;
-     	if(cline.hasOption("trials")) {
-            trials = new Integer(cline.getOptionValue("trials"));
-        }
-        
-     	int bins = 100;
-     	if(cline.hasOption("bins")) {
-            bins = new Integer(cline.getOptionValue("bins"));
-        }
-     	
-     	int runs = 1;
-     	if(cline.hasOption("runs")) {
-            runs = new Integer(cline.getOptionValue("runs"));
-        }
-     	
-        boolean directed = true;
+        Net net = Net.load(netfile, directed);
         
         System.out.println(net);
         MetricsBag targBag = new MetricsBag(net, bins);

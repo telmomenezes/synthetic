@@ -1,33 +1,18 @@
 package com.telmomenezes.synthetic.cli;
 
-import org.apache.commons.cli.CommandLine;
-
 import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
 
 
 public class Compare extends Command {
-    public boolean run(CommandLine cline) {
-        if(!cline.hasOption("inet")) {
-            setErrorMessage("input network file must be specified");
-            return false;
-        }
+    public boolean run() throws SynCliException {
+        String netfile1 = getStringParam("inet");
+        String netfile2 = getStringParam("inet2");
+        int bins = getIntegerParam("bins", 100);
+        boolean directed = !paramExists("undir");
         
-        if(!cline.hasOption("inet2")) {
-            setErrorMessage("sconde input network file must be specified");
-            return false;
-        }
-        
-        String netfile1 = cline.getOptionValue("inet");
-        Net net1 = Net.load(netfile1);
-        
-        String netfile2 = cline.getOptionValue("inet2");
-        Net net2 = Net.load(netfile2);
-        
-        int bins = 100;
-     	if(cline.hasOption("bins")) {
-            bins = new Integer(cline.getOptionValue("bins"));
-        }
+        Net net1 = Net.load(netfile1, directed);
+        Net net2 = Net.load(netfile2, directed);
         
      	System.out.println("NET: " + netfile1);
      	System.out.println(net1);

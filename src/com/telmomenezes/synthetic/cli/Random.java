@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic.cli;
 
-import org.apache.commons.cli.CommandLine;
 
 import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
@@ -10,30 +9,14 @@ import com.telmomenezes.synthetic.motifs.TriadicProfile;
 
 
 public class Random extends Command {
-    public boolean run(CommandLine cline) {
-        if(!cline.hasOption("inet")) {
-            setErrorMessage("input network file must be specified");
-            return false;
-        }
-        if(!cline.hasOption("odir")) {
-            setErrorMessage("output directory must be specified");
-            return false;
-        }
-        
-        String netfile = cline.getOptionValue("inet");
-        Net net = Net.load(netfile);
-
-        String outDir = cline.getOptionValue("odir");
-        
-        int bins = 100;
-     	if(cline.hasOption("bins")) {
-            bins = new Integer(cline.getOptionValue("bins"));
-        }
-        
-     	int runs = 1;
-     	if(cline.hasOption("runs")) {
-            runs = new Integer(cline.getOptionValue("runs"));
-        }
+    public boolean run() throws SynCliException {
+    	String netfile = getStringParam("inet");
+        String outDir = getStringParam("odir");
+        int bins = getIntegerParam("bins", 100);
+        int runs = getIntegerParam("runs", 1);
+        boolean directed = !paramExists("undir");
+    	
+        Net net = Net.load(netfile, directed);
      	
         int nodeCount = net.getNodeCount();
         int edgeCount = net.getEdgeCount();
