@@ -86,6 +86,14 @@ public class CompRun extends Command {
         	FileWriter fstream = new FileWriter(outFile);
         	BufferedWriter out = new BufferedWriter(fstream);
         
+        	for (int i = 0; i < progCount; i++) {
+        		if (i > 0) {
+        			out.write(",");
+        		}
+        		out.write("p" + i);
+        	}
+        	out.write("\n");
+        	
         	for (y = 0; y < progCount; y++) {
         		for (x = 0; x < progCount; x++) {
         			if (x > 0) out.write(",");
