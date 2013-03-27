@@ -87,9 +87,7 @@ public class CompRun extends Command {
         	BufferedWriter out = new BufferedWriter(fstream);
         
         	for (int i = 0; i < progCount; i++) {
-        		if (i > 0) {
-        			out.write(",");
-        		}
+        		if (i > 0) out.write(",");
         		out.write("p" + i);
         	}
         	out.write("\n");
