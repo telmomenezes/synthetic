@@ -1,10 +1,8 @@
 package com.telmomenezes.synthetic.cli;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.telmomenezes.synthetic.Generator;
@@ -13,18 +11,6 @@ import com.telmomenezes.synthetic.Net;
 
 
 public class CompFit extends Command {
-	
-	private List<String> textFiles(String directory) {
-		List<String> textFiles = new ArrayList<String>();
-		File dir = new File(directory);
-		for (File file : dir.listFiles()) {
-			if (file.getName().endsWith((".txt"))) {
-				textFiles.add(file.getName());
-		    }
-		}
-		
-		return textFiles;
-	}
 	
     public boolean run() throws SynCliException {
         String netfile = getStringParam("inet");

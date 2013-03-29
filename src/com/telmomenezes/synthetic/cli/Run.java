@@ -16,7 +16,7 @@ public class Run extends Command {
         String progFile = getStringParam("prg");
         int bins = getIntegerParam("bins", 100);
         int trials = getIntegerParam("trials", 50);
-        int runs = getIntegerParam("runs", 1);
+        int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
         
         Net net = Net.load(netfile, directed);
@@ -39,19 +39,28 @@ public class Run extends Command {
         	syntNet.save(outDir + "/syntnet" + i + ".txt", NetFileType.SNAP);
         
         	// write distributions
-        	DiscreteDistrib inDegrees = new DiscreteDistrib(syntNet.inDegSeq());
-        	DiscreteDistrib outDegrees = new DiscreteDistrib(syntNet.outDegSeq());
-        	Distrib dPageRank = new Distrib(syntNet.prDSeq(), bins, dPageRankReal);
+        	if (directed) {
+        		DiscreteDistrib inDegrees = new DiscreteDistrib(syntNet.inDegSeq());
+        		DiscreteDistrib outDegrees = new DiscreteDistrib(syntNet.outDegSeq());
+        		Distrib dPageRank = new Distrib(syntNet.prDSeq(), bins, dPageRankReal);
+        		DiscreteDistrib dDistsDist = gen.getNet().dDistMatrix.getDistrib();
+        		
+        		inDegrees.write(outDir + "/in_degrees.csv", append);
+            	outDegrees.write(outDir + "/out_degrees.csv", append);
+            	dPageRank.write(outDir + "/d_pagerank.csv", append);
+            	dDistsDist.write(outDir + "/d_dists.csv", append);
+        	}
+        	else {
+        		DiscreteDistrib degrees = new DiscreteDistrib(syntNet.degSeq());
+        		
+        		degrees.write(outDir + "/degrees.csv", append);
+        	}
         	Distrib uPageRank = new Distrib(syntNet.prUSeq(), bins, uPageRankReal);
-        	DiscreteDistrib dDistsDist = gen.getNet().dDistMatrix.getDistrib();
         	DiscreteDistrib uDistsDist = gen.getNet().uDistMatrix.getDistrib();
     	
-        	inDegrees.write(outDir + "/in_degrees.csv", append);
-        	outDegrees.write(outDir + "/out_degrees.csv", append);
-        	dPageRank.write(outDir + "/d_pagerank.csv", append);
+        	
         	uPageRank.write(outDir + "/u_pagerank.csv", append);
         	(TriadicProfile.create(syntNet)).write(outDir + "/triadic_profile.csv", append);
-        	dDistsDist.write(outDir + "/d_dists.csv", append);
         	uDistsDist.write(outDir + "/u_dists.csv", append);
         	
         	append = true;

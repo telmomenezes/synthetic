@@ -13,7 +13,7 @@ public class Random extends Command {
     	String netfile = getStringParam("inet");
         String outDir = getStringParam("odir");
         int bins = getIntegerParam("bins", 100);
-        int runs = getIntegerParam("runs", 1);
+        int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
     	
         Net net = Net.load(netfile, directed);
@@ -29,7 +29,7 @@ public class Random extends Command {
         for (int i = 0; i < runs; i++) {
         	System.out.println("run #" + i);
         
-        	Net randomNet = RandomNet.generate(nodeCount, edgeCount);
+        	Net randomNet = RandomNet.generate(nodeCount, edgeCount, directed);
         
         	// write net
         	randomNet.save(outDir + "/randomnet.txt", NetFileType.SNAP);
@@ -38,12 +38,18 @@ public class Random extends Command {
         	MetricsBag bag = new MetricsBag(randomNet, null, null, bins, realBag);
         
         	// write distributions
-        	bag.getInDegrees().write(outDir + "/random_in_degrees.csv", append);
-        	bag.getOutDegrees().write(outDir + "/random_out_degrees.csv", append);
-        	bag.getDPageRanks().write(outDir + "/random_d_pagerank.csv", append);
+        	
+        	if (directed) {
+        		bag.getInDegrees().write(outDir + "/random_in_degrees.csv", append);
+        		bag.getOutDegrees().write(outDir + "/random_out_degrees.csv", append);
+        		bag.getDPageRanks().write(outDir + "/random_d_pagerank.csv", append);
+        		bag.getdDists().write(outDir + "/random_d_dists.csv", append);
+        	}
+        	else {
+        		bag.getDegrees().write(outDir + "/random_degrees.csv", append);
+        	}
         	bag.getUPageRanks().write(outDir + "/random_u_pagerank.csv", append);
         	(TriadicProfile.create(randomNet)).write(outDir + "/random_triadic_profile.csv", append);
-        	bag.getdDists().write(outDir + "/random_d_dists.csv", append);
         	bag.getuDists().write(outDir + "/random_u_dists.csv", append);
         	
         	append = true;

@@ -1,8 +1,6 @@
 package com.telmomenezes.synthetic.cli;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,12 +10,11 @@ import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
 
 
-public class CompRun extends Command {
+public class DistFit extends Command {
 	
     public boolean run() throws SynCliException {
         String netfile = getStringParam("inet");
         String dir = getStringParam("dir");
-        String outFile = getStringParam("out");
         int trials = getIntegerParam("trials", 50);
         int bins = getIntegerParam("bins", 100);
         boolean directed = !paramExists("undir");
@@ -28,9 +25,6 @@ public class CompRun extends Command {
         
         List<String> prgFiles = textFiles(dir);
         int progCount = prgFiles.size();
-        
-        double[][] dists = new double[progCount][progCount];
-        
         
         Map<String, Generator> genMap = new HashMap<String, Generator>();
         Map<String, MetricsBag> bagMap = new HashMap<String, MetricsBag>();
@@ -47,26 +41,32 @@ public class CompRun extends Command {
     		bagMap.put(progFile, genBag);
         }
         
-        int x = 0;
-        int y = 0;
-        for (String progFile1 : prgFiles) {
-        	for (String progFile2 : prgFiles) {
+        double[] meanDists = new double[progCount];
+        for (int x = 0; x < progCount; x++) {
+        	for (int y = 0; y < progCount; y++) {
+        		String progFile1 = prgFiles.get(x);
+        		String progFile2 = prgFiles.get(y);
+        		
         		System.out.println(progFile1 + " -> " + progFile2);
         		
         		Generator gen = genMap.get(progFile1);
         		MetricsBag bag = bagMap.get(progFile2);
         		
         		double dist = gen.computeFitness(bag, bins, false);
-        		dists[x][y] = dist;
-        		
-        		System.out.println("distance: " + dist);
-        		
-        		x++;
+        		meanDists[x] += dist;
+        		meanDists[y] += dist;
         	}
-        	y++;
-        	x = 0;
         }
         
+        for (int i = 0; i < progCount; i++) {
+        	meanDists[i] /= progCount * 2;
+        }
+        
+        for (int i = 0; i < progCount; i++) {
+        	System.out.println("prog" + i + ": meanDist=" + meanDists[i]);
+        }
+        
+        /*
         System.out.println("Writing output file...");
         try {
         	FileWriter fstream = new FileWriter(outFile);
@@ -90,7 +90,7 @@ public class CompRun extends Command {
         }
         catch (IOException e) {
         	e.printStackTrace();
-        }
+        }*/
         
         System.out.println("done.");
         

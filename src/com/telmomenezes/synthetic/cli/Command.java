@@ -1,5 +1,9 @@
 package com.telmomenezes.synthetic.cli;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.cli.CommandLine;
 
 public abstract class Command {
@@ -73,5 +77,18 @@ public abstract class Command {
 	
 	protected boolean paramExists(String param) {
 		return cline.hasOption(param);
+	}
+	
+	
+	protected List<String> textFiles(String directory) {
+		List<String> textFiles = new ArrayList<String>();
+		File dir = new File(directory);
+		for (File file : dir.listFiles()) {
+			if (file.getName().endsWith((".txt"))) {
+				textFiles.add(file.getName());
+		    }
+		}
+		
+		return textFiles;
 	}
 }

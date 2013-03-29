@@ -111,6 +111,12 @@ public class SynCLI {
             else if (cmd.equals("compfit")) {
                 cmdObj = new CompFit();
             }
+            else if (cmd.equals("distfit")) {
+                cmdObj = new DistFit();
+            }
+            else if (cmd.equals("detailfit")) {
+                cmdObj = new DetailFit();
+            }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
             }
