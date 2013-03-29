@@ -25,11 +25,6 @@ public class DiscreteDistrib {
     }
     
     
-    public DiscreteDistrib(int[][] valueMat, int max) {
-        init(valueMat, max);
-    }
-    
-    
     public DiscreteDistrib(int[] valueSeq, DiscreteDistrib distrib) {
         if (distrib == null) {
             init(valueSeq);
@@ -48,30 +43,9 @@ public class DiscreteDistrib {
         for (int x0 : valueSeq) {
             int x = x0;
             
-            if (x > max) {
-                x = max;
+            if (x <= max) {
+            	freqs[x]++;
             }
-
-            freqs[x]++;
-        }
-    }
-    
-    
-    protected void init(int[][] valueMatrix, int max) {
-        this.max = max;
-        
-        freqs = new int[max + 1];
-        
-        for (int[] seq : valueMatrix) {
-        	for (int x0 : seq) {
-        		int x = x0;
-            
-        		if (x > max) {
-        			x = max;
-        		}
-
-        		freqs[x]++;
-        	}
         }
     }
     

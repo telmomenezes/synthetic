@@ -109,8 +109,8 @@ if (directed) {
   p2 <- plot3("out_degrees", "out degree", T, T, F, F)
   p3 <- plot3("d_pagerank", "directed PageRank", F, T, F, F)
   p4 <- plot3("u_pagerank", "undirected PageRank", F, T, F, F)
-  p5 <- plot3("d_dists", "directed distance", F, T, T, F)
-  p6 <- plot3("u_dists", "undirected distance", F, T, T, F)
+  p5 <- plot3("d_dists", "directed distance", F, F, T, F)
+  p6 <- plot3("u_dists", "undirected distance", F, F, T, F)
   p7 <- plot3("triadic_profile", "motif", F, T, T, T)
 
   first6 = arrangeGrob(p1, p2, p3, p4, p5, p6)
@@ -120,7 +120,7 @@ if (directed) {
 } else {
   p1 <- plot3("degrees", "degree", T, T, F, F)
   p2 <- plot3("u_pagerank", "PageRank", F, T, F, F)
-  p3 <- plot3("u_dists", "distance", F, T, T, F)
+  p3 <- plot3("u_dists", "distance", F, F, T, F)
   p4 <- plot3("triadic_profile", "motif", F, T, T, T)
 
   plots = arrangeGrob(p1, p2, p3, p4)
