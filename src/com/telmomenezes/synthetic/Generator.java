@@ -318,31 +318,9 @@ public class Generator implements Comparable<Generator> {
         		matches = true;
         	}
         	
-        	//System.out.println(matches);
-        	
         	if (matches) {
-        		//overlap += 1;
+        		overlap += 1;
         	}
-        	
-        	double dist = 0;
-        	for (int i = 0; i < trials; i++) {
-        		for (int j = 0; j < trials; j++) {
-        			double r1 = 0.0;
-        			if (weights1[i] == weights1[j]) r1 = 0.5;
-        			else if ((weights1[i] > weights1[j])) r1 = 1.0;
-        			
-        			double r2 = 0.0;
-        			if (weights2[i] == weights2[j]) r2 = 0.5;
-        			else if ((weights2[i] > weights2[j])) r2 = 1.0;
-        			
-        			//dist += Math.abs(r1 - r2);
-        			if (r1 != r2) {
-        				dist += 1;
-        			}
-        		}
-        	}
-        	dist /= (trials * trials);
-        	overlap += dist;
         	
         	Node orig = newEdge1.getOrigin();
         	Node targ = newEdge1.getTarget();

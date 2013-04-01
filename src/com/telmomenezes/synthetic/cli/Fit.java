@@ -61,6 +61,8 @@ public class Fit extends Command {
         meanFitAvg /= runs;
         meanFitMax /= runs;
         
+        System.out.println("\n\n");
+        
         System.out.println("mean fitness: " + meanFit + "; min fitness: " + minFit + "; max fitness: " + maxFit);
         System.out.println("mean fitness (avg): " + meanFitAvg + "; min fitness (avg): " + minFitAvg + "; max fitness (avg): " + maxFitAvg);
         System.out.println("mean fitness (max): " + meanFitMax + "; min fitness (max): " + minFitMax + "; max fitness (max): " + maxFitMax);
