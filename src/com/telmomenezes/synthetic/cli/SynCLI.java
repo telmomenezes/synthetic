@@ -66,7 +66,6 @@ public class SynCLI {
         options.addOption("maxnodes", true, "max nodes (sampling)");
         options.addOption("maxedges", true, "max edges (sampling)");
         options.addOption("trials", true, "number of trials for the fast generator");
-        options.addOption("noantibloat", false, "no anti bloat");
         options.addOption("runs", true, "number of generator runs");
         options.addOption("undir", false, "undirected network");
         

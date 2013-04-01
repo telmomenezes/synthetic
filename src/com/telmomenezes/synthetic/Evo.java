@@ -23,7 +23,6 @@ public class Evo {
 	private int generations;
 	private Generator baseGenerator;
 	private String outDir;
-	private boolean antiBloat;
 	
     // state
 	private Generator bestGenerator;
@@ -42,12 +41,11 @@ public class Evo {
     
 	
 	
-	public Evo(Net targNet, int generations, int bins, Generator baseGenerator, String outDir, boolean antiBloat) {
+	public Evo(Net targNet, int generations, int bins, Generator baseGenerator, String outDir) {
 		this.targNet = targNet;
 		this.generations = generations;
 		this.baseGenerator = baseGenerator;
 		this.outDir = outDir;
-		this.antiBloat = antiBloat;
 		this.bins = bins;
 		
 		targBag = new MetricsBag(targNet, bins);
@@ -100,7 +98,7 @@ public class Evo {
 					generator.run();
 					simTime += System.currentTimeMillis() - time0;
 					time0 = System.currentTimeMillis();
-					generator.computeFitness(targBag, bins, antiBloat);
+					generator.computeFitness(targBag, bins);
 					generator.getNet().clean();
 					fitTime += System.currentTimeMillis() - time0;
 				
@@ -310,7 +308,6 @@ public class Evo {
 		str += "target net node count: " + targNet.getNodeCount() + "\n";
         str += "target net edge count: " + targNet.getEdgeCount() + "\n";
         str += "distribution bins: " + bins + "\n";
-        str += "anti bloat: " + antiBloat + "\n";
 		return str;
 	}
 

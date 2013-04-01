@@ -31,7 +31,7 @@ public class Fit extends Command {
         	gen.load(progFile);
         	gen.run();
         	
-        	double fit = gen.computeFitness(targBag, bins, false);
+        	double fit = gen.computeFitness(targBag, bins);
         	meanFit += fit;
         	
         	if (fit > maxFit) {

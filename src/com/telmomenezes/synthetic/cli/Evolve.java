@@ -22,7 +22,6 @@ public class Evolve extends Command {
         int maxNodes = getIntegerParam("maxnodes", 999999999);
         int maxEdges = getIntegerParam("maxedges", 999999999);
         boolean directed = !paramExists("undir");
-        boolean antiBloat = !paramExists("noantibloat");
         
         Net net = Net.load(netfile, directed);
         
@@ -31,7 +30,7 @@ public class Evolve extends Command {
         
      	Generator baseGenerator = new Generator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, trials);
      	
-        Evo evo = new Evo(sampleNet, generations, bins, baseGenerator, outdir, antiBloat);
+        Evo evo = new Evo(sampleNet, generations, bins, baseGenerator, outdir);
         
         System.out.println("target net: " + netfile);
         System.out.println(evo.infoString());

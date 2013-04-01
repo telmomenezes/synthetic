@@ -383,19 +383,19 @@ public class Generator implements Comparable<Generator> {
 	}
 
 	
-	public double computeFitness(MetricsBag targBag, int bins, boolean antiBloat) {
+	public double computeFitness(MetricsBag targBag, int bins) {
 		if (net.isDirected()) {
-			fitness = computeFitnessDirected(targBag, bins, antiBloat);
+			fitness = computeFitnessDirected(targBag, bins);
 		}
 		else {
-			fitness = computeFitnessUndirected(targBag, bins, antiBloat);
+			fitness = computeFitnessUndirected(targBag, bins);
 		}
 		
 		return fitness;
 	}
 	
 	
-	private double computeFitnessDirected(MetricsBag targBag, int bins, boolean antiBloat) {
+	private double computeFitnessDirected(MetricsBag targBag, int bins) {
         genBag = new MetricsBag(net, net.dDistMatrix, net.uDistMatrix, bins, targBag);
 
         net.metricsBag = genBag;
@@ -408,14 +408,6 @@ public class Generator implements Comparable<Generator> {
         double dDistsDist = genBag.getdDistsDist();
         double uDistsDist = genBag.getuDistsDist();
         
-        double genSize = prog.size();
-        
-        if (genSize < 2) {
-        	genSize = 2;
-        }
-        
-        genSize = Math.log(genSize);
-        
         // random baseline
         MetricsBag randomBag = targBag.getRandomBag();
         double inDegreesDistR = randomBag.getInDegreesDist();
@@ -425,47 +417,33 @@ public class Generator implements Comparable<Generator> {
         double triadicProfileDistR = randomBag.getTriadicProfileDist();
         double dDistsDistR = randomBag.getdDistsDist();
         double uDistsDistR = randomBag.getuDistsDist();
-        
-        double distance;
-        
-        if (antiBloat) {
-        	/*
-        	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist 
-        			* triadicProfileDist * dDistsDist * uDistsDist * genSize;
-        	distance = Math.pow(distance, 1.0 / 8.0);*/
         	
-        	distance = (inDegreesDist / inDegreesDistR)
+        double distance = (inDegreesDist / inDegreesDistR)
         			+ (outDegreesDist / outDegreesDistR)
         			+ (dPageRanksDist / dPageRanksDistR)
         			+ (uPageRanksDist / uPageRanksDistR) 
         			+ (triadicProfileDist / triadicProfileDistR) 
         			+ (dDistsDist / dDistsDistR)
         			+ (uDistsDist / uDistsDistR);
-        	distance /= 7;
+        distance /= 7;
         	
-        	double distance2 = 0;
-        	distance2 = Math.max(distance2, inDegreesDist / inDegreesDistR);
-        	distance2 = Math.max(distance2, outDegreesDist / outDegreesDistR);
-        	distance2 = Math.max(distance2, dPageRanksDist / dPageRanksDistR);
-        	distance2 = Math.max(distance2, uPageRanksDist / uPageRanksDistR);
-        	distance2 = Math.max(distance2, triadicProfileDist / triadicProfileDistR);
-        	distance2 = Math.max(distance2, dDistsDist / dDistsDistR);
-        	distance2 = Math.max(distance2, uDistsDist / uDistsDistR);
+        double distance2 = 0;
+        distance2 = Math.max(distance2, inDegreesDist / inDegreesDistR);
+        distance2 = Math.max(distance2, outDegreesDist / outDegreesDistR);
+        distance2 = Math.max(distance2, dPageRanksDist / dPageRanksDistR);
+        distance2 = Math.max(distance2, uPageRanksDist / uPageRanksDistR);
+        distance2 = Math.max(distance2, triadicProfileDist / triadicProfileDistR);
+        distance2 = Math.max(distance2, dDistsDist / dDistsDistR);
+        distance2 = Math.max(distance2, uDistsDist / uDistsDistR);
         	
-        	distance = distance + (distance2 * MAXSCALE);
-        	distance /= MAXSCALE + 1;
-        }
-        else {
-        	distance = inDegreesDist * outDegreesDist * dPageRanksDist * uPageRanksDist
-        			* triadicProfileDist * dDistsDist * uDistsDist;
-        	distance = Math.pow(distance, 1.0 / 7.0);
-        }
+        distance = distance + (distance2 * MAXSCALE);
+        distance /= MAXSCALE + 1;
         
         return distance;
     }
 	
 	
-	private double computeFitnessUndirected(MetricsBag targBag, int bins, boolean antiBloat) {
+	private double computeFitnessUndirected(MetricsBag targBag, int bins) {
         MetricsBag genBag = new MetricsBag(net, null, net.uDistMatrix, bins, targBag);
 
         net.metricsBag = genBag;
@@ -475,14 +453,6 @@ public class Generator implements Comparable<Generator> {
         double triadicProfileDist = genBag.getTriadicProfileDist();
         double uDistsDist = genBag.getuDistsDist();
         
-        double genSize = prog.size();
-        
-        if (genSize < 2) {
-        	genSize = 2;
-        }
-        
-        genSize = Math.log(genSize);
-        
         // random baseline
         MetricsBag randomBag = targBag.getRandomBag();
         double degreesDistR = randomBag.getDegreesDist();
@@ -490,28 +460,20 @@ public class Generator implements Comparable<Generator> {
         double triadicProfileDistR = randomBag.getTriadicProfileDist();
         double uDistsDistR = randomBag.getuDistsDist();
         
-        double distance;
-        
-        if (antiBloat) {
-        	distance = (degreesDist / degreesDistR) 
+        double distance = (degreesDist / degreesDistR) 
         			+ (uPageRanksDist / uPageRanksDistR) 
         			+ (triadicProfileDist / triadicProfileDistR) 
         			+ (uDistsDist / uDistsDistR);
-        	distance /= 4;
+        distance /= 4;
         	
-        	double distance2 = 0;
-        	distance2 = Math.max(distance2, degreesDist / degreesDistR);
-        	distance2 = Math.max(distance2, uPageRanksDist / uPageRanksDistR);
-        	distance2 = Math.max(distance2, triadicProfileDist / triadicProfileDistR);
-        	distance2 = Math.max(distance2, uDistsDist / uDistsDistR);
+        double distance2 = 0;
+        distance2 = Math.max(distance2, degreesDist / degreesDistR);
+        distance2 = Math.max(distance2, uPageRanksDist / uPageRanksDistR);
+        distance2 = Math.max(distance2, triadicProfileDist / triadicProfileDistR);
+        distance2 = Math.max(distance2, uDistsDist / uDistsDistR);
         	
-        	distance = distance + (distance2 * MAXSCALE);
-        	distance /= MAXSCALE + 1;
-        }
-        else {
-        	distance = degreesDist * uPageRanksDist * triadicProfileDist * uDistsDist;
-        	distance = Math.pow(distance, 1.0 / 4.0);
-        }
+        distance = distance + (distance2 * MAXSCALE);
+        distance /= MAXSCALE + 1;
         
         return distance;
     }
