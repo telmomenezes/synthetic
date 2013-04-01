@@ -39,6 +39,7 @@ public class Evo {
     private MetricsBag targBag;
     
     private int bins;
+    
 	
 	
 	public Evo(Net targNet, int generations, int bins, Generator baseGenerator, String outDir, boolean antiBloat) {
@@ -52,6 +53,7 @@ public class Evo {
 		targBag = new MetricsBag(targNet, bins);
 		writeDistribs(targBag, "targ");
 	}
+	
 	
 	public void run() {
 		// init state

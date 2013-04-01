@@ -33,4 +33,9 @@ public class RandomNet {
 		
 		return net;
 	}
+	
+	
+	public static Net generate(Net net) {
+		return generate(net.getNodeCount(), net.getEdgeCount(), net.isDirected());
+	}
 }

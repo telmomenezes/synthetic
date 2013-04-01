@@ -26,6 +26,9 @@ public class MetricsBag {
     private double dDistsDist;
     private double uDistsDist;
     
+    private MetricsBag randomBag;
+    
+    
     public MetricsBag(Net net, int bins) {
     	this.net = net;
     	this.bins = bins;
@@ -65,6 +68,8 @@ public class MetricsBag {
 	    triadicProfileDist = 0;
 	    dDistsDist = 0;
 	    uDistsDist = 0;
+	    
+	    randomBag = null;
     }
     
     
@@ -236,5 +241,15 @@ public class MetricsBag {
 
 	public double getDegreesDist() {
 		return degreesDist;
+	}
+	
+	
+	public MetricsBag getRandomBag() {
+		if (randomBag == null) {
+			Net randomNet = RandomNet.generate(net);
+			randomBag = new MetricsBag(randomNet, null, null, bins, this);
+		}
+		
+		return randomBag;
 	}
 }
