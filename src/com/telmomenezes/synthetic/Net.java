@@ -191,7 +191,7 @@ public class Net implements Cloneable {
     
     
     public Node getRandomNode() {
-        int pos = RandomGenerator.instance().random.nextInt(nodeCount);
+        int pos = RandomGenerator.random.nextInt(nodeCount);
         return nodes[pos];
     }
 

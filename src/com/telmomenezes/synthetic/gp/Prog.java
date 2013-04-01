@@ -314,31 +314,31 @@ public class Prog {
 						int depth)
 	{
 		GPNode node;
-		double p = RandomGenerator.instance().random.nextDouble();
+		double p = RandomGenerator.random.nextDouble();
 		if (((!grow) || (p > probTerm)) && (depth < maxDepth)) {
-			int fun = RandomGenerator.instance().random.nextInt(GPFun.FUN_COUNT);
+			int fun = RandomGenerator.random.nextInt(GPFun.FUN_COUNT);
 			node = new GPNode(this);
 			node.initFun(fun, parent);
 			for (int i = 0; i < node.arity; i++)
 				node.params[i] = initRandom2(probTerm, node, maxDepth, grow, depth + 1);
 		}
 		else {
-			if (RandomGenerator.instance().random.nextBoolean() && (varcount > 0)) {
-				int var = RandomGenerator.instance().random.nextInt(varcount);
+			if (RandomGenerator.random.nextBoolean() && (varcount > 0)) {
+				int var = RandomGenerator.random.nextInt(varcount);
 				node = new GPNode(this);
 				node.initVar(var, parent);
 			}
 			else {
 				double val;
-				int r = RandomGenerator.instance().random.nextInt(10);
+				int r = RandomGenerator.random.nextInt(10);
 				if (r == 0) {
 				    val = 0.0;
 				}
 				else if (r > 5) {
-				    val = RandomGenerator.instance().random.nextInt(10);
+				    val = RandomGenerator.random.nextInt(10);
 				}
 				else {
-				    val = RandomGenerator.instance().random.nextDouble();
+				    val = RandomGenerator.random.nextDouble();
 				}
 				
 				node = new GPNode(this);
@@ -354,8 +354,8 @@ public class Prog {
 					int maxDepthLowLimit,
 					int maxDepthHighLimit)
 	{
-		boolean grow = RandomGenerator.instance().random.nextBoolean();
-		int max_depth = maxDepthLowLimit +(RandomGenerator.instance().random.nextInt(maxDepthHighLimit - maxDepthLowLimit));
+		boolean grow = RandomGenerator.random.nextBoolean();
+		int max_depth = maxDepthLowLimit +(RandomGenerator.random.nextInt(maxDepthHighLimit - maxDepthLowLimit));
 
 		root = initRandom2(probTerm, null, max_depth, grow, 0);
 	}
@@ -446,7 +446,7 @@ public class Prog {
 		Prog parentA = null;
 		Prog parentB = null;
 		
-		if ((RandomGenerator.instance().random.nextInt() % 2) == 0) {
+		if ((RandomGenerator.random.nextInt() % 2) == 0) {
 			parentA = parent2.clone();
 			parentB = clone();
 		}
@@ -458,8 +458,8 @@ public class Prog {
 		Prog child = parentA.clone();
 		int size1 = parentA.size();
 		int size2 = parentB.size();
-		int pos1 = RandomGenerator.instance().random.nextInt(size1);
-		int pos2 = RandomGenerator.instance().random.nextInt(size2);
+		int pos1 = RandomGenerator.random.nextInt(size1);
+		int pos2 = RandomGenerator.random.nextInt(size2);
 
 		GPNode point1 = child.GPNodeByPos(pos1);
 		GPNode point2 = parentB.GPNodeByPos(pos2);

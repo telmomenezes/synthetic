@@ -21,8 +21,8 @@ public class RandomNet {
 		int curedges = 0;
 		
 		while (curedges < edgeCount) {
-			int origIndex = RandomGenerator.instance().random.nextInt(nodeCount);
-			int targIndex = RandomGenerator.instance().random.nextInt(nodeCount);
+			int origIndex = RandomGenerator.random.nextInt(nodeCount);
+			int targIndex = RandomGenerator.random.nextInt(nodeCount);
 		
 			Node origin = nodes.get(origIndex);
 			Node target = nodes.elementAt(targIndex);

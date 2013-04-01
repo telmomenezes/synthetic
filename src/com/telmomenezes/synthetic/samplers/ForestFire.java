@@ -35,7 +35,7 @@ public class ForestFire {
         
         Collections.shuffle(candidates);
         
-        int count = RandomGenerator.instance().nextGeometric(0.2);
+        int count = RandomGenerator.nextGeometric(0.2);
         
         for (Node c : candidates) {
             if (count <= 0) {

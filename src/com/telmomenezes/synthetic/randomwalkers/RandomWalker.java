@@ -26,7 +26,7 @@ public class RandomWalker {
 	public void restart() {
 		targ = orig;
 		length = 0;
-		forward = RandomGenerator.instance().random.nextBoolean();
+		forward = RandomGenerator.random.nextBoolean();
 	}
 	
 	

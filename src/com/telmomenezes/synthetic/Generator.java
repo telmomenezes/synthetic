@@ -100,7 +100,7 @@ public class Generator implements Comparable<Generator> {
 	
 	
 	private int getRandomNode() {
-		return RandomGenerator.instance().random.nextInt(nodeCount);
+		return RandomGenerator.random.nextInt(nodeCount);
 	}
 	
 	

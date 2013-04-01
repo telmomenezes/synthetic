@@ -139,7 +139,7 @@ public class Node implements Cloneable {
     		return null;
     	}
     	
-    	int index = RandomGenerator.instance().random.nextInt(size);
+    	int index = RandomGenerator.random.nextInt(size);
     	return outEdges.get(index).getTarget();
     }
     
@@ -151,7 +151,7 @@ public class Node implements Cloneable {
     		return null;
     	}
     	
-    	int index = RandomGenerator.instance().random.nextInt(size);
+    	int index = RandomGenerator.random.nextInt(size);
     	return inEdges.get(index).getOrigin();
     }
     
@@ -167,7 +167,7 @@ public class Node implements Cloneable {
     	
     	double probIn = ins / total;
     	
-    	if (RandomGenerator.instance().random.nextDouble() < probIn) {
+    	if (RandomGenerator.random.nextDouble() < probIn) {
     		return getRandomInputNode();
     	}
     	else {

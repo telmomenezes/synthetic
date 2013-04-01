@@ -5,32 +5,15 @@ import java.util.Random;
 
 public class RandomGenerator {
 
-	private static RandomGenerator _instance = null;
-	public Random random;
+	public static Random random = new MTRandom();
 	
 	
-	private RandomGenerator()
-	{
-		random = new MTRandom();
-		//random = new Random();
-	}
-	
-	
-	public static RandomGenerator instance()
-	{
-		if (_instance == null)
-			_instance = new RandomGenerator();
-
-		return _instance;
-	}
-	
-	
-	public boolean testProb(double prob) {
+	public static boolean testProb(double prob) {
 		return random.nextDouble() < prob;
 	}
 	
 	
-	public int nextGeometric(double p) {
+	public static int nextGeometric(double p) {
 	    double r = random.nextDouble();
 	    double g = Math.log(r) / Math.log(1.0 - r);
 	    return (int)g;
