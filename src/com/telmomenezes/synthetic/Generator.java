@@ -23,6 +23,8 @@ public class Generator implements Comparable<Generator> {
     public boolean simulated;
 
     public double fitness;
+    public double fitnessAvg;
+    public double fitnessMax;
 
     private Vector<Prog> executionPaths;
     //private boolean checkPaths;
@@ -48,7 +50,9 @@ public class Generator implements Comparable<Generator> {
 	    
 		simulated = false;
 		
-		fitness = 0.0;
+		fitness = 0;
+		fitnessAvg = 0;
+		fitnessMax = 0;
 		
 		Vector<String> variableNames = new Vector<String>();
 		
@@ -379,17 +383,17 @@ public class Generator implements Comparable<Generator> {
 	
 	public double computeFitness(MetricsBag targBag, int bins) {
 		if (net.isDirected()) {
-			fitness = computeFitnessDirected(targBag, bins);
+			computeFitnessDirected(targBag, bins);
 		}
 		else {
-			fitness = computeFitnessUndirected(targBag, bins);
+			computeFitnessUndirected(targBag, bins);
 		}
 		
 		return fitness;
 	}
 	
 	
-	private double computeFitnessDirected(MetricsBag targBag, int bins) {
+	private void computeFitnessDirected(MetricsBag targBag, int bins) {
         genBag = new MetricsBag(net, net.dDistMatrix, net.uDistMatrix, bins, targBag);
 
         net.metricsBag = genBag;
@@ -412,32 +416,30 @@ public class Generator implements Comparable<Generator> {
         double dDistsDistR = randomBag.getdDistsDist();
         double uDistsDistR = randomBag.getuDistsDist();
         	
-        double distance = (inDegreesDist / inDegreesDistR)
+        fitnessAvg = (inDegreesDist / inDegreesDistR)
         			+ (outDegreesDist / outDegreesDistR)
         			+ (dPageRanksDist / dPageRanksDistR)
         			+ (uPageRanksDist / uPageRanksDistR) 
         			+ (triadicProfileDist / triadicProfileDistR) 
         			+ (dDistsDist / dDistsDistR)
         			+ (uDistsDist / uDistsDistR);
-        distance /= 7;
+        fitnessAvg /= 7;
         	
-        double distance2 = 0;
-        distance2 = Math.max(distance2, inDegreesDist / inDegreesDistR);
-        distance2 = Math.max(distance2, outDegreesDist / outDegreesDistR);
-        distance2 = Math.max(distance2, dPageRanksDist / dPageRanksDistR);
-        distance2 = Math.max(distance2, uPageRanksDist / uPageRanksDistR);
-        distance2 = Math.max(distance2, triadicProfileDist / triadicProfileDistR);
-        distance2 = Math.max(distance2, dDistsDist / dDistsDistR);
-        distance2 = Math.max(distance2, uDistsDist / uDistsDistR);
+        fitnessMax = 0;
+        fitnessMax = Math.max(fitnessMax, inDegreesDist / inDegreesDistR);
+        fitnessMax = Math.max(fitnessMax, outDegreesDist / outDegreesDistR);
+        fitnessMax = Math.max(fitnessMax, dPageRanksDist / dPageRanksDistR);
+        fitnessMax = Math.max(fitnessMax, uPageRanksDist / uPageRanksDistR);
+        fitnessMax = Math.max(fitnessMax, triadicProfileDist / triadicProfileDistR);
+        fitnessMax = Math.max(fitnessMax, dDistsDist / dDistsDistR);
+        fitnessMax = Math.max(fitnessMax, uDistsDist / uDistsDistR);
         	
-        distance = distance + (distance2 * MAXSCALE);
-        distance /= MAXSCALE + 1;
-        
-        return distance;
+        fitness = fitnessAvg + (fitnessMax * MAXSCALE);
+        fitness /= MAXSCALE + 1;
     }
 	
 	
-	private double computeFitnessUndirected(MetricsBag targBag, int bins) {
+	private void computeFitnessUndirected(MetricsBag targBag, int bins) {
         MetricsBag genBag = new MetricsBag(net, null, net.uDistMatrix, bins, targBag);
 
         net.metricsBag = genBag;
@@ -454,22 +456,20 @@ public class Generator implements Comparable<Generator> {
         double triadicProfileDistR = randomBag.getTriadicProfileDist();
         double uDistsDistR = randomBag.getuDistsDist();
         
-        double distance = (degreesDist / degreesDistR) 
+        fitnessAvg = (degreesDist / degreesDistR) 
         			+ (uPageRanksDist / uPageRanksDistR) 
         			+ (triadicProfileDist / triadicProfileDistR) 
         			+ (uDistsDist / uDistsDistR);
-        distance /= 4;
+        fitnessAvg /= 4;
+
+        fitnessMax = 0;
+        fitnessMax = Math.max(fitnessMax, degreesDist / degreesDistR);
+        fitnessMax = Math.max(fitnessMax, uPageRanksDist / uPageRanksDistR);
+        fitnessMax = Math.max(fitnessMax, triadicProfileDist / triadicProfileDistR);
+        fitnessMax = Math.max(fitnessMax, uDistsDist / uDistsDistR);
         	
-        double distance2 = 0;
-        distance2 = Math.max(distance2, degreesDist / degreesDistR);
-        distance2 = Math.max(distance2, uPageRanksDist / uPageRanksDistR);
-        distance2 = Math.max(distance2, triadicProfileDist / triadicProfileDistR);
-        distance2 = Math.max(distance2, uDistsDist / uDistsDistR);
-        	
-        distance = distance + (distance2 * MAXSCALE);
-        distance /= MAXSCALE + 1;
-        
-        return distance;
+        fitness = fitnessAvg + (fitnessMax * MAXSCALE);
+        fitness /= MAXSCALE + 1;
     }
 	
 

@@ -23,6 +23,14 @@ public class Fit extends Command {
         double maxFit = Double.NEGATIVE_INFINITY;
         double minFit = Double.POSITIVE_INFINITY;
         
+        double meanFitAvg = 0;
+        double maxFitAvg = Double.NEGATIVE_INFINITY;
+        double minFitAvg = Double.POSITIVE_INFINITY;
+        
+        double meanFitMax = 0;
+        double maxFitMax = Double.NEGATIVE_INFINITY;
+        double minFitMax = Double.POSITIVE_INFINITY;
+        
         for (int i = 0; i < runs; i++) {
         	System.out.println("run #" + i);
         	
@@ -30,23 +38,32 @@ public class Fit extends Command {
         	gen.load(progFile);
         	gen.run();
         	
-        	double fit = gen.computeFitness(targBag, bins);
+        	gen.computeFitness(targBag, bins);
+        	double fit = gen.fitness;
+        	double fitAvg = gen.fitnessAvg;
+        	double fitMax = gen.fitnessMax;
         	meanFit += fit;
+        	meanFitAvg += fitAvg;
+        	meanFitMax += fitMax;
         	
-        	if (fit > maxFit) {
-        		maxFit = fit;
-        	}
-        	if (fit < minFit) {
-        		minFit = fit;
-        	}
+        	if (fit > maxFit) maxFit = fit;
+        	if (fit < minFit) minFit = fit;
+        	if (fitAvg > maxFitAvg) maxFitAvg = fitAvg;
+        	if (fitAvg < minFitAvg) minFitAvg = fitAvg;
+        	if (fitMax > maxFitMax) maxFitMax = fitMax;
+        	if (fitMax < minFitMax) minFitMax = fitMax;
         	
-        	System.out.println("fitness: " + fit);
+        	System.out.println("fitness: " + fit + "; fitness (avg): " + fitAvg + "; fitness (max): " + fitMax);
         	System.out.println(gen.getGenBag());
         }
     	
         meanFit /= runs;
+        meanFitAvg /= runs;
+        meanFitMax /= runs;
         
-        System.out.println("\n" + "mean fitness: " + meanFit + "; min fitness: " + minFit + "; max fitness: " + maxFit + "\n");
+        System.out.println("mean fitness: " + meanFit + "; min fitness: " + minFit + "; max fitness: " + maxFit);
+        System.out.println("mean fitness (avg): " + meanFitAvg + "; min fitness (avg): " + minFitAvg + "; max fitness (avg): " + maxFitAvg);
+        System.out.println("mean fitness (max): " + meanFitMax + "; min fitness (max): " + minFitMax + "; max fitness (max): " + maxFitMax);
         
         System.out.println("done.");
         
