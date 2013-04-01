@@ -8,11 +8,6 @@ import java.util.Vector;
 import com.telmomenezes.synthetic.io.NetFileType;
 
 
-/**
- * Basic generation based evolutionary algorithm.
- * 
- * @author Telmo Menezes (telmo@telmomenezes.com)
- */
 public class Evo {
     
 	private Vector<Generator> population;

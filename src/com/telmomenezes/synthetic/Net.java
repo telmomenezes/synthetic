@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic;
 
-
 import com.telmomenezes.synthetic.io.NetFile;
 import com.telmomenezes.synthetic.io.NetFileType;
 import com.telmomenezes.synthetic.random.RandomGenerator;

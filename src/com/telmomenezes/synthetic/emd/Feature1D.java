@@ -1,9 +1,6 @@
 package com.telmomenezes.synthetic.emd;
 
-/**
- * @author Telmo Menezes (telmo@telmomenezes.com)
- *
- */
+
 public class Feature1D implements Feature {
     private double x;
 

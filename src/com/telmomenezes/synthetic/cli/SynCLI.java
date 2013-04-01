@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.telmomenezes.synthetic.cli;
 
 import org.apache.commons.cli.CommandLine;
@@ -10,10 +7,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-/**
- * @author telmo
- *
- */
+
 public class SynCLI {
     private Options options;
     private CommandLine cline;

@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic.motifs;
 
-
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 

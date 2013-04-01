@@ -2,6 +2,7 @@ package com.telmomenezes.synthetic.samplers;
 
 import com.telmomenezes.synthetic.Net;
 
+
 public class DownSampler {
     
     private double step;

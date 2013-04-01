@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.cli.CommandLine;
 
+
 public abstract class Command {
 	private String errorMessage;
 	private CommandLine cline;

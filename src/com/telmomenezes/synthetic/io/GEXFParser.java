@@ -10,11 +10,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import org.xml.sax.helpers.DefaultHandler;
 
 
-/**
- * GEFX network file parser.
- * 
- * @author Telmo Menezes (telmo@telmomenezes.com)
- */
 public class GEXFParser extends DefaultHandler
 {
 	

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.telmomenezes.synthetic.io;
 
 import java.io.BufferedReader;
@@ -16,10 +13,6 @@ import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.NetBuilder;
 
 
-/**
- * @author telmo
- *
- */
 public class SNAPNetFile extends NetFile {
     @Override
     public Net load(String filePath, boolean directed) {

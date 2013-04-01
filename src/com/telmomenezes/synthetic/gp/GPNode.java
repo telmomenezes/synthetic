@@ -3,11 +3,7 @@ package com.telmomenezes.synthetic.gp;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
-/**
- * Genetic program node.
- * 
- * @author Telmo Menezes (telmo@telmomenezes.com)
- */
+
 public class GPNode {
 
     public GPNodeType type;

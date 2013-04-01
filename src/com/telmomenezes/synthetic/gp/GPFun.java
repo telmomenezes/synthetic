@@ -1,11 +1,6 @@
 package com.telmomenezes.synthetic.gp;
 
 
-/**
- * Enum of the functions available to genetic programs.
- * 
- * @author Telmo Menezes (telmo@telmomenezes.com)
- */
 public class GPFun {
 	public final static int FUN_COUNT = 14;
 	

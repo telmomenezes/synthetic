@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic.cli;
 
-
 import com.telmomenezes.synthetic.Net;
 
 

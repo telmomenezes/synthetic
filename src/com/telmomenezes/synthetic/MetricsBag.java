@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic;
 
-
 import com.telmomenezes.synthetic.motifs.TriadicProfile;
 
 

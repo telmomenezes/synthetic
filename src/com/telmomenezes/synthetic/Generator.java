@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic;
 
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,11 +11,6 @@ import com.telmomenezes.synthetic.random.RandomGenerator;
 import com.telmomenezes.synthetic.gp.Prog;
 
 
-/**
- * Network generator.
- * 
- * @author Telmo Menezes (telmo@telmomenezes.com)
- */
 public class Generator implements Comparable<Generator> {
 	private static double MAXSCALE = 10; 
 	
@@ -559,7 +553,7 @@ public class Generator implements Comparable<Generator> {
     public Prog getProg() {
         return prog;
     }
-    
+ 
     
     public Net getNet() {
         return net;

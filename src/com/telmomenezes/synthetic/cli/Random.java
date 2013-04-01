@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic.cli;
 
-
 import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.RandomNet;

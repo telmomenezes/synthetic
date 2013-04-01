@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic.cli;
 
-
 import com.telmomenezes.synthetic.DiscreteDistrib;
 import com.telmomenezes.synthetic.Distrib;
 import com.telmomenezes.synthetic.Generator;

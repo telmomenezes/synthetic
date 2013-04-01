@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic;
 
-
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.random.RandomGenerator;

@@ -1,5 +1,6 @@
 package com.telmomenezes.synthetic;
 
+
 public class Edge {
     private Node origin;
     private Node target;

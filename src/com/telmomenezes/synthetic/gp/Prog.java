@@ -1,6 +1,5 @@
 package com.telmomenezes.synthetic.gp;
 
-
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
@@ -15,11 +14,6 @@ import java.util.Vector;
 import com.telmomenezes.synthetic.random.RandomGenerator;
 
 
-/**
- * Genetic program represented as a tree of nodes.
- * 
- * @author Telmo Menezes (telmo@telmomenezes.com)
- */
 public class Prog {
 
 	public double[] vars;
