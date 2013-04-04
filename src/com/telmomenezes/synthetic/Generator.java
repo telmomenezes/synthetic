@@ -414,6 +414,9 @@ public class Generator implements Comparable<Generator> {
         	
         fitness = fitnessAvg + (fitnessMax * MAXSCALE);
         fitness /= MAXSCALE + 1;
+        
+        double progSize = prog.size();
+        fitness += progSize / 100;
     }
 	
 	
@@ -448,6 +451,9 @@ public class Generator implements Comparable<Generator> {
         	
         fitness = fitnessAvg + (fitnessMax * MAXSCALE);
         fitness /= MAXSCALE + 1;
+        
+        double progSize = prog.size();
+        fitness += progSize / 100;
     }
 	
 

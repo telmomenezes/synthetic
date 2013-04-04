@@ -18,7 +18,7 @@ public class CompFit extends Command {
         String outFile = getStringParam("out");
         int trials = getIntegerParam("trials", 50);
         int bins = getIntegerParam("bins", 100);
-        int runs = getIntegerParam("runs", 1);
+        int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
         
         Net net = Net.load(netfile, directed);

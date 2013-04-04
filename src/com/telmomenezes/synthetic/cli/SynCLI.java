@@ -38,7 +38,7 @@ public class SynCLI {
     	//args = new String[]{"evo", "-inet", "syntnet.txt", "-odir", "test"};
     	//args = new String[]{"compare", "-inet", "syntnet0.txt", "-inet2", "syntnet1.txt"};
     	//args = new String[]{"evo", "-inet", "Hsapi20120818CR.mitab", "-odir", "test", "-undir"};
-    	//args = new String[]{"evo", "-inet", "power.gml", "-odir", "test", "-undir"};
+    	args = new String[]{"evo", "-inet", "power.gml", "-odir", "test", "-undir"};
     	//args = new String[]{"comprun", "-inet", "celegansneural.gml", "-dir", "/Users/telmo/amazon_syn6/celegansprogs", "-out", "distances.csv"};
     	//args = new String[]{"comprun", "-inet", "polblogs.gml", "-dir", "/Users/telmo/amazon_syn6/polblogsprogs"};
     	//args = new String[]{"fit", "-inet", "celegansneural.gml", "-prg", "/Users/telmo/amazon_syn6/celegans6/bestprog.txt", "-runs", "30"};

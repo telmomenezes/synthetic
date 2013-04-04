@@ -119,8 +119,16 @@ public class MetricsBag {
     private void calcDistances(MetricsBag bag) {
     	double verySmall = 0.999;
     	
+    	TriadicProfile rp;
+    	if (randomBag == null) {
+    		rp = this.triadicProfile;
+    	}
+    	else {
+    		rp = randomBag.triadicProfile;
+    	}
+    	
     	uPageRanksDist = uPageRanks.emdDistance(bag.uPageRanks);
-        triadicProfileDist = triadicProfile.proportionalDistance(bag.triadicProfile);
+        triadicProfileDist = triadicProfile.proportionalDistance(bag.triadicProfile, rp);
         uDistsDist = uDists.emdDistance(bag.uDists);
         
         

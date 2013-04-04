@@ -26,8 +26,7 @@ public class Prog {
     private Map<String, Integer> variableIndices;
     
     
-	public Prog(int varcount, Vector<String> variableNames)
-	{
+	public Prog(int varcount, Vector<String> variableNames) {
 		this.varcount = varcount;
 		vars = new double[varcount];
 		root = null;
@@ -41,8 +40,7 @@ public class Prog {
 	}
 
 
-	public double eval(int cycle)
-	{
+	public double eval(int cycle) {
 		GPNode curnode = root;
 		curnode.curpos = -1;
 		double val = 0;
@@ -104,10 +102,12 @@ public class Prog {
 						long id2 = Math.round(vars[1]);
 						if ((g == 0) || ((id1 % g) == (id2 % g))) {
 							curnode.stoppos = 2;
+							curnode.params[2].path = false;
 						}
 						else {
 							curnode.stoppos = 3;
 							curnode.curpos++;
+							curnode.params[1].path = false;
 						}
 						break;
 					default:
@@ -224,8 +224,7 @@ public class Prog {
 	}
 
 
-	private void write2(GPNode node, int indent, OutputStreamWriter out, boolean evalStats) throws IOException
-	{
+	private void write2(GPNode node, int indent, OutputStreamWriter out, boolean evalStats) throws IOException {
 		int ind = indent;
 
 		if (node.arity > 0) {
@@ -251,8 +250,7 @@ public class Prog {
 	}
 
 
-	public void write(OutputStreamWriter out, boolean evalStats) throws IOException
-	{
+	public void write(OutputStreamWriter out, boolean evalStats) throws IOException {
 		write2(root, 0, out, evalStats);
 		out.write("\n");
 	}
@@ -280,8 +278,7 @@ public class Prog {
     }
     
     
-    public void load(String filePath) throws IOException
-    {
+    public void load(String filePath) throws IOException {
         FileInputStream fstream = new FileInputStream(filePath);
         DataInputStream in = new DataInputStream(fstream);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -311,8 +308,7 @@ public class Prog {
 						GPNode parent,
 						int maxDepth,
 						boolean grow,
-						int depth)
-	{
+						int depth) {
 		GPNode node;
 		double p = RandomGenerator.random.nextDouble();
 		if (((!grow) || (p > probTerm)) && (depth < maxDepth)) {
@@ -352,21 +348,20 @@ public class Prog {
 
 	public void initRandom(double probTerm,
 					int maxDepthLowLimit,
-					int maxDepthHighLimit)
-	{
+					int maxDepthHighLimit) {
 		boolean grow = RandomGenerator.random.nextBoolean();
 		int max_depth = maxDepthLowLimit +(RandomGenerator.random.nextInt(maxDepthHighLimit - maxDepthLowLimit));
 
 		root = initRandom2(probTerm, null, max_depth, grow, 0);
 	}
 
-	public void initRandom()
-    {
+	
+	public void initRandom() {
 		initRandom(0.4, 2, 5);
     }
 
-	private GPNode cloneGPNode(GPNode node, GPNode parent)
-	{
+	
+	private GPNode cloneGPNode(GPNode node, GPNode parent) {
 		GPNode cnode = new GPNode(this);
 		switch (node.type) {
 		case VAL:
@@ -389,16 +384,14 @@ public class Prog {
 	}
 
 
-	public Prog clone()
-	{
+	public Prog clone() {
 		Prog ctree = new Prog(varcount, variableNames);
 		ctree.root = cloneGPNode(root, null);
 		return ctree;
 	}
 
 
-	private int size2(GPNode node)
-	{
+	private int size2(GPNode node) {
 		int c = 1;
 		for (int i = 0; i < node.arity; i++)
 			c += size2(node.params[i]);
@@ -406,16 +399,14 @@ public class Prog {
 	}
 
 
-	public int size()
-	{
+	public int size() {
 		return size2(root);
 	}
 
 
 	private GPNode GPNodeByPos2(GPNode node,
 						int pos,
-						int[] curpos)
-	{
+						int[] curpos) {
 		GPNode nodefound;
 
 		if (pos == curpos[0])
@@ -432,8 +423,7 @@ public class Prog {
 	}
 
 
-	public GPNode GPNodeByPos(int pos)
-	{
+	public GPNode GPNodeByPos(int pos) {
 		int[] curpos;
 		curpos = new int[1];
 		curpos[0] = 0;
@@ -441,8 +431,7 @@ public class Prog {
 	}
 
 
-	public Prog recombine(Prog parent2)
-	{
+	public Prog recombine(Prog parent2) {
 		Prog parentA = null;
 		Prog parentB = null;
 		
@@ -491,8 +480,7 @@ public class Prog {
 	}
 
 
-	private int tokenEnd(String prog, int pos)
-	{
+	private int tokenEnd(String prog, int pos) {
 		int curpos = pos;
 		char curchar = prog.charAt(curpos);
 		while ((curchar != ' ') 
@@ -513,8 +501,7 @@ public class Prog {
 	}
 
 
-	private int tokenStart(String prog)
-	{
+	private int tokenStart(String prog) {
 		int curpos = parsePos;
 		char curchar = prog.charAt(curpos);
 		while ((curchar == ' ')
@@ -530,8 +517,7 @@ public class Prog {
 	}
 
 
-	private GPNode parse2(String prog, GPNode parent)
-	{
+	private GPNode parse2(String prog, GPNode parent) {
 		int start = tokenStart(prog);
 		int end = tokenEnd(prog, start);
 		
@@ -597,8 +583,7 @@ public class Prog {
 	}
 
 
-	public void parse(String prog)
-	{
+	public void parse(String prog) {
 		parsePos = 0;
 		root = parse2(prog, null);
 	}
@@ -609,16 +594,14 @@ public class Prog {
 	}
 	
 
-	private void clearBranching2(GPNode node)
-	{
+	private void clearBranching2(GPNode node) {
 		node.branching = -1;
 		for (int i = 0; i < node.arity; i++)
 			clearBranching2(node.params[i]);
 	}
 
 
-	public void clearBranching()
-	{
+	public void clearBranching() {
 		clearBranching2(root);
 	}
 	

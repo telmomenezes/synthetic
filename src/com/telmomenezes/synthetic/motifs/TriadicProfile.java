@@ -121,7 +121,7 @@ public abstract class TriadicProfile {
     }
     
     
-    public double proportionalDistance(TriadicProfile tp) {
+    public double proportionalDistance(TriadicProfile tp, TriadicProfile rp) {
     	double distance = 0;
     	
         for (int i = 0; i < numberOfMotifs; i++) {
@@ -130,7 +130,12 @@ public abstract class TriadicProfile {
             	d = 1;
             }
             
-        	distance += (Math.abs(profile[i] - tp.profile[i]) / d) * motifEdges(i + 1);
+            double r = rp.profile[i];
+            if (r <= 0) {
+            	r = 1;
+            }
+            
+        	distance += (Math.abs((profile[i] / r) - (tp.profile[i] / r)) / d) * motifEdges(i + 1);
         }
 
         return distance;
