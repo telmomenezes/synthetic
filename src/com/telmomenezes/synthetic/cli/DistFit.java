@@ -52,7 +52,7 @@ public class DistFit extends Command {
         		Generator gen = genMap.get(progFile1);
         		MetricsBag bag = bagMap.get(progFile2);
         		
-        		double dist = gen.computeFitness(bag, bins);
+        		double dist = gen.computeFitness(bag, bins, false);
         		meanDists[x] += dist;
         		meanDists[y] += dist;
         	}

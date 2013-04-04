@@ -93,7 +93,7 @@ public class Evo {
 					generator.run();
 					simTime += System.currentTimeMillis() - time0;
 					time0 = System.currentTimeMillis();
-					generator.computeFitness(targBag, bins);
+					generator.computeFitness(targBag, bins, true);
 					generator.getNet().clean();
 					fitTime += System.currentTimeMillis() - time0;
 				

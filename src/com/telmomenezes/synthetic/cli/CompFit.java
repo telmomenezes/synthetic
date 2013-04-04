@@ -43,7 +43,7 @@ public class CompFit extends Command {
         			gen.load(dir + "/" + progFile);
         			gen.run();
             	
-        			double fit = gen.computeFitness(targBag, bins);
+        			double fit = gen.computeFitness(targBag, bins, false);
             	
         			String[] tokens = progFile.split("\\.");
         			out.write(tokens[0] + "," + fit + "\n");

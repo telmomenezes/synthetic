@@ -359,19 +359,19 @@ public class Generator implements Comparable<Generator> {
 	}
 
 	
-	public double computeFitness(MetricsBag targBag, int bins) {
+	public double computeFitness(MetricsBag targBag, int bins, boolean antiBloat) {
 		if (net.isDirected()) {
-			computeFitnessDirected(targBag, bins);
+			computeFitnessDirected(targBag, bins, antiBloat);
 		}
 		else {
-			computeFitnessUndirected(targBag, bins);
+			computeFitnessUndirected(targBag, bins, antiBloat);
 		}
 		
 		return fitness;
 	}
 	
 	
-	private void computeFitnessDirected(MetricsBag targBag, int bins) {
+	private void computeFitnessDirected(MetricsBag targBag, int bins, boolean antiBloat) {
         genBag = new MetricsBag(net, net.dDistMatrix, net.uDistMatrix, bins, targBag);
 
         net.metricsBag = genBag;
@@ -415,12 +415,14 @@ public class Generator implements Comparable<Generator> {
         fitness = fitnessAvg + (fitnessMax * MAXSCALE);
         fitness /= MAXSCALE + 1;
         
-        double progSize = prog.size();
-        fitness += progSize / 100;
+        if (antiBloat) {
+        	double progSize = prog.size();
+        	fitness += progSize / 100;
+        }
     }
 	
 	
-	private void computeFitnessUndirected(MetricsBag targBag, int bins) {
+	private void computeFitnessUndirected(MetricsBag targBag, int bins, boolean antiBloat) {
         MetricsBag genBag = new MetricsBag(net, null, net.uDistMatrix, bins, targBag);
 
         net.metricsBag = genBag;
@@ -452,8 +454,10 @@ public class Generator implements Comparable<Generator> {
         fitness = fitnessAvg + (fitnessMax * MAXSCALE);
         fitness /= MAXSCALE + 1;
         
-        double progSize = prog.size();
-        fitness += progSize / 100;
+        if (antiBloat) {
+        	double progSize = prog.size();
+        	fitness += progSize / 100;
+        }
     }
 	
 
