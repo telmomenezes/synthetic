@@ -12,8 +12,7 @@ import com.telmomenezes.synthetic.gp.Prog;
 
 
 public class Generator {
-	//private static double MAXSCALE = 10; 
-	
+
     private int nodeCount;
     private int edgeCount;
     private boolean directed;
@@ -409,17 +408,6 @@ public class Generator {
         fitnessMax = Math.max(fitnessMax, triadicProfileDist / triadicProfileDistR);
         fitnessMax = Math.max(fitnessMax, dDistsDist / dDistsDistR);
         fitnessMax = Math.max(fitnessMax, uDistsDist / uDistsDistR);
-        
-        /*
-        fitness = fitnessAvg + (fitnessMax * MAXSCALE);
-        fitness /= MAXSCALE + 1;
-        */
-        
-        /*
-        if (antiBloat) {
-        	double progSize = prog.size();
-        	fitness += progSize / 100;
-        }*/
     }
 	
 	
@@ -451,17 +439,6 @@ public class Generator {
         fitnessMax = Math.max(fitnessMax, uPageRanksDist / uPageRanksDistR);
         fitnessMax = Math.max(fitnessMax, triadicProfileDist / triadicProfileDistR);
         fitnessMax = Math.max(fitnessMax, uDistsDist / uDistsDistR);
-        	
-        /*
-        fitness = fitnessAvg + (fitnessMax * MAXSCALE);
-        fitness /= MAXSCALE + 1;
-        */
-        
-        /*
-        if (antiBloat) {
-        	double progSize = prog.size();
-        	fitness += progSize / 100;
-        }*/
     }
 	
 	
@@ -481,32 +458,18 @@ public class Generator {
 	}
 	
 	
-	private double adjFit(double fmax, double favg) {
-		/*double MAXSCALE = 1;
-		double af = favg + (fmax * MAXSCALE);
-        af /= MAXSCALE + 1;
-        return af;*/
-        return fmax;
-	}
-	
-	
-	private double adjFit() {
-		return adjFit(fitnessMax, fitnessAvg);
-	}
-	
-	
 	public boolean isBetterThan(Generator gen, double bestFitnessMax, double bestFitnessAvg) {
-		double bestAf = adjFit(bestFitnessMax, bestFitnessAvg);
+		double bestAf = bestFitnessMax;
 		
-		if (adjFit() < bestAf) {
-			bestAf = adjFit();
+		if (fitnessMax < bestAf) {
+			bestAf = fitnessMax;
 		}
-		if (gen.adjFit() < bestAf) {
-			bestAf = gen.adjFit();
+		if (gen.fitnessMax < bestAf) {
+			bestAf = gen.fitnessMax;
 		}
 		
-		boolean w1 = withinRatio(adjFit(), bestAf);
-		boolean w2 = withinRatio(gen.adjFit(), bestAf);
+		boolean w1 = withinRatio(fitnessMax, bestAf);
+		boolean w2 = withinRatio(gen.fitnessMax, bestAf);
 		
 		if (w1 == w2) {
 			return prog.size() < gen.prog.size();
