@@ -24,7 +24,8 @@ public class Node implements Cloneable {
     // Auxiliary flag for algorithms that need to know if this node was already
     // visited
     private boolean flag;
-
+    
+    
     public Node(int id) {
         this.id = id;
         inDegree = 0;

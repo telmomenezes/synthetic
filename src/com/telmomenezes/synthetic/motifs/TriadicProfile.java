@@ -135,7 +135,8 @@ public abstract class TriadicProfile {
             	r = 1;
             }
             
-        	distance += (Math.abs((profile[i] / r) - (tp.profile[i] / r)) / d) * motifEdges(i + 1);
+        	//distance += (Math.abs((profile[i] / r) - (tp.profile[i] / r)) / d);// * motifEdges(i + 1);
+            distance += (Math.abs(profile[i] - tp.profile[i]) / d) * motifEdges(i + 1);
         }
 
         return distance;

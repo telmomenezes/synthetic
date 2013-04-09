@@ -2,7 +2,6 @@ package com.telmomenezes.synthetic;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.Collections;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.io.NetFileType;
@@ -11,7 +10,8 @@ import com.telmomenezes.synthetic.io.NetFileType;
 public class Evo {
     
 	private Vector<Generator> population;
-	private double bestFitness;
+	private double bestFitnessMax;
+	private double bestFitnessAvg;
 	
     // parameters
 	private Net targNet;
@@ -22,8 +22,6 @@ public class Evo {
     // state
 	private Generator bestGenerator;
 	private int curgen;
-	private double bestGenFitness;
-	private double meanGenoSize;
 	private double genTime;
 	private double simTime;
 	private double fitTime;
@@ -34,7 +32,6 @@ public class Evo {
     
     private int bins;
     
-	
 	
 	public Evo(Net targNet, int generations, int bins, Generator baseGenerator, String outDir) {
 		this.targNet = targNet;
@@ -50,13 +47,12 @@ public class Evo {
 	
 	public void run() {
 		// init state
-		meanGenoSize = 0;
 		genTime = 0;
 		simTime = 0;
 		fitTime = 0;
 		bestGenerator = null;
-		bestFitness = Double.MAX_VALUE;
-		bestGenFitness = Double.MAX_VALUE;
+		bestFitnessMax = Double.MAX_VALUE;
+		bestFitnessAvg = Double.MAX_VALUE;
 		bestCount = 0;
 		writeLogHeader();
 	
@@ -74,19 +70,13 @@ public class Evo {
 			stableGens++;
 			
 			long startTime = System.currentTimeMillis();
-			meanGenoSize = 0;
 			
 			simTime = 0;
 			fitTime = 0;
-
-			bestGenFitness = Double.MAX_VALUE;
 			
 			Generator generator;
-			boolean first = false;
 			for (int j = 0; j < 2; j++) {
 				generator = population.get(j);
-
-				meanGenoSize += generator.getProg().size();
 
 				if (!generator.simulated) {
 					long time0 = System.currentTimeMillis();
@@ -97,22 +87,22 @@ public class Evo {
 					generator.getNet().clean();
 					fitTime += System.currentTimeMillis() - time0;
 				
-				    if (first || (generator.fitness < bestGenFitness)) {
-				        first = false;
-				        bestGenFitness = generator.fitness;
-				    }
 				    generator.simulated = true;
 				}
-
-				if (((curgen == 0) && (j == 0)) || (generator.fitness < bestFitness)) {
-					bestFitness = generator.fitness;
+				
+				if (((curgen == 0) && (j == 0)) || (generator.isBetterThan(bestGenerator, bestFitnessMax, bestFitnessAvg))) {
+				//if (((curgen == 0) && (j == 0)) || (generator.fitness < bestFitness)) {
+					if (generator.fitnessMax < bestFitnessMax) {
+						bestFitnessMax = generator.fitnessMax;
+					}
+					if (generator.fitnessAvg < bestFitnessAvg) {
+						bestFitnessAvg = generator.fitnessAvg;
+					}
 					bestGenerator = generator;
 					onNewBest();
 					stableGens = 0;
 				}
 			}
-			
-			meanGenoSize /= 2.0;
 
 			// assign new population
 			population = newGeneration();
@@ -133,10 +123,7 @@ public class Evo {
 	
 
 	private Vector<Generator> newGeneration() {
-		
-		// send the parents to the start of the vector by sorting
-		Collections.sort(population);
-		Generator parent = population.get(0);
+		Generator parent = bestGenerator;
 		
 		Vector<Generator> newPopulation = new Vector<Generator>();
 		
@@ -178,10 +165,10 @@ public class Evo {
     		FileWriter fwriter = new FileWriter(outDir + "/evo.csv");
     		BufferedWriter writer = new BufferedWriter(fwriter);
     		if (isDirected()) {
-    			writer.write("gen,best_fit,best_gen_fit,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,in_degrees_dist,out_degrees_dist,d_pageranks_dist,u_pageranks_dist,triadic_profile_dist,d_dists_dist,u_dists_dist\n");
+    			writer.write("gen,best_fit_max,best_fit_avg,best_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,in_degrees_dist,out_degrees_dist,d_pageranks_dist,u_pageranks_dist,triadic_profile_dist,d_dists_dist,u_dists_dist\n");
     		}
     		else {
-    			writer.write("gen,best_fit,best_gen_fit,best_geno_size,mean_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,degrees_dist,u_pageranks_dist,triadic_profile_dist,u_dists_dist\n");
+    			writer.write("gen,best_fit_max,best_fit_avg,best_geno_size,gen_comp_time,sim_comp_time,fit_comp_time,degrees_dist,u_pageranks_dist,triadic_profile_dist,u_dists_dist\n");
     		}
     		writer.close() ;
     	}
@@ -232,10 +219,9 @@ public class Evo {
             FileWriter fwriter = new FileWriter(outDir + "/evo.csv", true);
             BufferedWriter writer = new BufferedWriter(fwriter);
             writer.write("" + curgen + ","
-                    + bestFitness + ","
-                    + bestGenFitness + ","
+                    + bestFitnessMax + ","
+                    + bestFitnessAvg + ","
                     + bestGenerator.getProg().size() + ","
-                    + meanGenoSize + ","
                     + genTime + ","
                     + simTime + ","
                     + fitTime + ","
@@ -269,10 +255,9 @@ public class Evo {
             FileWriter fwriter = new FileWriter(outDir + "/evo.csv", true);
             BufferedWriter writer = new BufferedWriter(fwriter);
             writer.write("" + curgen + ","
-                    + bestFitness + ","
-                    + bestGenFitness + ","
+                    + bestFitnessMax + ","
+                    + bestFitnessAvg + ","
                     + bestGenerator.getProg().size() + ","
-                    + meanGenoSize + ","
                     + genTime + ","
                     + simTime + ","
                     + fitTime + ","
@@ -310,10 +295,9 @@ public class Evo {
 	private String genInfoString()
 	{
 		String tmpstr = "gen #" + curgen
-        	+ "; best fitness: " + bestFitness
-        	+ "; best gen fitness: " + bestGenFitness
+        	+ "; best fitness max: " + bestFitnessMax
+        	+ "; best fitness avg: " + bestFitnessAvg
         	+ "; best genotype size: " + bestGenerator.getProg().size()
-        	+ "; mean genotype size: " + meanGenoSize
         	+ "; gen comp time: " + genTime + "s."
 			+ "; sim comp time: " + simTime + "s."
 			+ "; fit comp time: " + fitTime + "s.";

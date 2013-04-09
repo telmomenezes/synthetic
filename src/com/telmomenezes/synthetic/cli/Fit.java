@@ -39,21 +39,17 @@ public class Fit extends Command {
         	gen.run();
         	
         	gen.computeFitness(targBag, bins, false);
-        	double fit = gen.fitness;
         	double fitAvg = gen.fitnessAvg;
         	double fitMax = gen.fitnessMax;
-        	meanFit += fit;
         	meanFitAvg += fitAvg;
         	meanFitMax += fitMax;
         	
-        	if (fit > maxFit) maxFit = fit;
-        	if (fit < minFit) minFit = fit;
         	if (fitAvg > maxFitAvg) maxFitAvg = fitAvg;
         	if (fitAvg < minFitAvg) minFitAvg = fitAvg;
         	if (fitMax > maxFitMax) maxFitMax = fitMax;
         	if (fitMax < minFitMax) minFitMax = fitMax;
         	
-        	System.out.println("fitness: " + fit + "; fitness (avg): " + fitAvg + "; fitness (max): " + fitMax);
+        	System.out.println("fitness (avg): " + fitAvg + "; fitness (max): " + fitMax);
         	System.out.println(gen.getGenBag());
         }
     	

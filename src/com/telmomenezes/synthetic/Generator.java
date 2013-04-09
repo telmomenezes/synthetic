@@ -11,8 +11,8 @@ import com.telmomenezes.synthetic.random.RandomGenerator;
 import com.telmomenezes.synthetic.gp.Prog;
 
 
-public class Generator implements Comparable<Generator> {
-	private static double MAXSCALE = 10; 
+public class Generator {
+	//private static double MAXSCALE = 10; 
 	
     private int nodeCount;
     private int edgeCount;
@@ -22,7 +22,6 @@ public class Generator implements Comparable<Generator> {
 	private Prog prog;
     public boolean simulated;
 
-    public double fitness;
     public double fitnessAvg;
     public double fitnessMax;
 
@@ -50,7 +49,6 @@ public class Generator implements Comparable<Generator> {
 	    
 		simulated = false;
 		
-		fitness = 0;
 		fitnessAvg = 0;
 		fitnessMax = 0;
 		
@@ -164,7 +162,7 @@ public class Generator implements Comparable<Generator> {
             
             Node origNode = net.getNodes()[origIndex];
     		Node targNode = net.getNodes()[targIndex];    
-        
+    		
             double distance = net.uDistMatrix.getDist(origNode.getId(), targNode.getId());
             	
             if (directed) {
@@ -367,7 +365,7 @@ public class Generator implements Comparable<Generator> {
 			computeFitnessUndirected(targBag, bins, antiBloat);
 		}
 		
-		return fitness;
+		return fitnessMax;
 	}
 	
 	
@@ -411,14 +409,17 @@ public class Generator implements Comparable<Generator> {
         fitnessMax = Math.max(fitnessMax, triadicProfileDist / triadicProfileDistR);
         fitnessMax = Math.max(fitnessMax, dDistsDist / dDistsDistR);
         fitnessMax = Math.max(fitnessMax, uDistsDist / uDistsDistR);
-        	
+        
+        /*
         fitness = fitnessAvg + (fitnessMax * MAXSCALE);
         fitness /= MAXSCALE + 1;
+        */
         
+        /*
         if (antiBloat) {
         	double progSize = prog.size();
         	fitness += progSize / 100;
-        }
+        }*/
     }
 	
 	
@@ -451,14 +452,68 @@ public class Generator implements Comparable<Generator> {
         fitnessMax = Math.max(fitnessMax, triadicProfileDist / triadicProfileDistR);
         fitnessMax = Math.max(fitnessMax, uDistsDist / uDistsDistR);
         	
+        /*
         fitness = fitnessAvg + (fitnessMax * MAXSCALE);
         fitness /= MAXSCALE + 1;
+        */
         
+        /*
         if (antiBloat) {
         	double progSize = prog.size();
         	fitness += progSize / 100;
-        }
+        }*/
     }
+	
+	
+	private boolean withinRatio(double x1, double x2) {
+		double f1 = x1;
+		double f2 = x2;
+		
+		if (f1 < f2) {
+			double aux = f1;
+			f1 = f2;
+			f2 = aux;
+		}
+		
+		double r = f1 / f2;
+		
+		return r < 1.05;
+	}
+	
+	
+	private double adjFit(double fmax, double favg) {
+		/*double MAXSCALE = 1;
+		double af = favg + (fmax * MAXSCALE);
+        af /= MAXSCALE + 1;
+        return af;*/
+        return fmax;
+	}
+	
+	
+	private double adjFit() {
+		return adjFit(fitnessMax, fitnessAvg);
+	}
+	
+	
+	public boolean isBetterThan(Generator gen, double bestFitnessMax, double bestFitnessAvg) {
+		double bestAf = adjFit(bestFitnessMax, bestFitnessAvg);
+		
+		if (adjFit() < bestAf) {
+			bestAf = adjFit();
+		}
+		if (gen.adjFit() < bestAf) {
+			bestAf = gen.adjFit();
+		}
+		
+		boolean w1 = withinRatio(adjFit(), bestAf);
+		boolean w2 = withinRatio(gen.adjFit(), bestAf);
+		
+		if (w1 == w2) {
+			return prog.size() < gen.prog.size();
+		}
+		
+		return w1;
+	}
 	
 
 	public int executionPath(Prog tree) {
@@ -478,16 +533,6 @@ public class Generator implements Comparable<Generator> {
 	public void clearExecutionPaths() {
 		executionPaths.clear();
 	}
-	
-	public int compareTo(Generator generator) {
-		
-        if (fitness < generator.fitness)
-        	return -1;
-        else if (fitness > generator.fitness)
-        	return 1;
-        else
-        	return 0;
-	}
 
 
 	public boolean isSimulated() {
@@ -497,11 +542,6 @@ public class Generator implements Comparable<Generator> {
 
 	public void setSimulated(boolean simulated) {
 		this.simulated = simulated;
-	}
-
-
-	public double getFitness() {
-		return fitness;
 	}
 
 
