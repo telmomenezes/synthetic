@@ -11,8 +11,8 @@ import com.telmomenezes.synthetic.random.RandomGenerator;
 import com.telmomenezes.synthetic.gp.Prog;
 
 
-public class Generator {
-
+public class Generator { 
+	
     private int nodeCount;
     private int edgeCount;
     private boolean directed;
@@ -356,19 +356,19 @@ public class Generator {
 	}
 
 	
-	public double computeFitness(MetricsBag targBag, int bins, boolean antiBloat) {
+	public double computeFitness(MetricsBag targBag, int bins) {
 		if (net.isDirected()) {
-			computeFitnessDirected(targBag, bins, antiBloat);
+			computeFitnessDirected(targBag, bins);
 		}
 		else {
-			computeFitnessUndirected(targBag, bins, antiBloat);
+			computeFitnessUndirected(targBag, bins);
 		}
 		
-		return fitnessMax;
+		return fitnessAvg;
 	}
 	
 	
-	private void computeFitnessDirected(MetricsBag targBag, int bins, boolean antiBloat) {
+	private void computeFitnessDirected(MetricsBag targBag, int bins) {
         genBag = new MetricsBag(net, net.dDistMatrix, net.uDistMatrix, bins, targBag);
 
         net.metricsBag = genBag;
@@ -411,7 +411,7 @@ public class Generator {
     }
 	
 	
-	private void computeFitnessUndirected(MetricsBag targBag, int bins, boolean antiBloat) {
+	private void computeFitnessUndirected(MetricsBag targBag, int bins) {
         MetricsBag genBag = new MetricsBag(net, null, net.uDistMatrix, bins, targBag);
 
         net.metricsBag = genBag;
@@ -442,7 +442,7 @@ public class Generator {
     }
 	
 	
-	private boolean withinRatio(double x1, double x2) {
+	private boolean withinRatio(double x1, double x2, double tolerance) {
 		double f1 = x1;
 		double f2 = x2;
 		
@@ -454,22 +454,37 @@ public class Generator {
 		
 		double r = f1 / f2;
 		
-		return r < 1.05;
+		return r < (1 + tolerance);
 	}
 	
 	
-	public boolean isBetterThan(Generator gen, double bestFitnessMax, double bestFitnessAvg) {
-		double bestAf = bestFitnessMax;
+	private double adjFit(double fmax, double favg) {
+		/*double MAXSCALE = 1;
+		double af = favg + (fmax * MAXSCALE);
+        af /= MAXSCALE + 1;
+        return af;*/
+        //return fmax;
+		return fmax;
+	}
+	
+	
+	private double adjFit() {
+		return adjFit(fitnessMax, fitnessAvg);
+	}
+	
+	
+	public boolean isBetterThan(Generator gen, double bestFitnessMax, double bestFitnessAvg, double tolerance) {
+		double bestAf = adjFit(bestFitnessMax, bestFitnessAvg);
 		
-		if (fitnessMax < bestAf) {
-			bestAf = fitnessMax;
+		if (adjFit() < bestAf) {
+			bestAf = adjFit();
 		}
-		if (gen.fitnessMax < bestAf) {
-			bestAf = gen.fitnessMax;
+		if (gen.adjFit() < bestAf) {
+			bestAf = gen.adjFit();
 		}
 		
-		boolean w1 = withinRatio(fitnessMax, bestAf);
-		boolean w2 = withinRatio(gen.fitnessMax, bestAf);
+		boolean w1 = withinRatio(adjFit(), bestAf, tolerance);
+		boolean w2 = withinRatio(gen.adjFit(), bestAf, tolerance);
 		
 		if (w1 == w2) {
 			return prog.size() < gen.prog.size();

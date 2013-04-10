@@ -32,13 +32,16 @@ public class Evo {
     
     private int bins;
     
+    private double tolerance;
+    
 	
-	public Evo(Net targNet, int generations, int bins, Generator baseGenerator, String outDir) {
+	public Evo(Net targNet, int generations, int bins, double tolerance, Generator baseGenerator, String outDir) {
 		this.targNet = targNet;
 		this.generations = generations;
 		this.baseGenerator = baseGenerator;
 		this.outDir = outDir;
 		this.bins = bins;
+		this.tolerance = tolerance;
 		
 		targBag = new MetricsBag(targNet, bins);
 		writeDistribs(targBag, "targ");
@@ -83,14 +86,14 @@ public class Evo {
 					generator.run();
 					simTime += System.currentTimeMillis() - time0;
 					time0 = System.currentTimeMillis();
-					generator.computeFitness(targBag, bins, true);
+					generator.computeFitness(targBag, bins);
 					generator.getNet().clean();
 					fitTime += System.currentTimeMillis() - time0;
 				
 				    generator.simulated = true;
 				}
 				
-				if (((curgen == 0) && (j == 0)) || (generator.isBetterThan(bestGenerator, bestFitnessMax, bestFitnessAvg))) {
+				if (((curgen == 0) && (j == 0)) || (generator.isBetterThan(bestGenerator, bestFitnessMax, bestFitnessAvg, tolerance))) {
 				//if (((curgen == 0) && (j == 0)) || (generator.fitness < bestFitness)) {
 					if (generator.fitnessMax < bestFitnessMax) {
 						bestFitnessMax = generator.fitnessMax;
@@ -288,6 +291,7 @@ public class Evo {
 		str += "target net node count: " + targNet.getNodeCount() + "\n";
         str += "target net edge count: " + targNet.getEdgeCount() + "\n";
         str += "distribution bins: " + bins + "\n";
+        str += "tolerance: " + tolerance + "\n";
 		return str;
 	}
 

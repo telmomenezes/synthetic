@@ -56,7 +56,7 @@ public class CompRun extends Command {
         		Generator gen = genMap.get(progFile1);
         		MetricsBag bag = bagMap.get(progFile2);
         		
-        		double dist = gen.computeFitness(bag, bins, false);
+        		double dist = gen.computeFitness(bag, bins);
         		dists[x][y] = dist;
         		
         		System.out.println("distance: " + dist);

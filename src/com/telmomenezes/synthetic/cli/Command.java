@@ -76,6 +76,28 @@ public abstract class Command {
 	}
 	
 	
+	protected double getDoubleParam(String param) throws SynCliException {
+		return getDoubleParam(param, true, -1);
+	}
+	
+	
+	protected double getDoubleParam(String param, double def) throws SynCliException {
+		return getDoubleParam(param, false, def);
+	}
+	
+	
+	protected double getDoubleParam(String param, boolean required, double def) throws SynCliException {
+		String str = getStringParam(param, required, "");
+		
+		if (str.equals("")) {
+			return def;
+		}
+		else {
+			return new Double(str);
+		}
+	}
+	
+	
 	protected boolean paramExists(String param) {
 		return cline.hasOption(param);
 	}

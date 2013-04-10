@@ -38,7 +38,7 @@ public class Fit extends Command {
         	gen.load(progFile);
         	gen.run();
         	
-        	gen.computeFitness(targBag, bins, false);
+        	gen.computeFitness(targBag, bins);
         	double fitAvg = gen.fitnessAvg;
         	double fitMax = gen.fitnessMax;
         	meanFitAvg += fitAvg;
