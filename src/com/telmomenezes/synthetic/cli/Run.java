@@ -11,6 +11,7 @@ import com.telmomenezes.synthetic.motifs.TriadicProfile;
 public class Run extends Command {
     public boolean run() throws SynCliException {
     	String netfile = getStringParam("inet");
+    	
         String outDir = getStringParam("odir");
         String progFile = getStringParam("prg");
         int bins = getIntegerParam("bins", 100);

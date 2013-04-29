@@ -53,7 +53,7 @@ public class Prog {
 				if (curnode.curpos == curnode.condpos) {
 					switch(curnode.fun) {
 					case GPFun.EQ:
-						if (curnode.params[0].val == curnode.params[1].curval) {
+						if (curnode.params[0].curval == curnode.params[1].curval) {
 							curnode.stoppos = 3;
 							curnode.params[3].path = false;
 						}

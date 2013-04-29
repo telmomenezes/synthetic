@@ -33,7 +33,7 @@ public class SynCLI {
     	//args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir", "test"};
     	//args = new String[]{"evo", "-inet", "hep-th.gml", "-odir", "test"};
     	//args = new String[]{"evo", "-inet", "wiki-Vote.snap", "-odir", "test", "-maxnodes", "100"};//, "-gentype", "full"};
-    	//args = new String[]{"evo", "-inet", "polblogs.gml", "-odir", "test"};
+    	//args = new String[]{"evo", "-inet", "polblogs.gml", "-odir", "test", "-tolerance", "0.1"};
     	//args = new String[]{"run", "-inet", "celegansneural.gml", "-prg", "prog.txt", "-odir", "test", "-runs", "30"};
     	//args = new String[]{"evo", "-inet", "syntnet.txt", "-odir", "test"};
     	//args = new String[]{"compare", "-inet", "syntnet0.txt", "-inet2", "syntnet1.txt"};
@@ -63,6 +63,8 @@ public class SynCLI {
         options.addOption("runs", true, "number of generator runs");
         options.addOption("undir", false, "undirected network");
         options.addOption("tolerance", true, "antibloat tolerance");
+        options.addOption("nodes", true, "number of nodes");
+        options.addOption("edges", true, "number of edges");
         
         try {
             cline = parser.parse(options, args);
@@ -114,6 +116,9 @@ public class SynCLI {
             }
             else if (cmd.equals("compprogs")) {
                 cmdObj = new CompProgs();
+            }
+            else if (cmd.equals("gennet")) {
+                cmdObj = new GenNet();
             }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
