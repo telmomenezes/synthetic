@@ -94,7 +94,6 @@ public class Evo {
 				}
 				
 				if (((curgen == 0) && (j == 0)) || (generator.isBetterThan(bestGenerator, bestFitnessMax, bestFitnessAvg, tolerance))) {
-				//if (((curgen == 0) && (j == 0)) || (generator.fitness < bestFitness)) {
 					if (generator.fitnessMax < bestFitnessMax) {
 						bestFitnessMax = generator.fitnessMax;
 					}

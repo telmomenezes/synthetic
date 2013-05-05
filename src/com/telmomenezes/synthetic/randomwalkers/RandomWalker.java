@@ -46,6 +46,9 @@ public class RandomWalker {
 		if (next == null) {
 			restart();
 		}
+		else if (orig == next) {
+			restart();
+		}
 		else {
 			targ = next;
 			length++;

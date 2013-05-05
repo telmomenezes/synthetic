@@ -8,6 +8,7 @@ import java.util.Vector;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.random.RandomGenerator;
+import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 import com.telmomenezes.synthetic.gp.Prog;
 
 
@@ -162,11 +163,11 @@ public class Generator {
             Node origNode = net.getNodes()[origIndex];
     		Node targNode = net.getNodes()[targIndex];    
     		
-            double distance = net.uDistMatrix.getDist(origNode.getId(), targNode.getId());
+            double distance = net.uRandomWalkers.getDist(origNode.getId(), targNode.getId());
             	
             if (directed) {
-            	double directDistance = net.dDistMatrix.getDist(origNode.getId(), targNode.getId());
-            	double reverseDistance = net.dDistMatrix.getDist(targNode.getId(), origNode.getId());
+            	double directDistance = net.dRandomWalkers.getDist(origNode.getId(), targNode.getId());
+            	double reverseDistance = net.dRandomWalkers.getDist(targNode.getId(), origNode.getId());
                     
             	prog.vars[0] = (double)origIndex;
             	prog.vars[1] = (double)targIndex;
@@ -242,11 +243,11 @@ public class Generator {
         }
         
         // init DistMatrix
-        net.dDistMatrix = null;
+        net.dRandomWalkers = null;
         if (directed) {
-        	net.dDistMatrix = new DistMatrix(nodeCount, true);
+        	net.dRandomWalkers = new RandomWalkers(net, true);
         }
-        net.uDistMatrix = new DistMatrix(nodeCount, false);
+        net.uRandomWalkers = new RandomWalkers(net, false);
 
         // create edges
         time = 0;
@@ -259,10 +260,12 @@ public class Generator {
         	net.addEdge(orig, targ);
             
             // update distances
+        	/*
             if (directed) {
                 net.dDistMatrix.updateDistances(net, orig.getId(), targ.getId());
             }
             net.uDistMatrix.updateDistances(net, orig.getId(), targ.getId());
+        	*/
         	
         	time++;
         }
@@ -281,11 +284,11 @@ public class Generator {
         }
         
         // init DistMatrix
-        net.dDistMatrix = null;
+        net.dRandomWalkers = null;
         if (directed) {
-        	net.dDistMatrix = new DistMatrix(nodeCount, true);
+        	net.dRandomWalkers = new RandomWalkers(net, true);
         }
-        net.uDistMatrix = new DistMatrix(nodeCount, false);
+        net.uRandomWalkers = new RandomWalkers(net, false);
 
         double overlap = 0;
         
@@ -325,10 +328,17 @@ public class Generator {
         	net.addEdge(orig, targ);
             
             // update distances
+        	/*
             if (directed) {
                 net.dDistMatrix.updateDistances(net, orig.getId(), targ.getId());
             }
             net.uDistMatrix.updateDistances(net, orig.getId(), targ.getId());
+            */
+        	
+        	if (directed) {
+        		net.dRandomWalkers.step();
+        	}
+        	net.uRandomWalkers.step();
         	
         	time++;
         }
@@ -369,7 +379,11 @@ public class Generator {
 	
 	
 	private void computeFitnessDirected(MetricsBag targBag, int bins) {
-        genBag = new MetricsBag(net, net.dDistMatrix, net.uDistMatrix, bins, targBag);
+		/*net.dRandomWalkers.init();
+		net.dRandomWalkers.allSteps();
+		net.uRandomWalkers.init();
+		net.uRandomWalkers.allSteps();*/
+        genBag = new MetricsBag(net, net.dRandomWalkers, net.uRandomWalkers, bins, targBag);
 
         net.metricsBag = genBag;
         
@@ -412,7 +426,7 @@ public class Generator {
 	
 	
 	private void computeFitnessUndirected(MetricsBag targBag, int bins) {
-        MetricsBag genBag = new MetricsBag(net, null, net.uDistMatrix, bins, targBag);
+        MetricsBag genBag = new MetricsBag(net, null, net.uRandomWalkers, bins, targBag);
 
         net.metricsBag = genBag;
         
@@ -463,8 +477,8 @@ public class Generator {
 		double af = favg + (fmax * MAXSCALE);
         af /= MAXSCALE + 1;
         return af;*/
-        //return fmax;
-		return fmax;
+        return fmax;
+		//return favg;
 	}
 	
 	

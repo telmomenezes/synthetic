@@ -21,8 +21,8 @@ public class RandomWalkers {
     
     
     public RandomWalkers(Net net, boolean directed) {
-    	maxLength = 10;
-    	steps = 1;
+    	maxLength = 5;
+    	steps = 5;
     	
     	this.net = net;
     	this.directed = directed;

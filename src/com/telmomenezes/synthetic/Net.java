@@ -3,6 +3,7 @@ package com.telmomenezes.synthetic;
 import com.telmomenezes.synthetic.io.NetFile;
 import com.telmomenezes.synthetic.io.NetFileType;
 import com.telmomenezes.synthetic.random.RandomGenerator;
+import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 
 
 public class Net implements Cloneable {
@@ -19,8 +20,8 @@ public class Net implements Cloneable {
     private boolean pageRanksComputed;
     
     public MetricsBag metricsBag;
-    public DistMatrix dDistMatrix;
-    public DistMatrix uDistMatrix;
+    public RandomWalkers dRandomWalkers;
+    public RandomWalkers uRandomWalkers;
     
     
     public Net(int maxNodeCount, int maxEdgeCount) {
@@ -359,8 +360,8 @@ public class Net implements Cloneable {
     
     
     public void clean() {
-		dDistMatrix = null;
-		uDistMatrix = null;
+		dRandomWalkers = null;
+		uRandomWalkers = null;
 	}
     
     
