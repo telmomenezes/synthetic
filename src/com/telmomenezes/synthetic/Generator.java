@@ -259,13 +259,11 @@ public class Generator {
         	
         	net.addEdge(orig, targ);
             
-            // update distances
-        	/*
-            if (directed) {
-                net.dDistMatrix.updateDistances(net, orig.getId(), targ.getId());
-            }
-            net.uDistMatrix.updateDistances(net, orig.getId(), targ.getId());
-        	*/
+        	// update distances
+        	if (directed) {
+        		net.dRandomWalkers.step();
+        	}
+        	net.uRandomWalkers.step();
         	
         	time++;
         }
@@ -328,13 +326,6 @@ public class Generator {
         	net.addEdge(orig, targ);
             
             // update distances
-        	/*
-            if (directed) {
-                net.dDistMatrix.updateDistances(net, orig.getId(), targ.getId());
-            }
-            net.uDistMatrix.updateDistances(net, orig.getId(), targ.getId());
-            */
-        	
         	if (directed) {
         		net.dRandomWalkers.step();
         	}
@@ -379,10 +370,10 @@ public class Generator {
 	
 	
 	private void computeFitnessDirected(MetricsBag targBag, int bins) {
-		/*net.dRandomWalkers.init();
+		net.dRandomWalkers.init();
 		net.dRandomWalkers.allSteps();
 		net.uRandomWalkers.init();
-		net.uRandomWalkers.allSteps();*/
+		net.uRandomWalkers.allSteps();
         genBag = new MetricsBag(net, net.dRandomWalkers, net.uRandomWalkers, bins, targBag);
 
         net.metricsBag = genBag;

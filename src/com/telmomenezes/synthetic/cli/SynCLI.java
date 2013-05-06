@@ -120,6 +120,9 @@ public class SynCLI {
             else if (cmd.equals("gennet")) {
                 cmdObj = new GenNet();
             }
+            else if (cmd.equals("metrics")) {
+                cmdObj = new Metrics();
+            }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
             }

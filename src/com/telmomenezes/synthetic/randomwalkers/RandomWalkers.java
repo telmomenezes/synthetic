@@ -21,8 +21,12 @@ public class RandomWalkers {
     
     
     public RandomWalkers(Net net, boolean directed) {
-    	maxLength = 5;
-    	steps = 5;
+    	maxLength = 4;
+    	steps = 8;
+    	
+    	if (!directed) {
+    		steps = 16;
+    	}
     	
     	this.net = net;
     	this.directed = directed;
@@ -77,14 +81,16 @@ public class RandomWalkers {
     
     public void step() {
     	for (int i = 0; i < nodes; i++) {
-    		for (int j = 0; j < steps; j++) {
-    			RandomWalker walker = walkers[i];
-    			walker.step();
-    			if (walker.isForward()) {
-    				setDist(walker.getOrig().getId(), walker.getTarg().getId(), walker.getLength());
-    			}
-    			else {
-    				setDist(walker.getTarg().getId(), walker.getOrig().getId(), walker.getLength());
+    		RandomWalker walker = walkers[i];
+    		if (walker.getOrig().getDegree() > 0) {
+    			for (int j = 0; j < steps; j++) {
+    				walker.step();
+    				if (walker.isForward()) {
+    					setDist(walker.getOrig().getId(), walker.getTarg().getId(), walker.getLength());
+    				}
+    				else {
+    					setDist(walker.getTarg().getId(), walker.getOrig().getId(), walker.getLength());
+    				}
     			}
     		}
     	}
