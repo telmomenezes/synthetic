@@ -12,26 +12,35 @@ public class Metrics extends Command {
     	int nodes = getIntegerParam("nodes", 1000);
     	int edges = getIntegerParam("edges", 10000);
     	
-        String progFile = getStringParam("prg");
+        String progFile = getStringParam("prg", "");
         int trials = getIntegerParam("trials", 50);
         int bins = getIntegerParam("bins", 100);
         boolean directed = !paramExists("undir");
         
+        Net net = null;
+        
         if (!netfile.equals("")) {
-        	Net net = Net.load(netfile, directed);
+        	net = Net.load(netfile, directed);
         	nodes = net.getNodeCount();
         	edges = net.getEdgeCount();
         }
+        else {
+        	Generator gen = new Generator(nodes, edges, directed, trials);
+            gen.load(progFile);
+            gen.run();
+            net = gen.getNet();
+        }
+        
         System.out.println("nodes: " + nodes);
         System.out.println("edges: " + edges);
-        	
-        Generator gen = new Generator(nodes, edges, directed, trials);
-        gen.load(progFile);
-        gen.run();
-        Net syntNet = gen.getNet();
         
-        MetricsBag bag = new MetricsBag(syntNet, bins);
-        System.out.println(bag);
+        MetricsBag bag = new MetricsBag(net, bins);
+        
+        System.out.println("Undirected Distances:");
+        System.out.println(bag.getuDists());
+        
+        System.out.println("Directed Distances:");
+        System.out.println(bag.getdDists());
         
         return true;
     }

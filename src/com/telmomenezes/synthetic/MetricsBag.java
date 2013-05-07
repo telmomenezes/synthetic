@@ -26,7 +26,7 @@ public class MetricsBag {
     private double dDistsDist;
     private double uDistsDist;
     
-    private MetricsBag randomBag;
+    private RandomBag randomBag;
     
     
     public MetricsBag(Net net, int bins) {
@@ -120,13 +120,7 @@ public class MetricsBag {
     private void calcDistances(MetricsBag bag) {
     	double verySmall = 0.999;
     	
-    	TriadicProfile rp;
-    	if (randomBag == null) {
-    		rp = this.triadicProfile;
-    	}
-    	else {
-    		rp = randomBag.triadicProfile;
-    	}
+    	TriadicProfile rp = this.triadicProfile;
     	
     	uPageRanksDist = uPageRanks.emdDistance(bag.uPageRanks);
         triadicProfileDist = triadicProfile.proportionalDistance(bag.triadicProfile, rp);
@@ -252,10 +246,14 @@ public class MetricsBag {
 	}
 	
 	
-	public MetricsBag getRandomBag() {
+	public Net getNet() {
+		return net;
+	}
+	
+	
+	public RandomBag getRandomBag() {
 		if (randomBag == null) {
-			Net randomNet = RandomNet.generate(net);
-			randomBag = new MetricsBag(randomNet, null, null, bins, this);
+			randomBag = new RandomBag(this, bins, 30);
 		}
 		
 		return randomBag;

@@ -34,6 +34,7 @@ public class Generator {
     
     private int[] sampleOrigs;
     private int[] sampleTargs;
+    private double[] sampleWeights;
     
     private MetricsBag genBag;
     
@@ -46,6 +47,7 @@ public class Generator {
 	    
 	    sampleOrigs = new int[trials];
 	    sampleTargs = new int[trials];
+	    sampleWeights = new double[trials];
 	    
 		simulated = false;
 		
@@ -156,6 +158,8 @@ public class Generator {
         int bestOrigIndex = -1;
         int bestTargIndex = -1;
         
+        double totalWeight = 0;
+        
         for (int i = 0; i < trials; i++) {
         	int origIndex = sampleOrigs[i];
             int targIndex = sampleTargs[i];
@@ -211,16 +215,36 @@ public class Generator {
             	weights[i] = weight;
             }
             
-            //System.out.println("weight: " + weight + "; bestWeight: " + bestWeight);
+            //
+            sampleWeights[i] = weight;
+            totalWeight += weight;
+            
+            /*
             if (weight > bestWeight) {
-            	//System.out.println("* best weight");
             	bestWeight = weight;
             	bestOrigIndex = origIndex;
             	bestTargIndex = targIndex;
             	prog.root.setWinPath();
-            }
+            }*/
         }
-
+        
+        if (totalWeight == 0) {
+        	for (int i = 0; i < trials; i++) {
+        		sampleWeights[i] = 1;
+        		totalWeight += 1;
+        	}
+        }
+        
+        double targWeight = RandomGenerator.random.nextDouble() * totalWeight;
+        int i = 0;
+        totalWeight = sampleWeights[i];
+        while (targWeight > totalWeight) {
+        	i++;
+        	totalWeight += sampleWeights[i];
+        }
+        bestOrigIndex = sampleOrigs[i];
+        bestTargIndex = sampleTargs[i];
+        
         // update win evals
         prog.root.updateWinEvals(time);
         
@@ -370,10 +394,8 @@ public class Generator {
 	
 	
 	private void computeFitnessDirected(MetricsBag targBag, int bins) {
-		net.dRandomWalkers.init();
-		net.dRandomWalkers.allSteps();
-		net.uRandomWalkers.init();
-		net.uRandomWalkers.allSteps();
+		net.dRandomWalkers.recompute();
+		net.uRandomWalkers.recompute();
         genBag = new MetricsBag(net, net.dRandomWalkers, net.uRandomWalkers, bins, targBag);
 
         net.metricsBag = genBag;
@@ -387,14 +409,14 @@ public class Generator {
         double uDistsDist = genBag.getuDistsDist();
         
         // random baseline
-        MetricsBag randomBag = targBag.getRandomBag();
-        double inDegreesDistR = randomBag.getInDegreesDist();
-        double outDegreesDistR = randomBag.getOutDegreesDist();
-        double dPageRanksDistR = randomBag.getDPageRanksDist();
-        double uPageRanksDistR = randomBag.getUPageRanksDist();
-        double triadicProfileDistR = randomBag.getTriadicProfileDist();
-        double dDistsDistR = randomBag.getdDistsDist();
-        double uDistsDistR = randomBag.getuDistsDist();
+        RandomBag randomBag = targBag.getRandomBag();
+        double inDegreesDistR = randomBag.inDegreesDistAvg;
+        double outDegreesDistR = randomBag.outDegreesDistAvg;
+        double dPageRanksDistR = randomBag.dPageRanksDistAvg;
+        double uPageRanksDistR = randomBag.uPageRanksDistAvg;
+        double triadicProfileDistR = randomBag.triadicProfileDistAvg;
+        double dDistsDistR = randomBag.dDistsDistAvg;
+        double uDistsDistR = randomBag.uDistsDistAvg;
         	
         fitnessAvg = (inDegreesDist / inDegreesDistR)
         			+ (outDegreesDist / outDegreesDistR)
@@ -405,6 +427,7 @@ public class Generator {
         			+ (uDistsDist / uDistsDistR);
         fitnessAvg /= 7;
         	
+        
         fitnessMax = 0;
         fitnessMax = Math.max(fitnessMax, inDegreesDist / inDegreesDistR);
         fitnessMax = Math.max(fitnessMax, outDegreesDist / outDegreesDistR);
@@ -417,6 +440,7 @@ public class Generator {
 	
 	
 	private void computeFitnessUndirected(MetricsBag targBag, int bins) {
+		net.uRandomWalkers.recompute();
         MetricsBag genBag = new MetricsBag(net, null, net.uRandomWalkers, bins, targBag);
 
         net.metricsBag = genBag;
@@ -427,11 +451,11 @@ public class Generator {
         double uDistsDist = genBag.getuDistsDist();
         
         // random baseline
-        MetricsBag randomBag = targBag.getRandomBag();
-        double degreesDistR = randomBag.getDegreesDist();
-        double uPageRanksDistR = randomBag.getUPageRanksDist();
-        double triadicProfileDistR = randomBag.getTriadicProfileDist();
-        double uDistsDistR = randomBag.getuDistsDist();
+        RandomBag randomBag = targBag.getRandomBag();
+        double degreesDistR = randomBag.degreesDistAvg;
+        double uPageRanksDistR = randomBag.uPageRanksDistAvg;
+        double triadicProfileDistR = randomBag.triadicProfileDistAvg;
+        double uDistsDistR = randomBag.uDistsDistAvg;
         
         fitnessAvg = (degreesDist / degreesDistR) 
         			+ (uPageRanksDist / uPageRanksDistR) 
