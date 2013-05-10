@@ -39,11 +39,11 @@ public class Generator {
     private MetricsBag genBag;
     
     
-	public Generator(int nodeCount, int edgeCount, boolean directed, int trials) {
+	public Generator(int nodeCount, int edgeCount, boolean directed, double sr) {
 	    this.nodeCount = nodeCount;
 	    this.edgeCount = edgeCount;
 	    this.directed = directed;
-	    this.trials = trials;
+	    this.trials = (int)(sr * (nodeCount * nodeCount));
 	    
 	    sampleOrigs = new int[trials];
 	    sampleTargs = new int[trials];

@@ -9,13 +9,13 @@ public class Prune extends Command {
     	String netfile = getStringParam("inet");
     	String progFile = getStringParam("prg");
     	String outProg = getStringParam("oprg");
-    	int trials = getIntegerParam("trials", 50);
+    	double sr = getDoubleParam("sr", 0.0006);
     	boolean directed = !paramExists("undir");
         
         Net net = Net.load(netfile, directed);
         System.out.println(net);
         
-        Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, trials);
+        Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
         gen.load(progFile);
         gen.run();
         

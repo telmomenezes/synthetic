@@ -16,7 +16,7 @@ public class CompProgs extends Command {
         String netfile = getStringParam("inet");
         String dir = getStringParam("dir");
         String outFile = getStringParam("out");
-        int trials = getIntegerParam("trials", 50);
+        double sr = getDoubleParam("sr", 0.0006);
         boolean directed = !paramExists("undir");
         
         Net net = Net.load(netfile, directed);
@@ -34,9 +34,9 @@ public class CompProgs extends Command {
         	for (String progFile2 : prgFiles) {
         		System.out.println(progFile1 + " -> " + progFile2);
         		
-        		Generator gen1 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, trials);
+        		Generator gen1 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
         		gen1.load(dir + "/" + progFile1);
-        		Generator gen2 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, trials);
+        		Generator gen2 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
         		gen2.load(dir + "/" + progFile2);
         		
         		double dist = gen1.runCompare(gen2);

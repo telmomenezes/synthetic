@@ -13,7 +13,7 @@ public class Metrics extends Command {
     	int edges = getIntegerParam("edges", 10000);
     	
         String progFile = getStringParam("prg", "");
-        int trials = getIntegerParam("trials", 50);
+        double sr = getDoubleParam("sr", 0.0006);
         int bins = getIntegerParam("bins", 100);
         boolean directed = !paramExists("undir");
         
@@ -25,7 +25,7 @@ public class Metrics extends Command {
         	edges = net.getEdgeCount();
         }
         else {
-        	Generator gen = new Generator(nodes, edges, directed, trials);
+        	Generator gen = new Generator(nodes, edges, directed, sr);
             gen.load(progFile);
             gen.run();
             net = gen.getNet();

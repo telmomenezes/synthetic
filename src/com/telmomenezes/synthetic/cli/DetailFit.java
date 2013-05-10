@@ -15,7 +15,7 @@ public class DetailFit extends Command {
     public boolean run() throws SynCliException {
         String netfile = getStringParam("inet");
         String dir = getStringParam("dir");
-        int trials = getIntegerParam("trials", 50);
+        double sr = getDoubleParam("sr", 0.0006);
         int bins = getIntegerParam("bins", 100);
         int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
@@ -63,7 +63,7 @@ public class DetailFit extends Command {
         	double uDistsDist = 0;
         		
         	for (int i = 0; i < runs; i++) {
-        		Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, trials);
+        		Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
         		gen.load(dir + "/" + progFile);
         		gen.run();
             	
@@ -81,7 +81,7 @@ public class DetailFit extends Command {
         	}
         	
         	// determine prunned program size
-        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, trials);
+        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
     		gen.load(dir + "/" + progFile);
     		gen.run();
     		gen.getProg().dynPruning();

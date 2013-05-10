@@ -17,19 +17,19 @@ public class Evolve extends Command {
         String netfile = getStringParam("inet");
         String outdir = getStringParam("odir");
         int generations = getIntegerParam("gens", 10000);
-        int trials = getIntegerParam("trials", 50);
+        double sr = getDoubleParam("sr", 0.0006);
         int bins = getIntegerParam("bins", 100);
         int maxNodes = getIntegerParam("maxnodes", 999999999);
         int maxEdges = getIntegerParam("maxedges", 999999999);
         boolean directed = !paramExists("undir");
-        double tolerance = getDoubleParam("tolerance", 0.1);
+        double tolerance = getDoubleParam("tolerance", 0.01);
         
         Net net = Net.load(netfile, directed);
         
         // down sampling if needed
         Net sampleNet = DownSampler.sample(net, maxNodes, maxEdges);
         
-     	Generator baseGenerator = new Generator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, trials);
+     	Generator baseGenerator = new Generator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, sr);
      	
         Evo evo = new Evo(sampleNet, generations, bins, tolerance, baseGenerator, outdir);
         

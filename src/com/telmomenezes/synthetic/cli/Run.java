@@ -15,7 +15,7 @@ public class Run extends Command {
         String outDir = getStringParam("odir");
         String progFile = getStringParam("prg");
         int bins = getIntegerParam("bins", 100);
-        int trials = getIntegerParam("trials", 50);
+        double sr = getDoubleParam("sr", 0.0006);
         int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
         
@@ -30,7 +30,7 @@ public class Run extends Command {
         for (int i = 0; i < runs; i++) {
         	System.out.println("run #" + i);
         	
-        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, trials);
+        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
         	gen.load(progFile);
         	gen.run();
         	Net syntNet = gen.getNet();

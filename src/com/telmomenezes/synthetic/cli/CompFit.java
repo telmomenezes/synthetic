@@ -16,7 +16,7 @@ public class CompFit extends Command {
         String netfile = getStringParam("inet");
         String dir = getStringParam("dir");
         String outFile = getStringParam("out");
-        int trials = getIntegerParam("trials", 50);
+        double sr = getDoubleParam("sr", 0.0006);
         int bins = getIntegerParam("bins", 100);
         int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
@@ -39,7 +39,7 @@ public class CompFit extends Command {
         		for (int i = 0; i < runs; i++) {
         			System.out.println("run #" + i);
             	
-        			Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, trials);
+        			Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
         			gen.load(dir + "/" + progFile);
         			gen.run();
             	

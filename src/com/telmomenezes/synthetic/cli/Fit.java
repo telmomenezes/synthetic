@@ -9,7 +9,7 @@ public class Fit extends Command {
     public boolean run() throws SynCliException {
     	String netfile = getStringParam("inet");
     	String progFile = getStringParam("prg");
-    	int trials = getIntegerParam("trials", 50);
+    	double sr = getDoubleParam("sr", 0.0006);
         int bins = getIntegerParam("bins", 100);
         int runs = getIntegerParam("runs", 30);
     	boolean directed = !paramExists("undir");
@@ -34,7 +34,7 @@ public class Fit extends Command {
         for (int i = 0; i < runs; i++) {
         	System.out.println("run #" + i);
         	
-        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, trials);
+        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
         	gen.load(progFile);
         	gen.run();
         	

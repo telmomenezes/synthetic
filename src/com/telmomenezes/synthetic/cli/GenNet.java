@@ -13,7 +13,7 @@ public class GenNet extends Command {
     	
         String outNet = getStringParam("onet");
         String progFile = getStringParam("prg");
-        int trials = getIntegerParam("trials", 50);
+        double sr = getDoubleParam("sr", 0.0006);
         boolean directed = !paramExists("undir");
         
         if (!netfile.equals("")) {
@@ -24,7 +24,7 @@ public class GenNet extends Command {
         System.out.println("nodes: " + nodes);
         System.out.println("edges: " + edges);
         	
-        Generator gen = new Generator(nodes, edges, directed, trials);
+        Generator gen = new Generator(nodes, edges, directed, sr);
         gen.load(progFile);
         gen.run();
         Net syntNet = gen.getNet();

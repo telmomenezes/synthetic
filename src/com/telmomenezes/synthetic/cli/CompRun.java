@@ -18,7 +18,7 @@ public class CompRun extends Command {
         String netfile = getStringParam("inet");
         String dir = getStringParam("dir");
         String outFile = getStringParam("out");
-        int trials = getIntegerParam("trials", 50);
+        double sr = getDoubleParam("sr", 0.0006);
         int bins = getIntegerParam("bins", 100);
         boolean directed = !paramExists("undir");
         
@@ -36,7 +36,7 @@ public class CompRun extends Command {
         Map<String, MetricsBag> bagMap = new HashMap<String, MetricsBag>();
         for (String progFile : prgFiles) {
         	System.out.println("running " + progFile);
-        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, trials);
+        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
     		gen.load(dir + "/" + progFile);
     		gen.run();
     		
