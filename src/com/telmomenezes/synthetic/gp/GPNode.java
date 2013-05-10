@@ -22,15 +22,9 @@ public class GPNode {
     public int branching;
     public GPNodeDynStatus dynStatus;
     
-    public boolean path;
-    public boolean winPath;
-    public int evals;
-    public int lastEval;
-    public int winEvals;
-    public int winLastEval;
-    
     private Prog tree;
 
+    
     public GPNode(Prog tree) {
     	this.tree = tree;
         params = new GPNode[4];
@@ -107,11 +101,7 @@ public class GPNode {
     }
     
 
-    public void write(OutputStreamWriter out, boolean evalStats) throws IOException {
-    	if (evalStats) {
-    		out.write(" [" + winEvals + "; " + winLastEval + "] ");
-    	}
-    	
+    public void write(OutputStreamWriter out) throws IOException {
         if (type == GPNodeType.VAL) {
             out.write("" + val);
         }
@@ -170,62 +160,5 @@ public class GPNode {
         else {
             out.write("???");
         }
-    }
-    
-    
-    public void clearPath() {
-    	path = true;
-    	
-    	for (int i = 0; i < arity; i++) {
-    		params[i].clearPath();
-    	}
-    }
-    
-    
-    public void setWinPath() {
-    	winPath = path;
-    	
-    	for (int i = 0; i < arity; i++) {
-    		params[i].setWinPath();
-    	}
-    }
-    
-    
-    public void clearEvals() {
-        evals = 0;
-        lastEval = -1;
-        winEvals = 0;
-        winLastEval = -1;
-        for (int i = 0; i < arity; i++) {
-        	params[i].clearEvals();
-        }
-    }
-    
-    
-    public void updateEvals(int cycle) {
-    	if (!path) {
-    		return;
-    	}
-    	
-    	evals += 1;
-		lastEval = cycle;
-		
-		for (int i = 0; i < arity; i++) {
-    		params[i].updateEvals(cycle);
-    	}
-    }
-    
-    
-    public void updateWinEvals(int cycle) {
-    	if (!winPath) {
-    		return;
-    	}
-    	
-    	winEvals += 1;
-		winLastEval = cycle;
-		
-		for (int i = 0; i < arity; i++) {
-    		params[i].updateWinEvals(cycle);
-    	}
     }
 }

@@ -1,7 +1,6 @@
 package com.telmomenezes.synthetic;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
@@ -17,6 +16,7 @@ public class Generator {
     private int nodeCount;
     private int edgeCount;
     private boolean directed;
+    private double sr;
     private int trials;
     
 	private Prog prog;
@@ -43,6 +43,7 @@ public class Generator {
 	    this.nodeCount = nodeCount;
 	    this.edgeCount = edgeCount;
 	    this.directed = directed;
+	    this.sr = sr;
 	    this.trials = (int)(sr * (nodeCount * nodeCount));
 	    
 	    sampleOrigs = new int[trials];
@@ -92,12 +93,12 @@ public class Generator {
 	
 	
 	public Generator instance() {
-		return new Generator(nodeCount, edgeCount, directed, trials);
+		return new Generator(nodeCount, edgeCount, directed, sr);
 	}
 	
 	
 	public Generator clone() {
-		Generator generator = new Generator(nodeCount, edgeCount, directed, trials);
+		Generator generator = new Generator(nodeCount, edgeCount, directed, sr);
 		generator.prog = prog.clone();
 		return generator;
 	}
@@ -130,25 +131,14 @@ public class Generator {
 		}
 	}
 	
-	
-	private void copySamplesTo(Generator gen) {
-		for (int i = 0; i < trials; i++) {
-			gen.sampleOrigs[i] = sampleOrigs[i];
-            gen.sampleTargs[i] = sampleTargs[i];
-		}
-	}
-	
     
 	private Edge cycle() {
-		return cycle(null, null, true);
+		return cycle(null, null);
 	}
 	
 	
-	private Edge cycle(Set<Edge> topSet, double[] weights, boolean newSample) {
-		
-		if (newSample) {
-			generateSample();
-		}
+	private Edge cycle(Set<Edge> topSet, double[] weights) {
+		generateSample();
 		
 		if (topSet != null) {
         	topSet.clear();
@@ -245,9 +235,6 @@ public class Generator {
         bestOrigIndex = sampleOrigs[i];
         bestTargIndex = sampleTargs[i];
         
-        // update win evals
-        prog.root.updateWinEvals(time);
-        
         Node origNode = net.getNodes()[bestOrigIndex];
         Node targNode = net.getNodes()[bestTargIndex];
 
@@ -258,9 +245,6 @@ public class Generator {
 	public void run() {
 		net = new Net(nodeCount, edgeCount, directed, false);
 		
-        // reset eval stats
-        prog.clearEvals();
-        
         // create nodes
         for (int i = 0; i < nodeCount; i++) {
             net.addNode();
@@ -293,72 +277,6 @@ public class Generator {
         }
         
         simulated = true;
-    }
-	
-	
-	public double runCompare(Generator gen) {
-		net = new Net(nodeCount, edgeCount, directed, false);
-		gen.net = net;
-        
-        // create nodes
-        for (int i = 0; i < nodeCount; i++) {
-            net.addNode();
-        }
-        
-        // init DistMatrix
-        net.dRandomWalkers = null;
-        if (directed) {
-        	net.dRandomWalkers = new RandomWalkers(net, true);
-        }
-        net.uRandomWalkers = new RandomWalkers(net, false);
-
-        double overlap = 0;
-        
-        // create edges
-        time = 0;
-        while (time < edgeCount) {
-        	Set<Edge> topSet1 = new HashSet<Edge>();
-        	Set<Edge> topSet2 = new HashSet<Edge>();
-        	double[] weights1 = new double[trials];
-        	double[] weights2 = new double[trials];
-        	
-        	Edge newEdge1 = cycle(topSet1, weights1, true);
-        	copySamplesTo(gen);
-        	gen.cycle(topSet2, weights2, false);
-        	
-        	//System.out.println("" + topSet1.size() + " " + topSet2.size());
-        	
-        	boolean matches = false;
-        	for (Edge e : topSet1) {
-        		if (topSet2.contains(e)) {
-        			matches = true;
-        			break;
-        		}
-        	}
-        	
-        	if ((topSet1.size() == 0) && (topSet2.size() == 0)) {
-        		matches = true;
-        	}
-        	
-        	if (matches) {
-        		overlap += 1;
-        	}
-        	
-        	Node orig = newEdge1.getOrigin();
-        	Node targ = newEdge1.getTarget();
-        	
-        	net.addEdge(orig, targ);
-            
-            // update distances
-        	if (directed) {
-        		net.dRandomWalkers.step();
-        	}
-        	net.uRandomWalkers.step();
-        	
-        	time++;
-        }
-        
-        return overlap / edgeCount;
     }
 
 

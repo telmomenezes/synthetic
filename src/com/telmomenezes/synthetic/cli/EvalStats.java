@@ -20,7 +20,7 @@ public class EvalStats extends Command {
         gen.load(progFile);
         gen.run();
         
-        gen.getProg().write(outProg, true);
+        gen.getProg().write(outProg);
     	
         System.out.println("done.");
         

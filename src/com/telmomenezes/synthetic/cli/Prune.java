@@ -20,7 +20,7 @@ public class Prune extends Command {
         gen.run();
         
         gen.getProg().dynPruning();
-        gen.getProg().write(outProg, false);
+        gen.getProg().write(outProg);
     	
         System.out.println("done.");
         

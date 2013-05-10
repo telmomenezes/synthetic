@@ -152,8 +152,8 @@ public class Evo {
         bestGen.getNet().save(outDir + "/bestnet" + ".txt", NetFileType.SNAP);
         
         // write progs
-        bestGen.getProg().write(outDir + "/bestprog" + suffix + ".txt", false);
-        bestGen.getProg().write(outDir + "/bestprog" + ".txt", false);
+        bestGen.getProg().write(outDir + "/bestprog" + suffix + ".txt");
+        bestGen.getProg().write(outDir + "/bestprog" + ".txt");
         
         // write distribs
         writeDistribs(bestGen.getNet().metricsBag, "best");

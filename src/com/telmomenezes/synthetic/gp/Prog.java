@@ -44,8 +44,6 @@ public class Prog {
 		GPNode curnode = root;
 		curnode.curpos = -1;
 		double val = 0;
-
-		root.clearPath();
 		
 		while (curnode != null) {
 			curnode.curpos++;
@@ -55,45 +53,37 @@ public class Prog {
 					case GPFun.EQ:
 						if (curnode.params[0].curval == curnode.params[1].curval) {
 							curnode.stoppos = 3;
-							curnode.params[3].path = false;
 						}
 						else {
 							curnode.stoppos = 4;
 							curnode.curpos++;
-							curnode.params[2].path = false;
 						}
 						break;
 					case GPFun.GRT:
 						if (curnode.params[0].curval > curnode.params[1].curval) {
 							curnode.stoppos = 3;
-							curnode.params[3].path = false;
 						}
 						else {
 							curnode.stoppos = 4;
 							curnode.curpos++;
-							curnode.params[2].path = false;
 						}
 						break;
 					case GPFun.LRT:
                         if (curnode.params[0].curval < curnode.params[1].curval) {
                             curnode.stoppos = 3;
-                            curnode.params[3].path = false;
                         }
                         else {
                             curnode.stoppos = 4;
                             curnode.curpos++;
-                            curnode.params[2].path = false;
                         }
                         break;
 					case GPFun.ZER:
 						if (curnode.params[0].curval == 0) {
 							curnode.stoppos = 2;
-							curnode.params[2].path = false;
 						}
 						else {
 							curnode.stoppos = 3;
 							curnode.curpos++;
-							curnode.params[1].path = false;
 						}
 						break;
 					case GPFun.AFF:
@@ -102,12 +92,10 @@ public class Prog {
 						long id2 = Math.round(vars[1]);
 						if ((g == 0) || ((id1 % g) == (id2 % g))) {
 							curnode.stoppos = 2;
-							curnode.params[2].path = false;
 						}
 						else {
 							curnode.stoppos = 3;
 							curnode.curpos++;
-							curnode.params[1].path = false;
 						}
 						break;
 					default:
@@ -149,20 +137,12 @@ public class Prog {
 						val = curnode.params[0].curval;
                         if (curnode.params[1].curval < val) {
                             val = curnode.params[1].curval;
-                            curnode.params[0].path = false;
-                        }
-                        else {
-                        	curnode.params[1].path = false;
                         }
                         break;
 					case GPFun.MAX:
                         val = curnode.params[0].curval;
                         if (curnode.params[1].curval > val) {
                             val = curnode.params[1].curval;
-                            curnode.params[0].path = false;
-                        }
-                        else {
-                        	curnode.params[1].path = false;
                         }
                         break;
 					case GPFun.EXP:
@@ -217,14 +197,12 @@ public class Prog {
 				curnode = curnode.parent;
 			}
 		}
-		
-		root.updateEvals(cycle);
 
 		return val;
 	}
 
 
-	private void write2(GPNode node, int indent, OutputStreamWriter out, boolean evalStats) throws IOException {
+	private void write2(GPNode node, int indent, OutputStreamWriter out) throws IOException {
 		int ind = indent;
 
 		if (node.arity > 0) {
@@ -236,11 +214,11 @@ public class Prog {
 			ind++;
 		}
 
-		node.write(out, evalStats);
+		node.write(out);
 
 		for (int i = 0; i < node.arity; i++) {
 			out.write(" ");
-			write2(node.params[i], ind, out, evalStats);
+			write2(node.params[i], ind, out);
 		}
 
 		if (node.arity > 0) {
@@ -250,17 +228,17 @@ public class Prog {
 	}
 
 
-	public void write(OutputStreamWriter out, boolean evalStats) throws IOException {
-		write2(root, 0, out, evalStats);
+	public void write(OutputStreamWriter out) throws IOException {
+		write2(root, 0, out);
 		out.write("\n");
 	}
 	
 	
-	public void write(String filePath, boolean evalStats) {
+	public void write(String filePath) {
         try {
             FileOutputStream fstream = new FileOutputStream(filePath);
             OutputStreamWriter out = new OutputStreamWriter(fstream);
-            write(out, evalStats);
+            write(out);
             out.close();
         }
         catch (IOException e) {
@@ -268,9 +246,9 @@ public class Prog {
         }
     }
     
-    public void print(boolean evalStats) {
+    public void print() {
         try {
-            write(new OutputStreamWriter(System.out), evalStats);
+            write(new OutputStreamWriter(System.out));
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -586,11 +564,6 @@ public class Prog {
 	public void parse(String prog) {
 		parsePos = 0;
 		root = parse2(prog, null);
-	}
-
-	
-	public void clearEvals() {
-		root.clearEvals();
 	}
 	
 
