@@ -22,7 +22,7 @@ public class Evolve extends Command {
         int maxNodes = getIntegerParam("maxnodes", 999999999);
         int maxEdges = getIntegerParam("maxedges", 999999999);
         boolean directed = !paramExists("undir");
-        double tolerance = getDoubleParam("tolerance", 0.1);
+        double tolerance = getDoubleParam("tolerance", 0.01);
         
         Net net = Net.load(netfile, directed);
         
