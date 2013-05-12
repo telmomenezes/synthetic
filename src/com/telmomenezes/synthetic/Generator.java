@@ -1,7 +1,6 @@
 package com.telmomenezes.synthetic;
 
 import java.io.IOException;
-import java.util.Set;
 import java.util.Vector;
 
 import com.telmomenezes.synthetic.Net;
@@ -131,20 +130,10 @@ public class Generator {
 		}
 	}
 	
-    
+	
 	private Edge cycle() {
-		return cycle(null, null);
-	}
-	
-	
-	private Edge cycle(Set<Edge> topSet, double[] weights) {
 		generateSample();
 		
-		if (topSet != null) {
-        	topSet.clear();
-		}
-		
-		double bestWeight = -1;
         int bestOrigIndex = -1;
         int bestTargIndex = -1;
         
@@ -189,33 +178,9 @@ public class Generator {
             if (Double.isNaN(weight)) {
             	weight = 0;
             }
-        
-            // update top set
-            if (topSet != null) {
-            	if (weight > bestWeight) {
-            		topSet.clear();
-            	}
-            	if (weight >= bestWeight) {
-            		topSet.add(new Edge(net.getNodes()[origIndex], net.getNodes()[targIndex]));
-            	}
-            }
             
-            // update weight array
-            if (weights != null) {
-            	weights[i] = weight;
-            }
-            
-            //
             sampleWeights[i] = weight;
             totalWeight += weight;
-            
-            /*
-            if (weight > bestWeight) {
-            	bestWeight = weight;
-            	bestOrigIndex = origIndex;
-            	bestTargIndex = targIndex;
-            	prog.root.setWinPath();
-            }*/
         }
         
         if (totalWeight == 0) {

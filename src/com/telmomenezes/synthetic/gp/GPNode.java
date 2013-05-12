@@ -86,6 +86,7 @@ public class GPNode {
         case GPFun.DIV:
         case GPFun.MIN:
         case GPFun.MAX:
+        case GPFun.POW:
             return 2;
         case GPFun.ZER:
         case GPFun.AFF:
@@ -152,6 +153,9 @@ public class GPNode {
             case GPFun.AFF:
                 out.write("AFF");
                 break;
+            case GPFun.POW:
+            	out.write("^");
+            	break;
             default:
                 out.write("F??");
                 break;

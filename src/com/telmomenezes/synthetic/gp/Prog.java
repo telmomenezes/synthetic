@@ -159,6 +159,9 @@ public class Prog {
 					case GPFun.ABS:
                         val = Math.abs(curnode.params[0].curval);
                         break;
+					case GPFun.POW:
+                        val = Math.pow(curnode.params[0].curval, curnode.params[1].curval);
+                        break;
 					case GPFun.EQ:
 					case GPFun.GRT:
 					case GPFun.LRT:
@@ -543,6 +546,8 @@ public class Prog {
                     fun = GPFun.MAX;
 				else if (token.equals("AFF"))
                     fun = GPFun.AFF;
+				else if (token.equals("^"))
+                    fun = GPFun.POW;
 			
 				node.initFun(fun, parent);
 
