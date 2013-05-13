@@ -370,11 +370,8 @@ public class Generator {
 	}
 	
 	
+	/*
 	private double adjFit(double fmax, double favg) {
-		/*double MAXSCALE = 1;
-		double af = favg + (fmax * MAXSCALE);
-        af /= MAXSCALE + 1;
-        return af;*/
         return fmax;
 		//return favg;
 	}
@@ -384,7 +381,7 @@ public class Generator {
 		return adjFit(fitnessMax, fitnessAvg);
 	}
 	
-	
+
 	public boolean isBetterThan(Generator gen, double bestFitnessMax, double bestFitnessAvg, double tolerance) {
 		double bestAf = adjFit(bestFitnessMax, bestFitnessAvg);
 		
@@ -403,6 +400,20 @@ public class Generator {
 		}
 		
 		return w1;
+	}
+	*/
+	
+	
+	public boolean isBetterThan(Generator gen, double bestFitnessMax, double bestFitnessAvg, double tolerance) {
+		if (fitnessMax < bestFitnessMax) {
+			return true;
+		}
+		
+		if (withinRatio(fitnessMax, bestFitnessMax, tolerance)) {
+			return prog.size() < gen.prog.size();
+		}
+		
+		return false;
 	}
 	
 
