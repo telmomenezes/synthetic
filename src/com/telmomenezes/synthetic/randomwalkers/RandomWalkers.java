@@ -37,8 +37,8 @@ public class RandomWalkers {
     
     public void init() {
     	// clear matrices
-        int largeVal = 9999999;
-        //int largeVal = maxLength + 1;
+        //int largeVal = 9999999;
+        int largeVal = maxLength + 1;
         Arrays.fill(dmatrix, largeVal);
         for (int i = 0; i < nodes; i++) {
         	dmatrix[(i * nodes) + i] = 0;

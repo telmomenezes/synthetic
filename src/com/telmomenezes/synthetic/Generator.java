@@ -37,6 +37,8 @@ public class Generator {
     
     private MetricsBag genBag;
     
+    private boolean valid;
+    
     
 	public Generator(int nodeCount, int edgeCount, boolean directed, double sr) {
 	    this.nodeCount = nodeCount;
@@ -49,6 +51,7 @@ public class Generator {
 	    sampleTargs = new int[trials];
 	    sampleWeights = new double[trials];
 	    
+	    valid = true;
 		simulated = false;
 		
 		fitnessAvg = 0;
@@ -177,6 +180,7 @@ public class Generator {
             	
             if (Double.isNaN(weight)) {
             	weight = 0;
+            	valid = false;
             }
             
             sampleWeights[i] = weight;
@@ -272,7 +276,7 @@ public class Generator {
 			computeFitnessUndirected(targBag, bins);
 		}
 		
-		return fitnessAvg;
+		return fitnessMax;
 	}
 	
 	
@@ -355,56 +359,19 @@ public class Generator {
 	
 	
 	private boolean withinRatio(double x1, double x2, double tolerance) {
-		double f1 = x1;
-		double f2 = x2;
-		
-		if (f1 < f2) {
-			double aux = f1;
-			f1 = f2;
-			f2 = aux;
-		}
-		
-		double r = f1 / f2;
-		
-		return r < (1 + tolerance);
+		return Math.abs(x1 - x2) < tolerance;
 	}
-	
-	
-	/*
-	private double adjFit(double fmax, double favg) {
-        return fmax;
-		//return favg;
-	}
-	
-	
-	private double adjFit() {
-		return adjFit(fitnessMax, fitnessAvg);
-	}
-	
-
-	public boolean isBetterThan(Generator gen, double bestFitnessMax, double bestFitnessAvg, double tolerance) {
-		double bestAf = adjFit(bestFitnessMax, bestFitnessAvg);
-		
-		if (adjFit() < bestAf) {
-			bestAf = adjFit();
-		}
-		if (gen.adjFit() < bestAf) {
-			bestAf = gen.adjFit();
-		}
-		
-		boolean w1 = withinRatio(adjFit(), bestAf, tolerance);
-		boolean w2 = withinRatio(gen.adjFit(), bestAf, tolerance);
-		
-		if (w1 == w2) {
-			return prog.size() < gen.prog.size();
-		}
-		
-		return w1;
-	}
-	*/
 	
 	
 	public boolean isBetterThan(Generator gen, double bestFitnessMax, double bestFitnessAvg, double tolerance) {
+		if (!gen.valid) {
+			return true;
+		}
+		
+		if ((!valid) && (gen.valid)) {
+			return false;
+		}
+		
 		if (fitnessMax < bestFitnessMax) {
 			return true;
 		}
