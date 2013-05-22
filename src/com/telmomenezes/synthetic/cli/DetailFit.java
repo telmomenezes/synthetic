@@ -67,8 +67,9 @@ public class DetailFit extends Command {
         		gen.load(dir + "/" + progFile);
         		gen.run();
             	
-        		fit += gen.computeFitness(targBag, bins);
-            	MetricsBag bag = gen.getGenBag();
+        		gen.computeFitness(targBag, bins);
+            	fit += gen.fitnessMax;
+        		MetricsBag bag = gen.getGenBag();
         		
         		degreesDist += bag.getdDistsDist();
             	inDegreesDist += bag.getInDegreesDist();

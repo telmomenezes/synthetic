@@ -99,9 +99,6 @@ public class SynCLI {
             else if (cmd.equals("evalstats")) {
                 cmdObj = new EvalStats();
             }
-            else if (cmd.equals("comprun")) {
-                cmdObj = new CompRun();
-            }
             else if (cmd.equals("fit")) {
                 cmdObj = new Fit();
             }

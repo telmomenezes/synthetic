@@ -32,7 +32,7 @@ public class CompFit extends Command {
         	FileWriter fstream = new FileWriter(outFile);
         	BufferedWriter out = new BufferedWriter(fstream);
         
-        	out.write("prog,fit\n");
+        	out.write("prog,fit_max,fit_avg\n");
     	
         	for (String progFile : prgFiles) {
         		System.out.println("-> " + progFile);
@@ -43,10 +43,12 @@ public class CompFit extends Command {
         			gen.load(dir + "/" + progFile);
         			gen.run();
             	
-        			double fit = gen.computeFitness(targBag, bins);
+        			gen.computeFitness(targBag, bins);
+        			double fitMax = gen.fitnessMax;
+        			double fitAvg = gen.fitnessAvg;
         			
         			String[] tokens = progFile.split("\\.");
-        			out.write(tokens[0] + "," + fit + "\n");
+        			out.write(tokens[0] + "," + fitMax + "," + fitAvg + "\n");
         		}
         	}
         

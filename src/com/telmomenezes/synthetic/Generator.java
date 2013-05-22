@@ -264,16 +264,13 @@ public class Generator {
 	}
 
 	
-	public double computeFitness(MetricsBag targBag, int bins) {
+	public void computeFitness(MetricsBag targBag, int bins) {
 		if (net.isDirected()) {
 			computeFitnessDirected(targBag, bins);
 		}
 		else {
 			computeFitnessUndirected(targBag, bins);
 		}
-		
-		return fitnessMax;
-		//return fitnessAvg;
 	}
 	
 	
