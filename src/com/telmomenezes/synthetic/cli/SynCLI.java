@@ -117,6 +117,9 @@ public class SynCLI {
             else if (cmd.equals("metrics")) {
                 cmdObj = new Metrics();
             }
+            else if (cmd.equals("dists")) {
+                cmdObj = new Dists();
+            }
             else {
                 printErrorMessage("Command '" + cmd + "' does not exist.");
             }

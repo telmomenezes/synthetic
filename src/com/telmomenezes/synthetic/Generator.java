@@ -132,9 +132,15 @@ public class Generator {
 	}
 	
 	
-	private Edge cycle() {
-		generateSample();
-		
+	private Edge cycle(Generator master) {
+		if (master == null) {
+			generateSample();
+		}
+		else {
+			sampleOrigs = master.sampleOrigs;
+			sampleTargs = master.sampleTargs;
+		}
+			
         int bestOrigIndex = -1;
         int bestTargIndex = -1;
         
@@ -209,8 +215,43 @@ public class Generator {
     }
 	
 	
-	public void run() {
+	private double weightsDist(Generator gen) {
+		double totalWeight1 = 0;
+		double totalWeight2 = 0;
+		
+		for (int i = 0; i < trials; i++) {
+    		totalWeight1 += sampleWeights[i];
+    		totalWeight2 += gen.sampleWeights[i];
+    	}
+		
+		double dist = 0;
+		
+		for (int i = 0; i < trials; i++) {
+    		sampleWeights[i] /= totalWeight1;
+    		gen.sampleWeights[i] /= totalWeight2;
+    		
+    		dist += Math.abs(sampleWeights[i] - gen.sampleWeights[i]);
+    	}
+		
+		dist /= trials;
+		
+		return dist;
+	}
+	
+	
+	public double run() {
+		return run(null);
+	}
+	
+	
+	public double run(Generator shadow) {
+		double dist = 0;
+		
 		net = new Net(nodeCount, edgeCount, directed, false);
+		
+		if (shadow != null) {
+			shadow.net = net;
+		}
 		
         // create nodes
         for (int i = 0; i < nodeCount; i++) {
@@ -227,7 +268,12 @@ public class Generator {
         // create edges
         time = 0;
         while (time < edgeCount) {
-        	Edge newEdge = cycle();
+        	Edge newEdge = cycle(null);
+        	
+        	if (shadow != null) {
+        		shadow.cycle(this);
+        		dist += weightsDist(shadow);
+        	}
         	
         	Node orig = newEdge.getOrigin();
         	Node targ = newEdge.getTarget();
@@ -242,6 +288,9 @@ public class Generator {
         	
         	time++;
         }
+        
+        dist /= edgeCount;
+        return dist;
     }
 
 
