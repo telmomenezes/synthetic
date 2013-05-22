@@ -20,6 +20,7 @@ public class CompFit extends Command {
         int bins = getIntegerParam("bins", 100);
         int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
+        boolean mean = paramExists("mean");
         
         Net net = Net.load(netfile, directed);
         
@@ -36,18 +37,35 @@ public class CompFit extends Command {
     	
         	for (String progFile : prgFiles) {
         		System.out.println("-> " + progFile);
+        		
+        		String[] tokens = progFile.split("\\.");
+        		
+        		double fitMax = 0;
+        		double fitAvg = 0;
+        		
         		for (int i = 0; i < runs; i++) {
         			System.out.println("run #" + i);
             	
         			Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
         			gen.load(dir + "/" + progFile);
         			gen.run();
-            	
         			gen.computeFitness(targBag, bins);
-        			double fitMax = gen.fitnessMax;
-        			double fitAvg = gen.fitnessAvg;
         			
-        			String[] tokens = progFile.split("\\.");
+        			if (mean) {
+        				fitMax += gen.fitnessMax;
+        				fitAvg += gen.fitnessAvg;
+        			}
+        			else {
+        				fitMax = gen.fitnessMax;
+        				fitAvg = gen.fitnessAvg;
+        			
+        				out.write(tokens[0] + "," + fitMax + "," + fitAvg + "\n");
+        			}
+        		}
+        		
+        		if (mean) {
+        			fitMax /= runs;
+        			fitAvg /= runs;
         			out.write(tokens[0] + "," + fitMax + "," + fitAvg + "\n");
         		}
         	}

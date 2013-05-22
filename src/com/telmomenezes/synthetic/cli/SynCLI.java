@@ -65,6 +65,7 @@ public class SynCLI {
         options.addOption("tolerance", true, "antibloat tolerance");
         options.addOption("nodes", true, "number of nodes");
         options.addOption("edges", true, "number of edges");
+        options.addOption("mean", false, "compute mean");
         
         try {
             cline = parser.parse(options, args);
