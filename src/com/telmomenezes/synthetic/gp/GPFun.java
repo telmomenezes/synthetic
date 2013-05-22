@@ -17,6 +17,6 @@ public class GPFun {
 	public final static int ABS = 10;
 	public final static int MIN = 11;
 	public final static int MAX = 12;
-	public final static int AFF = 13;
-	public final static int POW = 14;
+	public final static int POW = 13;
+	public final static int AFF = 14;
 }

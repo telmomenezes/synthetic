@@ -2,14 +2,15 @@ package com.telmomenezes.synthetic;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.Vector;
 
 import com.telmomenezes.synthetic.io.NetFileType;
+import com.telmomenezes.synthetic.random.RandomGenerator;
 
 
 public class Evo {
-    
-	private Vector<Generator> population;
+    // best generators
+	private Generator bestGenerator;
+	private Generator bestFitGenerator;
 	private double bestFitnessMax;
 	private double bestFitnessAvg;
 	
@@ -20,7 +21,6 @@ public class Evo {
 	private String outDir;
 	
     // state
-	private Generator bestGenerator;
 	private int curgen;
 	private double genTime;
 	private double simTime;
@@ -53,19 +53,19 @@ public class Evo {
 		genTime = 0;
 		simTime = 0;
 		fitTime = 0;
-		bestGenerator = null;
-		bestFitnessMax = Double.MAX_VALUE;
-		bestFitnessAvg = Double.MAX_VALUE;
 		bestCount = 0;
 		writeLogHeader();
 	
 		// init population
-		population = new Vector<Generator>();
-		for (int i = 0; i < 2; i++) {
-			Generator gen = baseGenerator.instance();
-			gen.initRandom();
-			population.add(gen);
-		}
+		bestFitGenerator = baseGenerator.instance();
+		bestFitGenerator.initRandom();
+		bestFitGenerator.run();
+		bestFitGenerator.computeFitness(targBag, bins);
+		bestFitGenerator.getNet().clean();
+		bestGenerator = bestFitGenerator;
+		
+		bestFitnessMax = bestFitGenerator.fitnessMax;
+		bestFitnessAvg = bestFitGenerator.fitnessAvg;
 		
 		// evolve
 		int stableGens = 0;
@@ -78,36 +78,34 @@ public class Evo {
 			fitTime = 0;
 			
 			Generator generator;
-			for (int j = 0; j < 2; j++) {
-				generator = population.get(j);
-
-				if (!generator.simulated) {
-					long time0 = System.currentTimeMillis();
-					generator.run();
-					simTime += System.currentTimeMillis() - time0;
-					time0 = System.currentTimeMillis();
-					generator.computeFitness(targBag, bins);
-					generator.getNet().clean();
-					fitTime += System.currentTimeMillis() - time0;
-				
-				    generator.simulated = true;
-				}
-				
-				if (((curgen == 0) && (j == 0)) || (generator.isBetterThan(bestGenerator, bestFitnessMax, bestFitnessAvg, tolerance))) {
-					if (generator.fitnessMax < bestFitnessMax) {
-						bestFitnessMax = generator.fitnessMax;
-					}
-					if (generator.fitnessAvg < bestFitnessAvg) {
-						bestFitnessAvg = generator.fitnessAvg;
-					}
-					bestGenerator = generator;
-					onNewBest();
-					stableGens = 0;
-				}
+			if (RandomGenerator.random.nextBoolean()) {
+				generator = bestFitGenerator.clone();
 			}
+			else {
+				generator = bestGenerator.clone();
+			}
+			generator = generator.mutate();
 
-			// assign new population
-			population = newGeneration();
+			long time0 = System.currentTimeMillis();
+			generator.run();
+			simTime += System.currentTimeMillis() - time0;
+			time0 = System.currentTimeMillis();
+			generator.computeFitness(targBag, bins);
+			generator.getNet().clean();
+			fitTime += System.currentTimeMillis() - time0;	
+			
+			if (generator.isBetterThan(bestFitGenerator, bestFitnessMax, bestFitnessAvg, 0)) {
+				bestFitnessMax = generator.fitnessMax;
+				bestFitnessAvg = generator.fitnessAvg;
+				bestFitGenerator = generator;
+				stableGens = 0;
+			}
+			
+			if (generator.isBetterThan(bestGenerator, bestFitnessMax, bestFitnessAvg, tolerance)) {
+				bestGenerator = generator;
+				onNewBest();
+				stableGens = 0;
+			}
 
 			// time it took to compute the generation
 			genTime = System.currentTimeMillis() - startTime;
@@ -116,30 +114,10 @@ public class Evo {
 			fitTime /= 1000;
 			
 			System.out.println("stable generation: " + stableGens);
-			// onGeneration callback
 			onGeneration();
 		}
 		
 		System.out.println("Done.");
-	}
-	
-
-	private Vector<Generator> newGeneration() {
-		Generator parent = bestGenerator;
-		
-		Vector<Generator> newPopulation = new Vector<Generator>();
-		
-		
-		// place parent in new population
-		newPopulation.add(parent);
-		
-		// generate offspring
-		Generator child = parent.clone();
-			
-		// mutate
-		newPopulation.add(child.mutate());
-		
-		return newPopulation;
 	}
     
 	

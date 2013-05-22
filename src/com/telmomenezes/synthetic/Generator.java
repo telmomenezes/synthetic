@@ -19,7 +19,6 @@ public class Generator {
     private int trials;
     
 	private Prog prog;
-    public boolean simulated;
 
     public double fitnessAvg;
     public double fitnessMax;
@@ -52,7 +51,6 @@ public class Generator {
 	    sampleWeights = new double[trials];
 	    
 	    valid = true;
-		simulated = false;
 		
 		fitnessAvg = 0;
 		fitnessMax = 0;
@@ -244,8 +242,6 @@ public class Generator {
         	
         	time++;
         }
-        
-        simulated = true;
     }
 
 
@@ -277,6 +273,7 @@ public class Generator {
 		}
 		
 		return fitnessMax;
+		//return fitnessAvg;
 	}
 	
 	
@@ -358,8 +355,8 @@ public class Generator {
     }
 	
 	
-	private boolean withinRatio(double x1, double x2, double tolerance) {
-		return Math.abs(x1 - x2) < tolerance;
+	private boolean withinTolerance(double bestFitnessMax, double tolerance) {
+		return Math.abs(fitnessMax - bestFitnessMax) < tolerance;
 	}
 	
 	
@@ -372,15 +369,19 @@ public class Generator {
 			return false;
 		}
 		
-		if (fitnessMax < bestFitnessMax) {
+		if (tolerance <= 0) {
+			return fitnessMax < gen.fitnessMax;
+		}
+		
+		if (!withinTolerance(bestFitnessMax, tolerance)) {
+			return false;
+		}
+		
+		if (!gen.withinTolerance(bestFitnessMax, tolerance)) {
 			return true;
 		}
 		
-		if (withinRatio(fitnessMax, bestFitnessMax, tolerance)) {
-			return prog.size() < gen.prog.size();
-		}
-		
-		return false;
+		return prog.size() < gen.prog.size();
 	}
 	
 
@@ -400,16 +401,6 @@ public class Generator {
 
 	public void clearExecutionPaths() {
 		executionPaths.clear();
-	}
-
-
-	public boolean isSimulated() {
-		return simulated;
-	}
-
-
-	public void setSimulated(boolean simulated) {
-		this.simulated = simulated;
 	}
 
 
