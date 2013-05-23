@@ -51,9 +51,9 @@ public class Dists extends Command {
         			Generator gen2 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
         			gen2.load(dir + "/" + progFile2);
         		
-        			double dist = gen1.run(gen2);
-        			dist += gen2.run(gen1);
-        			dist /= 2;
+        			double dist1 = gen1.run(gen2);
+        			double dist2 = gen2.run(gen1);
+        			double dist = Math.min(dist1, dist2);
         		
         			System.out.println("dist: " + dist);
         			out.write("," + dist);
