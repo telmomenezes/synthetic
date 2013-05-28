@@ -6,12 +6,14 @@ import com.telmomenezes.synthetic.random.RandomGenerator;
 
 
 public class Node implements Cloneable {
-    private int id;
+	private int id;
     private Vector<Edge> inEdges;
     private Vector<Edge> outEdges;
     private int inDegree;
     private int outDegree;
 
+    public int value;
+    
     // pageranks
     private double prD;
     private double prDLast;
@@ -26,18 +28,24 @@ public class Node implements Cloneable {
     private boolean flag;
     
     
-    public Node(int id) {
+    public Node(int id, int value) {
         this.id = id;
         inDegree = 0;
         outDegree = 0;
         inEdges = new Vector<Edge>();
         outEdges = new Vector<Edge>();
+        this.value = value;
+    }
+    
+    
+    public Node(int id) {
+    	this(id, 0);
     }
     
     @Override
     public Node clone()
     {
-        Node clonedNode = new Node(id);
+        Node clonedNode = new Node(id, value);
         return clonedNode;
     }
 

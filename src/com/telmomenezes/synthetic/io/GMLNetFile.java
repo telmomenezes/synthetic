@@ -28,6 +28,7 @@ public class GMLNetFile extends NetFile {
             String line;
             String source = "";
             String target = "";
+            String id = "";
             int value = 1;
             while ((line = in.readLine()) != null) {
                 line = line.trim();
@@ -53,10 +54,17 @@ public class GMLNetFile extends NetFile {
                     if (line.startsWith("id")) {
                         String[] tokens = line.split(" ");
                         if (tokens.length >= 2) {
-                            nodes.put(tokens[1], nb.addNode());
+                            id = tokens[1];
+                        }
+                    }
+                    else if (line.startsWith("value")) {
+                        String[] tokens = line.split(" ");
+                        if (tokens.length >= 2) {
+                            value = new Integer(tokens[1]);
                         }
                     }
                     else if (line.startsWith("]")) {
+                    	nodes.put(id, nb.addNode(value));
                         state = State.GRAPH;
                     }
                     break;

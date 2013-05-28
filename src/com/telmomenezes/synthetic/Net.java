@@ -11,8 +11,8 @@ public class Net implements Cloneable {
     protected Edge[] edges;
     protected boolean[][] adjMatrix;
     
-    private int nodeCount;
-    private int edgeCount;
+    public int nodeCount;
+    public int edgeCount;
 
     public boolean directed;
     public boolean selfEdges;
@@ -128,10 +128,16 @@ public class Net implements Cloneable {
         return node;
     }
     
-    public Node addNode() {
-        Node node = new Node(nodeCount);
+    
+    public Node addNode(int value) {
+        Node node = new Node(nodeCount, value);
         addNode(node);
         return node;
+    }
+    
+    
+    public Node addNode() {
+        return addNode(0);
     }
     
     public Node getNodeById(int id) {
@@ -382,5 +388,17 @@ public class Net implements Cloneable {
         for (Node node : nodes) {
             node.setFlag(false);
         }
+    }
+    
+    
+    public double valueRatio(int value) {
+    	double count = 0;
+        for (Node node : nodes) {
+        	if (node.value == value) {
+        		count += 1;
+        	}
+        }
+        
+        return count / (double)nodeCount;
     }
 }

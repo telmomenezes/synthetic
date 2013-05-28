@@ -13,6 +13,7 @@ public class NetBuilder {
     private boolean parallels;
     
     private Vector<Vector<Integer>> adjMatrix;
+    private Vector<Integer> nodeValues;
     
     
     public NetBuilder() {
@@ -24,6 +25,7 @@ public class NetBuilder {
         selfEdges = false;
         
         adjMatrix = new Vector<Vector<Integer>>();
+        nodeValues = new Vector<Integer>();
     }
     
     
@@ -36,9 +38,15 @@ public class NetBuilder {
     
     
     public int addNode() {
+    	return addNode(0);
+    }
+    
+    
+    public int addNode(int value) {
         int id = nodeCount;
     	nodeCount++;
     	adjMatrix.add(new Vector<Integer>());
+    	nodeValues.add(value);
         return id;
     }
 
@@ -82,7 +90,7 @@ public class NetBuilder {
     	Node[] nodeMap = new Node[nodeCount];
     	
     	for (int i = 0; i < nodeCount; i++) {
-    		nodeMap[i] = net.addNode();
+    		nodeMap[i] = net.addNode(nodeValues.get(i));
     	}
     	
     	for (int orig = 0; orig < nodeCount; orig++) {

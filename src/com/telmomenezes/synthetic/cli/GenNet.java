@@ -26,8 +26,9 @@ public class GenNet extends Command {
         }
         System.out.println("nodes: " + nodes);
         System.out.println("edges: " + edges);
-        	
-        Generator gen = GeneratorFactory.create(gentype, nodes, edges, directed, par, sr);
+        
+        Net net = new Net(nodes, edges, directed, false, par);
+        Generator gen = GeneratorFactory.create(gentype, net, sr);
         gen.load(progFile);
         gen.run();
         Net syntNet = gen.getNet();

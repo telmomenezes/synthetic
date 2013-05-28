@@ -2,6 +2,7 @@ package com.telmomenezes.synthetic.generators;
 
 import java.util.Vector;
 
+import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.gp.Prog;
 import com.telmomenezes.synthetic.random.RandomGenerator;
@@ -10,13 +11,12 @@ import com.telmomenezes.synthetic.random.RandomGenerator;
 
 public class ExoGenerator extends Generator {
 
-	public ExoGenerator(int nodeCount, int edgeCount, boolean directed,
-			boolean parallels, double sr) {
-		super(nodeCount, edgeCount, directed, parallels, sr);
+	public ExoGenerator(Net refNet, double sr) {
+		super(refNet, sr);
 		
 		Vector<String> variableNames = new Vector<String>();
 		
-		if (directed) {
+		if (refNet.directed) {
 			variableNames.add("ovar");
 			variableNames.add("tvar");
 			variableNames.add("origInDeg");
@@ -42,12 +42,12 @@ public class ExoGenerator extends Generator {
 	
 	
 	public Generator instance() {
-		return new ExoGenerator(nodeCount, edgeCount, directed, parallels, sr);
+		return new ExoGenerator(refNet, sr);
 	}
 	
 	
 	public Generator clone() {
-		Generator generator = new ExoGenerator(nodeCount, edgeCount, directed, parallels, sr);
+		Generator generator = new ExoGenerator(refNet, sr);
 		generator.prog = prog.clone();
 		return generator;
 	}
@@ -62,7 +62,7 @@ public class ExoGenerator extends Generator {
 		prog.vars[0] = labels[origIndex];
 		prog.vars[1] = labels[targIndex];
 		
-        if (directed) {
+        if (refNet.directed) {
         	double directDistance = net.dRandomWalkers.getDist(origNode.getId(), targNode.getId());
         	double reverseDistance = net.dRandomWalkers.getDist(targNode.getId(), origNode.getId());
                 
@@ -83,9 +83,15 @@ public class ExoGenerator extends Generator {
 	
 	
 	protected void createNodes() {
-        for (int i = 0; i < nodeCount; i++) {
+        for (int i = 0; i < refNet.nodeCount; i++) {
             net.addNode();
             labels[i] = RandomGenerator.random.nextDouble();
         }
+	}
+	
+	
+	@Override
+	public String toString() {
+		return "ExoGenerator -> " + super.toString(); 
 	}
 }

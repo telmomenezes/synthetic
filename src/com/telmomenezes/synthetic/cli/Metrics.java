@@ -28,7 +28,8 @@ public class Metrics extends Command {
         	edges = net.getEdgeCount();
         }
         else {
-        	Generator gen = GeneratorFactory.create(gentype, nodes, edges, directed, par, sr);
+        	net = new Net(nodes, edges, directed, false, par);
+        	Generator gen = GeneratorFactory.create(gentype, net, sr);
             gen.load(progFile);
             gen.run();
             net = gen.getNet();

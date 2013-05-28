@@ -32,7 +32,7 @@ public class Evolve extends Command {
         // down sampling if needed
         Net sampleNet = DownSampler.sample(net, maxNodes, maxEdges);
         
-     	Generator baseGenerator = GeneratorFactory.create(gentype, sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, par, sr);
+     	Generator baseGenerator = GeneratorFactory.create(gentype, sampleNet, sr);
      	
         Evo evo = new Evo(sampleNet, generations, bins, tolerance, baseGenerator, outdir);
         

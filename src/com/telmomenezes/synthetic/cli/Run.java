@@ -33,7 +33,7 @@ public class Run extends Command {
         for (int i = 0; i < runs; i++) {
         	System.out.println("run #" + i);
         	
-        	Generator gen = GeneratorFactory.create(gentype, net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
+        	Generator gen = GeneratorFactory.create(gentype, net, sr);
         	gen.load(progFile);
         	gen.run();
         	Net syntNet = gen.getNet();

@@ -19,7 +19,7 @@ public class EvalStats extends Command {
         
         System.out.println(net);
         
-        Generator gen = GeneratorFactory.create(gentype, net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
+        Generator gen = GeneratorFactory.create(gentype, net, sr);
         gen.load(progFile);
         gen.run();
         

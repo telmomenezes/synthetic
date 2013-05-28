@@ -33,7 +33,7 @@ public class DistFit extends Command {
         Map<String, MetricsBag> bagMap = new HashMap<String, MetricsBag>();
         for (String progFile : prgFiles) {
         	System.out.println("running " + progFile);
-        	Generator gen = GeneratorFactory.create(gentype, net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
+        	Generator gen = GeneratorFactory.create(gentype, net, sr);
     		gen.load(dir + "/" + progFile);
     		gen.run();
     		

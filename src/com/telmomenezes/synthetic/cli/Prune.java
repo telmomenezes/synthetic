@@ -18,7 +18,7 @@ public class Prune extends Command {
         Net net = Net.load(netfile, directed, par);
         System.out.println(net);
         
-        Generator gen = GeneratorFactory.create(gentype, net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
+        Generator gen = GeneratorFactory.create(gentype, net, sr);
         gen.load(progFile);
         gen.run();
         

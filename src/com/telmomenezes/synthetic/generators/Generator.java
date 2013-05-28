@@ -15,10 +15,6 @@ import com.telmomenezes.synthetic.gp.Prog;
 
 public abstract class Generator { 
 	
-	protected int nodeCount;
-    protected int edgeCount;
-    protected boolean directed;
-    protected boolean parallels;
     protected double sr;
     
     protected int trials;
@@ -31,6 +27,7 @@ public abstract class Generator {
     protected Vector<Prog> executionPaths;
     //private boolean checkPaths;
     
+    protected Net refNet;
     protected Net net;
     
     protected int time;
@@ -52,14 +49,11 @@ public abstract class Generator {
 	protected abstract void createNodes();
 	
     
-	public Generator(int nodeCount, int edgeCount, boolean directed, boolean parallels, double sr) {
-	    this.nodeCount = nodeCount;
-	    this.edgeCount = edgeCount;
-	    this.directed = directed;
-	    this.parallels = parallels;
+	public Generator(Net refNet, double sr) {
+	    this.refNet = refNet;
 	    this.sr = sr;
 	    
-	    this.trials = (int)(sr * (nodeCount * nodeCount));
+	    this.trials = (int)(sr * (refNet.nodeCount * refNet.nodeCount));
 	    
 	    sampleOrigs = new int[trials];
 	    sampleTargs = new int[trials];
@@ -83,7 +77,7 @@ public abstract class Generator {
 	
 	
 	private int getRandomNode() {
-		return RandomGenerator.random.nextInt(nodeCount);
+		return RandomGenerator.random.nextInt(refNet.nodeCount);
 	}
 	
 	
@@ -98,7 +92,7 @@ public abstract class Generator {
             	targIndex = getRandomNode();
             		
             	if (origIndex != targIndex) {
-            		if (parallels || (!net.edgeExists(origIndex, targIndex))) {
+            		if (refNet.parallels || (!net.edgeExists(origIndex, targIndex))) {
             			found = true;
             		}
             	}
@@ -197,8 +191,8 @@ public abstract class Generator {
 	public double run(Generator shadow) {
 		double dist = 0;
 		
-		net = new Net(nodeCount, edgeCount, directed, false, parallels);
-		labels = new double[nodeCount];
+		net = new Net(refNet.nodeCount, refNet.edgeCount, refNet.directed, false, refNet.parallels);
+		labels = new double[refNet.nodeCount];
 		
 		if (shadow != null) {
 			shadow.net = net;
@@ -209,14 +203,14 @@ public abstract class Generator {
         
         // init DistMatrix
         net.dRandomWalkers = null;
-        if (directed) {
+        if (refNet.directed) {
         	net.dRandomWalkers = new RandomWalkers(net, true);
         }
         net.uRandomWalkers = new RandomWalkers(net, false);
 
         // create edges
         time = 0;
-        while (time < edgeCount) {
+        while (time < refNet.edgeCount) {
         	Edge newEdge = cycle(null);
         	
         	if (shadow != null) {
@@ -230,7 +224,7 @@ public abstract class Generator {
         	net.addEdge(orig, targ);
             
         	// update distances
-        	if (directed) {
+        	if (refNet.directed) {
         		net.dRandomWalkers.step();
         	}
         	net.uRandomWalkers.step();
@@ -238,7 +232,7 @@ public abstract class Generator {
         	time++;
         }
         
-        dist /= edgeCount;
+        dist /= refNet.edgeCount;
         return dist;
     }
 
@@ -411,26 +405,6 @@ public abstract class Generator {
 		return executionPaths;
 	}
 
-
-    public int getNodeCount() {
-        return nodeCount;
-    }
-
-
-    public void setNodeCount(int nodeCount) {
-        this.nodeCount = nodeCount;
-    }
-
-
-    public int getEdgeCount() {
-        return edgeCount;
-    }
-
-
-    public void setEdgeCount(int edgeCount) {
-        this.edgeCount = edgeCount;
-    }
-
     
     public Prog getProg() {
         return prog;
@@ -449,6 +423,6 @@ public abstract class Generator {
 
 	@Override
 	public String toString() {
-		return "Generator-> trials: " + trials; 
+		return "trials: " + trials; 
 	}
 }
