@@ -14,9 +14,10 @@ public class Net implements Cloneable {
     private int nodeCount;
     private int edgeCount;
 
-    private boolean directed;
-    private boolean selfEdges;
-
+    public boolean directed;
+    public boolean selfEdges;
+    public boolean parallels;
+    
     private boolean pageRanksComputed;
     
     public MetricsBag metricsBag;
@@ -34,14 +35,16 @@ public class Net implements Cloneable {
         // defaults
         directed = true;
         selfEdges = false;
+        parallels = false;
         
         pageRanksComputed = false;
     }
     
-    public Net(int maxNodeCount, int maxEdgeCount, boolean directed, boolean selfEdges) {
+    public Net(int maxNodeCount, int maxEdgeCount, boolean directed, boolean selfEdges, boolean parallels) {
         this(maxNodeCount, maxEdgeCount);
         this.directed = directed;
         this.selfEdges = selfEdges;
+        this.parallels = parallels;
     }
     
     @Override
@@ -51,6 +54,7 @@ public class Net implements Cloneable {
         
         clonedNet.directed = directed;
         clonedNet.selfEdges = selfEdges;
+        clonedNet.parallels = parallels;
         
         // clone all nodes
         for (Node node : nodes) {
@@ -77,6 +81,7 @@ public class Net implements Cloneable {
         
         clonedNet.directed = directed;
         clonedNet.selfEdges = selfEdges;
+        clonedNet.parallels = parallels;
         
         // clone nodes
         for (Node node : nodes) {
@@ -103,12 +108,12 @@ public class Net implements Cloneable {
     
     
     public static Net load(String filePath) {
-        return load(filePath, true);
+        return load(filePath, true, false);
     }
     
     
-    public static Net load(String filePath, boolean directed) {
-        return NetFile.loadNet(filePath, directed);
+    public static Net load(String filePath, boolean directed, boolean parallels) {
+        return NetFile.loadNet(filePath, directed, parallels);
     }
 
     
@@ -135,11 +140,11 @@ public class Net implements Cloneable {
     
     public boolean addEdge(Node origin, Node target) {
         if ((!selfEdges) && (origin == target)) {
-            return false;
+        	return false;
         }
 
-        if (edgeExists(origin, target)) {
-            return false;
+        if ((!parallels) && edgeExists(origin, target)) {
+        	return false;
         }
         
         Edge edge = new Edge(origin, target);
@@ -378,8 +383,4 @@ public class Net implements Cloneable {
             node.setFlag(false);
         }
     }
-
-	public boolean isDirected() {
-		return directed;
-	}
 }

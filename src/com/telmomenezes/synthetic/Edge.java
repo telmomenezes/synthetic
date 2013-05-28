@@ -30,6 +30,7 @@ public class Edge {
     }
 
 
+    /*
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -60,5 +61,5 @@ public class Edge {
 		} else if (!target.equals(other.target))
 			return false;
 		return true;
-	}
+	}*/
 }

@@ -15,8 +15,8 @@ import com.telmomenezes.synthetic.NetBuilder;
 
 public class SNAPNetFile extends NetFile {
     @Override
-    public Net load(String filePath, boolean directed) {
-        NetBuilder nb = new NetBuilder(directed, false);
+    public Net load(String filePath, boolean directed, boolean parallels) {
+        NetBuilder nb = new NetBuilder(directed, false, parallels);
         Map<String, Integer> nodes = new HashMap<String, Integer>();
         
         try {
@@ -31,7 +31,7 @@ public class SNAPNetFile extends NetFile {
                                 nodes.put(t, nb.addNode());
                             }
                         }
-                        nb.addEdge(nodes.get(tokens[0]), nodes.get(tokens[1]));
+                        nb.addEdge(nodes.get(tokens[0]), nodes.get(tokens[1]), 1);
                     }
                 }
             }
@@ -62,7 +62,7 @@ public class SNAPNetFile extends NetFile {
     
     static public void main(String[] args) {
         SNAPNetFile snf = new SNAPNetFile();
-        Net net = snf.load("ownership.txt", true);
+        Net net = snf.load("ownership.txt", true, false);
         System.out.println(net);
     }
 }

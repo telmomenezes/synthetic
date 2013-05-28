@@ -22,7 +22,7 @@ public abstract class TriadicProfile {
     
 
     public static TriadicProfile create(Net net) {
-    	if (net.isDirected()) {
+    	if (net.directed) {
     		return new DTriadicProfile(net);
     	}
     	else {

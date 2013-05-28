@@ -15,7 +15,9 @@ public class Generator {
     private int nodeCount;
     private int edgeCount;
     private boolean directed;
+    private boolean parallels;
     private double sr;
+    
     private int trials;
     
 	private Prog prog;
@@ -30,6 +32,8 @@ public class Generator {
     
     private int time;
     
+    public double[] labels;
+    
     private int[] sampleOrigs;
     private int[] sampleTargs;
     private double[] sampleWeights;
@@ -39,11 +43,13 @@ public class Generator {
     private boolean valid;
     
     
-	public Generator(int nodeCount, int edgeCount, boolean directed, double sr) {
+	public Generator(int nodeCount, int edgeCount, boolean directed, boolean parallels, double sr) {
 	    this.nodeCount = nodeCount;
 	    this.edgeCount = edgeCount;
 	    this.directed = directed;
+	    this.parallels = parallels;
 	    this.sr = sr;
+	    
 	    this.trials = (int)(sr * (nodeCount * nodeCount));
 	    
 	    sampleOrigs = new int[trials];
@@ -58,8 +64,8 @@ public class Generator {
 		Vector<String> variableNames = new Vector<String>();
 		
 		if (directed) {
-			variableNames.add("origId");
-			variableNames.add("targId");
+			variableNames.add("ovar");
+			variableNames.add("tvar");
 			variableNames.add("origInDeg");
 			variableNames.add("origOutDeg");
 			variableNames.add("targInDeg");
@@ -71,8 +77,8 @@ public class Generator {
 			prog = new Prog(9, variableNames);
 		}
 		else {
-			variableNames.add("origId");
-			variableNames.add("targId");
+			variableNames.add("ovar");
+			variableNames.add("tvar");
 			variableNames.add("origDeg");
 			variableNames.add("targDeg");
 			variableNames.add("dist");
@@ -93,12 +99,12 @@ public class Generator {
 	
 	
 	public Generator instance() {
-		return new Generator(nodeCount, edgeCount, directed, sr);
+		return new Generator(nodeCount, edgeCount, directed, parallels, sr);
 	}
 	
 	
 	public Generator clone() {
-		Generator generator = new Generator(nodeCount, edgeCount, directed, sr);
+		Generator generator = new Generator(nodeCount, edgeCount, directed, parallels, sr);
 		generator.prog = prog.clone();
 		return generator;
 	}
@@ -120,7 +126,7 @@ public class Generator {
             	targIndex = getRandomNode();
             		
             	if (origIndex != targIndex) {
-            		if (!net.edgeExists(origIndex, targIndex)) {
+            		if (parallels || (!net.edgeExists(origIndex, targIndex))) {
             			found = true;
             		}
             	}
@@ -154,13 +160,14 @@ public class Generator {
     		Node targNode = net.getNodes()[targIndex];    
     		
             double distance = net.uRandomWalkers.getDist(origNode.getId(), targNode.getId());
-            	
+            
+			prog.vars[0] = labels[origIndex];
+			prog.vars[1] = labels[targIndex];
+			
             if (directed) {
             	double directDistance = net.dRandomWalkers.getDist(origNode.getId(), targNode.getId());
             	double reverseDistance = net.dRandomWalkers.getDist(targNode.getId(), origNode.getId());
                     
-            	prog.vars[0] = (double)origIndex;
-            	prog.vars[1] = (double)targIndex;
             	prog.vars[2] = (double)origNode.getInDegree();
             	prog.vars[3] = (double)origNode.getOutDegree();
             	prog.vars[4] = (double)targNode.getInDegree();
@@ -170,14 +177,12 @@ public class Generator {
             	prog.vars[8] = reverseDistance;
             }
             else {
-            	prog.vars[0] = (double)origIndex;
-            	prog.vars[1] = (double)targIndex;
             	prog.vars[2] = (double)origNode.getDegree();
             	prog.vars[3] = (double)targNode.getDegree();
             	prog.vars[4] = distance;
             }
                     
-            double weight = prog.eval(time);
+            double weight = prog.eval();
             if (weight < 0) {
             	weight = 0;
             }
@@ -247,15 +252,18 @@ public class Generator {
 	public double run(Generator shadow) {
 		double dist = 0;
 		
-		net = new Net(nodeCount, edgeCount, directed, false);
+		net = new Net(nodeCount, edgeCount, directed, false, parallels);
+		labels = new double[nodeCount];
 		
 		if (shadow != null) {
 			shadow.net = net;
+			shadow.labels = labels;
 		}
 		
         // create nodes
         for (int i = 0; i < nodeCount; i++) {
             net.addNode();
+            labels[i] = RandomGenerator.random.nextDouble();
         }
         
         // init DistMatrix
@@ -314,7 +322,7 @@ public class Generator {
 
 	
 	public void computeFitness(MetricsBag targBag, int bins) {
-		if (net.isDirected()) {
+		if (net.directed) {
 			computeFitnessDirected(targBag, bins);
 		}
 		else {

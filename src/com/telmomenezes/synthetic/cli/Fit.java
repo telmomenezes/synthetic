@@ -13,8 +13,9 @@ public class Fit extends Command {
         int bins = getIntegerParam("bins", 100);
         int runs = getIntegerParam("runs", 30);
     	boolean directed = !paramExists("undir");
-        
-        Net net = Net.load(netfile, directed);
+    	boolean par = paramExists("par");
+    	
+        Net net = Net.load(netfile, directed, par);
         System.out.println(net);
         
         MetricsBag targBag = new MetricsBag(net, bins);
@@ -34,7 +35,7 @@ public class Fit extends Command {
         for (int i = 0; i < runs; i++) {
         	System.out.println("run #" + i);
         	
-        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
+        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
         	gen.load(progFile);
         	gen.run();
         	

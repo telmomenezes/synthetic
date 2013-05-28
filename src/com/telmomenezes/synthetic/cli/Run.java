@@ -18,8 +18,9 @@ public class Run extends Command {
         double sr = getDoubleParam("sr", 0.0006);
         int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
+        boolean par = paramExists("par");
         
-        Net net = Net.load(netfile, directed);
+        Net net = Net.load(netfile, directed, par);
         
         Distrib dPageRankReal = new Distrib(net.prDSeq(), bins);
     	Distrib uPageRankReal = new Distrib(net.prUSeq(), bins);
@@ -30,7 +31,7 @@ public class Run extends Command {
         for (int i = 0; i < runs; i++) {
         	System.out.println("run #" + i);
         	
-        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
+        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
         	gen.load(progFile);
         	gen.run();
         	Net syntNet = gen.getNet();

@@ -21,8 +21,9 @@ public class CompFit extends Command {
         int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
         boolean mean = paramExists("mean");
+        boolean par = paramExists("par");
         
-        Net net = Net.load(netfile, directed);
+        Net net = Net.load(netfile, directed, par);
         
         System.out.println(net);
         MetricsBag targBag = new MetricsBag(net, bins);
@@ -46,7 +47,7 @@ public class CompFit extends Command {
         		for (int i = 0; i < runs; i++) {
         			System.out.println("run #" + i);
             	
-        			Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
+        			Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
         			gen.load(dir + "/" + progFile);
         			gen.run();
         			gen.computeFitness(targBag, bins);

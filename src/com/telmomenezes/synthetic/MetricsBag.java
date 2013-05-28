@@ -37,7 +37,7 @@ public class MetricsBag {
 		triadicProfile = TriadicProfile.create(net);
 		
 		// distances
-		if (net.isDirected()) {
+		if (net.directed) {
 			inDegrees = new DiscreteDistrib(net.inDegSeq());
 			outDegrees = new DiscreteDistrib(net.outDegSeq());
 			dPageRanks = new Distrib(net.prDSeq(), this.bins);
@@ -80,7 +80,7 @@ public class MetricsBag {
     	uPageRanks = new Distrib(net.prUSeq(), this.bins, bag.uPageRanks);
 		triadicProfile = TriadicProfile.create(net);
     	
-    	if (net.isDirected()) {
+    	if (net.directed) {
     		inDegrees = new DiscreteDistrib(net.inDegSeq(), bag.inDegrees);
     		outDegrees = new DiscreteDistrib(net.outDegSeq(), bag.outDegrees);
     		dPageRanks = new Distrib(net.prDSeq(), this.bins, bag.dPageRanks);
@@ -131,7 +131,7 @@ public class MetricsBag {
         if (triadicProfileDist == 0) triadicProfileDist = verySmall;
         if (uDistsDist == 0) uDistsDist = verySmall;
         
-    	if (net.isDirected()) {
+    	if (net.directed) {
     		inDegreesDist = inDegrees.emdDistance(bag.inDegrees);
             outDegreesDist = outDegrees.emdDistance(bag.outDegrees);
             dPageRanksDist = dPageRanks.emdDistance(bag.dPageRanks);

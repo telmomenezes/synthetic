@@ -18,8 +18,9 @@ public class Dists extends Command {
         String outFile = getStringParam("out");
         double sr = getDoubleParam("sr", 0.0006);
         boolean directed = !paramExists("undir");
+        boolean par = paramExists("par");
         
-        Net net = Net.load(netfile, directed);
+        Net net = Net.load(netfile, directed, par);
         
         System.out.println(net);
         
@@ -45,16 +46,17 @@ public class Dists extends Command {
         		
         			System.out.println(progFile1 + " -> " + progFile2);
         		
-        			Generator gen1 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
+        			Generator gen1 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
         			gen1.load(dir + "/" + progFile1);
         		
-        			Generator gen2 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
+        			Generator gen2 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
         			gen2.load(dir + "/" + progFile2);
         		
         			double dist1 = gen1.run(gen2);
         			double dist2 = gen2.run(gen1);
-        			double dist = Math.min(dist1, dist2);
-        		
+        			//double dist = Math.min(dist1, dist2);
+        			double dist = (dist1 + dist2) / 2;
+        			
         			System.out.println("dist: " + dist);
         			out.write("," + dist);
         		}

@@ -11,12 +11,13 @@ public class EvalStats extends Command {
     	String outProg = getStringParam("oprg");
     	double sr = getDoubleParam("sr", 0.0006);
         boolean directed = !paramExists("undir");
+        boolean par = paramExists("par");
     	
-        Net net = Net.load(netfile, directed);
+        Net net = Net.load(netfile, directed, par);
         
         System.out.println(net);
         
-        Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
+        Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
         gen.load(progFile);
         gen.run();
         

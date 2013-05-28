@@ -16,16 +16,17 @@ public class Metrics extends Command {
         double sr = getDoubleParam("sr", 0.0006);
         int bins = getIntegerParam("bins", 100);
         boolean directed = !paramExists("undir");
+        boolean par = paramExists("par");
         
         Net net = null;
         
         if (!netfile.equals("")) {
-        	net = Net.load(netfile, directed);
+        	net = Net.load(netfile, directed, par);
         	nodes = net.getNodeCount();
         	edges = net.getEdgeCount();
         }
         else {
-        	Generator gen = new Generator(nodes, edges, directed, sr);
+        	Generator gen = new Generator(nodes, edges, directed, par, sr);
             gen.load(progFile);
             gen.run();
             net = gen.getNet();

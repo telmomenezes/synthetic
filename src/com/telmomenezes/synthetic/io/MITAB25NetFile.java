@@ -40,8 +40,8 @@ public class MITAB25NetFile extends NetFile {
 	
 	
 	@Override
-	public Net load(String filePath, boolean directed) {
-		nb = new NetBuilder(directed, false);
+	public Net load(String filePath, boolean directed, boolean parallels) {
+		nb = new NetBuilder(directed, false, parallels);
 		nodeMap = new HashMap<String, Integer>();
 		
 		BufferedReader br;
@@ -53,7 +53,7 @@ public class MITAB25NetFile extends NetFile {
 			   
 			   int origNode = getNode(cols[0]);
 			   int targNode = getNode(cols[1]);
-			   nb.addEdge(origNode, targNode);
+			   nb.addEdge(origNode, targNode, 1);
 			}
 			br.close();
 		}
@@ -72,7 +72,7 @@ public class MITAB25NetFile extends NetFile {
 
 	public static void main(String[] args) {
 		MITAB25NetFile mitab25 = new MITAB25NetFile();
-		Net net = mitab25.load("Hsapi20120818CR.mitab", false);
+		Net net = mitab25.load("Hsapi20120818CR.mitab", false, false);
 		System.out.println(net);
 	}
 

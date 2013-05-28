@@ -17,8 +17,8 @@ public class GMLNetFile extends NetFile {
     }
     
     @Override
-    public Net load(String filePath, boolean directed) {
-        NetBuilder nb = new NetBuilder(directed, false);
+    public Net load(String filePath, boolean directed, boolean parallels) {
+        NetBuilder nb = new NetBuilder(directed, false, parallels);
         Map<String, Integer> nodes = new HashMap<String, Integer>();
         
         try {
@@ -28,6 +28,7 @@ public class GMLNetFile extends NetFile {
             String line;
             String source = "";
             String target = "";
+            int value = 1;
             while ((line = in.readLine()) != null) {
                 line = line.trim();
                 
@@ -72,8 +73,14 @@ public class GMLNetFile extends NetFile {
                             target = tokens[1];
                         }
                     }
+                    else if (line.startsWith("value")) {
+                        String[] tokens = line.split(" ");
+                        if (tokens.length >= 2) {
+                            value = new Integer(tokens[1]);
+                        }
+                    }
                     else if (line.startsWith("]")) {
-                        nb.addEdge(nodes.get(source), nodes.get(target));
+                        nb.addEdge(nodes.get(source), nodes.get(target), value);
                         state = State.GRAPH;
                     }
                     break;
@@ -96,7 +103,7 @@ public class GMLNetFile extends NetFile {
 
     static public void main(String[] args) {
         GMLNetFile nf = new GMLNetFile();
-        Net net = nf.load("celegansneural.gml", true);
+        Net net = nf.load("celegansneural.gml", true, true);
         System.out.println(net);
     }
 }

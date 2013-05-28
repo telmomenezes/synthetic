@@ -8,8 +8,8 @@ import com.telmomenezes.synthetic.random.RandomGenerator;
 
 
 public class RandomNet {
-	public static Net generate(int nodeCount, int edgeCount, boolean directed) {
-		Net net = new Net(nodeCount, edgeCount, directed, false);
+	public static Net generate(int nodeCount, int edgeCount, boolean directed, boolean parallels) {
+		Net net = new Net(nodeCount, edgeCount, directed, false, parallels);
 		
 		Vector<Node> nodes = new Vector<Node>();
 		
@@ -36,6 +36,6 @@ public class RandomNet {
 	
 	
 	public static Net generate(Net net) {
-		return generate(net.getNodeCount(), net.getEdgeCount(), net.isDirected());
+		return generate(net.getNodeCount(), net.getEdgeCount(), net.directed, net.parallels);
 	}
 }

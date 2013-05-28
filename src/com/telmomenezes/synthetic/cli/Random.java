@@ -14,8 +14,9 @@ public class Random extends Command {
         int bins = getIntegerParam("bins", 100);
         int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
+        boolean par = paramExists("par");
     	
-        Net net = Net.load(netfile, directed);
+        Net net = Net.load(netfile, directed, par);
      	
         int nodeCount = net.getNodeCount();
         int edgeCount = net.getEdgeCount();
@@ -28,7 +29,7 @@ public class Random extends Command {
         for (int i = 0; i < runs; i++) {
         	System.out.println("run #" + i);
         
-        	Net randomNet = RandomNet.generate(nodeCount, edgeCount, directed);
+        	Net randomNet = RandomNet.generate(nodeCount, edgeCount, directed, par);
         
         	// write net
         	randomNet.save(outDir + "/randomnet.txt", NetFileType.SNAP);

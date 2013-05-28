@@ -19,8 +19,9 @@ public class DetailFit extends Command {
         int bins = getIntegerParam("bins", 100);
         int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
+        boolean par = paramExists("par");
         
-        Net net = Net.load(netfile, directed);
+        Net net = Net.load(netfile, directed, par);
         
         MetricsBag targBag = new MetricsBag(net, bins);
         
@@ -63,7 +64,7 @@ public class DetailFit extends Command {
         	double uDistsDist = 0;
         		
         	for (int i = 0; i < runs; i++) {
-        		Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
+        		Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
         		gen.load(dir + "/" + progFile);
         		gen.run();
             	
@@ -82,7 +83,7 @@ public class DetailFit extends Command {
         	}
         	
         	// determine prunned program size
-        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
+        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
     		gen.load(dir + "/" + progFile);
     		gen.run();
     		gen.getProg().dynPruning();

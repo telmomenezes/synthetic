@@ -10,9 +10,10 @@ public class Compare extends Command {
         String netfile2 = getStringParam("inet2");
         int bins = getIntegerParam("bins", 100);
         boolean directed = !paramExists("undir");
+        boolean par = paramExists("par");
         
-        Net net1 = Net.load(netfile1, directed);
-        Net net2 = Net.load(netfile2, directed);
+        Net net1 = Net.load(netfile1, directed, par);
+        Net net2 = Net.load(netfile2, directed, par);
         
      	System.out.println("NET: " + netfile1);
      	System.out.println(net1);

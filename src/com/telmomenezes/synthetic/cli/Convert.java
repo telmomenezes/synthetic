@@ -10,8 +10,9 @@ public class Convert extends Command {
         String netfile = getStringParam("inet");
         String outfile = getStringParam("onet");
         boolean directed = !paramExists("undir");
+        boolean par = paramExists("par");
         
-        Net net = Net.load(netfile, directed);
+        Net net = Net.load(netfile, directed, par);
         System.out.println(net);
         
         net.save(outfile, NetFileType.SNAP);

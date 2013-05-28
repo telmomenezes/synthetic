@@ -23,13 +23,14 @@ public class Evolve extends Command {
         int maxEdges = getIntegerParam("maxedges", 999999999);
         boolean directed = !paramExists("undir");
         double tolerance = getDoubleParam("tolerance", 0.1);
+        boolean par = paramExists("par");
         
-        Net net = Net.load(netfile, directed);
+        Net net = Net.load(netfile, directed, par);
         
         // down sampling if needed
         Net sampleNet = DownSampler.sample(net, maxNodes, maxEdges);
         
-     	Generator baseGenerator = new Generator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, sr);
+     	Generator baseGenerator = new Generator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, par, sr);
      	
         Evo evo = new Evo(sampleNet, generations, bins, tolerance, baseGenerator, outdir);
         

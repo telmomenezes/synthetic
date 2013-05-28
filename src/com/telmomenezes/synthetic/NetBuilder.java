@@ -1,7 +1,6 @@
 package com.telmomenezes.synthetic;
 
-import java.util.HashSet;
-import java.util.Set;
+
 import java.util.Vector;
 
 
@@ -11,8 +10,9 @@ public class NetBuilder {
 
     private boolean directed;
     private boolean selfEdges;
+    private boolean parallels;
     
-    private Vector<Set<Integer>> adjMatrix;
+    private Vector<Vector<Integer>> adjMatrix;
     
     
     public NetBuilder() {
@@ -23,21 +23,22 @@ public class NetBuilder {
         directed = true;
         selfEdges = false;
         
-        adjMatrix = new Vector<Set<Integer>>();
+        adjMatrix = new Vector<Vector<Integer>>();
     }
     
     
-    public NetBuilder(boolean directed, boolean selfEdges) {
+    public NetBuilder(boolean directed, boolean selfEdges, boolean parallels) {
         this();
         this.directed = directed;
         this.selfEdges = selfEdges;
+        this.parallels = parallels;
     }
     
     
     public int addNode() {
         int id = nodeCount;
     	nodeCount++;
-    	adjMatrix.add(new HashSet<Integer>());
+    	adjMatrix.add(new Vector<Integer>());
         return id;
     }
 
@@ -52,26 +53,31 @@ public class NetBuilder {
     }
     
     
-    public boolean addEdge(int origin, int target) {
+    public boolean addEdge(int origin, int target, int value) {
         if ((!selfEdges) && (origin == target)) {
             return false;
         }
 
-        if (edgeExists(origin, target)) {
+        if ((!parallels) && edgeExists(origin, target)) {
             return false;
         }
         
-        adjMatrix.get(origin).add(target);
-
+        int count = 1;
+        if (parallels) {
+        	count = value;
+        }
         
-        edgeCount++;
+        for (int i = 0; i < count; i++) {
+        	adjMatrix.get(origin).add(target);
+        	edgeCount++;
+        }
         
         return true;
     }
     
     
     public Net buildNet() {
-    	Net net = new Net(nodeCount, edgeCount, directed, selfEdges);
+    	Net net = new Net(nodeCount, edgeCount, directed, selfEdges, parallels);
     	
     	Node[] nodeMap = new Node[nodeCount];
     	

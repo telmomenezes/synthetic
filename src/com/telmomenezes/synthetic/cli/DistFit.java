@@ -18,8 +18,9 @@ public class DistFit extends Command {
         double sr = getDoubleParam("sr", 0.0006);
         int bins = getIntegerParam("bins", 100);
         boolean directed = !paramExists("undir");
+        boolean par = paramExists("par");
         
-        Net net = Net.load(netfile, directed);
+        Net net = Net.load(netfile, directed, par);
         
         System.out.println(net);
         
@@ -30,7 +31,7 @@ public class DistFit extends Command {
         Map<String, MetricsBag> bagMap = new HashMap<String, MetricsBag>();
         for (String progFile : prgFiles) {
         	System.out.println("running " + progFile);
-        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, sr);
+        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
     		gen.load(dir + "/" + progFile);
     		gen.run();
     		

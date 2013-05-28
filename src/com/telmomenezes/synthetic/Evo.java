@@ -84,6 +84,7 @@ public class Evo {
 			else {
 				generator = bestGenerator.clone();
 			}
+			
 			generator = generator.mutate();
 
 			long time0 = System.currentTimeMillis();
@@ -257,7 +258,7 @@ public class Evo {
     
     
     public boolean isDirected() {
-    	return targNet.isDirected();
+    	return targNet.directed;
     }
     
 	

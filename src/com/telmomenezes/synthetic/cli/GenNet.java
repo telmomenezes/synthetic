@@ -15,16 +15,17 @@ public class GenNet extends Command {
         String progFile = getStringParam("prg");
         double sr = getDoubleParam("sr", 0.0006);
         boolean directed = !paramExists("undir");
+        boolean par = paramExists("par");
         
         if (!netfile.equals("")) {
-        	Net net = Net.load(netfile, directed);
+        	Net net = Net.load(netfile, directed, par);
         	nodes = net.getNodeCount();
         	edges = net.getEdgeCount();
         }
         System.out.println("nodes: " + nodes);
         System.out.println("edges: " + edges);
         	
-        Generator gen = new Generator(nodes, edges, directed, sr);
+        Generator gen = new Generator(nodes, edges, directed, par, sr);
         gen.load(progFile);
         gen.run();
         Net syntNet = gen.getNet();
