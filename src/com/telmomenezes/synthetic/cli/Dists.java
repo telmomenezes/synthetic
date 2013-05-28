@@ -6,7 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import com.telmomenezes.synthetic.Generator;
+import com.telmomenezes.synthetic.generators.Generator;
+import com.telmomenezes.synthetic.generators.GeneratorFactory;
 import com.telmomenezes.synthetic.Net;
 
 
@@ -19,6 +20,7 @@ public class Dists extends Command {
         double sr = getDoubleParam("sr", 0.0006);
         boolean directed = !paramExists("undir");
         boolean par = paramExists("par");
+        String gentype = getStringParam("gentype", "exo");
         
         Net net = Net.load(netfile, directed, par);
         
@@ -46,10 +48,10 @@ public class Dists extends Command {
         		
         			System.out.println(progFile1 + " -> " + progFile2);
         		
-        			Generator gen1 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
+        			Generator gen1 = GeneratorFactory.create(gentype, net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
         			gen1.load(dir + "/" + progFile1);
         		
-        			Generator gen2 = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
+        			Generator gen2 = GeneratorFactory.create(gentype, net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
         			gen2.load(dir + "/" + progFile2);
         		
         			double dist1 = gen1.run(gen2);

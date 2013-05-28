@@ -3,6 +3,7 @@ package com.telmomenezes.synthetic;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
+import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.io.NetFileType;
 import com.telmomenezes.synthetic.random.RandomGenerator;
 

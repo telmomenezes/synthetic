@@ -1,6 +1,7 @@
 package com.telmomenezes.synthetic.cli;
 
-import com.telmomenezes.synthetic.Generator;
+import com.telmomenezes.synthetic.generators.Generator;
+import com.telmomenezes.synthetic.generators.GeneratorFactory;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.io.NetFileType;
 
@@ -16,6 +17,7 @@ public class GenNet extends Command {
         double sr = getDoubleParam("sr", 0.0006);
         boolean directed = !paramExists("undir");
         boolean par = paramExists("par");
+        String gentype = getStringParam("gentype", "exo");
         
         if (!netfile.equals("")) {
         	Net net = Net.load(netfile, directed, par);
@@ -25,7 +27,7 @@ public class GenNet extends Command {
         System.out.println("nodes: " + nodes);
         System.out.println("edges: " + edges);
         	
-        Generator gen = new Generator(nodes, edges, directed, par, sr);
+        Generator gen = GeneratorFactory.create(gentype, nodes, edges, directed, par, sr);
         gen.load(progFile);
         gen.run();
         Net syntNet = gen.getNet();

@@ -1,47 +1,56 @@
-package com.telmomenezes.synthetic;
+package com.telmomenezes.synthetic.generators;
 
 import java.io.IOException;
 import java.util.Vector;
 
+import com.telmomenezes.synthetic.Edge;
+import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
+import com.telmomenezes.synthetic.RandomBag;
 import com.telmomenezes.synthetic.random.RandomGenerator;
 import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 import com.telmomenezes.synthetic.gp.Prog;
 
 
-public class Generator { 
+public abstract class Generator { 
 	
-    private int nodeCount;
-    private int edgeCount;
-    private boolean directed;
-    private boolean parallels;
-    private double sr;
+	protected int nodeCount;
+    protected int edgeCount;
+    protected boolean directed;
+    protected boolean parallels;
+    protected double sr;
     
-    private int trials;
+    protected int trials;
     
-	private Prog prog;
+    protected Prog prog;
 
     public double fitnessAvg;
     public double fitnessMax;
 
-    private Vector<Prog> executionPaths;
+    protected Vector<Prog> executionPaths;
     //private boolean checkPaths;
     
-    private Net net;
+    protected Net net;
     
-    private int time;
+    protected int time;
     
     public double[] labels;
     
-    private int[] sampleOrigs;
-    private int[] sampleTargs;
-    private double[] sampleWeights;
+    protected int[] sampleOrigs;
+    protected int[] sampleTargs;
+    protected double[] sampleWeights;
     
-    private MetricsBag genBag;
+    protected MetricsBag genBag;
     
-    private boolean valid;
+    protected boolean valid;
     
+    
+    public abstract Generator instance();
+	public abstract Generator clone();
+	protected abstract void setProgVars(int origIndex, int targIndex);
+	protected abstract void createNodes();
+	
     
 	public Generator(int nodeCount, int edgeCount, boolean directed, boolean parallels, double sr) {
 	    this.nodeCount = nodeCount;
@@ -60,31 +69,6 @@ public class Generator {
 		
 		fitnessAvg = 0;
 		fitnessMax = 0;
-		
-		Vector<String> variableNames = new Vector<String>();
-		
-		if (directed) {
-			variableNames.add("ovar");
-			variableNames.add("tvar");
-			variableNames.add("origInDeg");
-			variableNames.add("origOutDeg");
-			variableNames.add("targInDeg");
-			variableNames.add("targOutDeg");
-			variableNames.add("dist");
-			variableNames.add("dirDist");
-			variableNames.add("revDist");
-        
-			prog = new Prog(9, variableNames);
-		}
-		else {
-			variableNames.add("ovar");
-			variableNames.add("tvar");
-			variableNames.add("origDeg");
-			variableNames.add("targDeg");
-			variableNames.add("dist");
-        
-			prog = new Prog(5, variableNames);
-		}
 	}
 	
 	
@@ -95,18 +79,6 @@ public class Generator {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	
-	public Generator instance() {
-		return new Generator(nodeCount, edgeCount, directed, parallels, sr);
-	}
-	
-	
-	public Generator clone() {
-		Generator generator = new Generator(nodeCount, edgeCount, directed, parallels, sr);
-		generator.prog = prog.clone();
-		return generator;
 	}
 	
 	
@@ -153,34 +125,7 @@ public class Generator {
         double totalWeight = 0;
         
         for (int i = 0; i < trials; i++) {
-        	int origIndex = sampleOrigs[i];
-            int targIndex = sampleTargs[i];
-            
-            Node origNode = net.getNodes()[origIndex];
-    		Node targNode = net.getNodes()[targIndex];    
-    		
-            double distance = net.uRandomWalkers.getDist(origNode.getId(), targNode.getId());
-            
-			prog.vars[0] = labels[origIndex];
-			prog.vars[1] = labels[targIndex];
-			
-            if (directed) {
-            	double directDistance = net.dRandomWalkers.getDist(origNode.getId(), targNode.getId());
-            	double reverseDistance = net.dRandomWalkers.getDist(targNode.getId(), origNode.getId());
-                    
-            	prog.vars[2] = (double)origNode.getInDegree();
-            	prog.vars[3] = (double)origNode.getOutDegree();
-            	prog.vars[4] = (double)targNode.getInDegree();
-            	prog.vars[5] = (double)targNode.getOutDegree();
-            	prog.vars[6] = distance;
-            	prog.vars[7] = directDistance;
-            	prog.vars[8] = reverseDistance;
-            }
-            else {
-            	prog.vars[2] = (double)origNode.getDegree();
-            	prog.vars[3] = (double)targNode.getDegree();
-            	prog.vars[4] = distance;
-            }
+            setProgVars(sampleOrigs[i], sampleTargs[i]);
                     
             double weight = prog.eval();
             if (weight < 0) {
@@ -259,12 +204,8 @@ public class Generator {
 			shadow.net = net;
 			shadow.labels = labels;
 		}
-		
-        // create nodes
-        for (int i = 0; i < nodeCount; i++) {
-            net.addNode();
-            labels[i] = RandomGenerator.random.nextDouble();
-        }
+        
+        createNodes();
         
         // init DistMatrix
         net.dRandomWalkers = null;

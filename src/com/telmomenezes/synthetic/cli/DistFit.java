@@ -5,7 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.telmomenezes.synthetic.Generator;
+import com.telmomenezes.synthetic.generators.Generator;
+import com.telmomenezes.synthetic.generators.GeneratorFactory;
 import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
 
@@ -19,6 +20,7 @@ public class DistFit extends Command {
         int bins = getIntegerParam("bins", 100);
         boolean directed = !paramExists("undir");
         boolean par = paramExists("par");
+        String gentype = getStringParam("gentype", "exo");
         
         Net net = Net.load(netfile, directed, par);
         
@@ -31,7 +33,7 @@ public class DistFit extends Command {
         Map<String, MetricsBag> bagMap = new HashMap<String, MetricsBag>();
         for (String progFile : prgFiles) {
         	System.out.println("running " + progFile);
-        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
+        	Generator gen = GeneratorFactory.create(gentype, net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
     		gen.load(dir + "/" + progFile);
     		gen.run();
     		

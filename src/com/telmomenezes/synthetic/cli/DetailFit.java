@@ -5,9 +5,10 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import com.telmomenezes.synthetic.Generator;
+import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
+import com.telmomenezes.synthetic.generators.GeneratorFactory;
 
 
 public class DetailFit extends Command {
@@ -20,6 +21,7 @@ public class DetailFit extends Command {
         int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
         boolean par = paramExists("par");
+        String gentype = getStringParam("gentype", "exo");
         
         Net net = Net.load(netfile, directed, par);
         
@@ -64,7 +66,7 @@ public class DetailFit extends Command {
         	double uDistsDist = 0;
         		
         	for (int i = 0; i < runs; i++) {
-        		Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
+        		Generator gen = GeneratorFactory.create(gentype, net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
         		gen.load(dir + "/" + progFile);
         		gen.run();
             	
@@ -83,7 +85,7 @@ public class DetailFit extends Command {
         	}
         	
         	// determine prunned program size
-        	Generator gen = new Generator(net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
+        	Generator gen = GeneratorFactory.create(gentype, net.getNodeCount(), net.getEdgeCount(), directed, par, sr);
     		gen.load(dir + "/" + progFile);
     		gen.run();
     		gen.getProg().dynPruning();

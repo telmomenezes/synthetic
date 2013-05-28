@@ -5,7 +5,8 @@ import java.io.FileWriter;
 
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Evo;
-import com.telmomenezes.synthetic.Generator;
+import com.telmomenezes.synthetic.generators.Generator;
+import com.telmomenezes.synthetic.generators.GeneratorFactory;
 import com.telmomenezes.synthetic.samplers.DownSampler;
 
 
@@ -24,13 +25,14 @@ public class Evolve extends Command {
         boolean directed = !paramExists("undir");
         double tolerance = getDoubleParam("tolerance", 0.1);
         boolean par = paramExists("par");
+        String gentype = getStringParam("gentype", "exo");
         
         Net net = Net.load(netfile, directed, par);
         
         // down sampling if needed
         Net sampleNet = DownSampler.sample(net, maxNodes, maxEdges);
         
-     	Generator baseGenerator = new Generator(sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, par, sr);
+     	Generator baseGenerator = GeneratorFactory.create(gentype, sampleNet.getNodeCount(), sampleNet.getEdgeCount(), directed, par, sr);
      	
         Evo evo = new Evo(sampleNet, generations, bins, tolerance, baseGenerator, outdir);
         

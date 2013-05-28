@@ -1,7 +1,8 @@
 package com.telmomenezes.synthetic.cli;
 
 
-import com.telmomenezes.synthetic.Generator;
+import com.telmomenezes.synthetic.generators.Generator;
+import com.telmomenezes.synthetic.generators.GeneratorFactory;
 import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
 
@@ -17,6 +18,7 @@ public class Metrics extends Command {
         int bins = getIntegerParam("bins", 100);
         boolean directed = !paramExists("undir");
         boolean par = paramExists("par");
+        String gentype = getStringParam("gentype", "exo");
         
         Net net = null;
         
@@ -26,7 +28,7 @@ public class Metrics extends Command {
         	edges = net.getEdgeCount();
         }
         else {
-        	Generator gen = new Generator(nodes, edges, directed, par, sr);
+        	Generator gen = GeneratorFactory.create(gentype, nodes, edges, directed, par, sr);
             gen.load(progFile);
             gen.run();
             net = gen.getNet();
