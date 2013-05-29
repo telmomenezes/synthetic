@@ -5,8 +5,6 @@ import java.util.Vector;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.gp.Prog;
-import com.telmomenezes.synthetic.random.RandomGenerator;
-
 
 
 public class ExoGenerator extends Generator {
@@ -17,8 +15,8 @@ public class ExoGenerator extends Generator {
 		Vector<String> variableNames = new Vector<String>();
 		
 		if (refNet.directed) {
-			variableNames.add("ovar");
-			variableNames.add("tvar");
+			variableNames.add("origId");
+			variableNames.add("targId");
 			variableNames.add("origInDeg");
 			variableNames.add("origOutDeg");
 			variableNames.add("targInDeg");
@@ -30,8 +28,8 @@ public class ExoGenerator extends Generator {
 			prog = new Prog(9, variableNames);
 		}
 		else {
-			variableNames.add("ovar");
-			variableNames.add("tvar");
+			variableNames.add("origId");
+			variableNames.add("targId");
 			variableNames.add("origDeg");
 			variableNames.add("targDeg");
 			variableNames.add("dist");
@@ -59,8 +57,8 @@ public class ExoGenerator extends Generator {
 		
         double distance = net.uRandomWalkers.getDist(origNode.getId(), targNode.getId());
         
-		prog.vars[0] = labels[origIndex];
-		prog.vars[1] = labels[targIndex];
+		prog.vars[0] = (double)origIndex;
+		prog.vars[1] = (double)targIndex;
 		
         if (refNet.directed) {
         	double directDistance = net.dRandomWalkers.getDist(origNode.getId(), targNode.getId());
@@ -78,14 +76,6 @@ public class ExoGenerator extends Generator {
         	prog.vars[2] = (double)origNode.getDegree();
         	prog.vars[3] = (double)targNode.getDegree();
         	prog.vars[4] = distance;
-        }
-	}
-	
-	
-	protected void createNodes() {
-        for (int i = 0; i < refNet.nodeCount; i++) {
-            net.addNode();
-            labels[i] = RandomGenerator.random.nextDouble();
         }
 	}
 	

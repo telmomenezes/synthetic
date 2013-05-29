@@ -19,8 +19,8 @@ public class RedBlueGenerator extends Generator {
 		Vector<String> variableNames = new Vector<String>();
 		
 		if (refNet.directed) {
-			variableNames.add("ovar");
-			variableNames.add("tvar");
+			variableNames.add("origId");
+			variableNames.add("targId");
 			variableNames.add("aff");
 			variableNames.add("origInDeg");
 			variableNames.add("origOutDeg");
@@ -33,8 +33,8 @@ public class RedBlueGenerator extends Generator {
 			prog = new Prog(10, variableNames);
 		}
 		else {
-			variableNames.add("ovar");
-			variableNames.add("tvar");
+			variableNames.add("origId");
+			variableNames.add("targId");
 			variableNames.add("aff");
 			variableNames.add("origDeg");
 			variableNames.add("targDeg");
@@ -65,8 +65,8 @@ public class RedBlueGenerator extends Generator {
 		
         double distance = net.uRandomWalkers.getDist(origNode.getId(), targNode.getId());
         
-		prog.vars[0] = labels[origIndex];
-		prog.vars[1] = labels[targIndex];
+		prog.vars[0] = (double)origIndex;
+		prog.vars[1] = (double)targIndex;
 		
 		if (origNode.value == targNode.value) {
 			prog.vars[2] = 1;
@@ -95,6 +95,7 @@ public class RedBlueGenerator extends Generator {
 	}
 	
 	
+	@Override
 	protected void createNodes() {
         for (int i = 0; i < refNet.nodeCount; i++) {
             Node node = net.addNode();
@@ -105,8 +106,6 @@ public class RedBlueGenerator extends Generator {
             else {
             	node.value = 1;
             }
-            
-            labels[i] = RandomGenerator.random.nextDouble();
         }
 	}
 	

@@ -73,13 +73,6 @@ public class EndoGenerator extends Generator {
 	}
 	
 	
-	protected void createNodes() {
-        for (int i = 0; i < refNet.nodeCount; i++) {
-            net.addNode();
-        }
-	}
-	
-	
 	@Override
 	public String toString() {
 		return "EndoGenerator -> " + super.toString(); 

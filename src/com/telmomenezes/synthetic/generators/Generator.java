@@ -32,8 +32,6 @@ public abstract class Generator {
     
     protected int time;
     
-    public double[] labels;
-    
     protected int[] sampleOrigs;
     protected int[] sampleTargs;
     protected double[] sampleWeights;
@@ -46,7 +44,13 @@ public abstract class Generator {
     public abstract Generator instance();
 	public abstract Generator clone();
 	protected abstract void setProgVars(int origIndex, int targIndex);
-	protected abstract void createNodes();
+
+	
+	protected void createNodes() {
+        for (int i = 0; i < refNet.nodeCount; i++) {
+            net.addNode();
+        }
+	}
 	
     
 	public Generator(Net refNet, double sr) {
@@ -192,11 +196,9 @@ public abstract class Generator {
 		double dist = 0;
 		
 		net = new Net(refNet.nodeCount, refNet.edgeCount, refNet.directed, false, refNet.parallels);
-		labels = new double[refNet.nodeCount];
 		
 		if (shadow != null) {
 			shadow.net = net;
-			shadow.labels = labels;
 		}
         
         createNodes();
