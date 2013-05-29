@@ -18,7 +18,6 @@ public class Prog {
 
 	public double[] vars;
     public GPNode root;
-    
     private int varcount;
     
     private int parsePos;
@@ -80,6 +79,18 @@ public class Prog {
                         break;
 					case GPFun.ZER:
 						if (curnode.params[0].curval == 0) {
+							curnode.stoppos = 2;
+						}
+						else {
+							curnode.stoppos = 3;
+							curnode.curpos++;
+						}
+						break;
+					case GPFun.AFF:
+						long g = Math.round(curnode.params[0].curval);
+						long id1 = Math.round(vars[0]);
+						long id2 = Math.round(vars[1]);
+						if ((g == 0) || ((id1 % g) == (id2 % g))) {
 							curnode.stoppos = 2;
 						}
 						else {
@@ -155,6 +166,7 @@ public class Prog {
 					case GPFun.GRT:
 					case GPFun.LRT:
 					case GPFun.ZER:
+					case GPFun.AFF:
 						val = curnode.params[curnode.stoppos - 1].curval;
 						break;
 					// this should not happen
@@ -532,6 +544,8 @@ public class Prog {
                     fun = GPFun.MIN;
 				else if (token.equals("MAX"))
                     fun = GPFun.MAX;
+				else if (token.equals("AFF"))
+                    fun = GPFun.AFF;
 				else if (token.equals("^"))
                     fun = GPFun.POW;
 			

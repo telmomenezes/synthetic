@@ -63,6 +63,7 @@ public class GPNode {
     private int funCondPos(int fun) {
         switch (fun) {
         case GPFun.ZER:
+        case GPFun.AFF:
             return 1;
         case GPFun.EQ:
         case GPFun.GRT:
@@ -88,6 +89,7 @@ public class GPNode {
         case GPFun.POW:
             return 2;
         case GPFun.ZER:
+        case GPFun.AFF:
             return 3;
         case GPFun.EQ:
         case GPFun.GRT:
@@ -147,6 +149,9 @@ public class GPNode {
                 break;
             case GPFun.MAX:
                 out.write("MAX");
+                break;
+            case GPFun.AFF:
+                out.write("AFF");
                 break;
             case GPFun.POW:
             	out.write("^");
