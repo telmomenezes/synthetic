@@ -24,7 +24,7 @@ public class SNAPNetFile extends NetFile {
             String line;
             while ((line = in.readLine()) != null) {
                 if (line.charAt(0) != '#') {
-                    String[] tokens = line.split("\t");
+                    String[] tokens = line.split("\\s+");
                     if (tokens.length == 2) {
                         for (String t : tokens) {
                             if (!nodes.containsKey(t)) {

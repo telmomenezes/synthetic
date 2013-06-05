@@ -56,7 +56,6 @@ public class Dists extends Command {
         		
         			double dist1 = gen1.run(gen2);
         			double dist2 = gen2.run(gen1);
-        			//double dist = Math.min(dist1, dist2);
         			double dist = (dist1 + dist2) / 2;
         			
         			System.out.println("dist: " + dist);

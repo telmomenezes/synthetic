@@ -28,20 +28,7 @@ public class SynCLI {
     }
     
     public void run(String[] args) {
-        //args = new String[]{"evo", "-inet", "ownership.txt", "-odir", "test"};
-    	//args = new String[]{"evo", "-inet", "/Users/telmo/Desktop/Networks/polblogs/polblogs.gml", "-odir", "test"};
-    	//args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir", "test", "-par"};
-    	//args = new String[]{"evo", "-inet", "hep-th.gml", "-odir", "test"};
-    	//args = new String[]{"evo", "-inet", "wiki-Vote.snap", "-odir", "test", "-maxnodes", "100"};//, "-gentype", "full"};
-    	//args = new String[]{"evo", "-inet", "polblogs.gml", "-odir", "test", "-gentype", "redblue"};
-    	//args = new String[]{"run", "-inet", "celegansneural.gml", "-prg", "prog.txt", "-odir", "test", "-runs", "30"};
-    	//args = new String[]{"evo", "-inet", "syntnet.txt", "-odir", "test"};
-    	//args = new String[]{"compare", "-inet", "syntnet0.txt", "-inet2", "syntnet1.txt"};
-    	//args = new String[]{"evo", "-inet", "Hsapi20120818CR.mitab", "-odir", "test", "-undir"};
-    	//args = new String[]{"evo", "-inet", "power.gml", "-odir", "test", "-undir"};
-    	//args = new String[]{"comprun", "-inet", "celegansneural.gml", "-dir", "/Users/telmo/amazon_syn6/celegansprogs", "-out", "distances.csv"};
-    	//args = new String[]{"comprun", "-inet", "polblogs.gml", "-dir", "/Users/telmo/amazon_syn6/polblogsprogs"};
-    	//args = new String[]{"fit", "-inet", "celegansneural.gml", "-prg", "/Users/telmo/amazon_syn6/celegans6/bestprog.txt", "-runs", "30"};
+    	//args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir"};
     	
         CommandLineParser parser = new GnuParser();
         options = new Options();
@@ -99,26 +86,17 @@ public class SynCLI {
             else if (cmd.equals("prune")) {
                 cmdObj = new Prune();
             }
-            else if (cmd.equals("evalstats")) {
-                cmdObj = new EvalStats();
-            }
             else if (cmd.equals("fit")) {
                 cmdObj = new Fit();
             }
             else if (cmd.equals("compfit")) {
                 cmdObj = new CompFit();
             }
-            else if (cmd.equals("distfit")) {
-                cmdObj = new DistFit();
-            }
             else if (cmd.equals("detailfit")) {
                 cmdObj = new DetailFit();
             }
             else if (cmd.equals("gennet")) {
                 cmdObj = new GenNet();
-            }
-            else if (cmd.equals("metrics")) {
-                cmdObj = new Metrics();
             }
             else if (cmd.equals("dists")) {
                 cmdObj = new Dists();
