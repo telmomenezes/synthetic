@@ -26,7 +26,7 @@ public class RandomBag {
 			System.out.println("random run #" + i);
 			
 			Net randomNet = RandomNet.generate(targBag.getNet());
-			MetricsBag randomBag = new MetricsBag(randomNet, null, null, bins, targBag);
+			MetricsBag randomBag = new MetricsBag(randomNet, null, null, bins, targBag, false);
 			
 			degreesDistAvg += randomBag.getDegreesDist();
 		    inDegreesDistAvg += randomBag.getInDegreesDist();

@@ -28,8 +28,10 @@ public class SynCLI {
     }
     
     public void run(String[] args) {
-    	//args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir"};
-    	
+    	//args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir", "test"};
+        //args = new String[]{"detailfit", "-inet", "celegansneural.gml", "-dir", "celegansprogs10"};
+    	//args = new String[]{"detailfit", "-inet", "power.gml", "-dir", "powerprogs", "-out", "test.txt", "-undir"};
+
         CommandLineParser parser = new GnuParser();
         options = new Options();
         options.addOption("inet", true, "input net file");

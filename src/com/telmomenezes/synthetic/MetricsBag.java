@@ -25,6 +25,15 @@ public class MetricsBag {
     private double triadicProfileDist;
     private double dDistsDist;
     private double uDistsDist;
+
+    private double relDegreesDist;
+    private double relInDegreesDist;
+    private double relOutDegreesDist;
+    private double relDPageRanksDist;
+    private double relUPageRanksDist;
+    private double relTriadicProfileDist;
+    private double relDDistsDist;
+    private double relUDistsDist;
     
     private RandomBag randomBag;
     
@@ -68,12 +77,26 @@ public class MetricsBag {
 	    triadicProfileDist = 0;
 	    dDistsDist = 0;
 	    uDistsDist = 0;
+
+        relDegreesDist = 0;
+        relInDegreesDist = 0;
+        relOutDegreesDist = 0;
+        relDPageRanksDist = 0;
+        relUPageRanksDist = 0;
+        relTriadicProfileDist = 0;
+        relDDistsDist = 0;
+        relUDistsDist = 0;
 	    
 	    randomBag = null;
     }
-    
-    
+
+
     public MetricsBag(Net net, RandomWalkers dRW, RandomWalkers uRW, int bins, MetricsBag bag) {
+        this(net, dRW, uRW, bins, bag, true);
+    }
+
+
+    public MetricsBag(Net net, RandomWalkers dRW, RandomWalkers uRW, int bins, MetricsBag bag, boolean useRandom) {
     	this.net = net;
     	this.bins = bins;
     	
@@ -112,25 +135,34 @@ public class MetricsBag {
 			dm.allSteps();
 			uDists = dm.getDistrib();
 		}
-		
-		calcDistances(bag);
+
+        if (useRandom) {
+            randomBag = bag.getRandomBag();
+        }
+
+		calcDistances(bag, useRandom);
     }
     
     
-    private void calcDistances(MetricsBag bag) {
-    	double verySmall = 0.999;
+    private void calcDistances(MetricsBag bag, boolean useRandom) {
+        double verySmall = 0.999;
     	
     	TriadicProfile rp = this.triadicProfile;
     	
     	uPageRanksDist = uPageRanks.emdDistance(bag.uPageRanks);
         triadicProfileDist = triadicProfile.proportionalDistance(bag.triadicProfile, rp);
         uDistsDist = uDists.proportionalDistance(bag.uDists);
-        
-        
+
         if (uPageRanksDist == 0) uPageRanksDist = verySmall;
         if (triadicProfileDist == 0) triadicProfileDist = verySmall;
         if (uDistsDist == 0) uDistsDist = verySmall;
-        
+
+        if (useRandom) {
+            relUPageRanksDist = uPageRanksDist / randomBag.uPageRanksDistAvg;
+            relTriadicProfileDist = triadicProfileDist / randomBag.triadicProfileDistAvg;
+            relUDistsDist = uDistsDist / randomBag.uDistsDistAvg;
+        }
+
     	if (net.directed) {
     		inDegreesDist = inDegrees.emdDistance(bag.inDegrees);
             outDegreesDist = outDegrees.emdDistance(bag.outDegrees);
@@ -141,11 +173,22 @@ public class MetricsBag {
             if (outDegreesDist == 0) outDegreesDist = verySmall;
             if (dPageRanksDist == 0) dPageRanksDist = verySmall;
             if (dDistsDist == 0) dDistsDist = verySmall;
+
+            if (useRandom) {
+                relInDegreesDist = inDegreesDist / randomBag.inDegreesDistAvg;
+                relOutDegreesDist = outDegreesDist / randomBag.outDegreesDistAvg;
+                relDPageRanksDist = dPageRanksDist / randomBag.dPageRanksDistAvg;
+                relDDistsDist = dDistsDist / randomBag.dDistsDistAvg;
+            }
     	}
     	else {
     		degreesDist = degrees.emdDistance(bag.degrees);
     		
     		if (inDegreesDist == 0) inDegreesDist = verySmall;
+
+            if (useRandom) {
+                relDegreesDist = degreesDist / randomBag.degreesDistAvg;
+            }
     	}
     }
     
@@ -244,9 +287,41 @@ public class MetricsBag {
 	public double getDegreesDist() {
 		return degreesDist;
 	}
-	
-	
-	public Net getNet() {
+
+
+    public double getRelDegreesDist() {
+        return relDegreesDist;
+    }
+
+    public double getRelInDegreesDist() {
+        return relInDegreesDist;
+    }
+
+    public double getRelOutDegreesDist() {
+        return relOutDegreesDist;
+    }
+
+    public double getRelDPageRanksDist() {
+        return relDPageRanksDist;
+    }
+
+    public double getRelUPageRanksDist() {
+        return relUPageRanksDist;
+    }
+
+    public double getRelTriadicProfileDist() {
+        return relTriadicProfileDist;
+    }
+
+    public double getRelDDistsDist() {
+        return relDDistsDist;
+    }
+
+    public double getRelUDistsDist() {
+        return relUDistsDist;
+    }
+
+    public Net getNet() {
 		return net;
 	}
 	

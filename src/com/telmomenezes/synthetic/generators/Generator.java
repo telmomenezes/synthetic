@@ -7,7 +7,6 @@ import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
 import com.telmomenezes.synthetic.Node;
-import com.telmomenezes.synthetic.RandomBag;
 import com.telmomenezes.synthetic.random.RandomGenerator;
 import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 import com.telmomenezes.synthetic.gp.Prog;
@@ -275,74 +274,57 @@ public abstract class Generator {
 
         net.metricsBag = genBag;
         
-        double inDegreesDist = genBag.getInDegreesDist();
-        double outDegreesDist = genBag.getOutDegreesDist();
-        double dPageRanksDist = genBag.getDPageRanksDist();
-        double uPageRanksDist = genBag.getUPageRanksDist();
-        double triadicProfileDist = genBag.getTriadicProfileDist();
-        double dDistsDist = genBag.getdDistsDist();
-        double uDistsDist = genBag.getuDistsDist();
-        
-        // random baseline
-        RandomBag randomBag = targBag.getRandomBag();
-        double inDegreesDistR = randomBag.inDegreesDistAvg;
-        double outDegreesDistR = randomBag.outDegreesDistAvg;
-        double dPageRanksDistR = randomBag.dPageRanksDistAvg;
-        double uPageRanksDistR = randomBag.uPageRanksDistAvg;
-        double triadicProfileDistR = randomBag.triadicProfileDistAvg;
-        double dDistsDistR = randomBag.dDistsDistAvg;
-        double uDistsDistR = randomBag.uDistsDistAvg;
+        double inDegreesDist = genBag.getRelInDegreesDist();
+        double outDegreesDist = genBag.getRelOutDegreesDist();
+        double dPageRanksDist = genBag.getRelDPageRanksDist();
+        double uPageRanksDist = genBag.getRelUPageRanksDist();
+        double triadicProfileDist = genBag.getRelTriadicProfileDist();
+        double dDistsDist = genBag.getRelDDistsDist();
+        double uDistsDist = genBag.getRelUDistsDist();
         	
-        fitnessAvg = (inDegreesDist / inDegreesDistR)
-        			+ (outDegreesDist / outDegreesDistR)
-        			+ (dPageRanksDist / dPageRanksDistR)
-        			+ (uPageRanksDist / uPageRanksDistR) 
-        			+ (triadicProfileDist / triadicProfileDistR) 
-        			+ (dDistsDist / dDistsDistR)
-        			+ (uDistsDist / uDistsDistR);
+        fitnessAvg = inDegreesDist
+        			+ outDegreesDist
+        			+ dPageRanksDist
+        			+ uPageRanksDist
+        			+ triadicProfileDist
+        			+ dDistsDist
+        			+ uDistsDist;
         fitnessAvg /= 7;
         	
         
         fitnessMax = 0;
-        fitnessMax = Math.max(fitnessMax, inDegreesDist / inDegreesDistR);
-        fitnessMax = Math.max(fitnessMax, outDegreesDist / outDegreesDistR);
-        fitnessMax = Math.max(fitnessMax, dPageRanksDist / dPageRanksDistR);
-        fitnessMax = Math.max(fitnessMax, uPageRanksDist / uPageRanksDistR);
-        fitnessMax = Math.max(fitnessMax, triadicProfileDist / triadicProfileDistR);
-        fitnessMax = Math.max(fitnessMax, dDistsDist / dDistsDistR);
-        fitnessMax = Math.max(fitnessMax, uDistsDist / uDistsDistR);
+        fitnessMax = Math.max(fitnessMax, inDegreesDist);
+        fitnessMax = Math.max(fitnessMax, outDegreesDist);
+        fitnessMax = Math.max(fitnessMax, dPageRanksDist);
+        fitnessMax = Math.max(fitnessMax, uPageRanksDist);
+        fitnessMax = Math.max(fitnessMax, triadicProfileDist);
+        fitnessMax = Math.max(fitnessMax, dDistsDist);
+        fitnessMax = Math.max(fitnessMax, uDistsDist);
     }
 	
 	
 	private void computeFitnessUndirected(MetricsBag targBag, int bins) {
 		net.uRandomWalkers.recompute();
-        MetricsBag genBag = new MetricsBag(net, null, net.uRandomWalkers, bins, targBag);
+        genBag = new MetricsBag(net, null, net.uRandomWalkers, bins, targBag);
 
         net.metricsBag = genBag;
         
-        double degreesDist = genBag.getDegreesDist();
-        double uPageRanksDist = genBag.getUPageRanksDist();
-        double triadicProfileDist = genBag.getTriadicProfileDist();
-        double uDistsDist = genBag.getuDistsDist();
+        double degreesDist = genBag.getRelDegreesDist();
+        double uPageRanksDist = genBag.getRelUPageRanksDist();
+        double triadicProfileDist = genBag.getRelTriadicProfileDist();
+        double uDistsDist = genBag.getRelUDistsDist();
         
-        // random baseline
-        RandomBag randomBag = targBag.getRandomBag();
-        double degreesDistR = randomBag.degreesDistAvg;
-        double uPageRanksDistR = randomBag.uPageRanksDistAvg;
-        double triadicProfileDistR = randomBag.triadicProfileDistAvg;
-        double uDistsDistR = randomBag.uDistsDistAvg;
-        
-        fitnessAvg = (degreesDist / degreesDistR) 
-        			+ (uPageRanksDist / uPageRanksDistR) 
-        			+ (triadicProfileDist / triadicProfileDistR) 
-        			+ (uDistsDist / uDistsDistR);
+        fitnessAvg = degreesDist
+        			+ uPageRanksDist
+        			+ triadicProfileDist
+        			+ uDistsDist;
         fitnessAvg /= 4;
 
         fitnessMax = 0;
-        fitnessMax = Math.max(fitnessMax, degreesDist / degreesDistR);
-        fitnessMax = Math.max(fitnessMax, uPageRanksDist / uPageRanksDistR);
-        fitnessMax = Math.max(fitnessMax, triadicProfileDist / triadicProfileDistR);
-        fitnessMax = Math.max(fitnessMax, uDistsDist / uDistsDistR);
+        fitnessMax = Math.max(fitnessMax, degreesDist);
+        fitnessMax = Math.max(fitnessMax, uPageRanksDist);
+        fitnessMax = Math.max(fitnessMax, triadicProfileDist);
+        fitnessMax = Math.max(fitnessMax, uDistsDist);
     }
 	
 	
