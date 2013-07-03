@@ -1,9 +1,11 @@
 package com.telmomenezes.synthetic.cli;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.GnuParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -12,25 +14,67 @@ public class SynCLI {
     private Options options;
     private CommandLine cline;
     
-    private void printHelpMessage() {
-        HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("syn", options);
+    Map<String, Command> commands;
+    
+    
+    public SynCLI() {
+    	commands = new HashMap<String, Command>();
+    	commands.put("netstats", new NetStats());
+    	commands.put("evo", new Evolve());
+    	commands.put("random", new Random());
+    	commands.put("convert", new Convert());
+    	commands.put("run", new Run());
+    	commands.put("compare", new Compare());
+    	commands.put("prune", new Prune());
+    	commands.put("fit", new Fit());
+    	commands.put("compfit", new CompFit());
+    	commands.put("detailfit", new DetailFit());
+    	commands.put("gennet", new GenNet());
+    	commands.put("dists", new Dists());
     }
     
-    private void printErrorMessage(String msg) {
+    private void printHelpMessage() {
+    	System.err.print("use one of the commands: ");
+    	boolean first = true;
+    	for (String k : commands.keySet()) {
+    		if (first) {
+    			first = false;
+    		}
+    		else {
+    			System.err.print(", ");
+    		}
+    		System.err.print(k);
+    	}
+    	System.err.println("");
+    	System.exit(0);
+    }
+    
+    private void printErrorMessage(String msg, boolean help) {
     	if (msg == null) {
     		System.err.println("unkown error.");
     	}
     	else {
     		System.err.println(msg);
     	}
-        printHelpMessage();
+    	
+    	if (help) {
+    		System.err.println("");
+    		printHelpMessage();
+    	}
+    	else {
+    		System.exit(0);
+    	}
+    }
+    
+    private void printErrorMessage(String msg) {
+    	printErrorMessage(msg, false);
     }
     
     public void run(String[] args) {
-    	//args = new String[]{"evo", "-inet", "celegansneural.gml", "-odir", "test"};
-        //args = new String[]{"detailfit", "-inet", "celegansneural.gml", "-dir", "celegansprogs10"};
-    	//args = new String[]{"detailfit", "-inet", "power.gml", "-dir", "powerprogs", "-out", "test.txt", "-undir"};
+    	
+    	if (args.length == 0) {
+    		printErrorMessage("no command given.", true);
+    	}
 
         CommandLineParser parser = new GnuParser();
         options = new Options();
@@ -67,51 +111,15 @@ public class SynCLI {
             if (cmd.equals("help")) {
                 printHelpMessage();
             }
-            else if (cmd.equals("netstats")) {
-                cmdObj = new NetStats();
-            }
-            else if (cmd.equals("evo")) {
-                cmdObj = new Evolve();
-            }
-            else if (cmd.equals("random")) {
-                cmdObj = new Random();
-            }
-            else if (cmd.equals("convert")) {
-                cmdObj = new Convert();
-            }
-            else if (cmd.equals("run")) {
-                cmdObj = new Run();
-            }
-            else if (cmd.equals("compare")) {
-                cmdObj = new Compare();
-            }
-            else if (cmd.equals("prune")) {
-                cmdObj = new Prune();
-            }
-            else if (cmd.equals("fit")) {
-                cmdObj = new Fit();
-            }
-            else if (cmd.equals("compfit")) {
-                cmdObj = new CompFit();
-            }
-            else if (cmd.equals("detailfit")) {
-                cmdObj = new DetailFit();
-            }
-            else if (cmd.equals("gennet")) {
-                cmdObj = new GenNet();
-            }
-            else if (cmd.equals("dists")) {
-                cmdObj = new Dists();
-            }
-            else {
-                printErrorMessage("Command '" + cmd + "' does not exist.");
+            
+            if (!commands.containsKey(cmd)) {
+                printErrorMessage("Command '" + cmd + "' does not exist.", true);
             }
             
-            if (cmdObj != null) {
-            	cmdObj.setCline(cline);
-                if (!cmdObj.run()) {
-                    printErrorMessage(cmdObj.getErrorMessage());
-                }
+            cmdObj = commands.get(cmd);
+            cmdObj.setCline(cline);
+            if (!cmdObj.run()) {
+                printErrorMessage(cmdObj.getErrorMessage());
             }
         }
         catch (ParseException e) {
