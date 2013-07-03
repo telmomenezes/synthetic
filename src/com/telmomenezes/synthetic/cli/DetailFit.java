@@ -39,6 +39,7 @@ public class DetailFit extends Command {
             str += ",fit";
             str += ",program_size";
 
+            // absolute
             if (directed) {
                 str += ",in_degrees_dist";
                 str += ",out_degrees_dist";
@@ -53,6 +54,22 @@ public class DetailFit extends Command {
                 str += ",d_dists_dist";
             }
             str += ",u_dists_dist";
+            
+            // relative
+            if (directed) {
+                str += ",rel_in_degrees_dist";
+                str += ",rel_out_degrees_dist";
+                str += ",rel_d_pageranks_dist";
+            }
+            else {
+                str += ",rel_degrees_dist";
+            }
+            str += ",rel_u_pageranks_dist";
+            str += ",rel_triadic_profile_dist";
+            if (directed) {
+                str += ",rel_d_dists_dist";
+            }
+            str += ",rel_u_dists_dist";
 
             out.write(str + "\n");
 
@@ -68,6 +85,14 @@ public class DetailFit extends Command {
                 double triadicProfileDist = 0;
                 double dDistsDist = 0;
                 double uDistsDist = 0;
+                double relDegreesDist = 0;
+                double relInDegreesDist = 0;
+                double relOutDegreesDist = 0;
+                double relDPageRanksDist = 0;
+                double relUPageRanksDist = 0;
+                double relTriadicProfileDist = 0;
+                double relDDistsDist = 0;
+                double relUDistsDist = 0;
 
                 for (int i = 0; i < runs; i++) {
                     Generator gen = GeneratorFactory.create(gentype, net, sr);
@@ -78,14 +103,23 @@ public class DetailFit extends Command {
                     fit += gen.fitnessMax;
                     MetricsBag bag = gen.getGenBag();
 
-                    degreesDist += bag.getRelDDistsDist();
-                    inDegreesDist += bag.getRelInDegreesDist();
-                    outDegreesDist += bag.getRelOutDegreesDist();
-                    dPageRanksDist += bag.getRelDPageRanksDist();
-                    uPageRanksDist += bag.getRelUPageRanksDist();
-                    triadicProfileDist += bag.getRelTriadicProfileDist();
-                    dDistsDist += bag.getRelDDistsDist();
-                    uDistsDist += bag.getRelUDistsDist();
+                    degreesDist += bag.getDegreesDist();
+                    inDegreesDist += bag.getInDegreesDist();
+                    outDegreesDist += bag.getOutDegreesDist();
+                    dPageRanksDist += bag.getDPageRanksDist();
+                    uPageRanksDist += bag.getUPageRanksDist();
+                    triadicProfileDist += bag.getTriadicProfileDist();
+                    dDistsDist += bag.getdDistsDist();
+                    uDistsDist += bag.getuDistsDist();
+                    
+                    relDegreesDist += bag.getRelDegreesDist();
+                    relInDegreesDist += bag.getRelInDegreesDist();
+                    relOutDegreesDist += bag.getRelOutDegreesDist();
+                    relDPageRanksDist += bag.getRelDPageRanksDist();
+                    relUPageRanksDist += bag.getRelUPageRanksDist();
+                    relTriadicProfileDist += bag.getRelTriadicProfileDist();
+                    relDDistsDist += bag.getRelDDistsDist();
+                    relUDistsDist += bag.getRelUDistsDist();
                 }
 
                 // determine prunned program size
@@ -103,11 +137,20 @@ public class DetailFit extends Command {
                 triadicProfileDist /= runs;
                 dDistsDist /= runs;
                 uDistsDist /= runs;
+                relDegreesDist /= runs;
+                relInDegreesDist /= runs;
+                relOutDegreesDist /= runs;
+                relDPageRanksDist /= runs;
+                relUPageRanksDist /= runs;
+                relTriadicProfileDist /= runs;
+                relDDistsDist /= runs;
+                relUDistsDist /= runs;
 
                 str = progFile.split("\\.")[0];
                 str += "," + fit;
                 str += "," + gen.getProg().size();
 
+                // absolute
                 if (directed) {
                     str += "," + inDegreesDist;
                     str += "," + outDegreesDist;
@@ -122,6 +165,22 @@ public class DetailFit extends Command {
                     str += "," + dDistsDist;
                 }
                 str += "," + uDistsDist;
+                
+                // relative
+                if (directed) {
+                    str += "," + relInDegreesDist;
+                    str += "," + relOutDegreesDist;
+                    str += "," + relDPageRanksDist;
+                }
+                else {
+                    str += "," + relDegreesDist;
+                }
+                str += "," + relUPageRanksDist;
+                str += "," + relTriadicProfileDist;
+                if (directed) {
+                    str += "," + relDDistsDist;
+                }
+                str += "," + relUDistsDist;
 
                 out.write(str + "\n");
             }
