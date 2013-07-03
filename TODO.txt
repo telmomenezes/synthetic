@@ -1,5 +1,0 @@
-* create network repository
-* parameterize max distance on DistMatrix
-* make sure all experiment parameters are recorded in a file
-* triadic count sampler?
-* undirected nets?
