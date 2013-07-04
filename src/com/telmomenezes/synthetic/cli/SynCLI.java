@@ -11,6 +11,8 @@ import org.apache.commons.cli.ParseException;
 
 
 public class SynCLI {
+	private static String version = "1.0";
+	
     private Options options;
     private CommandLine cline;
     
@@ -34,6 +36,8 @@ public class SynCLI {
     }
     
     private void printHelpMessage() {
+    	System.err.println("\nSynthetic ver " + version);
+    	
     	System.err.print("use one of the commands: ");
     	boolean first = true;
     	for (String k : commands.keySet()) {
@@ -46,11 +50,12 @@ public class SynCLI {
     		System.err.print(k);
     	}
     	System.err.println("");
-    	System.err.println("\nUse 'synt help <command>' to get help on a specific command.");
+    	System.err.println("\nUse 'synt help <command>' to get help on a specific command.\n");
     	System.exit(0);
     }
     
     private void printErrorMessage(String msg, boolean help) {
+    	System.err.println("");
     	if (msg == null) {
     		System.err.println("unkown error.");
     	}
@@ -59,10 +64,10 @@ public class SynCLI {
     	}
     	
     	if (help) {
-    		System.err.println("");
     		printHelpMessage();
     	}
     	else {
+    		System.err.println("");
     		System.exit(0);
     	}
     }
@@ -114,6 +119,7 @@ public class SynCLI {
             		printHelpMessage();
             	}
             	else {
+            		System.err.println("");
             		String cmdHelp = args[1];
             		if (!commands.containsKey(cmdHelp)) {
                         printErrorMessage("Command '" + cmdHelp + "' does not exist.", true);
