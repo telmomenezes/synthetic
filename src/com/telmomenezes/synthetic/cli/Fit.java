@@ -7,6 +7,21 @@ import com.telmomenezes.synthetic.Net;
 
 
 public class Fit extends Command {
+	
+	@Override
+	public String help() {
+		String help = "Computes mean fitness for several runs of a generator.\n";
+		help += "$ synt fit -inet <network> -prg <generator>\n";
+		help += "Optional parameters:\n";
+		help += "-undir if network is undirected.\n";
+		help += "-sr <n> sample ratio (default is 0.0006).\n";
+		help += "-bins <n> distribution bins (default is 100).\n";
+		help += "-runs <n> number of runs per program (default is 30).\n";
+		return help;
+    }
+	
+	
+	@Override
     public boolean run() throws SynCliException {
     	String netfile = getStringParam("inet");
     	String progFile = getStringParam("prg");

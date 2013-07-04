@@ -7,7 +7,22 @@ import com.telmomenezes.synthetic.io.NetFileType;
 
 
 public class GenNet extends Command {
-    public boolean run() throws SynCliException {
+    
+	@Override
+	public String help() {
+		String help = "Generates network.\n";
+		help += "$ synt gen -inet <network> -prg <generator> -onet <network>\n";
+		help += "Optional parameters:\n";
+		help += "-undir if network is undirected.\n";
+		help += "-nodes <n> number of nodes (default is 1000).\n";
+		help += "-edges <n> number or edges (default is 10000).\n";
+		help += "-sr <n> sample ratio (default is 0.0006).\n";
+		return help;
+    }
+	
+	
+	@Override
+	public boolean run() throws SynCliException {
     	String netfile = getStringParam("inet", "");
     	int nodes = getIntegerParam("nodes", 1000);
     	int edges = getIntegerParam("edges", 10000);

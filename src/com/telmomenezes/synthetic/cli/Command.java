@@ -15,6 +15,9 @@ public abstract class Command {
 	public abstract boolean run() throws SynCliException;
 
 	
+	public abstract String help();
+	
+	
 	public void setCline(CommandLine cline) {
 		this.cline = cline;
 	}

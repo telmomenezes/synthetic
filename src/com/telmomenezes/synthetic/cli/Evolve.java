@@ -12,6 +12,20 @@ import com.telmomenezes.synthetic.samplers.DownSampler;
 
 public class Evolve extends Command {
 
+	@Override
+	public String help() {
+		String help = "Evolve network generator.\n";
+		help += "$ synt evo -inet <network> -odir <dir>\n";
+		help += "Optional parameters:\n";
+		help += "-undir if network is undirected.\n";
+		help += "-gens <n> number of stable generations before search stops (default is 1000).\n";
+		help += "-sr <n> sample ratio (default is 0.0006).\n";
+		help += "-bins <n> distribution bins (default is 100).\n";
+		help += "-tolerance <n> accepted fitness loss for shorter program (default is 0.1).\n";
+		return help;
+    }
+	
+	
     @Override
     public boolean run() throws SynCliException {
         

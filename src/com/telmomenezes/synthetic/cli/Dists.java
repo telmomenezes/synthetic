@@ -13,6 +13,18 @@ import com.telmomenezes.synthetic.Net;
 
 public class Dists extends Command {
 	
+	@Override
+	public String help() {
+		String help = "Computes matrix of behavioral distances between a set of generators.\n";
+		help += "$ synt dists -inet <network> -dir <dir> -out <csv_file>\n";
+		help += "Optional parameters:\n";
+		help += "-undir if network is undirected.\n";
+		help += "-sr <n> sample ratio (default is 0.0006).\n";
+		return help;
+    }
+	
+	
+	@Override
     public boolean run() throws SynCliException {
         String netfile = getStringParam("inet");
         String dir = getStringParam("dir");

@@ -8,7 +8,21 @@ import com.telmomenezes.synthetic.motifs.TriadicProfile;
 
 
 public class Random extends Command {
-    public boolean run() throws SynCliException {
+    
+	@Override
+	public String help() {
+		String help = "Generate random network with same number of nodes and edges as the reference network.\n";
+		help += "$ synt random -inet <network> -odir <dir>\n";
+		help += "Optional parameters:\n";
+		help += "-undir if network is undirected.\n";
+		help += "-bins <n> distribution bins (default is 100).\n";
+		help += "-runs <n> number of runs per program (default is 30).\n";
+		return help;
+    }
+	
+	
+	@Override
+	public boolean run() throws SynCliException {
     	String netfile = getStringParam("inet");
         String outDir = getStringParam("odir");
         int bins = getIntegerParam("bins", 100);

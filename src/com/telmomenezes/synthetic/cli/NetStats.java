@@ -4,7 +4,19 @@ import com.telmomenezes.synthetic.Net;
 
 
 public class NetStats extends Command {
-    public boolean run() throws SynCliException {
+    
+	@Override
+	public String help() {
+		String help = "Prints basic information about a network.\n";
+		help += "$ synt netstats -inet <network>\n";
+		help += "Optional parameters:\n";
+		help += "Use option -undir if network is undirected.\n";
+		return help;
+    }
+	
+	
+	@Override
+	public boolean run() throws SynCliException {
     	String netfile = getStringParam("inet");
     	boolean directed = !paramExists("undir");
     	boolean par = paramExists("par");

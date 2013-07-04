@@ -14,6 +14,20 @@ import com.telmomenezes.synthetic.generators.GeneratorFactory;
 
 public class DetailFit extends Command {
 	
+	@Override
+	public String help() {
+		String help = "Computes fitness and detailed metrics for a set of generators.\n";
+		help += "$ synt detailfit -inet <network> -dir <dir> -out <csv_file>\n";
+		help += "Optional parameters:\n";
+		help += "-undir if network is undirected.\n";
+		help += "-sr <n> sample ratio (default is 0.0006).\n";
+		help += "-bins <n> distribution bins (default is 100).\n";
+		help += "-runs <n> number of runs per program (default is 30).\n";
+		return help;
+    }
+	
+	
+	@Override
     public boolean run() throws SynCliException {
         String netfile = getStringParam("inet");
         String dir = getStringParam("dir");

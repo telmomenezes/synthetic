@@ -29,7 +29,7 @@ public class SynCLI {
     	commands.put("fit", new Fit());
     	commands.put("compfit", new CompFit());
     	commands.put("detailfit", new DetailFit());
-    	commands.put("gennet", new GenNet());
+    	commands.put("gen", new GenNet());
     	commands.put("dists", new Dists());
     }
     
@@ -46,6 +46,7 @@ public class SynCLI {
     		System.err.print(k);
     	}
     	System.err.println("");
+    	System.err.println("\nUse 'synt help <command>' to get help on a specific command.");
     	System.exit(0);
     }
     
@@ -109,7 +110,17 @@ public class SynCLI {
             Command cmdObj = null;
             
             if (cmd.equals("help")) {
-                printHelpMessage();
+            	if (args.length == 1) {
+            		printHelpMessage();
+            	}
+            	else {
+            		String cmdHelp = args[1];
+            		if (!commands.containsKey(cmdHelp)) {
+                        printErrorMessage("Command '" + cmdHelp + "' does not exist.", true);
+                    }
+            		System.err.println(commands.get(cmdHelp).help());
+            		System.exit(0);
+            	}
             }
             
             if (!commands.containsKey(cmd)) {

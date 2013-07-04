@@ -6,7 +6,20 @@ import com.telmomenezes.synthetic.Net;
 
 
 public class Prune extends Command {
-    public boolean run() throws SynCliException {
+    
+	@Override
+	public String help() {
+		String help = "Simplify generator program.\n";
+		help += "$ synt prune -inet <network> -prg <in_generator> -oprg <out_generator>\n";
+		help += "Optional parameters:\n";
+		help += "-undir if network is undirected.\n";
+		help += "-sr <n> sample ratio (default is 0.0006).\n";
+		return help;
+    }
+	
+	
+	@Override
+	public boolean run() throws SynCliException {
     	String netfile = getStringParam("inet");
     	String progFile = getStringParam("prg");
     	String outProg = getStringParam("oprg");
