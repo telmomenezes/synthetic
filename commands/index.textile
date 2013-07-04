@@ -13,7 +13,7 @@ h3. compare
 Compares two networks.
 
 {% highlight bash %}
-$ synt evo -inet <network1> -inet2 <network2>
+$ synt compare -inet <network1> -inet2 <network2>
 {% endhighlight %}
 
 Optional parameters: @-undir@, @-bins@
@@ -83,7 +83,7 @@ h3. gen
 Generates network.
 
 {% highlight bash %}
-$ synt gen -inet <network> -prg <generator> -onet <network>
+$ synt gen -prg <generator> -onet <network>
 {% endhighlight %}
 
 Optional parameters: @-undir@, @-nodes@, @-edges@, @-sr@
