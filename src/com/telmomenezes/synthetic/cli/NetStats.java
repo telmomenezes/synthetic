@@ -6,6 +6,10 @@ import com.telmomenezes.synthetic.Net;
 public class NetStats extends Command {
     
 	@Override
+	public String name() {return "netstats";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Prints basic information about a network.\n";
 		help += "$ synt netstats -inet <network>\n";

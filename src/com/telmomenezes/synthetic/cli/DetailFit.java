@@ -15,6 +15,10 @@ import com.telmomenezes.synthetic.generators.GeneratorFactory;
 public class DetailFit extends Command {
 	
 	@Override
+	public String name() {return "detailfit";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Computes fitness and detailed metrics for a set of generators.\n";
 		help += "$ synt detailfit -inet <network> -dir <dir> -out <csv_file>\n";

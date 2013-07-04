@@ -7,9 +7,13 @@ import com.telmomenezes.synthetic.Net;
 public class Compare extends Command {
 	
 	@Override
+	public String name() {return "compare";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Compares two networks.\n";
-		help += "$ synt evo -inet <network1> -inet2 <network2>\n";
+		help += "$ synt compare -inet <network1> -inet2 <network2>\n";
 		help += "Optional parameters:\n";
 		help += "-undir if network is undirected.\n";
 		help += "-bins <n> distribution bins (default is 100).\n";

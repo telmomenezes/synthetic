@@ -8,6 +8,10 @@ import com.telmomenezes.synthetic.Net;
 public class Prune extends Command {
     
 	@Override
+	public String name() {return "prune";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Simplify generator program.\n";
 		help += "$ synt prune -inet <network> -prg <in_generator> -oprg <out_generator>\n";

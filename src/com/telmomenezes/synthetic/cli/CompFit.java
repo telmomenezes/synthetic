@@ -14,6 +14,10 @@ import com.telmomenezes.synthetic.Net;
 public class CompFit extends Command {
 	
 	@Override
+	public String name() {return "compfit";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Computes fitness of a set of generators.\n";
 		help += "$ synt compfit -inet <network> -dir <dir> -out <csv_file>\n";

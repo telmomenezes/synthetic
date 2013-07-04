@@ -13,6 +13,10 @@ import com.telmomenezes.synthetic.samplers.DownSampler;
 public class Evolve extends Command {
 
 	@Override
+	public String name() {return "evo";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Evolve network generator.\n";
 		help += "$ synt evo -inet <network> -odir <dir>\n";

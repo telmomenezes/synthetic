@@ -21,19 +21,25 @@ public class SynCLI {
     
     public SynCLI() {
     	commands = new HashMap<String, Command>();
-    	commands.put("netstats", new NetStats());
-    	commands.put("evo", new Evolve());
-    	commands.put("random", new Random());
-    	commands.put("convert", new Convert());
-    	commands.put("run", new Run());
-    	commands.put("compare", new Compare());
-    	commands.put("prune", new Prune());
-    	commands.put("fit", new Fit());
-    	commands.put("compfit", new CompFit());
-    	commands.put("detailfit", new DetailFit());
-    	commands.put("gen", new GenNet());
-    	commands.put("dists", new Dists());
+    	addCommand(new NetStats());
+    	addCommand(new Evolve());
+    	addCommand(new Random());
+    	addCommand(new Convert());
+    	addCommand(new Run());
+    	addCommand(new Compare());
+    	addCommand(new Prune());
+    	addCommand(new Fit());
+    	addCommand(new CompFit());
+    	addCommand(new DetailFit());
+    	addCommand(new Gen());
+    	addCommand(new Dists());
     }
+    
+    
+    private void addCommand(Command cmd) {
+    	commands.put(cmd.name(), cmd);
+    }
+    
     
     private void printHelpMessage() {
     	System.err.println("\nSynthetic ver " + version);

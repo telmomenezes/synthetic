@@ -7,12 +7,16 @@ import com.telmomenezes.synthetic.NetParams;
 import com.telmomenezes.synthetic.io.NetFileType;
 
 
-public class GenNet extends Command {
+public class Gen extends Command {
     
+	@Override
+	public String name() {return "gen";}
+	
+	
 	@Override
 	public String help() {
 		String help = "Generates network.\n";
-		help += "$ synt gen -inet <network> -prg <generator> -onet <network>\n";
+		help += "$ synt gen -prg <generator> -onet <network>\n";
 		help += "Optional parameters:\n";
 		help += "-undir if network is undirected.\n";
 		help += "-nodes <n> number of nodes (default is 1000).\n";

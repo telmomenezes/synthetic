@@ -12,6 +12,10 @@ import com.telmomenezes.synthetic.motifs.TriadicProfile;
 public class Run extends Command {
     
 	@Override
+	public String name() {return "run";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Run generator and produce detailed output files.\n";
 		help += "$ synt run -inet <network> -odir <dir>\n";

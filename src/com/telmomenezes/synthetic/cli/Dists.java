@@ -14,6 +14,10 @@ import com.telmomenezes.synthetic.Net;
 public class Dists extends Command {
 	
 	@Override
+	public String name() {return "dists";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Computes matrix of behavioral distances between a set of generators.\n";
 		help += "$ synt dists -inet <network> -dir <dir> -out <csv_file>\n";

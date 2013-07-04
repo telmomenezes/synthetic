@@ -10,6 +10,10 @@ import com.telmomenezes.synthetic.motifs.TriadicProfile;
 public class Random extends Command {
     
 	@Override
+	public String name() {return "random";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Generate random network with same number of nodes and edges as the reference network.\n";
 		help += "$ synt random -inet <network> -odir <dir>\n";

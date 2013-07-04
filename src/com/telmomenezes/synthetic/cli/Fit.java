@@ -9,6 +9,10 @@ import com.telmomenezes.synthetic.Net;
 public class Fit extends Command {
 	
 	@Override
+	public String name() {return "fit";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Computes mean fitness for several runs of a generator.\n";
 		help += "$ synt fit -inet <network> -prg <generator>\n";

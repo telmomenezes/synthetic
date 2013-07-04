@@ -8,6 +8,10 @@ import com.telmomenezes.synthetic.io.NetFileType;
 public class Convert extends Command {
     
 	@Override
+	public String name() {return "convert";}
+	
+	
+	@Override
 	public String help() {
 		String help = "Converts network to a simple format.\n";
 		help += "$ synt convert -inet <in_network> -onet <out_network>\n";

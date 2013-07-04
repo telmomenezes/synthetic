@@ -12,10 +12,13 @@ public abstract class Command {
 	private CommandLine cline;
 	
 	
-	public abstract boolean run() throws SynCliException;
-
+	public abstract String name();
+	
 	
 	public abstract String help();
+	
+	
+	public abstract boolean run() throws SynCliException;
 	
 	
 	public void setCline(CommandLine cline) {
