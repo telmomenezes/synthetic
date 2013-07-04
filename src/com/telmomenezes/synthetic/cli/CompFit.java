@@ -64,7 +64,7 @@ public class CompFit extends Command {
         		for (int i = 0; i < runs; i++) {
         			System.out.println("run #" + i);
             	
-        			Generator gen = GeneratorFactory.create(gentype, net, sr);
+        			Generator gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
         			gen.load(dir + "/" + progFile);
         			gen.run();
         			gen.computeFitness(targBag, bins);

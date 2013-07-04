@@ -23,7 +23,7 @@ public class NetStats extends Command {
 
         Net net = Net.load(netfile, directed, par);
 
-        System.out.println("Stats for network '" + netfile+ "'");
+        System.out.println("Stats for network '" + netfile + "'");
         System.out.println(net);
         
         return true;

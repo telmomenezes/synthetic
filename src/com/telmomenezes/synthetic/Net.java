@@ -376,6 +376,11 @@ public class Net implements Cloneable {
 	}
     
     
+    public NetParams getNetParams() {
+    	return new NetParams(nodeCount, edgeCount, directed, selfEdges, parallels);
+    }
+    
+    
     @Override
     public String toString() {
         String str = "node count: " + nodeCount + "\n";
@@ -388,17 +393,5 @@ public class Net implements Cloneable {
         for (Node node : nodes) {
             node.setFlag(false);
         }
-    }
-    
-    
-    public double valueRatio(int value) {
-    	double count = 0;
-        for (Node node : nodes) {
-        	if (node.value == value) {
-        		count += 1;
-        	}
-        }
-        
-        return count / (double)nodeCount;
     }
 }

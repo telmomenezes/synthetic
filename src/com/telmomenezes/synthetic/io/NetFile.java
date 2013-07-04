@@ -20,6 +20,10 @@ public abstract class NetFile {
             net = (new SNAPNetFile()).load(filePath, directed, parallels);
             return net;
         }
+        else if (ext.equals("edges")) {
+            net = (new SNAPNetFile()).load(filePath, directed, parallels);
+            return net;
+        }
         else if (ext.equals("snap")) {
             net = (new SNAPNetFile()).load(filePath, directed, parallels);
             return net;

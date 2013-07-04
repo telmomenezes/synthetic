@@ -2,19 +2,19 @@ package com.telmomenezes.synthetic.generators;
 
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.Net;
+import com.telmomenezes.synthetic.NetParams;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.gp.Prog;
 
 
 public class EndoGenerator extends Generator {
 
-	public EndoGenerator(Net refNet, double sr) {
-		super(refNet, sr);
+	public EndoGenerator(NetParams netParams, double sr) {
+		super(netParams, sr);
 		
 		Vector<String> variableNames = new Vector<String>();
 		
-		if (refNet.directed) {
+		if (netParams.getDirected()) {
 			variableNames.add("origInDeg");
 			variableNames.add("origOutDeg");
 			variableNames.add("targInDeg");
@@ -36,12 +36,12 @@ public class EndoGenerator extends Generator {
 	
 	
 	public Generator instance() {
-		return new EndoGenerator(refNet, sr);
+		return new EndoGenerator(netParams, sr);
 	}
 	
 	
 	public Generator clone() {
-		Generator generator = new EndoGenerator(refNet, sr);
+		Generator generator = new EndoGenerator(netParams, sr);
 		generator.prog = prog.clone();
 		return generator;
 	}
@@ -53,7 +53,7 @@ public class EndoGenerator extends Generator {
 		
         double distance = net.uRandomWalkers.getDist(origNode.getId(), targNode.getId());
 		
-        if (refNet.directed) {
+        if (netParams.getDirected()) {
         	double directDistance = net.dRandomWalkers.getDist(origNode.getId(), targNode.getId());
         	double reverseDistance = net.dRandomWalkers.getDist(targNode.getId(), origNode.getId());
                 

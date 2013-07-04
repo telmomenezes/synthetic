@@ -3,6 +3,7 @@ package com.telmomenezes.synthetic.cli;
 import com.telmomenezes.synthetic.generators.Generator;
 import com.telmomenezes.synthetic.generators.GeneratorFactory;
 import com.telmomenezes.synthetic.Net;
+import com.telmomenezes.synthetic.NetParams;
 import com.telmomenezes.synthetic.io.NetFileType;
 
 
@@ -42,9 +43,10 @@ public class GenNet extends Command {
         System.out.println("nodes: " + nodes);
         System.out.println("edges: " + edges);
         
-        Net net = new Net(nodes, edges, directed, false, par);
-        Generator gen = GeneratorFactory.create(gentype, net, sr);
+        NetParams netParams = new NetParams(nodes, edges, directed, false, par);
+        Generator gen = GeneratorFactory.create(gentype, netParams, sr);
         gen.load(progFile);
+        
         gen.run();
         Net syntNet = gen.getNet();
         

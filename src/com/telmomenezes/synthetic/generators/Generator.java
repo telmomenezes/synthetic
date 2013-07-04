@@ -6,6 +6,7 @@ import java.util.Vector;
 import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.MetricsBag;
 import com.telmomenezes.synthetic.Net;
+import com.telmomenezes.synthetic.NetParams;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.random.RandomGenerator;
 import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
@@ -26,7 +27,7 @@ public abstract class Generator {
     protected Vector<Prog> executionPaths;
     //private boolean checkPaths;
     
-    protected Net refNet;
+    protected NetParams netParams;
     protected Net net;
     
     protected int time;
@@ -46,17 +47,17 @@ public abstract class Generator {
 
 	
 	protected void createNodes() {
-        for (int i = 0; i < refNet.nodeCount; i++) {
+        for (int i = 0; i < netParams.getNodeCount(); i++) {
             net.addNode();
         }
 	}
 	
     
-	public Generator(Net refNet, double sr) {
-	    this.refNet = refNet;
+	public Generator(NetParams netParams, double sr) {
+	    this.netParams = netParams;
 	    this.sr = sr;
 	    
-	    this.trials = (int)(sr * (refNet.nodeCount * refNet.nodeCount));
+	    this.trials = (int)(sr * (netParams.getNodeCount() * netParams.getNodeCount()));
 	    
 	    sampleOrigs = new int[trials];
 	    sampleTargs = new int[trials];
@@ -80,7 +81,7 @@ public abstract class Generator {
 	
 	
 	private int getRandomNode() {
-		return RandomGenerator.random.nextInt(refNet.nodeCount);
+		return RandomGenerator.random.nextInt(netParams.getNodeCount());
 	}
 	
 	
@@ -95,7 +96,7 @@ public abstract class Generator {
             	targIndex = getRandomNode();
             		
             	if (origIndex != targIndex) {
-            		if (refNet.parallels || (!net.edgeExists(origIndex, targIndex))) {
+            		if (netParams.getParallels() || (!net.edgeExists(origIndex, targIndex))) {
             			found = true;
             		}
             	}
@@ -194,7 +195,7 @@ public abstract class Generator {
 	public double run(Generator shadow) {
 		double dist = 0;
 		
-		net = new Net(refNet.nodeCount, refNet.edgeCount, refNet.directed, false, refNet.parallels);
+		net = new Net(netParams.getNodeCount(), netParams.getEdgeCount(), netParams.getDirected(), false, netParams.getParallels());
 		
 		if (shadow != null) {
 			shadow.net = net;
@@ -204,14 +205,14 @@ public abstract class Generator {
         
         // init DistMatrix
         net.dRandomWalkers = null;
-        if (refNet.directed) {
+        if (netParams.getDirected()) {
         	net.dRandomWalkers = new RandomWalkers(net, true);
         }
         net.uRandomWalkers = new RandomWalkers(net, false);
 
         // create edges
         time = 0;
-        while (time < refNet.edgeCount) {
+        while (time < netParams.getEdgeCount()) {
         	Edge newEdge = cycle(null);
         	
         	if (shadow != null) {
@@ -225,7 +226,7 @@ public abstract class Generator {
         	net.addEdge(orig, targ);
             
         	// update distances
-        	if (refNet.directed) {
+        	if (netParams.getDirected()) {
         		net.dRandomWalkers.step();
         	}
         	net.uRandomWalkers.step();
@@ -233,7 +234,7 @@ public abstract class Generator {
         	time++;
         }
         
-        dist /= refNet.edgeCount;
+        dist /= netParams.getEdgeCount();
         return dist;
     }
 

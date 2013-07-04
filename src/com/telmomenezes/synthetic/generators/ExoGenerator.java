@@ -2,19 +2,19 @@ package com.telmomenezes.synthetic.generators;
 
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.Net;
+import com.telmomenezes.synthetic.NetParams;
 import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.gp.Prog;
 
 
 public class ExoGenerator extends Generator {
 
-	public ExoGenerator(Net refNet, double sr) {
-		super(refNet, sr);
+	public ExoGenerator(NetParams netParams, double sr) {
+		super(netParams, sr);
 		
 		Vector<String> variableNames = new Vector<String>();
 		
-		if (refNet.directed) {
+		if (netParams.getDirected()) {
 			variableNames.add("origId");
 			variableNames.add("targId");
 			variableNames.add("origInDeg");
@@ -40,12 +40,12 @@ public class ExoGenerator extends Generator {
 	
 	
 	public Generator instance() {
-		return new ExoGenerator(refNet, sr);
+		return new ExoGenerator(netParams, sr);
 	}
 	
 	
 	public Generator clone() {
-		Generator generator = new ExoGenerator(refNet, sr);
+		Generator generator = new ExoGenerator(netParams, sr);
 		generator.prog = prog.clone();
 		return generator;
 	}
@@ -60,7 +60,7 @@ public class ExoGenerator extends Generator {
 		prog.vars[0] = (double)origIndex;
 		prog.vars[1] = (double)targIndex;
 		
-        if (refNet.directed) {
+        if (netParams.getDirected()) {
         	double directDistance = net.dRandomWalkers.getDist(origNode.getId(), targNode.getId());
         	double reverseDistance = net.dRandomWalkers.getDist(targNode.getId(), origNode.getId());
                 

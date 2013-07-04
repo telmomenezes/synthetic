@@ -60,10 +60,10 @@ public class Dists extends Command {
         		
         			System.out.println(progFile1 + " -> " + progFile2);
         		
-        			Generator gen1 = GeneratorFactory.create(gentype, net, sr);
+        			Generator gen1 = GeneratorFactory.create(gentype, net.getNetParams(), sr);
         			gen1.load(dir + "/" + progFile1);
         		
-        			Generator gen2 = GeneratorFactory.create(gentype, net, sr);
+        			Generator gen2 = GeneratorFactory.create(gentype, net.getNetParams(), sr);
         			gen2.load(dir + "/" + progFile2);
         		
         			double dist1 = gen1.run(gen2);

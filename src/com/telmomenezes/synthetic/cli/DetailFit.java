@@ -109,7 +109,7 @@ public class DetailFit extends Command {
                 double relUDistsDist = 0;
 
                 for (int i = 0; i < runs; i++) {
-                    Generator gen = GeneratorFactory.create(gentype, net, sr);
+                    Generator gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
                     gen.load(dir + "/" + progFile);
                     gen.run();
 
@@ -137,7 +137,7 @@ public class DetailFit extends Command {
                 }
 
                 // determine prunned program size
-                Generator gen = GeneratorFactory.create(gentype, net, sr);
+                Generator gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
                 gen.load(dir + "/" + progFile);
                 gen.run();
                 gen.getProg().dynPruning();
