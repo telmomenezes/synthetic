@@ -32,6 +32,7 @@ public class SynCLI {
     	addCommand(new DetailFit());
     	addCommand(new Gen());
     	addCommand(new Dists());
+    	addCommand(new RandGen());
     }
     
     
