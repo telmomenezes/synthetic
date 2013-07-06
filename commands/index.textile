@@ -18,16 +18,6 @@ $ synt compare -inet <network1> -inet2 <network2>
 
 Optional parameters: @-undir@, @-bins@
 
-h3. compfit
-
-Computes fitness of a set of programs.
-
-{% highlight bash %}
-$ synt compfit -inet <network> -dir <dir> -out <csv_file>
-{% endhighlight %}
-
-Optional parameters: @-undir@, @-sr@, @-bins@, @-runs@, @-mean@
-
 h3. convert
 
 Converts network to a simple format.
@@ -46,7 +36,7 @@ Computes fitness and detailed metrics for a set of generators.
 $ synt detailfit -inet <network> -dir <dir> -out <csv_file>
 {% endhighlight %}
 
-Optional parameters: @-undir@, @-sr@, @-bins@, @-runs@
+Optional parameters: @-undir@, @-sr@, @-bins@, @-runs@, @-mean@
 
 h3. dists
 
