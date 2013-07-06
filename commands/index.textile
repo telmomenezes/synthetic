@@ -98,6 +98,14 @@ $ synt prune -inet <network> -prg <in_generator> -oprg <out_generator>
 
 Optional parameters: @-undir@, @-sr@
 
+h3. randgen
+
+Create a random generator program.
+
+{% highlight bash %}
+$ synt randgen -oprg <out_generator>
+{% endhighlight %}
+
 h3. random
 
 Generate random network with same number of nodes and edges as the reference network.
