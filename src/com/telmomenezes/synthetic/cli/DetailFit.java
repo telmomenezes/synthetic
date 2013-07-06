@@ -14,6 +14,27 @@ import com.telmomenezes.synthetic.generators.GeneratorFactory;
 
 public class DetailFit extends Command {
 	
+	private double fitMax;
+	private double fitAvg;
+	private double degreesDist;
+	private double inDegreesDist;
+	private double outDegreesDist;
+	private double dPageRanksDist;
+	private double uPageRanksDist;
+	private double triadicProfileDist;
+	private double dDistsDist;
+	private double uDistsDist;
+	private double relDegreesDist;
+	private double relInDegreesDist;
+	private double relOutDegreesDist;
+	private double relDPageRanksDist;
+	private double relUPageRanksDist;
+	private double relTriadicProfileDist;
+	private double relDDistsDist;
+	private double relUDistsDist;
+	private int progSize;
+	
+	
 	@Override
 	public String name() {return "detailfit";}
 	
@@ -27,8 +48,73 @@ public class DetailFit extends Command {
 		help += "-sr <n> sample ratio (default is 0.0006).\n";
 		help += "-bins <n> distribution bins (default is 100).\n";
 		help += "-runs <n> number of runs per program (default is 30).\n";
+		help += "-mean compute mean.\n";
 		return help;
     }
+	
+	
+	private void resetMetrics() {
+		fitMax = 0;
+        fitAvg = 0;
+        degreesDist = 0;
+        inDegreesDist = 0;
+        outDegreesDist = 0;
+        dPageRanksDist = 0;
+        uPageRanksDist = 0;
+        triadicProfileDist = 0;
+        dDistsDist = 0;
+        uDistsDist = 0;
+        relDegreesDist = 0;
+        relInDegreesDist = 0;
+        relOutDegreesDist = 0;
+        relDPageRanksDist = 0;
+        relUPageRanksDist = 0;
+        relTriadicProfileDist = 0;
+        relDDistsDist = 0;
+        relUDistsDist = 0;
+	}
+	
+	
+	private String metricsLine(String progFile, boolean directed) {
+		String str = progFile.split("\\.")[0];
+    	str += "," + fitMax;
+    	str += "," + fitAvg;
+    	str += "," + progSize;
+
+    	// absolute
+    	if (directed) {
+        	str += "," + inDegreesDist;
+        	str += "," + outDegreesDist;
+        	str += "," + dPageRanksDist;
+    	}
+    	else {
+        	str += "," + degreesDist;
+    	}
+    	str += "," + uPageRanksDist;
+    	str += "," + triadicProfileDist;
+    	if (directed) {
+        	str += "," + dDistsDist;
+    	}
+    	str += "," + uDistsDist;
+    
+    	// relative
+    	if (directed) {
+        	str += "," + relInDegreesDist;
+        	str += "," + relOutDegreesDist;
+        	str += "," + relDPageRanksDist;
+    	}
+    	else {
+        	str += "," + relDegreesDist;
+    	}
+    	str += "," + relUPageRanksDist;
+    	str += "," + relTriadicProfileDist;
+    	if (directed) {
+        	str += "," + relDDistsDist;
+    	}
+    	str += "," + relUDistsDist;
+
+    	return str;
+	}
 	
 	
 	@Override
@@ -40,6 +126,7 @@ public class DetailFit extends Command {
         int bins = getIntegerParam("bins", 100);
         int runs = getIntegerParam("runs", 30);
         boolean directed = !paramExists("undir");
+        boolean mean = paramExists("mean");
         boolean par = paramExists("par");
         String gentype = getStringParam("gentype", "exo");
         
@@ -54,7 +141,8 @@ public class DetailFit extends Command {
             BufferedWriter out = new BufferedWriter(fstream);
 
             String str = "prog";
-            str += ",fit";
+            str += ",fit_max";
+            str += ",fit_mean";
             str += ",program_size";
 
             // absolute
@@ -94,31 +182,27 @@ public class DetailFit extends Command {
             for (String progFile : prgFiles) {
             	System.out.println("processing " + progFile);
             	
-                double fit = 0;
-                double degreesDist = 0;
-                double inDegreesDist = 0;
-                double outDegreesDist = 0;
-                double dPageRanksDist = 0;
-                double uPageRanksDist = 0;
-                double triadicProfileDist = 0;
-                double dDistsDist = 0;
-                double uDistsDist = 0;
-                double relDegreesDist = 0;
-                double relInDegreesDist = 0;
-                double relOutDegreesDist = 0;
-                double relDPageRanksDist = 0;
-                double relUPageRanksDist = 0;
-                double relTriadicProfileDist = 0;
-                double relDDistsDist = 0;
-                double relUDistsDist = 0;
+                resetMetrics();
 
+                // determine prunned program size
+                Generator gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
+                gen.load(dir + "/" + progFile);
+                gen.run();
+                gen.getProg().dynPruning();
+                progSize = gen.getProg().size();
+                
                 for (int i = 0; i < runs; i++) {
-                    Generator gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
+                	if(!mean) {
+                		resetMetrics();
+                	}
+                	
+                    gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
                     gen.load(dir + "/" + progFile);
                     gen.run();
 
                     gen.computeFitness(targBag, bins);
-                    fit += gen.fitnessMax;
+                    fitMax += gen.fitnessMax;
+                    fitAvg += gen.fitnessAvg;
                     MetricsBag bag = gen.getGenBag();
 
                     degreesDist += bag.getDegreesDist();
@@ -138,69 +222,34 @@ public class DetailFit extends Command {
                     relTriadicProfileDist += bag.getRelTriadicProfileDist();
                     relDDistsDist += bag.getRelDDistsDist();
                     relUDistsDist += bag.getRelUDistsDist();
+                    
+                    if (!mean) {
+                    	out.write(metricsLine(progFile, directed) + "\n");
+                    }
                 }
 
-                // determine prunned program size
-                Generator gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
-                gen.load(dir + "/" + progFile);
-                gen.run();
-                gen.getProg().dynPruning();
+                if (mean) {
+                	fitMax /= runs;
+                	fitAvg /= runs;
+                	degreesDist /= runs;
+                	inDegreesDist /= runs;
+                	outDegreesDist /= runs;
+                	dPageRanksDist /= runs;
+                	uPageRanksDist /= runs;
+                	triadicProfileDist /= runs;
+                	dDistsDist /= runs;
+                	uDistsDist /= runs;
+                	relDegreesDist /= runs;
+                	relInDegreesDist /= runs;
+                	relOutDegreesDist /= runs;
+                	relDPageRanksDist /= runs;
+                	relUPageRanksDist /= runs;
+                	relTriadicProfileDist /= runs;
+                	relDDistsDist /= runs;
+                	relUDistsDist /= runs;
 
-                fit /= runs;
-                degreesDist /= runs;
-                inDegreesDist /= runs;
-                outDegreesDist /= runs;
-                dPageRanksDist /= runs;
-                uPageRanksDist /= runs;
-                triadicProfileDist /= runs;
-                dDistsDist /= runs;
-                uDistsDist /= runs;
-                relDegreesDist /= runs;
-                relInDegreesDist /= runs;
-                relOutDegreesDist /= runs;
-                relDPageRanksDist /= runs;
-                relUPageRanksDist /= runs;
-                relTriadicProfileDist /= runs;
-                relDDistsDist /= runs;
-                relUDistsDist /= runs;
-
-                str = progFile.split("\\.")[0];
-                str += "," + fit;
-                str += "," + gen.getProg().size();
-
-                // absolute
-                if (directed) {
-                    str += "," + inDegreesDist;
-                    str += "," + outDegreesDist;
-                    str += "," + dPageRanksDist;
+                	out.write(metricsLine(progFile, directed) + "\n");
                 }
-                else {
-                    str += "," + degreesDist;
-                }
-                str += "," + uPageRanksDist;
-                str += "," + triadicProfileDist;
-                if (directed) {
-                    str += "," + dDistsDist;
-                }
-                str += "," + uDistsDist;
-                
-                // relative
-                if (directed) {
-                    str += "," + relInDegreesDist;
-                    str += "," + relOutDegreesDist;
-                    str += "," + relDPageRanksDist;
-                }
-                else {
-                    str += "," + relDegreesDist;
-                }
-                str += "," + relUPageRanksDist;
-                str += "," + relTriadicProfileDist;
-                if (directed) {
-                    str += "," + relDDistsDist;
-                }
-                str += "," + relUDistsDist;
-
-                out.write(str + "\n");
             }
             
             out.close();

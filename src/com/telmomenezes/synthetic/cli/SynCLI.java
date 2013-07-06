@@ -29,7 +29,6 @@ public class SynCLI {
     	addCommand(new Compare());
     	addCommand(new Prune());
     	addCommand(new Fit());
-    	addCommand(new CompFit());
     	addCommand(new DetailFit());
     	addCommand(new Gen());
     	addCommand(new Dists());
