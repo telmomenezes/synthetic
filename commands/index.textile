@@ -106,6 +106,8 @@ Create a random generator program.
 $ synt randgen -oprg <out_generator>
 {% endhighlight %}
 
+Optional parameters: @-undir@
+
 h3. random
 
 Generate random network with same number of nodes and edges as the reference network.
