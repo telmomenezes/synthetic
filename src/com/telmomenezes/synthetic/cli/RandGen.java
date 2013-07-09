@@ -14,6 +14,7 @@ public class RandGen extends Command {
 	public String help() {
 		String help = "Create a random generator program.\n";
 		help += "$ synt randgen -oprg <out_generator>\n";
+		help += "-undir if network is undirected.\n";
 		return help;
     }
 	
@@ -21,8 +22,9 @@ public class RandGen extends Command {
 	@Override
 	public boolean run() throws SynCliException {
     	String outProg = getStringParam("oprg");
+    	boolean directed = !paramExists("undir");
         
-    	NetParams netParams = new NetParams(0, 0, false, false, false);
+    	NetParams netParams = new NetParams(0, 0, directed, false, false);
         Generator gen = GeneratorFactory.create("exo", netParams, 0);
         gen.initRandom();
         
