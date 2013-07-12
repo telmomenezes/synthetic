@@ -19,7 +19,7 @@ p1 <- p1 + theme(axis.line = element_line(colour = "black"),
 p1 <- p1 + xlab("program")
 p1 <- p1 + ylab("fitness (max)")
 
-p2 <- ggplot(dataFit, aes(x=prog, y=fit_avg)) + geom_boxplot()
+p2 <- ggplot(dataFit, aes(x=prog, y=fit_mean)) + geom_boxplot()
 p2 <- p2 + theme(axis.line = element_line(colour = "black"),
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
