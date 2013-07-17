@@ -40,6 +40,8 @@ public abstract class Generator {
     
     protected boolean valid;
     
+    private double lastWeight;
+    private boolean constant;
     
     public abstract Generator instance();
 	public abstract Generator clone();
@@ -137,6 +139,17 @@ public abstract class Generator {
             
             sampleWeights[i] = weight;
             totalWeight += weight;
+            
+            if (constant) {
+            	if (lastWeight < 0) {
+            		lastWeight = weight;
+            	}
+            	else {
+            		if (lastWeight != weight) {
+            			constant = false;
+            		}
+            	}
+            }
         }
         
         if (totalWeight == 0) {
@@ -193,6 +206,9 @@ public abstract class Generator {
 	
 	
 	public double run(Generator shadow) {
+		lastWeight = -1;
+		constant = true;
+		
 		double dist = 0;
 		
 		net = new Net(netParams.getNodeCount(), netParams.getEdgeCount(), netParams.getDirected(), false, netParams.getParallels());
@@ -406,6 +422,11 @@ public abstract class Generator {
 	}
 
 
+	public boolean isConstant() {
+		return constant;
+	}
+	
+	
 	@Override
 	public String toString() {
 		return "trials: " + trials; 

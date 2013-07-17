@@ -33,6 +33,7 @@ public class SynCLI {
     	addCommand(new Gen());
     	addCommand(new Dists());
     	addCommand(new RandGen());
+    	addCommand(new Const());
     }
     
     
