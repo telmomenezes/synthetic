@@ -18,7 +18,7 @@ public class Run extends Command {
 	@Override
 	public String help() {
 		String help = "Run generator and produce detailed output files.\n";
-		help += "$ synt run -inet <network> -odir <dir>\n";
+		help += "$ synt run -prg <generator> -inet <network> -odir <dir>\n";
 		help += "Optional parameters:\n";
 		help += "-undir if network is undirected.\n";
 		help += "-sr <n> sample ratio (default is 0.0006).\n";
