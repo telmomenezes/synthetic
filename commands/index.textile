@@ -18,6 +18,17 @@ $ synt compare -inet <network1> -inet2 <network2>
 
 Optional parameters: @-undir@, @-bins@
 
+h3. const
+
+Check if generator weight is constant (random network generator)..
+
+{% highlight bash %}
+$ synt const -prg <generator>
+{% endhighlight %}
+
+Optional parameters: @-undir@, @-sr@, @-nodes@, @-edges@
+
+
 h3. convert
 
 Converts network to a simple format.
@@ -123,7 +134,7 @@ h3. run
 Run generator and produce detailed output files.
 
 {% highlight bash %}
-$ synt run -inet <network> -odir <dir>
+$ synt run -prg <generator> -inet <network> -odir <dir>
 {% endhighlight %}
 
 Optional parameters: @-undir@, @-sr@, @-bins@, @-runs@
