@@ -23,6 +23,7 @@ public class GMLNetFile extends NetFile {
         
         try {
             State state = State.START;
+            int nesting = 0;
             
             BufferedReader in = new BufferedReader(new FileReader(filePath));
             String line;
@@ -42,6 +43,12 @@ public class GMLNetFile extends NetFile {
                 case GRAPH:
                     if (line.startsWith("node")) {
                         state = State.NODE;
+                        if (line.contains("[")) {
+                        	nesting = 0;
+                        }
+                        else {
+                        	nesting = -1;
+                        }
                     }
                     else if (line.startsWith("edge")) {
                         state = State.EDGE;
@@ -52,20 +59,32 @@ public class GMLNetFile extends NetFile {
                     break;
                 case NODE:
                     if (line.startsWith("id")) {
-                        String[] tokens = line.split(" ");
-                        if (tokens.length >= 2) {
-                            id = tokens[1];
-                        }
+                    	if (nesting == 0) {
+                    		String[] tokens = line.split(" ");
+                    		if (tokens.length >= 2) {
+                    			id = tokens[1];
+                    		}
+                    	}
                     }
                     else if (line.startsWith("value")) {
-                        String[] tokens = line.split(" ");
-                        if (tokens.length >= 2) {
-                            value = new Integer(tokens[1]);
-                        }
+                    	if (nesting == 0) {
+                    		String[] tokens = line.split(" ");
+                    		if (tokens.length >= 2) {
+                    			value = new Integer(tokens[1]);
+                    		}
+                    	}
                     }
                     else if (line.startsWith("]")) {
-                    	nodes.put(id, nb.addNode(value));
-                        state = State.GRAPH;
+                    	if (nesting == 0) {
+                    		nodes.put(id, nb.addNode(value));
+                    		state = State.GRAPH;
+                    	}
+                    	else {
+                    		nesting--;
+                    	}
+                    }
+                    else if (line.startsWith("[")) {
+                        nesting++;
                     }
                     break;
                 case EDGE:
@@ -81,12 +100,14 @@ public class GMLNetFile extends NetFile {
                             target = tokens[1];
                         }
                     }
+                    /*
                     else if (line.startsWith("value")) {
                         String[] tokens = line.split(" ");
                         if (tokens.length >= 2) {
                             value = new Integer(tokens[1]);
                         }
                     }
+                    */
                     else if (line.startsWith("]")) {
                         nb.addEdge(nodes.get(source), nodes.get(target), value);
                         state = State.GRAPH;

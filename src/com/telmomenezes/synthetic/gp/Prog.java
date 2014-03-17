@@ -287,17 +287,17 @@ public class Prog {
 
 	private GPNode initRandom2(double probTerm,
 						GPNode parent,
-						int maxDepth,
+						int minDepth,
 						boolean grow,
 						int depth) {
 		GPNode node;
 		double p = RandomGenerator.random.nextDouble();
-		if (((!grow) || (p > probTerm)) && (depth < maxDepth)) {
+		if (((!grow) || (p > probTerm)) && (depth < minDepth)) {
 			int fun = RandomGenerator.random.nextInt(GPFun.FUN_COUNT);
 			node = new GPNode(this);
 			node.initFun(fun, parent);
 			for (int i = 0; i < node.arity; i++)
-				node.params[i] = initRandom2(probTerm, node, maxDepth, grow, depth + 1);
+				node.params[i] = initRandom2(probTerm, node, minDepth, grow, depth + 1);
 		}
 		else {
 			if (RandomGenerator.random.nextBoolean() && (varcount > 0)) {
@@ -328,10 +328,10 @@ public class Prog {
 
 
 	public void initRandom(double probTerm,
-					int maxDepthLowLimit,
-					int maxDepthHighLimit) {
+					int depthLowLimit,
+					int depthHighLimit) {
 		boolean grow = RandomGenerator.random.nextBoolean();
-		int max_depth = maxDepthLowLimit +(RandomGenerator.random.nextInt(maxDepthHighLimit - maxDepthLowLimit));
+		int max_depth = depthLowLimit + (RandomGenerator.random.nextInt(depthHighLimit - depthLowLimit));
 
 		root = initRandom2(probTerm, null, max_depth, grow, 0);
 	}
