@@ -63,6 +63,7 @@ public class GMLNetFile extends NetFile {
                     		String[] tokens = line.split(" ");
                     		if (tokens.length >= 2) {
                     			id = tokens[1];
+                    			//System.out.println(id);
                     		}
                     	}
                     }
@@ -109,6 +110,7 @@ public class GMLNetFile extends NetFile {
                     }
                     */
                     else if (line.startsWith("]")) {
+                    	//System.out.println(source + " -> " + target);
                         nb.addEdge(nodes.get(source), nodes.get(target), value);
                         state = State.GRAPH;
                     }
