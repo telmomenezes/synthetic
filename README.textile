@@ -8,6 +8,11 @@ Programs are represented in a very simple language that is suitable both for hum
 
 "More info here":http://telmomenezes.github.io/synthetic
 
+h2. Related papers
+
+Menezes, T. and Roth, C., Symbolic regression of generative network models, Scientific Reports 4 (2014)
+"http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html":http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html
+
 h2. Author
 
 Synthetic is being developed by Telmo Menezes (telmo@telmomenezes.com). Feel free to contact the author with an issues regarding this software.

@@ -60,6 +60,7 @@ public abstract class Generator {
 	    this.sr = sr;
 	    
 	    this.trials = (int)(sr * (netParams.getNodeCount() * netParams.getNodeCount()));
+	    if (trials < 2) trials = 2;
 	    
 	    sampleOrigs = new int[trials];
 	    sampleTargs = new int[trials];
