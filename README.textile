@@ -6,7 +6,7 @@ Generators are useful as network growth models, both for their potentially expla
 
 Programs are represented in a very simple language that is suitable both for humans and the machine learning process. The machine learning algorithm used is Genetic Programming, belonging to the family of Evolutionary Algorithms, which are inspired by Darwinian evolution. Programs are subject to random variations, much like the genetic material in biological entities. The programs with the highest quality survive, leading to an ongoing refinement of the growth model.
 
-For a more complete explanation see "this article":http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html"> and "this blog post":http://www.telmomenezes.com/2014/09/using-evolutionary-computation-to-explain-network-growth/.
+For a more complete explanation see "this article":http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html and "this blog post":http://www.telmomenezes.com/2014/09/using-evolutionary-computation-to-explain-network-growth/.
 
 h2. Installation and usage
 
