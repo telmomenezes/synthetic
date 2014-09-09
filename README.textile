@@ -12,7 +12,7 @@ h2. Installation and usage
 
 "Check the wiki":https://github.com/telmomenezes/synthetic/wiki
 
-h2. Related papers
+h2. Related publications
 
 Menezes, T. and Roth, C., Symbolic regression of generative network models, Scientific Reports 4 (2014)
 "http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html":http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html
