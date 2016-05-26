@@ -16,3 +16,7 @@ h2. Related publications
 
 Menezes, T. and Roth, C., Symbolic regression of generative network models, Scientific Reports 4 (2014)
 "http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html":http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html
+
+h2. Acknowledgments
+
+This work has been partially supported by grants funded by the French National Agency of Research, “Algopol” ANR-12-CORD- 0018.
