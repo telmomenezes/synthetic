@@ -184,7 +184,7 @@ public class MetricsBag {
     	else {
     		degreesDist = degrees.emdDistance(bag.degrees);
     		
-    		if (inDegreesDist == 0) inDegreesDist = verySmall;
+    		if (degreesDist == 0) degreesDist = verySmall;
 
             if (useRandom) {
                 relDegreesDist = degreesDist / randomBag.degreesDistAvg;
@@ -256,20 +256,28 @@ public class MetricsBag {
 	@Override
 	public String toString() {
 		String str = "";
-		
-		str += "inDegreesDist: " + inDegreesDist;
-		str += "; outDegreesDist: " + outDegreesDist;
-		str += "; dPageRanksDist: " + dPageRanksDist;
-		str += "; uPageRanksDist: " + uPageRanksDist;
-		str += "; dDistsDist: " + dDistsDist;
-		str += "; uDistsDist: " + uDistsDist;
-		str += "; triadicProfileDist: " + triadicProfileDist;
+
+        if (net.directed) {
+            str += "inDegreesDist: " + inDegreesDist;
+            str += "; outDegreesDist: " + outDegreesDist;
+            str += "; dPageRanksDist: " + dPageRanksDist;
+            str += "; uPageRanksDist: " + uPageRanksDist;
+            str += "; dDistsDist: " + dDistsDist;
+            str += "; uDistsDist: " + uDistsDist;
+            str += "; triadicProfileDist: " + triadicProfileDist;
+        }
+        else {
+            str += "degreesDist: " + degreesDist;
+            str += "; uPageRanksDist: " + uPageRanksDist;
+            str += "; uDistsDist: " + uDistsDist;
+            str += "; triadicProfileDist: " + triadicProfileDist;
+        }
 		
 		return str;
 	}
 
 	
-	public TriadicProfile getTriadicProfile() {
+	TriadicProfile getTriadicProfile() {
 		return triadicProfile;
 	}
 
@@ -326,7 +334,7 @@ public class MetricsBag {
 	}
 	
 	
-	public RandomBag getRandomBag() {
+	private RandomBag getRandomBag() {
 		if (randomBag == null) {
 			randomBag = new RandomBag(this, bins, 30);
 		}
