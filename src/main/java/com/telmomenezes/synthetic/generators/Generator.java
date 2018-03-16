@@ -275,30 +275,54 @@ public abstract class Generator {
 	}
 
 	
-	public void computeFitness(MetricsBag targBag, int bins) {
+	public void computeFitness(MetricsBag targBag, int bins, boolean useRandom) {
 		if (net.directed) {
-			computeFitnessDirected(targBag, bins);
+			computeFitnessDirected(targBag, bins, useRandom);
 		}
 		else {
-			computeFitnessUndirected(targBag, bins);
+			computeFitnessUndirected(targBag, bins, useRandom);
 		}
+	}
+
+
+	public void computeFitness(MetricsBag targBag, int bins) {
+		computeFitness(targBag, bins, true);
 	}
 	
 	
-	private void computeFitnessDirected(MetricsBag targBag, int bins) {
+	private void computeFitnessDirected(MetricsBag targBag, int bins, boolean useRandom) {
 		net.dRandomWalkers.recompute();
 		net.uRandomWalkers.recompute();
-        genBag = new MetricsBag(net, net.dRandomWalkers, net.uRandomWalkers, bins, targBag);
+        genBag = new MetricsBag(net, net.dRandomWalkers, net.uRandomWalkers, bins, targBag, useRandom);
 
         net.metricsBag = genBag;
-        
-        double inDegreesDist = genBag.getRelInDegreesDist();
-        double outDegreesDist = genBag.getRelOutDegreesDist();
-        double dPageRanksDist = genBag.getRelDPageRanksDist();
-        double uPageRanksDist = genBag.getRelUPageRanksDist();
-        double triadicProfileDist = genBag.getRelTriadicProfileDist();
-        double dDistsDist = genBag.getRelDDistsDist();
-        double uDistsDist = genBag.getRelUDistsDist();
+
+		double inDegreesDist;
+		double outDegreesDist;
+		double dPageRanksDist;
+		double uPageRanksDist;
+		double triadicProfileDist;
+		double dDistsDist;
+		double uDistsDist;
+
+		if (useRandom) {
+            inDegreesDist = genBag.getRelInDegreesDist();
+            outDegreesDist = genBag.getRelOutDegreesDist();
+            dPageRanksDist = genBag.getRelDPageRanksDist();
+            uPageRanksDist = genBag.getRelUPageRanksDist();
+            triadicProfileDist = genBag.getRelTriadicProfileDist();
+            dDistsDist = genBag.getRelDDistsDist();
+            uDistsDist = genBag.getRelUDistsDist();
+        }
+        else {
+            inDegreesDist = genBag.getInDegreesDist();
+            outDegreesDist = genBag.getOutDegreesDist();
+            dPageRanksDist = genBag.getDPageRanksDist();
+            uPageRanksDist = genBag.getUPageRanksDist();
+            triadicProfileDist = genBag.getTriadicProfileDist();
+            dDistsDist = genBag.getdDistsDist();
+            uDistsDist = genBag.getuDistsDist();
+        }
         	
         fitnessAvg = inDegreesDist
         			+ outDegreesDist
@@ -321,17 +345,30 @@ public abstract class Generator {
     }
 	
 	
-	private void computeFitnessUndirected(MetricsBag targBag, int bins) {
+	private void computeFitnessUndirected(MetricsBag targBag, int bins, boolean useRandom) {
 		net.uRandomWalkers.recompute();
-        genBag = new MetricsBag(net, null, net.uRandomWalkers, bins, targBag);
+        genBag = new MetricsBag(net, null, net.uRandomWalkers, bins, targBag, useRandom);
 
         net.metricsBag = genBag;
         
-        double degreesDist = genBag.getRelDegreesDist();
-        double uPageRanksDist = genBag.getRelUPageRanksDist();
-        double triadicProfileDist = genBag.getRelTriadicProfileDist();
-        double uDistsDist = genBag.getRelUDistsDist();
-        
+        double degreesDist;
+        double uPageRanksDist;
+        double triadicProfileDist;
+        double uDistsDist;
+
+        if (useRandom) {
+            degreesDist = genBag.getRelDegreesDist();
+            uPageRanksDist = genBag.getRelUPageRanksDist();
+            triadicProfileDist = genBag.getRelTriadicProfileDist();
+            uDistsDist = genBag.getRelUDistsDist();
+        }
+        else {
+            degreesDist = genBag.getDegreesDist();
+            uPageRanksDist = genBag.getUPageRanksDist();
+            triadicProfileDist = genBag.getTriadicProfileDist();
+            uDistsDist = genBag.getuDistsDist();
+        }
+
         fitnessAvg = degreesDist
         			+ uPageRanksDist
         			+ triadicProfileDist

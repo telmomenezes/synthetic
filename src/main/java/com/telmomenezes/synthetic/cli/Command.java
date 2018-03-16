@@ -30,11 +30,11 @@ public abstract class Command {
 		return errorMessage;
 	}
 
-	
+
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
-	
+
 	
 	protected String getStringParam(String param) throws SynCliException {
 		return getStringParam(param, true, "");
@@ -58,8 +58,8 @@ public abstract class Command {
 		
 		return cline.getOptionValue(param);
 	}
-	
-	
+
+
 	protected int getIntegerParam(String param) throws SynCliException {
 		return getIntegerParam(param, true, -1);
 	}
@@ -80,12 +80,12 @@ public abstract class Command {
 			return new Integer(str);
 		}
 	}
-	
-	
+
+
 	protected double getDoubleParam(String param) throws SynCliException {
 		return getDoubleParam(param, true, -1);
 	}
-	
+
 	
 	protected double getDoubleParam(String param, double def) throws SynCliException {
 		return getDoubleParam(param, false, def);

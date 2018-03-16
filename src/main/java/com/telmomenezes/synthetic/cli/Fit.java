@@ -40,11 +40,7 @@ public class Fit extends Command {
         System.out.println(net);
         
         MetricsBag targBag = new MetricsBag(net, bins);
-        
-        double meanFit = 0;
-        double maxFit = Double.NEGATIVE_INFINITY;
-        double minFit = Double.POSITIVE_INFINITY;
-        
+
         double meanFitAvg = 0;
         double maxFitAvg = Double.NEGATIVE_INFINITY;
         double minFitAvg = Double.POSITIVE_INFINITY;
@@ -60,7 +56,7 @@ public class Fit extends Command {
         	gen.load(progFile);
         	gen.run();
         	
-        	gen.computeFitness(targBag, bins);
+        	gen.computeFitness(targBag, bins, true);
         	double fitAvg = gen.fitnessAvg;
         	double fitMax = gen.fitnessMax;
         	meanFitAvg += fitAvg;
@@ -74,16 +70,16 @@ public class Fit extends Command {
         	System.out.println("fitness (avg): " + fitAvg + "; fitness (max): " + fitMax);
         	System.out.println(gen.getGenBag());
         }
-    	
-        meanFit /= runs;
+
         meanFitAvg /= runs;
         meanFitMax /= runs;
         
         System.out.println("\n\n");
-        
-        System.out.println("mean fitness: " + meanFit + "; min fitness: " + minFit + "; max fitness: " + maxFit);
-        System.out.println("mean fitness (avg): " + meanFitAvg + "; min fitness (avg): " + minFitAvg + "; max fitness (avg): " + maxFitAvg);
-        System.out.println("mean fitness (max): " + meanFitMax + "; min fitness (max): " + minFitMax + "; max fitness (max): " + maxFitMax);
+
+        System.out.println("mean fitness (avg): " + meanFitAvg + "; min fitness (avg): "
+                + minFitAvg + "; max fitness (avg): " + maxFitAvg);
+        System.out.println("mean fitness (max): " + meanFitMax + "; min fitness (max): "
+                + minFitMax + "; max fitness (max): " + maxFitMax);
         
         System.out.println("done.");
         
