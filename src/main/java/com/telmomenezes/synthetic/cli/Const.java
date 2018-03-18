@@ -34,13 +34,17 @@ public class Const extends Command {
         boolean par = paramExists("par");
         String gentype = getStringParam("gentype", "exo");
         	
-        NetParams netParams = new NetParams(nodes, edges, directed, false, par);
+        NetParams netParams = new NetParams(nodes, edges, directed, par);
         Generator gen = GeneratorFactory.create(gentype, netParams, sr);
-        gen.load(progFile);
-        gen.run();
-        
-        System.out.println("constant: " + gen.isConstant());
-        
+        if (gen != null) {
+            gen.load(progFile);
+            gen.run();
+            System.out.println("constant: " + gen.isConstant());
+        }
+        else {
+            System.err.println("could not load program file.");
+        }
+
         return true;
     }
 }

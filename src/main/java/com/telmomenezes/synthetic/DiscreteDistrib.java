@@ -24,7 +24,7 @@ public class DiscreteDistrib {
     }
     
     
-    public DiscreteDistrib(int[] valueSeq, DiscreteDistrib distrib) {
+    DiscreteDistrib(int[] valueSeq, DiscreteDistrib distrib) {
         if (distrib == null) {
             init(valueSeq);
         }
@@ -39,9 +39,7 @@ public class DiscreteDistrib {
         
         freqs = new int[max + 1];
         
-        for (int x0 : valueSeq) {
-            int x = x0;
-            
+        for (int x : valueSeq) {
             if (x <= max) {
             	freqs[x]++;
             }
@@ -91,8 +89,7 @@ public class DiscreteDistrib {
     }
     
     
-    public double emdDistance(DiscreteDistrib fd)
-    {
+    double emdDistance(DiscreteDistrib fd) {
         double infinity = Double.MAX_VALUE;
 
         if ((total() <= 0) || (fd.total() <= 0)) {
@@ -103,30 +100,10 @@ public class DiscreteDistrib {
         Signature sig2 = fd.getEmdSignature();
         
         return JFastEMD.distance(sig1, sig2, -1);
-    	
-    	
-    	/*double dist = 0;
-    	for (int i = 0; i < freqs.length; i++) {
-    		dist += Math.abs(freqs[i] - fd.freqs[i]);
-    	}
-    	
-    	return dist;*/
     }
     
     
-    public double simpleDistance(DiscreteDistrib fd)
-    {
-        double dist = 0;
-    	for (int i = 0; i < freqs.length; i++) {
-    		dist += Math.abs(freqs[i] - fd.freqs[i]);// * (i + 1);
-    	}
-    	
-    	return dist;
-    }
-    
-    
-    public double proportionalDistance(DiscreteDistrib fd)
-    {
+    double proportionalDistance(DiscreteDistrib fd) {
         double dist = 0;
     	for (int i = 0; i < freqs.length; i++) {
     		double d = fd.freqs[i];

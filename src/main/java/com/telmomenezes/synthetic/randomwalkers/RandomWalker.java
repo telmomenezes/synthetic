@@ -14,7 +14,7 @@ public class RandomWalker {
 
 	private int[] steps;
 
-	public RandomWalker(Node node, boolean directed, int maxLength) {
+	RandomWalker(Node node, boolean directed, int maxLength) {
 		this.orig = node;
 		
 		this.directed = directed;
@@ -45,7 +45,7 @@ public class RandomWalker {
 	
 	
 	public void step() {
-		Node next = null;
+		Node next;
 		if (directed) {
 			if (forward) {
 				next = targ.getRandomOutputNode();
@@ -86,7 +86,7 @@ public class RandomWalker {
 	}
 	
 	
-	public Node getTarg() {
+	Node getTarg() {
 		return targ;
 	}
 	

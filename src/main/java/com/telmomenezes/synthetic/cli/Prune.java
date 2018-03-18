@@ -36,6 +36,10 @@ public class Prune extends Command {
         System.out.println(net);
         
         Generator gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
+		if (gen == null) {
+			System.err.println("could not load program.");
+			return false;
+		}
         gen.load(progFile);
         gen.run();
         

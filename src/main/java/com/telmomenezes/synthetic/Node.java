@@ -20,9 +20,6 @@ public class Node implements Cloneable {
     private double prU;
     private double prULast;
 
-    // for generators
-    private double genweight;
-
     // Auxiliary flag for algorithms that need to know if this node was already
     // visited
     private boolean flag;
@@ -45,8 +42,7 @@ public class Node implements Cloneable {
     @Override
     public Node clone()
     {
-        Node clonedNode = new Node(id, value);
-        return clonedNode;
+        return new Node(id, value);
     }
 
     public int getId() {
@@ -73,11 +69,11 @@ public class Node implements Cloneable {
         return inDegree + outDegree;
     }
 
-    public double getPrD() {
+    double getPrD() {
         return prD;
     }
 
-    public void setPrD(double prD) {
+    void setPrD(double prD) {
         this.prD = prD;
     }
 
@@ -89,11 +85,11 @@ public class Node implements Cloneable {
         this.prDLast = prDLast;
     }
 
-    public double getPrU() {
+    double getPrU() {
         return prU;
     }
 
-    public void setPrU(double prU) {
+    void setPrU(double prU) {
         this.prU = prU;
     }
 
@@ -103,14 +99,6 @@ public class Node implements Cloneable {
 
     void setPrULast(double prULast) {
         this.prULast = prULast;
-    }
-
-    public double getGenweight() {
-        return genweight;
-    }
-
-    public void setGenweight(double genweight) {
-        this.genweight = genweight;
     }
 
     public boolean getFlag() {
@@ -198,8 +186,6 @@ public class Node implements Cloneable {
 		if (getClass() != obj.getClass())
 			return false;
 		Node other = (Node) obj;
-		if (id != other.id)
-			return false;
-		return true;
+		return id == other.id;
 	}
 }

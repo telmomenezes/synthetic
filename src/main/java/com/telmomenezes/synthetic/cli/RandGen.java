@@ -24,8 +24,12 @@ public class RandGen extends Command {
     	String outProg = getStringParam("oprg");
     	boolean directed = !paramExists("undir");
         
-    	NetParams netParams = new NetParams(0, 0, directed, false, false);
+    	NetParams netParams = new NetParams(0, 0, directed,false);
         Generator gen = GeneratorFactory.create("exo", netParams, 0);
+		if (gen == null) {
+			System.err.println("could not load program.");
+			return false;
+		}
         gen.initRandom();
         
         gen.getProg().write(outProg);

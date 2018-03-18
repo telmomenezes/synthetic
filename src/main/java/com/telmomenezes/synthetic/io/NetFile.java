@@ -15,7 +15,7 @@ public abstract class NetFile {
         }
         ext = ext.toLowerCase();
             
-        Net net = null;
+        Net net;
         if (ext.equals("txt")) {
             net = (new SNAPNetFile()).load(filePath, directed, parallels);
             return net;

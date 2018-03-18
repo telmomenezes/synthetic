@@ -6,7 +6,7 @@ import com.telmomenezes.synthetic.Node;
 
 public class UTriadicProfile extends TriadicProfile {
     
-    public UTriadicProfile(Net net) {
+    UTriadicProfile(Net net) {
         super(net);
         numberOfMotifs = 2;
         triadProfile();

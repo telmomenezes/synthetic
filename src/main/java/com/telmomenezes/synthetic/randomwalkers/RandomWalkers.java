@@ -62,7 +62,7 @@ public class RandomWalkers {
     }
     
     
-    public void setDist(int x, int y, int d) {
+    private void setDist(int x, int y, int d) {
     	if (getDist(x, y) <= d) {
     		return;
     	}
@@ -109,8 +109,7 @@ public class RandomWalkers {
     
     
     public DiscreteDistrib getDistrib() {
-    	DiscreteDistrib distrib = new DiscreteDistrib(dmatrix, maxLength);
-    	return distrib;
+    	return new DiscreteDistrib(dmatrix, maxLength);
     }
     
     

@@ -11,7 +11,6 @@ import com.telmomenezes.synthetic.random.RandomGenerator;
 public class Evo {
     // best generators
 	private Generator bestGenerator;
-	private Generator bestFitGenerator;
 	private double bestFitnessMax;
 	private double bestFitnessAvg;
 	
@@ -58,7 +57,7 @@ public class Evo {
 		writeLogHeader();
 	
 		// init population
-		bestFitGenerator = baseGenerator.instance();
+		Generator bestFitGenerator = baseGenerator.instance();
 		bestFitGenerator.initRandom();
 		bestFitGenerator.run();
 		bestFitGenerator.computeFitness(targBag, bins);
@@ -96,14 +95,14 @@ public class Evo {
 			generator.getNet().clean();
 			fitTime += System.currentTimeMillis() - time0;	
 			
-			if (generator.isBetterThan(bestFitGenerator, bestFitnessMax, bestFitnessAvg, 0)) {
+			if (generator.isBetterThan(bestFitGenerator, bestFitnessMax, 0)) {
 				bestFitnessMax = generator.fitnessMax;
 				bestFitnessAvg = generator.fitnessAvg;
 				bestFitGenerator = generator;
 				stableGens = 0;
 			}
 			
-			if (generator.isBetterThan(bestGenerator, bestFitnessMax, bestFitnessAvg, tolerance)) {
+			if (generator.isBetterThan(bestGenerator, bestFitnessMax, tolerance)) {
 				bestGenerator = generator;
 				onNewBest();
 				stableGens = 0;
@@ -263,8 +262,7 @@ public class Evo {
     }
     
 	
-	public String infoString()
-	{
+	public String infoString() {
 		String str = "stable generations: " + generations + "\n";
 		str += "directed: " + isDirected() + "\n";
 		str += "target net node count: " + targNet.getNodeCount() + "\n";
@@ -275,15 +273,13 @@ public class Evo {
 	}
 
 
-	private String genInfoString()
-	{
-		String tmpstr = "gen #" + curgen
+	private String genInfoString() {
+		return "gen #" + curgen
         	+ "; best fitness max: " + bestFitnessMax
         	+ "; best fitness avg: " + bestFitnessAvg
         	+ "; best genotype size: " + bestGenerator.getProg().size()
         	+ "; gen comp time: " + genTime + "s."
 			+ "; sim comp time: " + simTime + "s."
 			+ "; fit comp time: " + fitTime + "s.";
-        	return tmpstr;
 	}
 }

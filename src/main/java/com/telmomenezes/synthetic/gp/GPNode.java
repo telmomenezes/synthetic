@@ -10,27 +10,27 @@ public class GPNode {
     public double val;
     public int var;
     public int fun;
-    public int arity;
+    int arity;
     public GPNode[] params;
-    public double curval;
+    double curval;
     protected GPNode parent;
 
-    public int curpos;
-    public int stoppos;
-    public int condpos;
+    int curpos;
+    int stoppos;
+    int condpos;
 
-    public int branching;
-    public GPNodeDynStatus dynStatus;
+    int branching;
+    GPNodeDynStatus dynStatus;
     
     private Prog tree;
 
     
-    public GPNode(Prog tree) {
+    GPNode(Prog tree) {
     	this.tree = tree;
         params = new GPNode[4];
     }
 
-    public void initVal(double val, GPNode parent) {
+    void initVal(double val, GPNode parent) {
         type = GPNodeType.VAL;
         this.parent = parent;
         this.val = val;
@@ -40,7 +40,7 @@ public class GPNode {
         dynStatus = GPNodeDynStatus.UNUSED;
     }
 
-    public void initVar(int var, GPNode parent) {
+    void initVar(int var, GPNode parent) {
         type = GPNodeType.VAR;
         this.parent = parent;
         this.var = var;
@@ -50,7 +50,7 @@ public class GPNode {
         dynStatus = GPNodeDynStatus.UNUSED;
     }
 
-    public void initFun(int fun, GPNode parent) {
+    void initFun(int fun, GPNode parent) {
         type = GPNodeType.FUN;
         this.parent = parent;
         this.fun = fun;

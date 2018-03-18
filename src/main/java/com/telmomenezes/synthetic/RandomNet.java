@@ -2,8 +2,6 @@ package com.telmomenezes.synthetic;
 
 import java.util.Vector;
 
-import com.telmomenezes.synthetic.Net;
-import com.telmomenezes.synthetic.Node;
 import com.telmomenezes.synthetic.random.RandomGenerator;
 
 

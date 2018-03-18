@@ -53,6 +53,10 @@ public class Run extends Command {
         	System.out.println("run #" + i);
         	
         	Generator gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
+			if (gen == null) {
+				System.err.println("could not load program.");
+				return false;
+			}
         	gen.load(progFile);
         	gen.run();
         	Net syntNet = gen.getNet();

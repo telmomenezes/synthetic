@@ -186,6 +186,10 @@ public class DetailFit extends Command {
 
                 // determine prunned program size
                 Generator gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
+                if (gen == null) {
+                    System.err.println("could not load program.");
+                    return false;
+                }
                 gen.load(dir + "/" + progFile);
                 gen.run();
                 gen.getProg().dynPruning();
@@ -197,6 +201,10 @@ public class DetailFit extends Command {
                 	}
                 	
                     gen = GeneratorFactory.create(gentype, net.getNetParams(), sr);
+                    if (gen == null) {
+                        System.err.println("could not load program.");
+                        return false;
+                    }
                     gen.load(dir + "/" + progFile);
                     gen.run();
 

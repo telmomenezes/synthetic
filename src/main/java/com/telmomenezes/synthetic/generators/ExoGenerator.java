@@ -9,7 +9,7 @@ import com.telmomenezes.synthetic.gp.Prog;
 
 public class ExoGenerator extends Generator {
 
-	public ExoGenerator(NetParams netParams, double sr) {
+	ExoGenerator(NetParams netParams, double sr) {
 		super(netParams, sr);
 		
 		Vector<String> variableNames = new Vector<String>();

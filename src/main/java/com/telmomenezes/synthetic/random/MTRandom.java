@@ -104,12 +104,10 @@ public class MTRandom extends Random {
 	private final static int MAGIC_MASK1   = 0x9d2c5680;
 	private final static int MAGIC_MASK2   = 0xefc60000;
 	private final static int MAGIC_SEED    = 19650218;
-	private final static long DEFAULT_SEED = 5489L;
 
 	// Internal state
 	private transient int[] mt;
 	private transient int mti;
-	private transient boolean compat = false;
 
 	// Temporary buffer used during setSeed(long)
 	private transient int[] ibuf;
@@ -120,77 +118,13 @@ public class MTRandom extends Random {
 	 * in the class being initialised with a seed value obtained by calling
 	 * System.currentTimeMillis().
 	 */	
-	public MTRandom() { }
+	MTRandom() { }
 
-	/**
-	 * This version of the constructor can be used to implement identical
-	 * behaviour to the original C code version of this algorithm including
-	 * exactly replicating the case where the seed value had not been set
-	 * prior to calling genrand_int32.
-	 * <p>
-	 * If the compatibility flag is set to true, then the algorithm will be
-	 * seeded with the same default value as was used in the original C
-	 * code.  Furthermore the setSeed() method, which must take a 64 bit
-	 * long value, will be limited to using only the lower 32 bits of the
-	 * seed to facilitate seamless migration of existing C code into Java
-	 * where identical behaviour is required.
-	 * <p>
-	 * Whilst useful for ensuring backwards compatibility, it is advised
-	 * that this feature not be used unless specifically required, due to
-	 * the reduction in strength of the seed value.
-	 * 
-	 * @param compatible Compatibility flag for replicating original
-	 * behaviour.
-	 */
-	public MTRandom(boolean compatible) {
-		super(0L);
-		compat = compatible;
-		setSeed(compat?DEFAULT_SEED:System.currentTimeMillis());
-	}
-
-	/**
-	 * This version of the constructor simply initialises the class with
-	 * the given 64 bit seed value.  For a better random number sequence
-	 * this seed value should contain as much entropy as possible.
-	 * 
-	 * @param seed The seed value with which to initialise this class.
-	 */
-	public MTRandom(long seed) {
-		super(seed);
-	}
-
-	/**
-	 * This version of the constructor initialises the class with the
-	 * given byte array.  All the data will be used to initialise this
-	 * instance.
-	 * 
-	 * @param buf The non-empty byte array of seed information.
-	 * @throws NullPointerException if the buffer is null.
-	 * @throws IllegalArgumentException if the buffer has zero length.
-	 */
-	public MTRandom(byte[] buf) {
-		super(0L);
-		setSeed(buf);
-	}
-
-	/**
-	 * This version of the constructor initialises the class with the
-	 * given integer array.  All the data will be used to initialise
-	 * this instance.
-	 * 
-	 * @param buf The non-empty integer array of seed information.
-	 * @throws NullPointerException if the buffer is null.
-	 * @throws IllegalArgumentException if the buffer has zero length.
-	 */
-	public MTRandom(int[] buf) {
-		super(0L);
-		setSeed(buf);
-	}
 
 	// Initializes mt[N] with a simple integer seed. This method is
 	// required as part of the Mersenne Twister algorithm but need
 	// not be made public.
-	private final void setSeed(int seed) {
+	private void setSeed(int seed) {
 
 		// Annoying runtime check for initialisation of internal data
 		// caused by java.util.Random invoking setSeed() during init.
@@ -223,21 +157,16 @@ public class MTRandom extends Random {
 	 * number generator state. 
 	 */
 	public final synchronized void setSeed(long seed) {
-		if (compat) {
-			setSeed((int)seed);
-		} else {
+		// Annoying runtime check for initialisation of internal data
+		// caused by java.util.Random invoking setSeed() during init.
+		// This is unavoidable because no fields in our instance will
+		// have been initialised at this point, not even if the code
+		// were placed at the declaration of the member variable.
+		if (ibuf == null) ibuf = new int[2];
 
-			// Annoying runtime check for initialisation of internal data
-			// caused by java.util.Random invoking setSeed() during init.
-			// This is unavoidable because no fields in our instance will
-			// have been initialised at this point, not even if the code
-			// were placed at the declaration of the member variable.
-			if (ibuf == null) ibuf = new int[2];
-
-			ibuf[0] = (int)seed;
-			ibuf[1] = (int)(seed >>> 32);
-			setSeed(ibuf);
-		}
+		ibuf[0] = (int)seed;
+		ibuf[1] = (int)(seed >>> 32);
+		setSeed(ibuf);
 	}
 
 	/**
@@ -382,7 +311,7 @@ public class MTRandom extends Random {
 		for (int n = 0; n < ilen; n++) {
 			int m = (n+1) << 2;
 			if (m > blen) m = blen;
-			for (k = buf[--m]&0xff; (m & 0x3) != 0; k = (k << 8) | buf[--m]&0xff);
+			for (k = buf[--m] & 0xff; (m & 0x3) != 0; k = (k << 8) | buf[--m] & 0xff);
 			ibuf[n] = k;
 		}
 		return ibuf;

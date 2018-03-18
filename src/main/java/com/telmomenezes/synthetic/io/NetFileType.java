@@ -1,5 +1,5 @@
 package com.telmomenezes.synthetic.io;
 
 public enum NetFileType {
-    SNAP, MAT, GML, MITAB25;
+    SNAP, MAT, GML, MITAB25
 }

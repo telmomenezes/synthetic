@@ -12,7 +12,7 @@ public class DownSampler {
     private ForestFire ff;
     private double ratio;
     
-    public DownSampler(Net net, double attenuation, int maxNodes) {
+    private DownSampler(Net net, double attenuation, int maxNodes) {
         ff = new ForestFire(net);
         this.attenuation = attenuation;
         this.maxNodes = maxNodes;
@@ -27,8 +27,7 @@ public class DownSampler {
             ratio = Math.exp(-step / attenuation);
             int sampleNodes = (int)(ratio * (double)origNodes);
             if (sampleNodes <= maxNodes) {
-                Net sample = ff.sample(ratio);
-                return sample;
+                return ff.sample(ratio);
             }
         }
     }

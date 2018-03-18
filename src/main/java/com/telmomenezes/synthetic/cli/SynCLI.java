@@ -11,15 +11,10 @@ import org.apache.commons.cli.ParseException;
 
 
 public class SynCLI {
-	private static String version = "1.0";
-	
-    private Options options;
-    private CommandLine cline;
-    
-    Map<String, Command> commands;
+    private Map<String, Command> commands;
     
     
-    public SynCLI() {
+    private SynCLI() {
     	commands = new HashMap<String, Command>();
     	addCommand(new NetStats());
     	addCommand(new Evolve());
@@ -43,6 +38,7 @@ public class SynCLI {
     
     
     private void printHelpMessage() {
+        String version = "1.0";
     	System.err.println("\nSynthetic ver " + version);
     	
     	System.err.print("use one of the commands: ");
@@ -90,7 +86,7 @@ public class SynCLI {
     	}
 
         CommandLineParser parser = new GnuParser();
-        options = new Options();
+        Options options = new Options();
         options.addOption("inet", true, "input net file");
         options.addOption("inet2", true, "second input net file");
         options.addOption("onet", true, "output net file");
@@ -116,10 +112,10 @@ public class SynCLI {
         options.addOption("gentype", true, "generator type");
         
         try {
-            cline = parser.parse(options, args);
+            CommandLine cline = parser.parse(options, args);
 
             String cmd = args[0];
-            Command cmdObj = null;
+            Command cmdObj;
             
             if (cmd.equals("help")) {
             	if (args.length == 1) {
@@ -142,9 +138,7 @@ public class SynCLI {
             
             cmdObj = commands.get(cmd);
             cmdObj.setCline(cline);
-            if (!cmdObj.run()) {
-                printErrorMessage(cmdObj.getErrorMessage());
-            }
+            cmdObj.run();
         }
         catch (ParseException e) {
            printErrorMessage(e.getMessage());

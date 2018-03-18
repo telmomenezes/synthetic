@@ -16,7 +16,7 @@ public class NetBuilder {
     private Vector<Integer> nodeValues;
     
     
-    public NetBuilder() {
+    private NetBuilder() {
         this.nodeCount = 0;
         this.edgeCount = 0;
         
@@ -51,7 +51,7 @@ public class NetBuilder {
     }
 
     
-    public boolean edgeExists(int origin, int target) {
+    private boolean edgeExists(int origin, int target) {
     	if (directed) {
     		return adjMatrix.get(origin).contains(target);
     	}

@@ -6,7 +6,7 @@ import com.telmomenezes.synthetic.Node;
 
 public class DTriadicProfile extends TriadicProfile {
     
-    public DTriadicProfile(Net net) {
+    DTriadicProfile(Net net) {
         super(net);
         numberOfMotifs = 13;
         triadProfile();

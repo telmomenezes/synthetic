@@ -9,7 +9,7 @@ import com.telmomenezes.synthetic.gp.Prog;
 
 public class EndoGenerator extends Generator {
 
-	public EndoGenerator(NetParams netParams, double sr) {
+	EndoGenerator(NetParams netParams, double sr) {
 		super(netParams, sr);
 		
 		Vector<String> variableNames = new Vector<String>();

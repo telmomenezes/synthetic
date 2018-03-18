@@ -9,14 +9,14 @@ import com.telmomenezes.synthetic.randomwalkers.RandomWalkers;
 public class Net implements Cloneable {
     protected Node[] nodes;
     protected Edge[] edges;
-    protected boolean[][] adjMatrix;
+    private boolean[][] adjMatrix;
     
-    public int nodeCount;
-    public int edgeCount;
+    private int nodeCount;
+    private int edgeCount;
 
     public boolean directed;
-    public boolean selfEdges;
-    public boolean parallels;
+    private boolean selfEdges;
+    boolean parallels;
     
     private boolean pageRanksComputed;
     
@@ -129,7 +129,7 @@ public class Net implements Cloneable {
     }
     
     
-    public Node addNode(int value) {
+    Node addNode(int value) {
         Node node = new Node(nodeCount, value);
         addNode(node);
         return node;
@@ -140,7 +140,7 @@ public class Net implements Cloneable {
         return addNode(0);
     }
     
-    public Node getNodeById(int id) {
+    private Node getNodeById(int id) {
         return nodes[id];
     }
     
@@ -185,22 +185,7 @@ public class Net implements Cloneable {
     public boolean edgeExists(Node origin, Node target) {
     	return edgeExists(origin.getId(), target.getId());
     }
-    
-    
-    public Edge getEdge(Node origin, Node target) {
-        for (Edge edge : origin.getOutEdges()) {
-            if (edge.getTarget() == target) {
-                return edge;
-            }
-        }
 
-        return null;
-    }
-    
-    public Edge getInverseEdge(Edge edge) {
-        return getEdge(edge.getTarget(), edge.getOrigin());
-    }
-    
     
     public Node getRandomNode() {
         int pos = RandomGenerator.random.nextInt(nodeCount);
@@ -208,7 +193,7 @@ public class Net implements Cloneable {
     }
 
     
-    public void computePageranks() {
+    private void computePageranks() {
         if (pageRanksComputed) {
             return;
         }
@@ -291,10 +276,6 @@ public class Net implements Cloneable {
         }
     }
 
-    public void printNetInfo() {
-        System.out.println("node number: " + nodeCount);
-        System.out.println("edge number: " + edgeCount);
-    }
 
     public int[] inDegSeq() {
         int seq[] = new int[nodeCount];
@@ -377,7 +358,7 @@ public class Net implements Cloneable {
     
     
     public NetParams getNetParams() {
-    	return new NetParams(nodeCount, edgeCount, directed, selfEdges, parallels);
+    	return new NetParams(nodeCount, edgeCount, directed, parallels);
     }
     
     

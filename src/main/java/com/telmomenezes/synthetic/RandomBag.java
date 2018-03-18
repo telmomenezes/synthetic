@@ -1,17 +1,17 @@
 package com.telmomenezes.synthetic;
 
-public class RandomBag {
+class RandomBag {
 	
-	public double degreesDistAvg;
-	public double inDegreesDistAvg;
-	public double outDegreesDistAvg;
-	public double dPageRanksDistAvg;
-	public double uPageRanksDistAvg;
-	public double triadicProfileDistAvg;
-	public double dDistsDistAvg;
-	public double uDistsDistAvg;
+	double degreesDistAvg;
+	double inDegreesDistAvg;
+	double outDegreesDistAvg;
+	double dPageRanksDistAvg;
+	double uPageRanksDistAvg;
+	double triadicProfileDistAvg;
+	double dDistsDistAvg;
+	double uDistsDistAvg;
 	
-	public RandomBag(MetricsBag targBag, int bins, int samples) {
+	RandomBag(MetricsBag targBag, int bins, int samples) {
 		
 		degreesDistAvg = 0;
 	    inDegreesDistAvg = 0;

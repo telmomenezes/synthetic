@@ -1,7 +1,6 @@
 package com.telmomenezes.synthetic.generators;
 
 import java.io.IOException;
-import java.util.Vector;
 
 import com.telmomenezes.synthetic.Edge;
 import com.telmomenezes.synthetic.MetricsBag;
@@ -17,26 +16,23 @@ public abstract class Generator {
 	
     protected double sr;
     
-    protected int trials;
+    private int trials;
     
     protected Prog prog;
 
     public double fitnessAvg;
     public double fitnessMax;
-
-    protected Vector<Prog> executionPaths;
-    //private boolean checkPaths;
     
-    protected NetParams netParams;
+    NetParams netParams;
     protected Net net;
     
     protected int time;
     
-    protected int[] sampleOrigs;
-    protected int[] sampleTargs;
-    protected double[] sampleWeights;
+    private int[] sampleOrigs;
+    private int[] sampleTargs;
+    private double[] sampleWeights;
     
-    protected MetricsBag genBag;
+    private MetricsBag genBag;
     
     protected boolean valid;
     
@@ -48,7 +44,7 @@ public abstract class Generator {
 	protected abstract void setProgVars(int origIndex, int targIndex);
 
 	
-	protected void createNodes() {
+	private void createNodes() {
         for (int i = 0; i < netParams.getNodeCount(); i++) {
             net.addNode();
         }
@@ -120,8 +116,8 @@ public abstract class Generator {
 			sampleTargs = master.sampleTargs;
 		}
 			
-        int bestOrigIndex = -1;
-        int bestTargIndex = -1;
+        int bestOrigIndex;
+        int bestTargIndex;
         
         double totalWeight = 0;
         
@@ -261,7 +257,7 @@ public abstract class Generator {
 	}
 
 
-	public Generator recombine(Generator parent2) {
+	private Generator recombine(Generator parent2) {
 		Generator generator = instance();
 		generator.prog = prog.recombine(parent2.prog);
 		return generator;
@@ -388,12 +384,12 @@ public abstract class Generator {
 	}
 	
 	
-	public boolean isBetterThan(Generator gen, double bestFitnessMax, double bestFitnessAvg, double tolerance) {
+	public boolean isBetterThan(Generator gen, double bestFitnessMax, double tolerance) {
 		if (!gen.valid) {
 			return true;
 		}
 		
-		if ((!valid) && (gen.valid)) {
+		if (!valid) {
 			return false;
 		}
 		
@@ -401,47 +397,8 @@ public abstract class Generator {
 			return fitnessMax < gen.fitnessMax;
 		}
 		
-		if (!withinTolerance(bestFitnessMax, tolerance)) {
-			return false;
-		}
-		
-		if (!gen.withinTolerance(bestFitnessMax, tolerance)) {
-			return true;
-		}
-		
-		return prog.size() < gen.prog.size();
-	}
-	
-
-	public int executionPath(Prog tree) {
-		int pos = 0;
-		for (Prog path : executionPaths) {
-			if (tree.compareBranching(path))
-				return pos;
-
-			pos++;
-		}
-
-		executionPaths.add(tree.clone());
-		return pos;
-	}
-
-
-	public void clearExecutionPaths() {
-		executionPaths.clear();
-	}
-
-
-	/*
-	public void setCheckPaths(boolean checkPaths) {
-		this.checkPaths = checkPaths;
-		if (checkPaths)
-			executionPaths = new Vector<Prog>();
-	}*/
-
-
-	public Vector<Prog> getExecutionPaths() {
-		return executionPaths;
+		return withinTolerance(bestFitnessMax, tolerance) &&
+                (!gen.withinTolerance(bestFitnessMax, tolerance)) || prog.size() < gen.prog.size();
 	}
 
     

@@ -226,7 +226,6 @@ public class Prog {
 
 		if (node.arity > 0) {
 			out.write(")");
-			ind--;
 		}
 	}
 
@@ -327,19 +326,15 @@ public class Prog {
 	}
 
 
-	public void initRandom(double probTerm,
-					int depthLowLimit,
-					int depthHighLimit) {
+	public void initRandom() {
+		double probTerm = 0.4;
+		int depthLowLimit = 2;
+		int depthHighLimit = 5;
 		boolean grow = RandomGenerator.random.nextBoolean();
 		int max_depth = depthLowLimit + (RandomGenerator.random.nextInt(depthHighLimit - depthLowLimit));
 
 		root = initRandom2(probTerm, null, max_depth, grow, 0);
 	}
-
-	
-	public void initRandom() {
-		initRandom(0.4, 2, 5);
-    }
 
 	
 	private GPNode cloneGPNode(GPNode node, GPNode parent) {
@@ -404,7 +399,7 @@ public class Prog {
 	}
 
 
-	public GPNode GPNodeByPos(int pos) {
+	private GPNode GPNodeByPos(int pos) {
 		int[] curpos;
 		curpos = new int[1];
 		curpos[0] = 0;
@@ -413,8 +408,8 @@ public class Prog {
 
 
 	public Prog recombine(Prog parent2) {
-		Prog parentA = null;
-		Prog parentB = null;
+		Prog parentA;
+		Prog parentB;
 		
 		if ((RandomGenerator.random.nextInt() % 2) == 0) {
 			parentA = parent2.clone();
@@ -572,38 +567,6 @@ public class Prog {
 	}
 	
 
-	private void clearBranching2(GPNode node) {
-		node.branching = -1;
-		for (int i = 0; i < node.arity; i++)
-			clearBranching2(node.params[i]);
-	}
-
-
-	public void clearBranching() {
-		clearBranching2(root);
-	}
-	
-
-	public int branchingDistance(Prog tree) {
-		return branchingDistance2(root, tree.root);
-	}
-
-
-	private int branchingDistance2(GPNode node1, GPNode node2) {
-		int distance = 0;
-		if (node1.branching != node2.branching)
-			distance += 1;
-		for (int i = 0; i < node1.arity; i++)
-			distance += branchingDistance2(node1.params[i], node2.params[i]);
-		return distance;
-	}
-
-	
-	public boolean compareBranching(Prog tree) {
-		return (branchingDistance(tree) == 0);
-    }
-	
-
 	private void moveUp(GPNode origNode, GPNode targNode) {
 		switch (origNode.type) {
 		case VAL:
@@ -659,7 +622,7 @@ public class Prog {
 	}
 	
 	
-	public Vector<String> getVariableNames() {
+    Vector<String> getVariableNames() {
         return variableNames;
     }
 }

@@ -16,7 +16,7 @@ public class ForestFire {
     private int targNodeCount;
     private int sampleNodeCount;
     
-    public ForestFire(Net net) {
+    ForestFire(Net net) {
         origNet = net;
     }
     

@@ -1,4 +1,4 @@
-/**
+/*
  * This class computes the Earth Mover's Distance, using the EMD-HAT algorithm
  * created by Ofir Pele and Michael Werman.
  * 
@@ -70,19 +70,14 @@ class Edge3 {
         _dist = 0;
     }
 
-    Edge3(int to, long dist) {
-        _to = to;
-        _dist = dist;
-    }
-
     int _to;
     long _dist;
 }
 
 class MinCostFlow {
 
-    int numNodes;
-    Vector<Integer> nodesToQ;
+    private int numNodes;
+    private Vector<Integer> nodesToQ;
 
     // e - supply(positive) and demand(negative).
     // c[i] - edges that goes from node i. first is the second nod
@@ -139,16 +134,14 @@ class MinCostFlow {
             if (e.get(i) > U)
                 U = e.get(i);
         }
-        long delta = (long) (Math.pow(2.0,
-                Math.ceil(Math.log((double) (U)) / Math.log(2.0))));
+        long delta;
 
         Vector<Long> d = new Vector<Long>();
         Vector<Integer> prev = new Vector<Integer>();
         for (int i = 0; i < numNodes; i++) {
-            d.add(0l);
+            d.add(0L);
             prev.add(0);
         }
-        delta = 1;
         while (true) { // until we break when S or T is empty
             long maxSupply = 0;
             int k = 0;
@@ -239,7 +232,7 @@ class MinCostFlow {
         return dist;
     }
 
-    void computeShortestPath(Vector<Long> d, Vector<Integer> prev,
+    private void computeShortestPath(Vector<Long> d, Vector<Integer> prev,
             int from, Vector<List<Edge1>> costForward,
             Vector<List<Edge2>> costBackward, Vector<Long> e, int[] l) {
         // Making heap (all inf except 0, so we are saving comparisons...)
@@ -335,7 +328,7 @@ class MinCostFlow {
         }
     }
 
-    void heapDecreaseKey(Vector<Edge3> Q, Vector<Integer> nodes_to_Q,
+    private void heapDecreaseKey(Vector<Edge3> Q, Vector<Integer> nodes_to_Q,
             int v, long alt) {
         int i = nodes_to_Q.get(v);
         Q.get(i)._dist = alt;
@@ -345,15 +338,15 @@ class MinCostFlow {
         }
     }
 
-    void heapRemoveFirst(Vector<Edge3> Q, Vector<Integer> nodes_to_Q) {
+    private void heapRemoveFirst(Vector<Edge3> Q, Vector<Integer> nodes_to_Q) {
         swapHeap(Q, nodes_to_Q, 0, Q.size() - 1);
         Q.remove(Q.size() - 1);
-        heapify(Q, nodes_to_Q, 0);
+        heapify(Q, nodes_to_Q);
     }
 
-    void heapify(Vector<Edge3> Q, Vector<Integer> nodes_to_Q, int i) {
+    private void heapify(Vector<Edge3> Q, Vector<Integer> nodes_to_Q) {
+        int i = 0;
         do {
-            // TODO: change to loop
             int l = LEFT(i);
             int r = RIGHT(i);
             int smallest;
@@ -375,7 +368,7 @@ class MinCostFlow {
         } while (true);
     }
 
-    void swapHeap(Vector<Edge3> Q, Vector<Integer> nodesToQ, int i, int j) {
+    private void swapHeap(Vector<Edge3> Q, Vector<Integer> nodesToQ, int i, int j) {
         Edge3 tmp = Q.get(i);
         Q.set(i, Q.get(j));
         Q.set(j, tmp);
@@ -383,15 +376,15 @@ class MinCostFlow {
         nodesToQ.set(Q.get(i)._to, i);
     }
 
-    int LEFT(int i) {
+    private int LEFT(int i) {
         return 2 * (i + 1) - 1;
     }
 
-    int RIGHT(int i) {
+    private int RIGHT(int i) {
         return 2 * (i + 1); // 2 * (i + 1) + 1 - 1
     }
 
-    int PARENT(int i) {
+    private int PARENT(int i) {
         return (i - 1) / 2;
     }
 }
@@ -463,8 +456,8 @@ public class JFastEMD {
     }
     
 
-    static private long emdHatImplLongLongInt(Vector<Long> Pc, Vector<Long> Qc,
-            Vector<Vector<Long>> C, long extraMassPenalty) {
+    static private long emdHatImplLongLongInt(Vector<Long> Pc, Vector<Long> Qc, Vector<Vector<Long>> C) {
+        long extraMassPenalty = 0L;
 
         int N = Pc.size();
         assert (Qc.size() == N);
@@ -476,8 +469,8 @@ public class JFastEMD {
         long absDiffSumPSumQ;
         long sumP = 0;
         long sumQ = 0;
-        for (int i = 0; i < N; i++)
-            sumP += Pc.get(i);
+        for (long x: Pc)
+            sumP += x;
         for (int i = 0; i < N; i++)
             sumQ += Qc.get(i);
         if (sumQ > sumP) {
@@ -493,7 +486,7 @@ public class JFastEMD {
         // creating the b vector that contains all vertexes
         Vector<Long> b = new Vector<Long>();
         for (int i = 0; i < 2 * N + 2; i++) {
-            b.add(0l);
+            b.add(0L);
         }
         int THRESHOLD_NODE = 2 * N;
         int ARTIFICIAL_NODE = 2 * N + 1; // need to be last !
@@ -513,7 +506,7 @@ public class JFastEMD {
         // edges had the cost of zero)
         // This also makes sum of b zero.
         b.set(THRESHOLD_NODE, -absDiffSumPSumQ);
-        b.set(ARTIFICIAL_NODE, 0l);
+        b.set(ARTIFICIAL_NODE, 0L);
 
         long maxC = 0;
         for (int i = 0; i < N; i++) {
@@ -523,8 +516,6 @@ public class JFastEMD {
                     maxC = C.get(i).get(j);
             }
         }
-        if (extraMassPenalty == -1)
-            extraMassPenalty = maxC;
 
         Set<Integer> sourcesThatFlowNotOnlyToThresh = new HashSet<Integer>();
         Set<Integer> sinksThatGetFlowNotOnlyFromThresh = new HashSet<Integer>();
@@ -591,17 +582,14 @@ public class JFastEMD {
         // as I'm using -1 as a special flag !!!
         int REMOVE_NODE_FLAG = -1;
         Vector<Integer> nodesNewNames = new Vector<Integer>();
-        Vector<Integer> nodesOldNames = new Vector<Integer>();
         for (int i = 0; i < b.size(); i++) {
             nodesNewNames.add(REMOVE_NODE_FLAG);
-            nodesOldNames.add(0);
         }
         for (int i = 0; i < N * 2; i++) {
             if (b.get(i) != 0) {
                 if (sourcesThatFlowNotOnlyToThresh.contains(i)
                         || sinksThatGetFlowNotOnlyFromThresh.contains(i)) {
                     nodesNewNames.set(i, currentNodeName);
-                    nodesOldNames.add(i);
                     currentNodeName++;
                 } else {
                     if (i >= N) {
@@ -612,15 +600,13 @@ public class JFastEMD {
             }
         }
         nodesNewNames.set(THRESHOLD_NODE, currentNodeName);
-        nodesOldNames.add(THRESHOLD_NODE);
         currentNodeName++;
         nodesNewNames.set(ARTIFICIAL_NODE, currentNodeName);
-        nodesOldNames.add(ARTIFICIAL_NODE);
         currentNodeName++;
 
         Vector<Long> bb = new Vector<Long>();
         for (int i = 0; i < currentNodeName; i++) {
-            bb.add(0l);
+            bb.add(0L);
         }
         int j = 0;
         for (int i = 0; i < b.size(); i++) {
@@ -679,11 +665,11 @@ public class JFastEMD {
         Vector<Long> iQ = new Vector<Long>();
         Vector<Vector<Long>> iC = new Vector<Vector<Long>>();
         for (int i = 0; i < N; i++) {
-            iP.add(0l);
-            iQ.add(0l);
+            iP.add(0L);
+            iQ.add(0L);
             Vector<Long> vec = new Vector<Long>();
             for (int j = 0; j < N; j++) {
-                vec.add(0l);
+                vec.add(0L);
             }
             iC.add(vec);
         }
@@ -716,7 +702,7 @@ public class JFastEMD {
         }
 
         // computing distance without extra mass penalty
-        double dist = emdHatImplLongLongInt(iP, iQ, iC, 0);
+        double dist = emdHatImplLongLongInt(iP, iQ, iC);
         // unnormalize
         dist = dist / PQnormFactor;
         dist = dist / CnormFactor;

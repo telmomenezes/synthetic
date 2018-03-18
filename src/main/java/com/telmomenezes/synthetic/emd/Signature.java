@@ -6,7 +6,7 @@ public class Signature {
     private Feature[] features;
     private double[] weights;
     
-    public int getNumberOfFeatures() {
+    int getNumberOfFeatures() {
         return numberOfFeatures;
     }
     
@@ -22,7 +22,7 @@ public class Signature {
         this.features = features;
     }
 
-    public double[] getWeights() {
+    double[] getWeights() {
         return weights;
     }
 

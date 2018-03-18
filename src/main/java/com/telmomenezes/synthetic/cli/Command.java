@@ -8,7 +8,6 @@ import org.apache.commons.cli.CommandLine;
 
 
 public abstract class Command {
-	private String errorMessage;
 	private CommandLine cline;
 	
 	
@@ -21,18 +20,8 @@ public abstract class Command {
 	public abstract boolean run() throws SynCliException;
 	
 	
-	public void setCline(CommandLine cline) {
+	void setCline(CommandLine cline) {
 		this.cline = cline;
-	}
-	
-	
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-
-
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
 	}
 
 	
@@ -60,19 +49,9 @@ public abstract class Command {
 	}
 
 
-	protected int getIntegerParam(String param) throws SynCliException {
-		return getIntegerParam(param, true, -1);
-	}
-	
-	
-	protected int getIntegerParam(String param, int def) throws SynCliException {
-		return getIntegerParam(param, false, def);
-	}
-	
-	
-	protected int getIntegerParam(String param, boolean required, int def) throws SynCliException {
-		String str = getStringParam(param, required, "");
-		
+	int getIntegerParam(String param, int def) throws SynCliException {
+		String str = getStringParam(param, false, "");
+
 		if (str.equals("")) {
 			return def;
 		}
@@ -81,19 +60,9 @@ public abstract class Command {
 		}
 	}
 
-
-	protected double getDoubleParam(String param) throws SynCliException {
-		return getDoubleParam(param, true, -1);
-	}
-
 	
-	protected double getDoubleParam(String param, double def) throws SynCliException {
-		return getDoubleParam(param, false, def);
-	}
-	
-	
-	protected double getDoubleParam(String param, boolean required, double def) throws SynCliException {
-		String str = getStringParam(param, required, "");
+	double getDoubleParam(String param, double def) throws SynCliException {
+		String str = getStringParam(param, false, "");
 		
 		if (str.equals("")) {
 			return def;
@@ -109,14 +78,17 @@ public abstract class Command {
 	}
 	
 	
-	protected List<String> textFiles(String directory) {
+	List<String> textFiles(String directory) {
 		List<String> textFiles = new ArrayList<String>();
 		File dir = new File(directory);
-		for (File file : dir.listFiles()) {
-			if (file.getName().endsWith((".txt"))) {
-				textFiles.add(file.getName());
-		    }
-		}
+		File[] files = dir.listFiles();
+		if (files != null) {
+            for (File file : files) {
+                if (file.getName().endsWith((".txt"))) {
+                    textFiles.add(file.getName());
+                }
+            }
+        }
 		
 		return textFiles;
 	}

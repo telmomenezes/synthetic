@@ -47,8 +47,12 @@ public class Gen extends Command {
         System.out.println("nodes: " + nodes);
         System.out.println("edges: " + edges);
         
-        NetParams netParams = new NetParams(nodes, edges, directed, false, par);
+        NetParams netParams = new NetParams(nodes, edges, directed, par);
         Generator gen = GeneratorFactory.create(gentype, netParams, sr);
+        if (gen == null) {
+            System.err.println("could not load program.");
+            return false;
+        }
         gen.load(progFile);
         
         gen.run();

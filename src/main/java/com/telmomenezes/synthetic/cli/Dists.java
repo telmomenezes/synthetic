@@ -43,31 +43,34 @@ public class Dists extends Command {
         System.out.println(net);
         
         List<String> prgFiles = textFiles(dir);
-        int progCount = prgFiles.size();
         
         try {
         	FileWriter fstream = new FileWriter(outFile);
         	BufferedWriter out = new BufferedWriter(fstream);
         
         	out.write("X");
-        	for (int x = 0; x < progCount; x++) {
-        		String progFile1 = prgFiles.get(x);
+        	for (String progFile1 : prgFiles) {
         		out.write("," + progFile1);
         	}
         	out.write("\n");
         	
-        	for (int x = 0; x < progCount; x++) {
-        		String progFile1 = prgFiles.get(x);
+        	for (String progFile1 : prgFiles) {
         		out.write(progFile1);
-        		for (int y = 0; y < progCount; y++) {
-        			String progFile2 = prgFiles.get(y);
-        		
+        		for (String progFile2 : prgFiles) {
         			System.out.println(progFile1 + " -> " + progFile2);
         		
         			Generator gen1 = GeneratorFactory.create(gentype, net.getNetParams(), sr);
+					if (gen1 == null) {
+						System.err.println("could not load program.");
+						return false;
+					}
         			gen1.load(dir + "/" + progFile1);
         		
         			Generator gen2 = GeneratorFactory.create(gentype, net.getNetParams(), sr);
+					if (gen2 == null) {
+						System.err.println("could not load program.");
+						return false;
+					}
         			gen2.load(dir + "/" + progFile2);
         		
         			double dist1 = gen1.run(gen2);
