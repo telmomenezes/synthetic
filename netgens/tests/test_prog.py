@@ -1,5 +1,5 @@
 import unittest
-from netgens.gp.prog import *
+from netgens.progs.prog import *
 
 
 class TestProg(unittest.TestCase):

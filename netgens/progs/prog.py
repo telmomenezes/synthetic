@@ -1,11 +1,10 @@
-import sys
 import math
 import random
 import numpy as np
-from netgens.gp.node import Node
-from netgens.gp.node_type import NodeType
-from netgens.gp.fun import Fun
-from netgens.gp.node_dyn_status import NodeDynStatus
+from netgens.progs.node import Node
+from netgens.progs.node_type import NodeType
+from netgens.progs.fun import Fun
+from netgens.progs.node_dyn_status import NodeDynStatus
 
 
 class Prog(object):
