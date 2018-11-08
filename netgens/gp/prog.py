@@ -285,35 +285,35 @@ class Prog(object):
                 node.init_var(var, parent)
             else:
                 fun = -1
-                if token == "+":
+                if token == '+':
                     fun = Fun.SUM
-                elif token == "-":
+                elif token == '-':
                     fun = Fun.SUB
-                elif token == "*":
+                elif token == '*':
                     fun = Fun.MUL
-                elif token == "/":
+                elif token == '/':
                     fun = Fun.DIV
-                elif token == "ZER":
+                elif token == 'ZER':
                     fun = Fun.ZER
-                elif token == "==":
+                elif token == '==':
                     fun = Fun.EQ
-                elif token == ">":
+                elif token == '>':
                     fun = Fun.GRT
-                elif token == "<":
+                elif token == '<':
                     fun = Fun.LRT
-                elif token == "EXP":
+                elif token == 'EXP':
                     fun = Fun.EXP
-                elif token == "LOG":
+                elif token == 'LOG':
                     fun = Fun.LOG
-                elif token == "ABS":
+                elif token == 'ABS':
                     fun = Fun.ABS
-                elif token == "MIN":
+                elif token == 'MIN':
                     fun = Fun.MIN
-                elif token == "MAX":
+                elif token == 'MAX':
                     fun = Fun.MAX
-                elif token == "AFF":
+                elif token == 'AFF':
                     fun = Fun.AFF
-                elif token == "^":
+                elif token == '^':
                     fun = Fun.POW
 
                 node.init_fun(fun, parent)
