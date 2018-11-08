@@ -25,6 +25,43 @@ def token_end(prog_str, pos):
     return curpos
 
 
+def parse(prog_str, vars, prog=None, parent=None):
+    if prog is None:
+        prog = Prog(vars)
+
+    start = token_start(prog_str, prog.parse_pos)
+    end = token_end(prog_str, start)
+    token = prog_str[start:end]
+
+    node = Node(prog)
+
+    try:
+        val = float(token)
+        node.init_val(val, parent)
+    except:
+        if token[0] == '$':
+            var = prog.variable_indices[token.substring[1:]]
+            node.init_var(var, parent)
+        else:
+            fun = str2fun(token)
+            node.init_fun(fun, parent)
+
+            prog.parse_pos = end
+
+            for i in range(node.arity):
+                parse(prog_str, vars, prog, node)
+                param = prog.root
+                node.params.append(param)
+
+            prog.root = node
+            return prog
+
+    prog.parse_pos = end
+
+    prog.root = node
+    return prog
+
+
 class Prog(object):
     def __init__(self, var_names):
         self.varcount = len(var_names)
@@ -34,7 +71,7 @@ class Prog(object):
         self.variable_indices = {}
         for i in range(self.varcount):
             self.variable_indices[var_names[i]] = i
-        self.parse_pos = None
+        self.parse_pos = 0
 
     def eval(self):
         curnode = self.root
@@ -268,43 +305,6 @@ class Prog(object):
 
         return child
 
-    def parse(self, prog_str, parent=None):
-        if parent is None:
-            self.parse_pos = 0
-
-        start = token_start(prog_str, self.parse_pos)
-        end = token_end(prog_str, start)
-        token = prog_str[start:end]
-
-        node = Node(self)
-
-        try:
-            val = float(token)
-            node.init_val(val, parent)
-        except:
-            if token[0] == '$':
-                var = self.variable_indices[token.substring[1:]]
-                node.init_var(var, parent)
-            else:
-                fun = str2fun(token)
-                node.init_fun(fun, parent)
-
-                self.parse_pos = end
-
-                for i in range(node.arity):
-                    node.params.append(self.parse(prog_str, node))
-
-                if parent is None:
-                    self.root = node
-                return node
-
-        self.parse_pos = end
-
-        if parent is None:
-            self.root = node
-
-        return node
-
     def clear_branching2(self, node):
         node.branching = -1
         for i in range(node.arity):
@@ -387,9 +387,3 @@ class Prog(object):
 
     def __str__(self):
         return self.build_str(self.root, 0, '')
-
-
-if __name__ == '__main__':
-    prog = Prog(['a', 'b', 'c'])
-    prog.parse('(+ 1 1)')
-    print(prog)
