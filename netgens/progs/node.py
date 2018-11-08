@@ -1,6 +1,17 @@
-from netgens.progs.node_type import NodeType
+from enum import Enum
 from netgens.progs.funs import fun_arity, fun_cond_pos, fun2str
-from netgens.progs.node_dyn_status import NodeDynStatus
+
+
+class NodeType(Enum):
+    FUN = 0
+    VAR = 1
+    VAL = 2
+
+
+class NodeDynStatus(Enum):
+    UNUSED = 0
+    CONSTANT = 1
+    DYNAMIC = 2
 
 
 class Node(object):

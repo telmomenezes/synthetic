@@ -1,10 +1,8 @@
 import math
 import random
 import numpy as np
-from netgens.progs.node import Node
-from netgens.progs.node_type import NodeType
+from netgens.progs.node import Node, NodeType, NodeDynStatus
 from netgens.progs.funs import Fun, str2fun
-from netgens.progs.node_dyn_status import NodeDynStatus
 
 
 def token_start(prog_str, pos):
