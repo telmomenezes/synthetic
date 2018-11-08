@@ -3,8 +3,28 @@ import random
 import numpy as np
 from netgens.progs.node import Node
 from netgens.progs.node_type import NodeType
-from netgens.progs.fun import Fun
+from netgens.progs.funs import Fun, str2fun
 from netgens.progs.node_dyn_status import NodeDynStatus
+
+
+def token_start(prog_str, pos):
+    curpos = pos
+    curchar = prog_str[curpos]
+    while curchar in {' ', '\n', '\t', '\r', ')', '(', 0}:
+        curpos += 1
+        curchar = prog_str[curpos]
+    return curpos
+
+
+def token_end(prog_str, pos):
+    curpos = pos
+    curchar = prog_str[curpos]
+    while curchar not in {' ', '\n', '\t', '\r', ')', '(', 0}:
+        curpos += 1
+        if curpos >= len(prog_str):
+            return curpos
+        curchar = prog_str[curpos]
+    return curpos
 
 
 class Prog(object):
@@ -185,7 +205,7 @@ class Prog(object):
         return cnode
 
     def clone(self):
-        ctree = Prog(self.varcount, self.variable_names)
+        ctree = Prog(self.var_names)
         ctree.root = self.clone_node(self.root, None)
         return ctree
 
@@ -250,28 +270,13 @@ class Prog(object):
 
         return child
 
-    def token_end(self, prog, pos):
-        curpos = pos
-        curchar = prog[curpos]
-        while curchar not in {' ', '\n', '\t', '\r', ')', '(', 0}:
-            curpos += 1
-            if curpos >= len(prog):
-                return curpos
-            curchar = prog[curpos]
-        return curpos
+    def parse(self, prog_str, parent=None):
+        if parent is None:
+            self.parse_pos = 0
 
-    def token_start(self, prog):
-        curpos = self.parse_pos
-        curchar = prog[curpos]
-        while curchar in {' ', '\n', '\t', '\r', ')', '(', 0}:
-            curpos += 1
-            curchar = prog[curpos]
-        return curpos
-
-    def parse2(self, prog, parent):
-        start = self.token_start(prog)
-        end = self.token_end(prog, start)
-        token = prog[start:end]
+        start = token_start(prog_str, self.parse_pos)
+        end = token_end(prog_str, start)
+        token = prog_str[start:end]
 
         node = Node(self)
 
@@ -283,53 +288,24 @@ class Prog(object):
                 var = self.variable_indices[token.substring[1:]]
                 node.init_var(var, parent)
             else:
-                fun = -1
-                if token == '+':
-                    fun = Fun.SUM
-                elif token == '-':
-                    fun = Fun.SUB
-                elif token == '*':
-                    fun = Fun.MUL
-                elif token == '/':
-                    fun = Fun.DIV
-                elif token == 'ZER':
-                    fun = Fun.ZER
-                elif token == '==':
-                    fun = Fun.EQ
-                elif token == '>':
-                    fun = Fun.GRT
-                elif token == '<':
-                    fun = Fun.LRT
-                elif token == 'EXP':
-                    fun = Fun.EXP
-                elif token == 'LOG':
-                    fun = Fun.LOG
-                elif token == 'ABS':
-                    fun = Fun.ABS
-                elif token == 'MIN':
-                    fun = Fun.MIN
-                elif token == 'MAX':
-                    fun = Fun.MAX
-                elif token == 'AFF':
-                    fun = Fun.AFF
-                elif token == '^':
-                    fun = Fun.POW
-
+                fun = str2fun(token)
                 node.init_fun(fun, parent)
 
                 self.parse_pos = end
 
                 for i in range(node.arity):
-                    node.params.append(self.parse2(prog, node))
+                    node.params.append(self.parse(prog_str, node))
 
+                if parent is None:
+                    self.root = node
                 return node
 
         self.parse_pos = end
-        return node
 
-    def parse(self, prog):
-        self.parse_pos = 0
-        self.root = self.parse2(prog, None)
+        if parent is None:
+            self.root = node
+
+        return node
 
     def clear_branching2(self, node):
         node.branching = -1
