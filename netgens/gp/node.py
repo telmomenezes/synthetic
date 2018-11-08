@@ -29,8 +29,6 @@ class Node(object):
     def __init__(self, tree):
         self.tree = tree
         self.params = []
-        for i in range(4):
-            self.params.append(Node(tree))
         self.type = 0
         self.val = 0
         self.var = 0
@@ -71,43 +69,43 @@ class Node(object):
         self.stoppos = self.arity
         self.dyn_status = NodeDynStatus.UNUSED
 
-    def write(self, out):
+    def __str__(self):
         if self.type == NodeType.VAL:
-            out.write('%s' % self.val)
+            return '%s' % self.val
         elif self.type == NodeType.VAR:
-            out.write("$%s" % self.tree.variable_names[self.var])
+            return "$%s" % self.tree.variable_names[self.var]
         elif self.type == NodeType.FUN:
             if self.fun == Fun.SUM:
-                out.write('+')
+                return '+'
             elif self.fun == Fun.SUB:
-                out.write('-')
+                return '-'
             elif self.fun == Fun.MUL:
-                out.write('*')
+                return '*'
             elif self.fun == Fun.DIV:
-                out.write('/')
+                return '/'
             elif self.fun == Fun.ZER:
-                out.write('ZER')
+                return 'ZER'
             elif self.fun == Fun.EQ:
-                out.write('==')
+                return '=='
             elif self.fun == Fun.GRT:
-                out.write('>')
+                return '>'
             elif self.fun == Fun.LRT:
-                out.write('<')
+                return '<'
             elif self.fun == Fun.EXP:
-                out.write('EXP')
+                return 'EXP'
             elif self.fun == Fun.LOG:
-                out.write('LOG')
+                return 'LOG'
             elif self.fun == Fun.ABS:
-                out.write('ABS')
+                return 'ABS'
             elif self.fun == Fun.MIN:
-                out.write('MIN')
+                return 'MIN'
             elif self.fun == Fun.MAX:
-                out.write('MAX')
+                return 'MAX'
             elif self.fun == Fun.AFF:
-                out.write('AFF')
+                return 'AFF'
             elif self.fun == Fun.POW:
-                out.write('^')
+                return '^'
             else:
-                out.write('F??')
+                return 'F??'
         else:
-            out.write('???')
+            return '???'

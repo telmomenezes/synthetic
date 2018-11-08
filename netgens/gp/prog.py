@@ -9,15 +9,14 @@ from netgens.gp.node_dyn_status import NodeDynStatus
 
 
 class Prog(object):
-    def __init__(self, varcount, variable_names):
-        self.varcount = varcount
-        self.vars = np.zeros(varcount)
+    def __init__(self, var_names):
+        self.varcount = len(var_names)
+        self.vars = np.zeros(self.varcount)
         self.root = None
-        self.variable_names = variable_names
-        # initialize variable indices table
+        self.var_names = var_names
         self.variable_indices = {}
-        for i in range(len(variable_names)):
-            self.variable_indices[variable_names[i]] = i
+        for i in range(self.varcount):
+            self.variable_indices[var_names[i]] = i
         self.parse_pos = None
 
     def eval(self):
@@ -111,11 +110,11 @@ class Prog(object):
                     val = curnode.val
 
                 # update dynamic status
-                if curnode.dynStatus == NodeDynStatus.UNUSED:
-                    curnode.dynStatus = NodeDynStatus.CONSTANT
-                elif curnode.dynStatus == NodeDynStatus.CONSTANT:
+                if curnode.dyn_status == NodeDynStatus.UNUSED:
+                    curnode.dyn_status = NodeDynStatus.CONSTANT
+                elif curnode.dyn_status == NodeDynStatus.CONSTANT:
                     if curnode.curval != val:
-                        curnode.dynStatus = NodeDynStatus.DYNAMIC
+                        curnode.dyn_status = NodeDynStatus.DYNAMIC
 
                 # update and move to next node
                 curnode.curval = val
@@ -123,36 +122,9 @@ class Prog(object):
 
         return val
 
-    def write2(self, node, indent, out):
-        ind = indent
-
-        if node.arity > 0:
-            if node.parent is not None:
-                out.write('\n')
-            for i in range(indent):
-                out.write(' ')
-            out.write('(')
-            ind += 1
-
-        node.write(out)
-
-        for i in range(node.arity):
-            out.write(' ')
-            self.write2(node.params[i], ind, out)
-
-        if node.arity > 0:
-            out.write(')')
-
-    def write(self, out):
-        self.write2(self.root, 0, out)
-        out.write('\n')
-
-    def write_to_path(self, file_path):
+    def write(self, file_path):
         with open(file_path, 'w') as f:
-            self.write(f)
-
-    def print(self):
-        self.write(sys.stdout)
+            f.write(str(self))
 
     def load(self, file_path):
         with open(file_path) as f:
@@ -284,7 +256,7 @@ class Prog(object):
         curchar = prog[curpos]
         while curchar not in {' ', '\n', '\t', '\r', ')', '(', 0}:
             curpos += 1
-            if curpos >= prog.length():
+            if curpos >= len(prog):
                 return curpos
             curchar = prog[curpos]
         return curpos
@@ -300,8 +272,7 @@ class Prog(object):
     def parse2(self, prog, parent):
         start = self.token_start(prog)
         end = self.token_end(prog, start)
-
-        token = prog[start, end]
+        token = prog[start:end]
 
         node = Node(self)
 
@@ -350,7 +321,7 @@ class Prog(object):
                 self.parse_pos = end
 
                 for i in range(node.arity):
-                    node.params[i] = self.parse2(prog, node)
+                    node.params.append(self.parse2(prog, node))
 
                 return node
 
@@ -420,5 +391,32 @@ class Prog(object):
         for i in range(node.arity):
             self.dyn_pruning2(node.params[i])
 
-    def get_variable_names(self):
-        return self.variable_names
+    def build_str(self, node, indent, cur_str):
+        out = cur_str
+        ind = indent
+
+        if node.arity > 0:
+            if node.parent is not None:
+                out = '%s\n' % out
+            out = '%s%s(' % (out, ' ' * indent)
+            ind += 1
+
+        out = '%s%s' % (out, node)
+
+        for i in range(node.arity):
+            out = '%s ' % out
+            out = self.build_str(node.params[i], ind, out)
+
+        if node.arity > 0:
+            out = '%s)' % out
+
+        return out
+
+    def __str__(self):
+        return self.build_str(self.root, 0, '')
+
+
+if __name__ == '__main__':
+    prog = Prog(['a', 'b', 'c'])
+    prog.parse('(+ 1 1)')
+    print(prog)
