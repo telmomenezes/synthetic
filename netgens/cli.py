@@ -1,4 +1,5 @@
 import argparse
+from netgens.net import Net
 
 
 # commands
