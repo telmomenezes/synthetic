@@ -25,9 +25,9 @@ def token_end(prog_str, pos):
     return curpos
 
 
-def parse(prog_str, vars, prog=None, parent=None):
+def parse(prog_str, var_names, prog=None, parent=None):
     if prog is None:
-        prog = Prog(vars)
+        prog = Prog(var_names)
 
     start = token_start(prog_str, prog.parse_pos)
     end = token_end(prog_str, start)
@@ -38,7 +38,7 @@ def parse(prog_str, vars, prog=None, parent=None):
     try:
         val = float(token)
         node.init_val(val, parent)
-    except:
+    except ValueError:
         if token[0] == '$':
             var = prog.variable_indices[token.substring[1:]]
             node.init_var(var, parent)
@@ -60,6 +60,19 @@ def parse(prog_str, vars, prog=None, parent=None):
 
     prog.root = node
     return prog
+
+
+def load(var_names, file_path):
+    with open(file_path) as f:
+        lines = f.readlines()
+    lines = [x.strip() for x in lines]
+
+    prog_str = ''
+    for line in lines:
+        if len(line) > 0 and line[0] != '#':
+            prog_str += line
+
+    return parse(prog_str, var_names)
 
 
 class Prog(object):
@@ -179,18 +192,6 @@ class Prog(object):
     def write(self, file_path):
         with open(file_path, 'w') as f:
             f.write(str(self))
-
-    def load(self, file_path):
-        with open(file_path) as f:
-            lines = f.readlines()
-        lines = [x.strip() for x in lines]
-
-        prog = ''
-        for line in lines:
-            if len(line) > 0 and line[0] != '#':
-                prog += line
-
-        self.parse(prog)
 
     def init_random2(self, prob_term, parent, min_depth, grow, depth):
         node = Node(self)
