@@ -14,55 +14,72 @@ class NodeDynStatus(Enum):
     DYNAMIC = 2
 
 
+def create_val(val, prog, parent):
+    node = Node(prog, parent)
+    node.type = NodeType.VAL
+    node.val = val
+    return node
+
+
+def create_var(var, prog, parent):
+    node = Node(prog, parent)
+    node.type = NodeType.VAR
+    node.var = var
+    return node
+
+
+def create_fun(fun, prog, parent):
+    node = Node(prog, parent)
+    node.type = NodeType.FUN
+    node.fun = fun
+    node.condpos = fun_cond_pos(fun)
+    node.stoppos = fun_arity(fun)
+    return node
+
+
 class Node(object):
-    def __init__(self, tree):
-        self.tree = tree
+    def __init__(self, prog, parent):
+        self.prog = prog
+        self.parent = parent
         self.params = []
         self.type = 0
-        self.val = 0
+        self.val = 0.
         self.var = 0
         self.fun = 0
-        self.arity = 0
         self.curval = 0.
-        self.parent = None
         self.curpos = 0
+        self.condpos = -1
         self.stoppos = 0
-        self.condpos = 0
         self.branching = 0
-        self.dyn_status = 0
-
-    def init_val(self, val, parent):
-        self.type = NodeType.VAL
-        self.parent = parent
-        self.val = val
-        self.arity = 0
-        self.condpos = -1
-        self.stoppos = 0
         self.dyn_status = NodeDynStatus.UNUSED
 
-    def init_var(self, var, parent):
-        self.type = NodeType.VAR
-        self.parent = parent
-        self.var = var
-        self.arity = 0
-        self.condpos = -1
-        self.stoppos = 0
-        self.dyn_status = NodeDynStatus.UNUSED
+    def clone(self, prog, parent):
+        if self.type == NodeType.VAL:
+            cnode = create_val(self.val, prog, parent)
+        elif self.type == NodeType.VAR:
+            cnode = create_var(self.var, prog, parent)
+        else:
+            cnode = create_fun(self.fun, prog, parent)
+        cnode.curval = self.curval
+        cnode.branching = self.branching
+        cnode.dyn_status = self.dyn_status
 
-    def init_fun(self, fun, parent):
-        self.type = NodeType.FUN
-        self.parent = parent
-        self.fun = fun
-        self.arity = fun_arity(fun)
-        self.condpos = fun_cond_pos(fun)
-        self.stoppos = self.arity
-        self.dyn_status = NodeDynStatus.UNUSED
+        for param in self.params:
+            cnode.params.append(param.clone(prog, cnode))
+
+        return cnode
+
+    def arity(self):
+        if self.type == NodeType.FUN:
+            return fun_arity(self.fun)
+        else:
+            return 0
 
     def __str__(self):
         if self.type == NodeType.VAL:
             return '%s' % self.val
         elif self.type == NodeType.VAR:
-            return "$%s" % self.tree.variable_names[self.var]
+            return "$%s" % self.prog.variable_names[self.var]
         elif self.type == NodeType.FUN:
             return fun2str(self.fun)
         else:

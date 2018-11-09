@@ -1,7 +1,7 @@
 import math
 import random
 import numpy as np
-from netgens.progs.node import Node, NodeType, NodeDynStatus
+from netgens.progs.node import create_fun, create_val, create_var, NodeType, NodeDynStatus
 from netgens.progs.funs import Fun, str2fun
 
 
@@ -33,22 +33,20 @@ def parse(prog_str, var_names, prog=None, parent=None):
     end = token_end(prog_str, start)
     token = prog_str[start:end]
 
-    node = Node(prog)
-
     try:
         val = float(token)
-        node.init_val(val, parent)
+        node = create_val(val, prog, parent)
     except ValueError:
         if token[0] == '$':
             var = prog.variable_indices[token.substring[1:]]
-            node.init_var(var, parent)
+            node = create_var(var, prog, parent)
         else:
             fun = str2fun(token)
-            node.init_fun(fun, parent)
+            node = create_fun(fun, prog, parent)
 
             prog.parse_pos = end
 
-            for i in range(node.arity):
+            for i in range(node.arity()):
                 parse(prog_str, vars, prog, node)
                 param = prog.root
                 node.params.append(param)
@@ -85,6 +83,11 @@ class Prog(object):
         for i in range(self.varcount):
             self.variable_indices[var_names[i]] = i
         self.parse_pos = 0
+
+    def clone(self):
+        cprog = Prog(self.var_names)
+        cprog.root = self.root.clone(cprog, None)
+        return cprog
 
     def eval(self):
         curnode = self.root
@@ -194,17 +197,16 @@ class Prog(object):
             f.write(str(self))
 
     def init_random2(self, prob_term, parent, min_depth, grow, depth):
-        node = Node(self)
         p = random.random()
         if ((not grow) or p > prob_term) and depth < min_depth:
             fun = random.randrange(len(Fun))
-            node.init_fun(fun, parent)
+            node = create_fun(fun, self, parent)
             for i in range(node.arity):
                 node.params[i] = self.init_random2(prob_term, node, min_depth, grow, depth + 1)
         else:
             if random.randrange(2) == 0 and self.varcount > 0:
                 var = random.randint(self.varcount)
-                node.init_var(var, parent)
+                node = create_var(var, self, parent)
             else:
                 r = random.randrange(10)
                 if r == 0:
@@ -213,7 +215,7 @@ class Prog(object):
                     val = random.randint(10)
                 else:
                     val = random.random()
-                node.init_val(val, parent)
+                node = create_val(val, self, parent)
         return node
 
     def init_random(self):
@@ -223,27 +225,6 @@ class Prog(object):
         grow = random.randrange(2) == 0
         max_depth = depth_low_limit + random.randrange(depth_high_limit - depth_low_limit)
         self.root = self.init_random2(prob_term, None, max_depth, grow, 0)
-
-    def clone_node(self, node, parent):
-        cnode = Node(self)
-        if node.type == NodeType.VAL:
-            cnode.init_val(node.val, parent)
-        elif node.type == NodeType.VAR:
-            cnode.init_var(node.var, parent)
-        else:
-            cnode.init_fun(node.fun, parent)
-        cnode.curval = node.curval
-        cnode.branching = node.branching
-        cnode.dyn_status = node.dyn_status
-
-        for i in range(node.arity):
-            cnode.params[i] = self.clone_node(node.params[i], cnode)
-        return cnode
-
-    def clone(self):
-        ctree = Prog(self.var_names)
-        ctree.root = self.clone_node(self.root, None)
-        return ctree
 
     def size2(self, node):
         c = 1
@@ -298,7 +279,7 @@ class Prog(object):
                     parampos = i
 
         # copy sub-tree from parent 2 to parent 1
-        point2clone = self.clone_node(point2, point1parent)
+        point2clone = point2.clone(child, point1parent)
         if point1parent is not None:
             point1parent.params[parampos] = point2clone
         else:
@@ -325,51 +306,39 @@ class Prog(object):
     def compare_branching(self, tree):
         return self.branching_distance(tree) == 0
 
-    def move_up(self, orig_node, targ_node):
-        if orig_node.type == NodeType.VAL:
-            targ_node.init_val(orig_node.val, orig_node.parent)
-        elif orig_node.type == NodeType.VAR:
-            targ_node.init_var(orig_node.var, orig_node.parent)
+    def dyn_pruning(self, node=None, parent=None, param_pos=-1):
+        if node is None:
+            node = self.root
         else:
-            targ_node.init_fun(orig_node.fun, orig_node.parent)
-        targ_node.branching = orig_node.branching
-        targ_node.dyn_status = orig_node.dyn_status
+            # nodes with constant value
+            if node.dyn_status == NodeDynStatus.CONSTANT:
+                parent[param_pos] = create_val(node.curval, self, parent)
 
-        for i in range(orig_node.arity):
-            targ_node.params[i] = orig_node.params[i]
-            targ_node.params[i].parent = targ_node
+            # conditions with constant branching
+            if node.condpos > 0:
+                branch1 = node.params[node.condpos]
+                branch2 = node.params[node.condpos + 1]
 
-    def dyn_pruning(self):
-        self.dyn_pruning2(self.root)
+                branch = -1
 
-    def dyn_pruning2(self, node):
-        # nodes with constant value
-        if node.dyn_status == NodeDynStatus.CONSTANT:
-            node.init_val(node.curval, node.parent)
+                if branch1.dyn_status == NodeDynStatus.UNUSED:
+                    branch = node.condpos + 1
+                elif branch2.dyn_status == NodeDynStatus.UNUSED:
+                    branch = node.condpos
 
-        # conditions with constant branching
-        if node.condpos > 0:
-            branch1 = node.params[node.condpos]
-            branch2 = node.params[node.condpos + 1]
+                if branch > 0:
+                    node.params[branch].branching = node.branching
+                    node.params[branch].dyn_status = node.dyn_status
+                    parent[param_pos] = node.params[branch]
 
-            branch = -1
-
-            if branch1.dyn_status == NodeDynStatus.UNUSED:
-                branch = node.condpos + 1
-            elif branch2.dyn_status == NodeDynStatus.UNUSED:
-                branch = node.condpos
-
-            if branch > 0:
-                self.move_up(node.params[branch], node)
-
-        for i in range(node.arity):
-            self.dyn_pruning2(node.params[i])
+        for i in range(len(node.params)):
+            self.dyn_pruning(node.params[i], node, i)
 
     def build_str(self, node, indent, cur_str):
         out = cur_str
         ind = indent
 
-        if node.arity > 0:
+        if node.arity() > 0:
             if node.parent is not None:
                 out = '%s\n' % out
             out = '%s%s(' % (out, ' ' * indent)
@@ -377,11 +346,11 @@ class Prog(object):
 
         out = '%s%s' % (out, node)
 
-        for i in range(node.arity):
+        for param in node.params:
             out = '%s ' % out
-            out = self.build_str(node.params[i], ind, out)
+            out = self.build_str(param, ind, out)
 
-        if node.arity > 0:
+        if node.arity() > 0:
             out = '%s)' % out
 
         return out
