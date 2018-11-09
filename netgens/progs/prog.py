@@ -1,7 +1,7 @@
 import math
 import random
 import numpy as np
-from netgens.progs.node import create_fun, create_val, create_var, NodeType, NodeDynStatus
+from netgens.progs.node import create_fun, create_val, create_var, create_random_node_tree, NodeType, NodeDynStatus
 from netgens.progs.funs import Fun, str2fun
 
 
@@ -71,6 +71,15 @@ def load(var_names, file_path):
             prog_str += line
 
     return parse(prog_str, var_names)
+
+
+def create_random(var_names, prob_term=.4, depth_low_limit=2, depth_high_limit=5, grow=None):
+    if grow is None:
+        grow = random.randrange(2) == 0
+    max_depth = depth_low_limit + random.randrange(depth_high_limit - depth_low_limit)
+    prog = Prog(var_names)
+    prog.root = create_random_node_tree(prog, prob_term, None, max_depth, grow, 0)
+    return prog
 
 
 class Prog(object):
@@ -196,60 +205,11 @@ class Prog(object):
         with open(file_path, 'w') as f:
             f.write(str(self))
 
-    def init_random2(self, prob_term, parent, min_depth, grow, depth):
-        p = random.random()
-        if ((not grow) or p > prob_term) and depth < min_depth:
-            fun = random.randrange(len(Fun))
-            node = create_fun(fun, self, parent)
-            for i in range(node.arity):
-                node.params[i] = self.init_random2(prob_term, node, min_depth, grow, depth + 1)
-        else:
-            if random.randrange(2) == 0 and self.varcount > 0:
-                var = random.randint(self.varcount)
-                node = create_var(var, self, parent)
-            else:
-                r = random.randrange(10)
-                if r == 0:
-                    val = 0.
-                elif r > 5:
-                    val = random.randint(10)
-                else:
-                    val = random.random()
-                node = create_val(val, self, parent)
-        return node
-
-    def init_random(self):
-        prob_term = .4
-        depth_low_limit = 2
-        depth_high_limit = 5
-        grow = random.randrange(2) == 0
-        max_depth = depth_low_limit + random.randrange(depth_high_limit - depth_low_limit)
-        self.root = self.init_random2(prob_term, None, max_depth, grow, 0)
-
-    def size2(self, node):
-        c = 1
-        for i in range(node.arity):
-            c += self.size2(node.params[i])
-        return c
-
     def size(self):
-        return self.size2(self.root)
-
-    def node_by_pos2(self, node, pos, curpos):
-        if pos == curpos[0]:
-            return node
-
-        curpos[0] += 1
-        for i in range(node.arity):
-            nodefound = self.node_by_pos2(node.params[i], pos, curpos)
-            if nodefound is not None:
-                return nodefound
-
-        return None
+        return self.root.size()
 
     def node_by_pos(self, pos):
-        curpos = [0]
-        return self.node_by_pos2(self.root, pos, curpos)
+        return self.root.node_by_pos(pos)
 
     def recombine(self, parent2):
         if random.randrange(2) == 0:
@@ -287,24 +247,14 @@ class Prog(object):
 
         return child
 
-    def clear_branching2(self, node):
-        node.branching = -1
-        for i in range(node.arity):
-            self.clear_branching2(node.params[i])
+    def clear_branching(self):
+        self.clear_branching()
 
-    def branching_distance(self, tree):
-        return self.branching_distance2(self.root, tree.root)
+    def branching_distance(self, prg):
+        return self.root.branching_distance(prg.root)
 
-    def branching_distance2(self, node1, node2):
-        distance = 0
-        if node1.branching != node2.branching:
-            distance += 1
-        for i in range(node1.arity):
-            distance += self.branching_distance2(node1.params[i], node2.params[i])
-        return distance
-
-    def compare_branching(self, tree):
-        return self.branching_distance(tree) == 0
+    def compare_branching(self, prg):
+        return self.branching_distance(prg) == 0
 
     def dyn_pruning(self, node=None, parent=None, param_pos=-1):
         if node is None:
