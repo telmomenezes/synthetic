@@ -7,7 +7,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'numpy',
-        'scipy',
+        'python-igraph',
         'jupyter',
         'progressbar2'
     ],
