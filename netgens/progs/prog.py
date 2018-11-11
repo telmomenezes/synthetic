@@ -38,7 +38,7 @@ def parse(prog_str, var_names, prog=None, parent=None):
         node = create_val(val, prog, parent)
     except ValueError:
         if token[0] == '$':
-            var = prog.variable_indices[token.substring[1:]]
+            var = prog.variable_indices[token[1:]]
             node = create_var(var, prog, parent)
         else:
             fun = str2fun(token)

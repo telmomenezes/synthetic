@@ -132,7 +132,7 @@ class Node(object):
         if self.type == NodeType.VAL:
             return '%s' % self.val
         elif self.type == NodeType.VAR:
-            return "$%s" % self.prog.variable_names[self.var]
+            return "$%s" % self.prog.var_names[self.var]
         elif self.type == NodeType.FUN:
             return fun2str(self.fun)
         else:

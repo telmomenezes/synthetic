@@ -98,5 +98,19 @@ class TestProg(unittest.TestCase):
         self.assertEqual(str(prog), '(AFF 3.0 0.0 1.0)')
         self.assertEqual(prog.eval(), 1.)
 
+    def test_prog_complex1(self):
+        prog = parse('(== $a (+ 1 $b) 0 1)', ['a', 'b'])
+        prog.vars[0] = 2
+        prog.vars[1] = 1
+        self.assertEqual(str(prog), '(== $a \n (+ 1.0 $b) 0.0 1.0)')
+        self.assertEqual(prog.eval(), 0.)
+
+    def test_prog_complex2(self):
+        prog = parse('(== $a (+ 1 $b) 0 1)', ['a', 'b'])
+        prog.vars[0] = 1
+        prog.vars[1] = 1
+        self.assertEqual(str(prog), '(== $a \n (+ 1.0 $b) 0.0 1.0)')
+        self.assertEqual(prog.eval(), 1.)
+
 if __name__ == '__main__':
     unittest.main()
