@@ -2,7 +2,7 @@ import math
 import random
 import numpy as np
 from netgens.progs.node import create_fun, create_val, create_var, create_random_node_tree, NodeType, NodeDynStatus
-from netgens.progs.funs import Fun, str2fun
+from netgens.progs.fun import Fun, str2fun
 
 
 def token_start(prog_str, pos):

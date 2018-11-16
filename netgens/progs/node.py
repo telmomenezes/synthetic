@@ -1,6 +1,6 @@
 from enum import Enum
 import random
-from netgens.progs.funs import Fun, fun_arity, fun_cond_pos, fun2str
+from netgens.progs.fun import Fun, fun_arity, fun_cond_pos, fun2str
 
 
 class NodeType(Enum):
