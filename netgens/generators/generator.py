@@ -1,8 +1,52 @@
+from enum import Enum
 import random
 import numpy as np
 from igraph import *
 import netgens.progs.prog as prog
-from netgens.generators.genvar import *
+
+
+class GenVar(Enum):
+    ORIGID = 0
+    TARGID = 1
+    ORIGDEG = 2
+    ORIGINDEG = 3
+    ORIGOUTDEG = 4
+    TARGDEG = 5
+    TARGINDEG = 6
+    TARGOUTDEG = 7
+    DIST = 8
+    DIRDIST = 9
+    REVDIST = 10
+
+
+genvars_names = {GenVar.ORIGID: 'orig',
+                 GenVar.TARGID: 'targ',
+                 GenVar.ORIGDEG: 'orig_deg',
+                 GenVar.ORIGINDEG: 'orig_in_deg',
+                 GenVar.ORIGOUTDEG: 'orig_out_deg',
+                 GenVar.TARGDEG: 'targ_deg',
+                 GenVar.TARGINDEG: 'targ_in_deg',
+                 GenVar.TARGOUTDEG: 'targ_out_deg',
+                 GenVar.DIST: 'dist',
+                 GenVar.DIRDIST: 'dist',
+                 GenVar.REVDIST: 'rev_dist'}
+
+
+names_genvars = {}
+for genvar, name in genvars_names.items():
+    names_genvars[name] = genvar
+
+
+def str2genvar(st):
+    if st in names_genvars:
+        return names_genvars[st]
+    return None
+
+
+def genvar2str(gvar):
+    if gvar in genvars_names:
+        return genvars_names[gvar]
+    return None
 
 
 def create_exo_generator(directed):
