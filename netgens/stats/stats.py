@@ -4,18 +4,13 @@ import igraph
 from pyemd import emd
 
 
-def euclidean_pairwise_distance_matrix(x):
-    distance_matrix = np.abs(np.repeat(x, len(x)) - np.tile(x, len(x)))
-    return distance_matrix.reshape(len(x), len(x))
-
-
 class StatType(Enum):
     DEGREES = 0
     IN_DEGREES = 1
     OUT_DEGREES = 2
     D_PAGERANKS = 3
     U_PAGERANKS = 4
-    TRIADIC_PROFILE = 5
+    TRIAD_CENSUS = 5
     D_DISTS = 6
     U_DISTS = 7
 
@@ -46,6 +41,16 @@ def create_stat(net, stat_type, bins=None, ref_stat=None):
         return InDegrees(net, stat_type, bins=bins, ref_stat=ref_stat)
     elif stat_type == StatType.OUTDEGREES:
         return OutDegrees(net, stat_type, bins=bins, ref_stat=ref_stat)
+    elif stat_type == StatType.D_PAGERANKS:
+        return DirectedPageRanks(net, stat_type, bins=bins, ref_stat=ref_stat)
+    elif stat_type == StatType.U_PAGERANKS:
+        return UndirectedPageRanks(net, stat_type, bins=bins, ref_stat=ref_stat)
+    elif stat_type == StatType.TRIAD_CENSUS:
+        return TriadCensus(net, stat_type)
+    elif stat_type == StatType.D_DISTS:
+        return DirectedDistances(net, stat_type, bins=bins, ref_stat=ref_stat)
+    elif stat_type == StatType.U_DISTS:
+        return UndirectedDistances(net, stat_type, bins=bins, ref_stat=ref_stat)
     else:
         # TODO: exception
         pass
@@ -114,9 +119,11 @@ class Histogram(Distrib):
     def distance(self, stat, distance_type):
         assert(isinstance(stat, Histogram))
         if distance_type == DistanceType.EARTH_MOVER:
-            bin_locations = np.mean([self.bin_edges[:-1], self.bin_edges[1:]], axis=0)
-            distance_matrix = euclidean_pairwise_distance_matrix(bin_locations)
-            # Validate distance matrix
+            bin_locs = np.mean([self.bin_edges[:-1], self.bin_edges[1:]], axis=0)
+            bins = len(bin_locs)
+
+            distance_matrix = np.abs(np.repeat(bin_locs, bins) - np.tile(bin_locs, bins))
+            distance_matrix = distance_matrix.reshape(bins, bins)
             assert(len(distance_matrix) == len(distance_matrix[0]))
             assert(self.data.shape[0] <= len(distance_matrix))
             assert(stat.data.shape[0] <= len(distance_matrix))
@@ -143,3 +150,32 @@ class InDegrees(Histogram):
 class OutDegrees(Histogram):
     def __values(self, net):
         return net.outdegree(net.vs)
+
+
+class DirectedPageRanks(Histogram):
+    def __values(self, net):
+        return net.pagerank(vertices=net.vs, directed=True)
+
+
+class UndirectedPageRanks(Histogram):
+    def __values(self, net):
+        return net.pagerank(vertices=net.vs, directed=False)
+
+
+class TriadCensus(Distrib):
+    def __values(self, net):
+        return net.triad_census()
+
+
+class DirectedDistances(Histogram):
+    def __values(self, net):
+        sp = net.shortest_paths_dijkstra(mode=igraph.OUT)
+        # flatten shortest paths length matrix
+        return [item for sublist in sp for item in sublist]
+
+
+class UndirectedDistances(Histogram):
+    def __values(self, net):
+        sp = net.shortest_paths_dijkstra(mode=igraph.ALL)
+        # flatten shortest paths length matrix
+        return [item for sublist in sp for item in sublist]
