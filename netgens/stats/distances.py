@@ -42,7 +42,7 @@ class Distances(object):
         return norm_values
 
     def compute(self, net):
-        stats_set = StatsSet(net, self.stat_types, self.bins)
+        stats_set = StatsSet(net, self.stat_types, self.bins, ref_stats=self.targ_stats_set)
 
         dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i]) for i in range(self.nstats)]
         if self.norm == Norm.ER_MEAN_RATIO:

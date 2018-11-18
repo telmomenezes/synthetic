@@ -8,6 +8,7 @@ setup(
     install_requires=[
         'numpy',
         'python-igraph',
+        'pyemd',
         'jupyter',
         'progressbar2'
     ],

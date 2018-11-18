@@ -1,6 +1,12 @@
 from enum import Enum
 import numpy as np
 import igraph
+from pyemd import emd
+
+
+def euclidean_pairwise_distance_matrix(x):
+    distance_matrix = np.abs(np.repeat(x, len(x)) - np.tile(x, len(x)))
+    return distance_matrix.reshape(len(x), len(x))
 
 
 class StatType(Enum):
@@ -33,16 +39,21 @@ def str2stat_type(name):
     return None
 
 
-def create_stat(net, stat_type, bins=None):
+def create_stat(net, stat_type, bins=None, ref_stat=None):
     if stat_type == StatType.DEGREES:
-        return Degrees(net, stat_type, bins=bins)
+        return Degrees(net, stat_type, bins=bins, ref_stat=ref_stat)
     elif stat_type == StatType.INDEGREES:
-        return InDegrees(net, stat_type, bins=bins)
+        return InDegrees(net, stat_type, bins=bins, ref_stat=ref_stat)
     elif stat_type == StatType.OUTDEGREES:
-        return OutDegrees(net, stat_type, bins=bins)
+        return OutDegrees(net, stat_type, bins=bins, ref_stat=ref_stat)
     else:
         # TODO: exception
         pass
+
+
+class DistanceType(Enum):
+    SIMPLE = 0
+    EARTH_MOVER = 1
 
 
 class Stat(object):
@@ -51,30 +62,71 @@ class Stat(object):
         self.data = self.__compute(net)
 
     def __compute(self, net):
+        # TODO: exception
         return None
 
-    def distance(self, stat):
-        return 0
+    def distance(self, stat, distance_type):
+        if distance_type == DistanceType.SIMPLE:
+            return abs(self.data - stat.data)
+        else:
+            # TODO: exception
+            pass
 
     def name(self):
         return stat_type2str(self.stat_type)
 
 
 class Distrib(Stat):
-    def distance(self, stat):
+    def distance(self, stat, distance_type):
         assert(isinstance(stat, Distrib))
-        return 0
+        if distance_type == DistanceType.SIMPLE:
+            dist = 0
+            for i in range(len(self.data)):
+                d = stat.data[i]
+                if d == 0:
+                    d = 1
+                dist += abs(self.data[i] - stat.data[i]) / d
+            return dist
+        elif distance_type == DistanceType.EARTH_MOVER:
+            pass
+        else:
+            # TODO: exception
+            pass
 
 
 class Histogram(Distrib):
-    def __init__(self, net, stat_type, bins):
+    def __init__(self, net, stat_type, bins, ref_stat):
         self.bins = bins
+        self.ref_stat = ref_stat
+        self.max_value = 0
+        self.bin_edges = None
         Distrib.__init__(self, net, stat_type)
 
     def __compute(self, net):
-        return np.histogram(self.__values(net), bins=self.bins)
+        values = self.__values(net)
+        if self.ref_stat is None:
+            self.max_value = np.max(values)
+        else:
+            self.max_value = self.ref_stat.max_value
+        self.bin_edges, histogram = np.histogram(values, bins=self.bins, range=(0, self.max_value))
+        return histogram
+
+    def distance(self, stat, distance_type):
+        assert(isinstance(stat, Histogram))
+        if distance_type == DistanceType.EARTH_MOVER:
+            bin_locations = np.mean([self.bin_edges[:-1], self.bin_edges[1:]], axis=0)
+            distance_matrix = euclidean_pairwise_distance_matrix(bin_locations)
+            # Validate distance matrix
+            assert(len(distance_matrix) == len(distance_matrix[0]))
+            assert(self.data.shape[0] <= len(distance_matrix))
+            assert(stat.data.shape[0] <= len(distance_matrix))
+
+            return emd(self.data, stat.data, distance_matrix)
+        else:
+            return Histogram.distance(self, stat, distance_type)
 
     def __values(self, net):
+        # TODO: exception
         return []
 
 
