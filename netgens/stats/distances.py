@@ -9,10 +9,11 @@ class Norm(Enum):
 
 
 class Distances(object):
-    def __init__(self, net, stat_types, bins, norm=Norm.NONE, norm_samples=0):
+    def __init__(self, net, stat_types, dist_types, bins, norm=Norm.NONE, norm_samples=0):
         assert(norm == Norm.NONE or norm_samples > 0)
 
         self.stat_types = stat_types
+        self.dist_types = dist_types
         self.bins = bins
         self.norm = norm
 
@@ -44,7 +45,8 @@ class Distances(object):
     def compute(self, net):
         stats_set = StatsSet(net, self.stat_types, self.bins, ref_stats=self.targ_stats_set)
 
-        dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i]) for i in range(self.nstats)]
+        dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i], self.dist_types[self.stat_types[i]])
+                 for i in range(self.nstats)]
         if self.norm == Norm.ER_MEAN_RATIO:
             very_small = .999
             dists = [max(d, very_small) for d in dists]
