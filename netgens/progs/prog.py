@@ -95,7 +95,8 @@ class Prog(object):
 
     def clone(self):
         cprog = Prog(self.var_names)
-        cprog.root = self.root.clone(cprog, None)
+        if cprog.root is not None:
+            cprog.root = self.root.clone(cprog, None)
         return cprog
 
     def eval(self):

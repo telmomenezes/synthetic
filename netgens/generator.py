@@ -68,15 +68,19 @@ def create_endo_generator(directed):
 
 
 class Generator(object):
-    def __init__(self, genvars, directed):
+    def __init__(self, genvars, directed, init_random=False):
         self.directed = directed
 
         self.genvars = genvars
         self.var_names = [genvar2str(gv) for gv in genvars]
         self.var_count = len(genvars)
-        self.prog = prog.Prog(self.var_names)
+        if init_random:
+            self.prog = prog.create_random(self.var_names)
+        else:
+            self.prog = prog.Prog(self.var_names)
 
         self.net = None
+        self.eval_distance = 0.
 
         self.valid = True
         self.iterations = -1
@@ -91,6 +95,9 @@ class Generator(object):
         cgen = Generator(self.genvars, self.directed)
         cgen.prog = self.prog.clone()
         return cgen
+
+    def spawn_random(self):
+        return Generator(self.genvars, self.directed, init_random=True)
 
     def load(self, file_path):
         self.prog = prog.load(self.var_names, file_path)
@@ -204,7 +211,7 @@ class Generator(object):
         self.sample_targs = np.zeros(self.trials, dtype=np.uint64)
         self.sample_weights = np.zeros(self.trials)
 
-        dist = 0.
+        self.eval_distance = 0.
 
         self.net = Graph(n=nodes, directed=self.directed)
 
@@ -218,16 +225,13 @@ class Generator(object):
 
             if shadow is not None:
                 shadow.cycle(self)
-                dist += self.weights_dist(shadow)
+                self.eval_distance += self.weights_dist(shadow)
 
             self.net.add_edge(orig, targ)
             self.iterations += 1
 
-        dist /= edges
-        return dist
-
-    def init_random(self):
-        self.prog = prog.create_random(self.var_names)
+        self.eval_distance /= edges
+        return self.net
 
     def recombine(self, parent2):
         generator = Generator(self.genvars, self.directed)
@@ -235,6 +239,5 @@ class Generator(object):
         return generator
 
     def mutate(self):
-        random_gen = Generator(self.genvars, self.directed)
-        random_gen.init_random()
+        random_gen = Generator(self.genvars, self.directed, init_random=True)
         return self.recombine(random_gen)
