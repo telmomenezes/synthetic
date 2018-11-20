@@ -67,6 +67,15 @@ def create_endo_generator(directed):
     return Generator(genvars, directed)
 
 
+def create_generator(name, directed):
+    if name == 'exo':
+        return create_exo_generator(directed)
+    elif name =='endo':
+        return create_endo_generator(directed)
+    else:
+        return None
+
+
 class Generator(object):
     def __init__(self, genvars, directed, init_random=False):
         self.directed = directed

@@ -1,6 +1,22 @@
 from enum import Enum
 import igraph
 from netgens.stats.stats_set import StatsSet
+from netgens.stats.stats import StatType, DistanceType
+
+
+DEFAULT_UNDIRECTED = ((StatType.DEGREES, DistanceType.EARTH_MOVER),
+                      (StatType.U_PAGERANKS, DistanceType.EARTH_MOVER),
+                      (StatType.TRIAD_CENSUS, DistanceType.SIMPLE),
+                      (StatType.U_DISTS, DistanceType.SIMPLE))
+
+
+DEFAULT_DIRECTED = ((StatType.IN_DEGREES, DistanceType.EARTH_MOVER),
+                    (StatType.OUT_DEGREES, DistanceType.EARTH_MOVER),
+                    (StatType.U_PAGERANKS, DistanceType.EARTH_MOVER),
+                    (StatType.D_PAGERANKS, DistanceType.EARTH_MOVER),
+                    (StatType.TRIAD_CENSUS, DistanceType.SIMPLE),
+                    (StatType.U_DISTS, DistanceType.SIMPLE),
+                    (StatType.D_DISTS, DistanceType.SIMPLE))
 
 
 class Norm(Enum):
@@ -9,16 +25,17 @@ class Norm(Enum):
 
 
 class Distances(object):
-    def __init__(self, net, stat_types, dist_types, bins, norm=Norm.NONE, norm_samples=0):
+    def __init__(self, net, stat_dist_types, bins, norm=Norm.NONE, norm_samples=0):
         assert(norm == Norm.NONE or norm_samples > 0)
 
-        self.stat_types = stat_types
-        self.dist_types = dist_types
+        self.stat_dist_types = stat_dist_types
         self.bins = bins
         self.norm = norm
 
-        self.nstats = len(self.stat_types)
-        self.targ_stats_set = StatsSet(net, stat_types, bins)
+        self.nstats = len(self.stat_dist_types)
+        self.stat_types = [item[0] for item in stat_dist_types]
+        self.dist_types = [item[1] for item in stat_dist_types]
+        self.targ_stats_set = StatsSet(net, self.stat_types, bins)
 
         if norm != Norm.NONE:
             self.norm_values = self.__compute_norm_values(net, norm_samples)
@@ -31,7 +48,7 @@ class Distances(object):
         directed = net.is_directed()
 
         norm_values = [.0] * self.nstats
-        dists = Distances(net, self.stat_types, self.bins, norm=Norm.NONE)
+        dists = Distances(net, self.stat_dist_types, self.bins, norm=Norm.NONE)
 
         for i in range(norm_samples):
             sample_net = igraph.Graph.Erdos_Renyi(n=vcount, m=ecount, directed=directed)
@@ -43,7 +60,7 @@ class Distances(object):
         return norm_values
 
     def compute(self, net):
-        stats_set = StatsSet(net, self.stat_types, self.bins, ref_stats=self.targ_stats_set)
+        stats_set = StatsSet(net, self.stat_dist_types, self.bins, ref_stats=self.targ_stats_set)
 
         dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i], self.dist_types[self.stat_types[i]])
                  for i in range(self.nstats)]

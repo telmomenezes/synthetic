@@ -27,12 +27,17 @@ class EvaluatedIndividual(object):
 
 
 class Evo(object):
-    def __init__(self, distances, generations, tolerance, base_generator, out_dir):
+    def __init__(self, net, distances, generations, tolerance, base_generator, out_dir, sample_ratio):
         self.distances = distances
         self.generations = generations
+        self.tolerance = tolerance
         self.base_generator = base_generator
         self.out_dir = out_dir
-        self.tolerance = tolerance
+        self.sample_ratio = sample_ratio
+
+        # number of nodes and edges in target netwoork
+        self.nodes = len(net.vs)
+        self.edges = len(net.es)
 
         # best individuals
         self.best_individual = None
@@ -63,7 +68,7 @@ class Evo(object):
 
         # init population
         generator = self.base_generator.spawn_random()
-        net = generator.run()
+        net = generator.run(self.nodes, self.edges, self.sample_ratio)
         self.best_fit_individual = EvaluatedIndividual(self, generator, net)
         self.best_individual = self.best_fit_individual
 
@@ -87,7 +92,7 @@ class Evo(object):
             generator = generator.mutate()
 
             time0 = current_time_millis()
-            net = generator.run()
+            net = generator.run(self.nodes, self.edges, self.sample_ratio)
             sim_time += current_time_millis() - time0
             time0 = current_time_millis()
             individual = EvaluatedIndividual(self, generator, net)
@@ -155,8 +160,8 @@ class Evo(object):
     def info_string(self):
         lines = ['stable generations: %s' % self.generations,
                  'directed: %s' % self.distances.net.is_directed(),
-                 'target net node count: %s' % len(self.distances.net.vs),
-                 'target net edge count: %s' % len(self.distances.net.es),
+                 'target net node count: %s' % self.nodes,
+                 'target net edge count: %s' % self.edges,
                  'distribution bins: %s' % self.distances.bins,
                  'tolerance: %s' % self.tolerance]
         return '\n'.join(lines)

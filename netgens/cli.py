@@ -1,29 +1,6 @@
+import sys
 import argparse
-from netgens.net import Net
-
-
-# commands
-def compare(args):
-    netfile1 = args.inet
-    netfile2 = args.inet2
-    bins = args.bins
-    directed = args.undir
-    par = args.par
-
-    net1 = net.load(netfile1, directed, par)
-    net2 = net.load(netfile2, directed, par)
-
-    print('NET: %s' % netfile1)
-    print(net1)
-    bag1 = MetricsBag(net1, bins)
-    print(bag1)
-
-    print('\n\n')
-
-    print('NET: %s' % netfile2)
-    print(net2)
-    bag2 = MetricsBag(net2, null, null, bins, bag1)
-    print(bag2)
+from netgens.commands.command import create_command
 
 
 def cli():
@@ -39,28 +16,30 @@ def cli():
     parser.add_argument('--prg2', type=str, help='second generator program file')
     parser.add_argument('--oprg', type=str, help='generator output program file')
     parser.add_argument('--out', type=str, help='output file')
-    parser.add_argument('--gens', type=str, help='number of generations')
+    parser.add_argument('--gens', type=int, help='number of generations')
     parser.add_argument('--bins', type=int, help='number of distribution bins', default=100)
-    parser.add_argument('--maxnodes', type=str, help='max nodes (sampling)')
-    parser.add_argument('--maxedges', type=str, help='max edges (sampling)')
-    parser.add_argument('--trials', type=str, help='number of trials for the fast generator')
-    parser.add_argument('--runs', type=str, help='number of generator runs')
+    parser.add_argument('--runs', type=int, help='number of generator runs')
     parser.add_argument('--undir', help='undirected network', action='store_true')
-    parser.add_argument('--tolerance', type=str, help='antibloat tolerance')
-    parser.add_argument('--nodes', type=str, help='number of nodes')
-    parser.add_argument('--edges', type=str, help='number of edges')
+    parser.add_argument('--tolerance', type=float, help='antibloat tolerance')
+    parser.add_argument('--nodes', type=int, help='number of nodes')
+    parser.add_argument('--edges', type=int, help='number of edges')
     parser.add_argument('--mean', help='compute mean', action='store_true')
-    parser.add_argument('--par', help='parallel edges allowed', action='store_true')
     parser.add_argument('--gentype', type=str, help='generator type')
 
-    args = parser.parse_args()
+    args = vars(parser.parse_args())
 
-    command = args.command
+    command = create_command(args['command'])
 
-    if command == 'compare':
-        compare(args)
-    else:
+    if command is None:
         print('unkown command: %s' % command)
+        sys.exit(2)
+    else:
+        if not command.check_args(args):
+            print('error: %s' % command.error_msg)
+            sys.exit(2)
+        if not command.run(args):
+            print('error: %s' % command.error_msg)
+            sys.exit(1)
 
 
 if __name__ == '__main__':
