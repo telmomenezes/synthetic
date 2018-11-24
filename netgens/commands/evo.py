@@ -44,11 +44,8 @@ class Evolve(Command):
             return False
 
         # create fitness calculator
-        if directed:
-            stat_dist_types = DEFAULT_DIRECTED
-        else:
-            stat_dist_types = DEFAULT_UNDIRECTED
-        fitness = Fitness(net, stat_dist_types, bins, norm=Norm.ER_MEAN_RATIO, norm_samples=30)
+        # TODO: norm samples configurable
+        fitness = Fitness(net, get_stat_dist_types(args), bins, norm=Norm.ER_MEAN_RATIO, norm_samples=30)
 
         # create evolutionary search
         evo = Evo(net, fitness, generations, tolerance, base_generator, outdir, sr)

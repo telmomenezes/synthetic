@@ -24,7 +24,7 @@ class Norm(Enum):
 
 
 class Fitness(object):
-    def __init__(self, net, stat_dist_types, bins, norm=Norm.NONE, norm_samples=0):
+    def __init__(self, net, stat_dist_types, bins, norm=Norm.ER_MEAN_RATIO, norm_samples=0):
         assert(norm == Norm.NONE or norm_samples > 0)
 
         self.stat_dist_types = stat_dist_types
@@ -47,11 +47,11 @@ class Fitness(object):
         directed = net.is_directed()
 
         norm_values = [.0] * self.nstats
-        dists = Fitness(net, self.stat_dist_types, self.bins, norm=Norm.NONE)
+        fitness = Fitness(net, self.stat_dist_types, self.bins, norm=Norm.NONE)
 
         for i in range(norm_samples):
             sample_net = igraph.Graph.Erdos_Renyi(n=vcount, m=ecount, directed=directed)
-            values = dists.compute(sample_net)
+            _, _, values = fitness.compute(sample_net)
             for j in range(self.nstats):
                 norm_values[j] += values[j]
 

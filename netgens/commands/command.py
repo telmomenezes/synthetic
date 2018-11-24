@@ -1,4 +1,13 @@
+from netgens.fitness import DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
 from netgens.commands.evo import Evolve
+
+
+def get_stat_dist_types(args):
+    directed = not args['undir']
+    if directed:
+        return DEFAULT_DIRECTED
+    else:
+        return DEFAULT_UNDIRECTED
 
 
 def create_command(name):
