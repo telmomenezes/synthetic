@@ -67,13 +67,19 @@ def create_endo_generator(directed):
     return Generator(genvars, directed)
 
 
-def create_generator(gen_name, directed):
-    if gen_name == 'exo':
+def create_generator(gen_type, directed):
+    if gen_type == 'exo':
         return create_exo_generator(directed)
-    elif gen_name == 'endo':
+    elif gen_type == 'endo':
         return create_endo_generator(directed)
     else:
         return None
+
+
+def load(prog_path, gen_type, directed):
+    gen = create_generator(gen_type, directed)
+    gen.prog = prog.load(gen.var_names, prog_path)
+    return gen
 
 
 class Generator(object):
