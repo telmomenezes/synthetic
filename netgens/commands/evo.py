@@ -1,6 +1,6 @@
 from netgens.net import load_net
 from netgens.generator import create_generator
-from netgens.fitness import Fitness, Norm, DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
+from netgens.fitness import Fitness, Norm
 from netgens.evo import Evo
 from netgens.commands.command import *
 
