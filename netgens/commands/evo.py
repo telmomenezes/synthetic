@@ -1,6 +1,6 @@
 import igraph
 from netgens.generator import create_generator
-from netgens.distances import Distances, Norm, DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
+from netgens.fitness import Fitness, Norm, DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
 from netgens.evo import Evo
 from netgens.commands.command import *
 
@@ -54,15 +54,15 @@ class Evolve(Command):
             self.error_msg = 'unknown generator type: %s' % gen_type
             return False
 
-        # create distances calculator
+        # create fitness calculator
         if directed:
             stat_dist_types = DEFAULT_DIRECTED
         else:
             stat_dist_types = DEFAULT_UNDIRECTED
-        distances = Distances(net, stat_dist_types, bins, norm=Norm.ER_MEAN_RATIO, norm_samples=30)
+        fitness = Fitness(net, stat_dist_types, bins, norm=Norm.ER_MEAN_RATIO, norm_samples=30)
 
         # create evolutionary search
-        evo = Evo(net, distances, generations, tolerance, base_generator, outdir, sr)
+        evo = Evo(net, fitness, generations, tolerance, base_generator, outdir, sr)
 
         # some reports to screen
         print('target net: %s' + netfile)

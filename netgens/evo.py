@@ -9,7 +9,7 @@ def within_tolerance(fitness, best_fitness, tolerance):
 class EvaluatedIndividual(object):
     def __init__(self, evo, generator, net):
         self.generator = generator
-        self.fitness_max, self.fitness_avg, self.fitness_tuple = evo.compute_fitness(net)
+        self.fitness_max, self.fitness_avg, self.fitness_tuple = evo.fitness.compute(net)
 
     def is_better_than(self, eval_indiv, best_fitness, tolerance):
         fitness_orig = self.fitness_max
@@ -27,8 +27,8 @@ class EvaluatedIndividual(object):
 
 
 class Evo(object):
-    def __init__(self, net, distances, generations, tolerance, base_generator, out_dir, sample_ratio):
-        self.distances = distances
+    def __init__(self, net, fitness, generations, tolerance, base_generator, out_dir, sample_ratio):
+        self.fitness = fitness
         self.generations = generations
         self.tolerance = tolerance
         self.base_generator = base_generator
@@ -51,12 +51,6 @@ class Evo(object):
         self.gen_time = 0
         self.sim_time = 0.
         self.fit_time = 0.
-
-    def compute_fitness(self, net):
-        dists = self.distances.compute(net)
-        fitness_max = max(dists)
-        fitness_avg = sum(dists) / len(dists)
-        return fitness_max, fitness_avg, dists
 
     def run(self):
         # init state
@@ -137,7 +131,7 @@ class Evo(object):
         # write header of log file
         with open('%s/evo.csv' % self.out_dir, 'w') as log_file:
             header = 'gen,best_fit_max,best_fit_avg,best_geno_size,gen_comp_time,sim_comp_time,fit_comp_time'
-            stat_names = [stat.name() for stat in self.distances.targ_stats_set.stats]
+            stat_names = [stat.name() for stat in self.fitness.targ_stats_set.stats]
             header = '%s,%s\n' % (header, ','.join(stat_names))
             log_file.write(header)
 
@@ -153,16 +147,16 @@ class Evo(object):
 
         # print info
         print(self.gen_info_string())
-        stat_names = [stat.name() for stat in self.distances.targ_stats_set.stats]
+        stat_names = [stat.name() for stat in self.fitness.targ_stats_set.stats]
         items = ['%s: %s' % (stat_names[i], dists[i]) for i in range(len(stat_names))]
         print('; '.join(items))
 
     def info_string(self):
         lines = ['stable generations: %s' % self.generations,
-                 'directed: %s' % self.distances.net.is_directed(),
+                 'directed: %s' % self.fitness.net.is_directed(),
                  'target net node count: %s' % self.nodes,
                  'target net edge count: %s' % self.edges,
-                 'distribution bins: %s' % self.distances.bins,
+                 'distribution bins: %s' % self.fitness.bins,
                  'tolerance: %s' % self.tolerance]
         return '\n'.join(lines)
 

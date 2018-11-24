@@ -23,7 +23,7 @@ class Norm(Enum):
     ER_MEAN_RATIO = 1
 
 
-class Distances(object):
+class Fitness(object):
     def __init__(self, net, stat_dist_types, bins, norm=Norm.NONE, norm_samples=0):
         assert(norm == Norm.NONE or norm_samples > 0)
 
@@ -47,7 +47,7 @@ class Distances(object):
         directed = net.is_directed()
 
         norm_values = [.0] * self.nstats
-        dists = Distances(net, self.stat_dist_types, self.bins, norm=Norm.NONE)
+        dists = Fitness(net, self.stat_dist_types, self.bins, norm=Norm.NONE)
 
         for i in range(norm_samples):
             sample_net = igraph.Graph.Erdos_Renyi(n=vcount, m=ecount, directed=directed)
@@ -68,4 +68,6 @@ class Distances(object):
             dists = [max(d, very_small) for d in dists]
             dists = [dists[i] / self.norm_values[i] for i in range(self.nstats)]
 
-        return dists
+        fitness_max = max(dists)
+        fitness_avg = sum(dists) / len(dists)
+        return fitness_max, fitness_avg, dists
