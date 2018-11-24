@@ -1,4 +1,4 @@
-import igraph
+from netgens.net import load_net
 from netgens.generator import create_generator
 from netgens.fitness import Fitness, Norm, DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
 from netgens.evo import Evo
@@ -13,7 +13,7 @@ class Evolve(Command):
 
     def help(self):
         lines = ['Evolve network generator.',
-                 '$ synt evo -inet <network> -odir <dir>',
+                 '$ netgens evo -inet <network> -odir <dir>',
                  'Optional parameters:',
                  '-undir if network is undirected',
                  '-gens <n> number of stable generations before search stops (default is 1000)',
@@ -35,18 +35,7 @@ class Evolve(Command):
         gen_type = arg_with_default(args, 'gentype', 'exo')
 
         # load net
-        net = igraph.Graph.Load(netfile)
-
-        # force directed / undirected
-        if net.is_directed() and not directed:
-            net = net.as_undirected()
-        if not net.is_directed() and directed:
-            net = net.as_directed()
-
-        # prevent loops and multiple edges
-        net = net.simplify()
-
-        assert (net.is_directed() == directed)
+        net = load_net(netfile, directed)
 
         # create base generator
         base_generator = create_generator(gen_type, directed)
