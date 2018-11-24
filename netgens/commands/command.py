@@ -1,3 +1,4 @@
+from netgens.consts import *
 from netgens.fitness import DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
 from netgens.commands.evo import Evolve
 from netgens.commands.compare import Compare
@@ -10,13 +11,19 @@ ARG_PLACEHOLDERS = {'inet': 'network',
                     'gens': 'n',
                     'sr': 'n',
                     'bins': 'n',
-                    'tolerance': 'n'}
+                    'tolerance': 'n',
+                    'nodes': 'n',
+                    'edges': 'n',
+                    'gentype': 'generator type'}
 
 ARG_HELP = {'undir': 'undirected network(s)',
             'gens': 'number of stable generations before search stops (default is 1000)',
             'sr': 'sample ratio (default is .0006)',
             'bins': 'histogram bins (default is 100)',
-            'tolerance': 'accepted fitness loss for shorter program (default is .1)'}
+            'tolerance': 'accepted fitness loss for shorter program (default is .1)',
+            'nodes': 'number of nodes (default is 1000)',
+            'edges': 'number or edges (default is 10000)',
+            'gentype': 'type of generator to use (default is "exo")'}
 
 
 def get_stat_dist_types(args):
@@ -29,9 +36,9 @@ def get_stat_dist_types(args):
 
 def create_command(name):
     if name == 'evo':
-        return Evolve()
+        return Evolve(CLI_NAME)
     elif name == 'compare':
-        return Compare()
+        return Compare(CLI_NAME)
     return None
 
 
