@@ -6,21 +6,12 @@ from netgens.commands.command import *
 
 
 class Evolve(Command):
-    def __init__(self):
-        Command.__init__(self)
+    def __init__(self, cli_name):
+        Command.__init__(self, cli_name)
         self.name = 'evo'
+        self.description = 'evolve network generator'
         self.mandatory_args = ['inet', 'odir']
-
-    def help(self):
-        lines = ['Evolve network generator.',
-                 '$ netgens evo -inet <network> -odir <dir>',
-                 'Optional parameters:',
-                 '-undir if network is undirected',
-                 '-gens <n> number of stable generations before search stops (default is 1000)',
-                 '-sr <n> sample ratio (default is .0006)',
-                 '-bins <n> distribution bins (default is 100)',
-                 '-tolerance <n> accepted fitness loss for shorter program (default is .1)']
-        return '\n'.join(lines)
+        self.optional_args = ['undir', 'gens', 'sr', 'bins', 'tolerance']
 
     def run(self, args):
         self.error_msg = None

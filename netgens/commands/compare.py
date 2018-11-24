@@ -4,18 +4,12 @@ from netgens.commands.command import *
 
 
 class Compare(Command):
-    def __init__(self):
-        Command.__init__(self)
+    def __init__(self, cli_name):
+        Command.__init__(self, cli_name)
         self.name = 'compare'
+        self.description = 'compare two networks'
         self.mandatory_args = ['inet', 'inet2']
-
-    def help(self):
-        lines = ['Compares two networks.',
-                 '$ netgens compare -inet <network1> -inet2 <network2>',
-                 'Optional parameters:',
-                 '-undir if network is undirected',
-                 '-bins <n> distribution bins (default is 100)']
-        return '\n'.join(lines)
+        self.optional_args = ['undir', 'bins']
 
     def run(self, args):
         self.error_msg = None
