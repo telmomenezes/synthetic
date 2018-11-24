@@ -1,5 +1,6 @@
 from netgens.fitness import DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
 from netgens.commands.evo import Evolve
+from netgens.commands.compare import Compare
 
 
 def get_stat_dist_types(args):
@@ -13,6 +14,8 @@ def get_stat_dist_types(args):
 def create_command(name):
     if name == 'evo':
         return Evolve()
+    elif name == 'compare':
+        return Compare()
     return None
 
 
