@@ -1,6 +1,6 @@
 import igraph
 from netgens.generator import create_generator
-from netgens.stats.distances import Distances, Norm, DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
+from netgens.distances import Distances, Norm, DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
 from netgens.evo import Evo
 from netgens.commands.command import *
 

@@ -1,7 +1,6 @@
 from enum import Enum
 import igraph
-from netgens.stats.stats_set import StatsSet
-from netgens.stats.stats import StatType, DistanceType
+from netgens.stats import StatType, DistanceType, StatsSet
 
 
 DEFAULT_UNDIRECTED = ((StatType.DEGREES, DistanceType.EARTH_MOVER),
