@@ -2,7 +2,7 @@ from enum import Enum
 import random
 import numpy as np
 from igraph import *
-import netgens.progs.prog as prog
+import netgens.prog as prog
 
 
 class GenVar(Enum):
@@ -67,10 +67,10 @@ def create_endo_generator(directed):
     return Generator(genvars, directed)
 
 
-def create_generator(name, directed):
-    if name == 'exo':
+def create_generator(gen_name, directed):
+    if gen_name == 'exo':
         return create_exo_generator(directed)
-    elif name =='endo':
+    elif gen_name == 'endo':
         return create_endo_generator(directed)
     else:
         return None

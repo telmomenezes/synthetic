@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from netgens.progs.prog import parse
+from netgens.prog import parse
 
 
 class TestProg(unittest.TestCase):
