@@ -18,12 +18,12 @@ class Evolve(Command):
 
         netfile = args['inet']
         outdir = args['odir']
-        generations = arg_with_default(args, 'gens', 1000)
-        sr = arg_with_default(args, 'sr', 0.0006)
-        bins = arg_with_default(args, 'bins', 100)
+        generations = arg_with_default(args, 'gens', DEFAULT_GENERATIONS)
+        sr = arg_with_default(args, 'sr', DEFAULT_SAMPLE_RATE)
+        bins = arg_with_default(args, 'bins', DEFAULT_BINS)
         directed = not args['undir']
-        tolerance = arg_with_default(args, 'tolerance', 0.1)
-        gen_type = arg_with_default(args, 'gentype', 'exo')
+        tolerance = arg_with_default(args, 'tolerance', DEFAULT_TOLERANCE)
+        gen_type = arg_with_default(args, 'gentype', DEFAULT_GEN_TYPE)
 
         # load net
         net = load_net(netfile, directed)

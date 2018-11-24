@@ -17,7 +17,7 @@ class Compare(Command):
         netfile1 = args['inet']
         netfile2 = args['inet2']
 
-        bins = arg_with_default(args, 'bins', 100)
+        bins = arg_with_default(args, 'bins', DEFAULT_BINS)
         directed = not args['undir']
 
         # load nets

@@ -15,11 +15,11 @@ class Const(Command):
 
         prog = args['prg']
 
-        sr = arg_with_default(args, 'sr', 0.0006)
+        sr = arg_with_default(args, 'sr', DEFAULT_SAMPLE_RATE)
         directed = not args['undir']
-        nodes = arg_with_default(args, 'nodes', 1000)
-        edges = arg_with_default(args, 'edges', 10000)
-        gentype = arg_with_default(args, 'gentype', 'exo')
+        nodes = arg_with_default(args, 'nodes', DEFAULT_NODES)
+        edges = arg_with_default(args, 'edges', DEFAULT_EDGES)
+        gentype = arg_with_default(args, 'gentype', DEFAULT_GEN_TYPE)
 
         generator = gen.load(prog, gentype, directed)
         generator.run(nodes, edges, sr)
