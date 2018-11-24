@@ -1,5 +1,5 @@
 from netgens.net import load_net
-from netgens.generator import create_generator
+import netgens.generator as gen
 from netgens.fitness import Fitness, Norm
 from netgens.evo import Evo
 from netgens.commands.command import *
@@ -29,7 +29,7 @@ class Evolve(Command):
         net = load_net(netfile, directed)
 
         # create base generator
-        base_generator = create_generator(gen_type, directed)
+        base_generator = gen.create(gen_type, directed)
         if base_generator is None:
             self.error_msg = 'unknown generator type: %s' % gen_type
             return False
