@@ -4,6 +4,7 @@ from netgens.commands.evo import Evolve
 from netgens.commands.compare import Compare
 from netgens.commands.const import Const
 from netgens.commands.eval_distance import EvalDistance
+from netgens.commands.fit import Fit
 
 
 ARG_PLACEHOLDERS = {'inet': 'network',
@@ -53,6 +54,8 @@ def create_command(name):
         return Const(CLI_NAME)
     elif name == 'eval_distance':
         return EvalDistance(CLI_NAME)
+    elif name == 'fit':
+        return Fit(CLI_NAME)
     return None
 
 

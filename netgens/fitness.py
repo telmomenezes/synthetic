@@ -78,5 +78,5 @@ class Fitness(object):
             dists = [dists[i] / self.norm_values[i] for i in range(self.nstats)]
 
         fitness_max = max(dists)
-        fitness_avg = sum(dists) / len(dists)
-        return fitness_max, fitness_avg, dists
+        fitness_mean = sum(dists) / len(dists)
+        return fitness_max, fitness_mean, dists

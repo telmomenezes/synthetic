@@ -9,7 +9,7 @@ def within_tolerance(fitness, best_fitness, tolerance):
 class EvaluatedIndividual(object):
     def __init__(self, evo, generator, net):
         self.generator = generator
-        self.fitness_max, self.fitness_avg, self.fitness_tuple = evo.fitness.compute(net)
+        self.fitness_max, self.fitness_mean, self.fitness_tuple = evo.fitness.compute(net)
 
     def is_better_than(self, eval_indiv, best_fitness, tolerance):
         fitness_orig = self.fitness_max
@@ -130,7 +130,7 @@ class Evo(object):
     def write_log_header(self):
         # write header of log file
         with open('%s/evo.csv' % self.out_dir, 'w') as log_file:
-            header = 'gen,best_fit_max,best_fit_avg,best_geno_size,gen_comp_time,sim_comp_time,fit_comp_time'
+            header = 'gen,best_fit_max,best_fit_mean,best_geno_size,gen_comp_time,sim_comp_time,fit_comp_time'
             stat_names = [stat.name() for stat in self.fitness.targ_stats_set.stats]
             header = '%s,%s\n' % (header, ','.join(stat_names))
             log_file.write(header)
@@ -140,7 +140,7 @@ class Evo(object):
 
         # write log line for generation
         with open('%s/evo.csv' % self.out_dir, 'a') as log_file:
-            row = ','.join((self.curgen, self.best_individual.fitness_max, self.best_individual.fitness_avg,
+            row = ','.join((self.curgen, self.best_individual.fitness_max, self.best_individual.fitness_mean,
                             self.best_individual.prog.size(), self.gen_time, self.sim_time, self.fit_time))
             row = '%s,%s\n' % (row, ','.join(dists))
             log_file.write(row)
@@ -163,7 +163,7 @@ class Evo(object):
     def gen_info_string(self):
         items = ['gen #%s' % self.curgen,
                  'best fitness max: %s' % self.best_individual.fitness_max,
-                 'best fitness avg: %s' % self.best_individual.fitness_avg,
+                 'best fitness mean: %s' % self.best_individual.fitness_mean,
                  'best genotype size: %s' % self.best_individual.prog.size(),
                  'gen comp time: %ss.' % self.gen_time,
                  'sim comp time: %ss.' % self.sim_time,
