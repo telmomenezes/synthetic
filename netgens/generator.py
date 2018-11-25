@@ -49,29 +49,29 @@ def genvar2str(gvar):
     return None
 
 
-def create_exo_generator(directed):
+def create_exo_generator(directed, init_random=False):
     if directed:
         genvars = (GenVar.ORIGID, GenVar.TARGID, GenVar.ORIGINDEG, GenVar.ORIGOUTDEG,
                    GenVar.TARGINDEG, GenVar.TARGOUTDEG, GenVar.DIST, GenVar.DIRDIST, GenVar.REVDIST)
     else:
         genvars = (GenVar.ORIGID, GenVar.TARGID, GenVar.ORIGDEG, GenVar.TARGDEG, GenVar.DIST)
-    return Generator(genvars, directed)
+    return Generator(genvars, directed, init_random=init_random)
 
 
-def create_endo_generator(directed):
+def create_endo_generator(directed, init_random=False):
     if directed:
         genvars = (GenVar.ORIGINDEG, GenVar.ORIGOUTDEG, GenVar.TARGINDEG, GenVar.TARGOUTDEG,
                    GenVar.DIST, GenVar.DIRDIST, GenVar.REVDIST)
     else:
         genvars = (GenVar.ORIGDEG, GenVar.TARGDEG, GenVar.DIST)
-    return Generator(genvars, directed)
+    return Generator(genvars, directed, init_random=init_random)
 
 
-def create_generator(gen_type, directed):
+def create_generator(gen_type, directed, init_random=False):
     if gen_type == 'exo':
-        return create_exo_generator(directed)
+        return create_exo_generator(directed, init_random=init_random)
     elif gen_type == 'endo':
-        return create_endo_generator(directed)
+        return create_endo_generator(directed, init_random=init_random)
     else:
         return None
 

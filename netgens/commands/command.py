@@ -7,6 +7,7 @@ from netgens.commands.eval_distance import EvalDistance
 from netgens.commands.fit import Fit
 from netgens.commands.gen import Gen
 from netgens.commands.prune import Prune
+from netgens.commands.rand_gen import RandGen
 
 
 ARG_PLACEHOLDERS = {'inet': 'network',
@@ -64,6 +65,8 @@ def create_command(name):
         return Gen(CLI_NAME)
     elif name == 'prune':
         return Prune(CLI_NAME)
+    elif name == 'rand_gen':
+        return RandGen(CLI_NAME)
     return None
 
 
