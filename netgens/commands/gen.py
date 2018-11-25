@@ -26,7 +26,7 @@ class Gen(Command):
         print('edges: %s' % edges)
 
         # load and run generator
-        gen = load_generator(prog, gentype, directed)
+        gen = load_generator(prog, directed, gentype)
         net = gen.run(nodes, edges, sr)
         
         # write net

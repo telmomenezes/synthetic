@@ -18,7 +18,7 @@ class RandGen(Command):
         directed = not args['undir']
         gentype = arg_with_default(args, 'gentype', DEFAULT_GEN_TYPE)
 
-        gen = create_generator(gentype, directed, init_random=True)
+        gen = create_generator(directed, gentype, init_random=True)
         gen.prog.write(out_prog)
 
         print('done.')

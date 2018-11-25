@@ -27,7 +27,7 @@ class Fit(Command):
         net = load_net(netfile, directed)
 
         # create base generator
-        base_generator = create_generator(gen_type, directed)
+        base_generator = create_generator(directed, gen_type)
         if base_generator is None:
             self.error_msg = 'unknown generator type: %s' % gen_type
             return False
@@ -42,7 +42,7 @@ class Fit(Command):
         for i in range(runs):
             print('run #%s' % i)
 
-            gen = load_generator(prog, gen_type, directed)
+            gen = load_generator(prog, directed, gen_type)
             synth_net = gen.run(len(net.vs), len(net.es), sr)
             fit_max, fit_mean, distances = fitness.compute(synth_net)
 

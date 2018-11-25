@@ -22,8 +22,8 @@ class EvalDistance(Command):
         edges = arg_with_default(args, 'edges', DEFAULT_EDGES)
         gentype = arg_with_default(args, 'gentype', DEFAULT_GEN_TYPE)
 
-        gen1 = load_generator(prog1, gentype, directed)
-        gen2 = load_generator(prog2, gentype, directed)
+        gen1 = load_generator(prog1, directed, gentype)
+        gen2 = load_generator(prog2, directed, gentype)
 
         gen1.run(nodes, edges, sr, shadow=gen2)
         dist1 = gen1.eval_distance

@@ -67,7 +67,7 @@ def create_endo_generator(directed, init_random=False):
     return Generator(genvars, directed, init_random=init_random)
 
 
-def create_generator(gen_type, directed, init_random=False):
+def create_generator(directed, gen_type='exo', init_random=False):
     if gen_type == 'exo':
         return create_exo_generator(directed, init_random=init_random)
     elif gen_type == 'endo':
@@ -76,9 +76,15 @@ def create_generator(gen_type, directed, init_random=False):
         return None
 
 
-def load_generator(prog_path, gen_type, directed):
-    gen = create_generator(gen_type, directed)
+def load_generator(prog_path, directed, gen_type='exo'):
+    gen = create_generator(directed, gen_type=gen_type)
     gen.prog = prog.load(gen.var_names, prog_path)
+    return gen
+
+
+def generator_from_prog_str(prog_str, directed, gen_type='exo'):
+    gen = create_generator(directed, gen_type)
+    gen.prog = prog.parse(prog_str, gen.var_names)
     return gen
 
 

@@ -21,7 +21,7 @@ class Const(Command):
         edges = arg_with_default(args, 'edges', DEFAULT_EDGES)
         gentype = arg_with_default(args, 'gentype', DEFAULT_GEN_TYPE)
 
-        generator = load_generator(prog, gentype, directed)
+        generator = load_generator(prog, directed, gentype)
         generator.run(nodes, edges, sr)
         print('is constant? %s' % generator.is_constant())
 

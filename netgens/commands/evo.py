@@ -29,7 +29,7 @@ class Evolve(Command):
         net = load_net(netfile, directed)
 
         # create base generator
-        base_generator = create_generator(gen_type, directed)
+        base_generator = create_generator(directed, gen_type)
         if base_generator is None:
             self.error_msg = 'unknown generator type: %s' % gen_type
             return False
