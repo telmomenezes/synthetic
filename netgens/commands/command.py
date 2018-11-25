@@ -3,6 +3,7 @@ from netgens.fitness import DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
 from netgens.commands.evo import Evolve
 from netgens.commands.compare import Compare
 from netgens.commands.const import Const
+from netgens.commands.eval_distance import EvalDistance
 
 
 ARG_PLACEHOLDERS = {'inet': 'network',
@@ -19,7 +20,9 @@ ARG_PLACEHOLDERS = {'inet': 'network',
                     'edges': 'n',
                     'gentype': 'generator_type',
                     'runs': 'n',
-                    'mean': None}
+                    'mean': None,
+                    'prg': 'program_file',
+                    'prg2': 'program_file'}
 
 ARG_HELP = {'undir': 'undirected network(s)',
             'gens': 'number of stable generations before search stops (default is 1000)',
@@ -48,6 +51,8 @@ def create_command(name):
         return Compare(CLI_NAME)
     elif name == 'const':
         return Const(CLI_NAME)
+    elif name == 'eval_distance':
+        return EvalDistance(CLI_NAME)
     return None
 
 
