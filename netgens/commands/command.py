@@ -6,6 +6,7 @@ from netgens.commands.const import Const
 from netgens.commands.eval_distance import EvalDistance
 from netgens.commands.fit import Fit
 from netgens.commands.gen import Gen
+from netgens.commands.prune import Prune
 
 
 ARG_PLACEHOLDERS = {'inet': 'network',
@@ -25,7 +26,8 @@ ARG_PLACEHOLDERS = {'inet': 'network',
                     'runs': 'n',
                     'mean': None,
                     'prg': 'program_file',
-                    'prg2': 'program_file'}
+                    'prg2': 'program_file',
+                    'oprg': 'output_program_file'}
 
 ARG_HELP = {'undir': 'undirected network(s)',
             'gens': 'number of stable generations before search stops (default is 1000)',
@@ -60,6 +62,8 @@ def create_command(name):
         return Fit(CLI_NAME)
     elif name == 'gen':
         return Gen(CLI_NAME)
+    elif name == 'prune':
+        return Prune(CLI_NAME)
     return None
 
 
