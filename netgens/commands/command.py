@@ -5,10 +5,12 @@ from netgens.commands.compare import Compare
 from netgens.commands.const import Const
 from netgens.commands.eval_distance import EvalDistance
 from netgens.commands.fit import Fit
+from netgens.commands.gen import Gen
 
 
 ARG_PLACEHOLDERS = {'inet': 'network',
                     'inet2': 'network',
+                    'onet': 'output_network',
                     'out': 'output_file',
                     'dir': 'dir',
                     'odir': 'dir',
@@ -56,6 +58,8 @@ def create_command(name):
         return EvalDistance(CLI_NAME)
     elif name == 'fit':
         return Fit(CLI_NAME)
+    elif name == 'gen':
+        return Gen(CLI_NAME)
     return None
 
 
