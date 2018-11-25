@@ -2,10 +2,13 @@ from netgens.consts import *
 from netgens.fitness import DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
 from netgens.commands.evo import Evolve
 from netgens.commands.compare import Compare
+from netgens.commands.const import Const
 
 
 ARG_PLACEHOLDERS = {'inet': 'network',
                     'inet2': 'network',
+                    'out': 'output_file',
+                    'dir': 'dir',
                     'odir': 'dir',
                     'undir': None,
                     'gens': 'n',
@@ -14,7 +17,9 @@ ARG_PLACEHOLDERS = {'inet': 'network',
                     'tolerance': 'n',
                     'nodes': 'n',
                     'edges': 'n',
-                    'gentype': 'generator type'}
+                    'gentype': 'generator_type',
+                    'runs': 'n',
+                    'mean': None}
 
 ARG_HELP = {'undir': 'undirected network(s)',
             'gens': 'number of stable generations before search stops (default is 1000)',
@@ -23,7 +28,9 @@ ARG_HELP = {'undir': 'undirected network(s)',
             'tolerance': 'accepted fitness loss for shorter program (default is .1)',
             'nodes': 'number of nodes (default is 1000)',
             'edges': 'number or edges (default is 10000)',
-            'gentype': 'type of generator to use (default is "exo")'}
+            'gentype': 'type of generator to use (default is "exo")',
+            'runs': 'number of runs per program (default is 30)',
+            'mean': 'compute mean'}
 
 
 def get_stat_dist_types(args):
@@ -39,6 +46,8 @@ def create_command(name):
         return Evolve(CLI_NAME)
     elif name == 'compare':
         return Compare(CLI_NAME)
+    elif name == 'const':
+        return Const(CLI_NAME)
     return None
 
 

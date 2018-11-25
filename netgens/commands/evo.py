@@ -36,7 +36,8 @@ class Evolve(Command):
 
         # create fitness calculator
         # TODO: norm samples configurable
-        fitness = Fitness(net, get_stat_dist_types(args), bins, norm=Norm.ER_MEAN_RATIO, norm_samples=30)
+        fitness = Fitness(net, get_stat_dist_types(args), bins,
+                          norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES)
 
         # create evolutionary search
         evo = Evo(net, fitness, generations, tolerance, base_generator, outdir, sr)

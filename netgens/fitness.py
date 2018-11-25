@@ -1,5 +1,6 @@
 from enum import Enum
 import igraph
+from netgens.consts import *
 from netgens.stats import StatType, DistanceType, StatsSet
 
 
@@ -23,8 +24,16 @@ class Norm(Enum):
     ER_MEAN_RATIO = 1
 
 
+def create_fitness(net, bins, norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
+    if net.is_directed():
+        stat_dist_types = DEFAULT_DIRECTED
+    else:
+        stat_dist_types = DEFAULT_UNDIRECTED
+    return Fitness(net, stat_dist_types, bins, norm, norm_samples)
+
+
 class Fitness(object):
-    def __init__(self, net, stat_dist_types, bins, norm=Norm.ER_MEAN_RATIO, norm_samples=0):
+    def __init__(self, net, stat_dist_types, bins, norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
         assert(norm == Norm.NONE or norm_samples > 0)
 
         self.stat_dist_types = stat_dist_types

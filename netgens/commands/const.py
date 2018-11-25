@@ -6,7 +6,7 @@ class Const(Command):
     def __init__(self, cli_name):
         Command.__init__(self, cli_name)
         self.name = 'const'
-        self.description = 'check if generator weight is constant (random network generator)'
+        self.description = 'check if generator weight is constant'
         self.mandatory_args = ['prg']
         self.optional_args = ['undir', 'sr', 'nodes', 'edges', 'gentype']
 
