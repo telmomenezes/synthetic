@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name='netgens',
+    name='synthetic',
     version='0.1',
     packages=find_packages(),
     install_requires=[
@@ -14,6 +14,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        netgens=netgens.cli:cli
+        synth=synthetic.cli:cli
     '''
 )
