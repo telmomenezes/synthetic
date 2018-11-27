@@ -158,13 +158,11 @@ class Generator(object):
 
     def generate_sample(self):
         for i in range(self.trials):
-            orig_index = -1
-            targ_index = -1
             found = False
 
             while not found:
-                orig_index = random.randrange(self.nodes)
-                targ_index = random.randrange(self.nodes)
+                orig_index = np.random.randint(0, self.nodes)
+                targ_index = np.random.randint(0, self.nodes)
 
                 if orig_index != targ_index:
                     if self.net[orig_index, targ_index] == 0:
@@ -202,8 +200,8 @@ class Generator(object):
         best_orig_index = self.sample_origs[i]
         best_targ_index = self.sample_targs[i]
 
-        orig_node = self.net.get_nodes()[best_orig_index]
-        targ_node = self.net.get_nodes()[best_targ_index]
+        orig_node = self.net.vs[best_orig_index]
+        targ_node = self.net.vs[best_targ_index]
 
         return orig_node, targ_node
 
