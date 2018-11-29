@@ -12,5 +12,4 @@ For a more complete explanation see this article: http://www.nature.com/srep/201
 
 ## Related publications
 
-Menezes, T. and Roth, C., Symbolic regression of generative network models, Scientific Reports 4 (2014)
-"http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html":http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html
+Menezes, T. and Roth, C., Symbolic regression of generative network models, Scientific Reports 4 (2014) http://www.nature.com/srep/2014/140905/srep06284/full/srep06284.html
