@@ -1,3 +1,5 @@
+from synthetic.consts import *
+
 from synthetic.generator import load_generator
 from synthetic.commands.command import *
 

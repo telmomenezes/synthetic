@@ -1,3 +1,4 @@
+from synthetic.consts import *
 from synthetic.net import load_net
 from synthetic.stats import StatsSet
 from synthetic.commands.command import *

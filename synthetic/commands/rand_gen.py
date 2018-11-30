@@ -1,3 +1,4 @@
+from synthetic.consts import *
 from synthetic.generator import create_generator
 from synthetic.commands.command import *
 

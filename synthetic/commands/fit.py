@@ -1,3 +1,4 @@
+from synthetic.consts import *
 from synthetic.net import load_net
 from synthetic.generator import create_generator, load_generator
 from synthetic.fitness import Fitness, Norm
