@@ -10,7 +10,8 @@ setup(
         'python-igraph',
         'pyemd',
         'jupyter',
-        'progressbar2'
+        'progressbar2',
+        'termcolor'
     ],
     entry_points='''
         [console_scripts]

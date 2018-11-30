@@ -11,3 +11,8 @@ DEFAULT_NODES = 1000
 DEFAULT_EDGES = 10000
 DEFAULT_RUNS = 30
 DEFAULT_NORM_SAMPLES = 30
+
+# Logo
+ascii_logo = """┌─┐┬ ┬┌┐┌┌┬┐┬ ┬┌─┐┌┬┐┬┌─┐
+└─┐└┬┘│││ │ ├─┤├┤  │ ││  
+└─┘ ┴ ┘└┘ ┴ ┴ ┴└─┘ ┴ ┴└─┘"""
