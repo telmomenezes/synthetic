@@ -28,7 +28,7 @@ genvars_names = {GenVar.ORIGID: 'orig',
                  GenVar.TARGINDEG: 'targ_in_deg',
                  GenVar.TARGOUTDEG: 'targ_out_deg',
                  GenVar.DIST: 'dist',
-                 GenVar.DIRDIST: 'dist',
+                 GenVar.DIRDIST: 'dir_dist',
                  GenVar.REVDIST: 'rev_dist'}
 
 
