@@ -131,7 +131,7 @@ class Evo(object):
         # write header of log file
         with open('%s/evo.csv' % self.out_dir, 'w') as log_file:
             header = 'gen,best_fit_max,best_fit_mean,best_geno_size,gen_comp_time,sim_comp_time,fit_comp_time'
-            stat_names = [stat.name() for stat in self.fitness.targ_stats_set.stats]
+            stat_names = [stat_type.name for stat_type in self.fitness.targ_stats_set.stat_types]
             header = '%s,%s\n' % (header, ','.join(stat_names))
             log_file.write(header)
 
@@ -147,7 +147,7 @@ class Evo(object):
 
         # print info
         print(self.gen_info_string())
-        stat_names = [stat.name() for stat in self.fitness.targ_stats_set.stats]
+        stat_names = [stat_type.name for stat_type in self.fitness.targ_stats_set.stat_types]
         items = ['%s: %s' % (stat_names[i], dists[i]) for i in range(len(stat_names))]
         print('; '.join(items))
 

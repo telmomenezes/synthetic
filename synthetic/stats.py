@@ -28,15 +28,11 @@ class StatType(Enum):
     D_DISTS = 7
 
 
-def stat_type2str(stat_type):
-    return stat_type.name
-
-
 stat_types__names = {}
 names__type_stats = {}
 
 for st in StatType:
-    stat_name = stat_type2str(st)
+    stat_name = st.name
     stat_types__names[st] = stat_name
     names__type_stats[stat_name] = st
 
@@ -49,21 +45,21 @@ def str2stat_type(name):
 
 def create_stat(net, stat_type, bins=None, max_dist=None, ref_stat=None):
     if stat_type == StatType.DEGREES:
-        stat = Degrees(stat_type, bins=bins, ref_stat=ref_stat)
+        stat = Degrees(bins=bins, ref_stat=ref_stat)
     elif stat_type == StatType.IN_DEGREES:
-        stat = InDegrees(stat_type, bins=bins, ref_stat=ref_stat)
+        stat = InDegrees(bins=bins, ref_stat=ref_stat)
     elif stat_type == StatType.OUT_DEGREES:
-        stat = OutDegrees(stat_type, bins=bins, ref_stat=ref_stat)
+        stat = OutDegrees(bins=bins, ref_stat=ref_stat)
     elif stat_type == StatType.U_PAGERANKS:
-        stat = UndirectedPageRanks(stat_type, bins=bins, ref_stat=ref_stat)
+        stat = UndirectedPageRanks(bins=bins, ref_stat=ref_stat)
     elif stat_type == StatType.D_PAGERANKS:
-        stat = DirectedPageRanks(stat_type, bins=bins, ref_stat=ref_stat)
+        stat = DirectedPageRanks(bins=bins, ref_stat=ref_stat)
     elif stat_type == StatType.TRIAD_CENSUS:
-        stat = TriadCensus(stat_type)
+        stat = TriadCensus()
     elif stat_type == StatType.U_DISTS:
-        stat = UndirectedDistances(stat_type, max_dist=max_dist)
+        stat = UndirectedDistances(max_dist=max_dist)
     elif stat_type == StatType.D_DISTS:
-        stat = DirectedDistances(stat_type, max_dist=max_dist)
+        stat = DirectedDistances(max_dist=max_dist)
     else:
         # TODO: exception
         return None
@@ -77,8 +73,7 @@ class DistanceType(Enum):
 
 
 class Stat(ABC):
-    def __init__(self, stat_type):
-        self.stat_type = stat_type
+    def __init__(self):
         self.data = None
 
     @abstractmethod
@@ -94,9 +89,6 @@ class Stat(ABC):
         else:
             # TODO: exception
             pass
-
-    def name(self):
-        return stat_type2str(self.stat_type)
 
 
 # Simple distributions
@@ -136,13 +128,13 @@ class TriadCensus(Distrib):
 
 # Histograms
 class Histogram(Distrib):
-    def __init__(self, stat_type, bins, ref_stat):
+    def __init__(self, bins, ref_stat):
         self.bins = bins
         self.ref_stat = ref_stat
         self.min_value = 0
         self.max_value = None
         self.bin_edges = None
-        super().__init__(stat_type)
+        super().__init__()
 
     @abstractmethod
     def compute(self, net):
@@ -205,8 +197,8 @@ class DirectedPageRanks(Histogram):
 
 # Distance histograms
 class DistanceHistogram(Histogram):
-    def __init__(self, stat_type, max_dist):
-        super().__init__(stat_type, bins=max_dist, ref_stat=None)
+    def __init__(self, max_dist):
+        super().__init__(bins=max_dist, ref_stat=None)
         self.min_value = 1
         self.max_value = max_dist
 
