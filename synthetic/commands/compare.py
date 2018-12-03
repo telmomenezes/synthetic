@@ -10,7 +10,7 @@ class Compare(Command):
         self.name = 'compare'
         self.description = 'compare two networks'
         self.mandatory_args = ['inet', 'inet2']
-        self.optional_args = ['undir', 'bins']
+        self.optional_args = ['undir', 'bins', 'maxdist']
 
     def run(self, args):
         self.error_msg = None
@@ -19,6 +19,7 @@ class Compare(Command):
         netfile2 = args['inet2']
 
         bins = arg_with_default(args, 'bins', DEFAULT_BINS)
+        max_dist = arg_with_default(args, 'maxdist', DEFAULT_MAX_DIST)
         directed = not args['undir']
 
         # load nets
@@ -29,14 +30,14 @@ class Compare(Command):
 
         print('first network: %s' % netfile1)
         print(net1)
-        stats1 = StatsSet(net1, stat_dist_types, bins, ref_stats=None)
+        stats1 = StatsSet(net1, stat_dist_types, bins, max_dist, ref_stats=None)
         print(stats1)
 
         print('\n\n')
 
         print('second network: %s' % netfile2)
         print(net2)
-        stats2 = StatsSet(net1, stat_dist_types, bins, ref_stats=None)
+        stats2 = StatsSet(net1, stat_dist_types, bins, max_dist, ref_stats=None)
         print(stats2)
 
         return True

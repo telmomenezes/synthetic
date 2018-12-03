@@ -24,26 +24,28 @@ class Norm(Enum):
     ER_MEAN_RATIO = 1
 
 
-def create_fitness(net, bins, norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
+def create_fitness(net, bins, max_dist, norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
     if net.is_directed():
         stat_dist_types = DEFAULT_DIRECTED
     else:
         stat_dist_types = DEFAULT_UNDIRECTED
-    return Fitness(net, stat_dist_types, bins, norm, norm_samples)
+    return Fitness(net, stat_dist_types, bins, max_dist, norm, norm_samples)
 
 
 class Fitness(object):
-    def __init__(self, net, stat_dist_types, bins, norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
+    def __init__(self, net, stat_dist_types, bins, max_dist,
+                 norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
         assert(norm == Norm.NONE or norm_samples > 0)
 
         self.stat_dist_types = stat_dist_types
         self.bins = bins
+        self.max_dist = max_dist
         self.norm = norm
 
         self.nstats = len(self.stat_dist_types)
         self.stat_types = [item[0] for item in stat_dist_types]
         self.dist_types = [item[1] for item in stat_dist_types]
-        self.targ_stats_set = StatsSet(net, self.stat_types, bins)
+        self.targ_stats_set = StatsSet(net, self.stat_types, bins, max_dist)
 
         if norm != Norm.NONE:
             self.norm_values = self.__compute_norm_values(net, norm_samples)
@@ -56,7 +58,7 @@ class Fitness(object):
         directed = net.is_directed()
 
         norm_values = [.0] * self.nstats
-        fitness = Fitness(net, self.stat_dist_types, self.bins, norm=Norm.NONE)
+        fitness = Fitness(net, self.stat_dist_types, self.bins, self.max_dist, norm=Norm.NONE)
 
         for i in range(norm_samples):
             sample_net = igraph.Graph.Erdos_Renyi(n=vcount, m=ecount, directed=directed)
@@ -68,7 +70,7 @@ class Fitness(object):
         return norm_values
 
     def compute(self, net):
-        stats_set = StatsSet(net, self.stat_dist_types, self.bins, ref_stats=self.targ_stats_set)
+        stats_set = StatsSet(net, self.stat_dist_types, self.bins, self.max_dist, ref_stats=self.targ_stats_set)
 
         dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i], self.dist_types[self.stat_types[i]])
                  for i in range(self.nstats)]

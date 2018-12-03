@@ -11,7 +11,7 @@ class Fit(Command):
         self.name = 'fit'
         self.description = 'compute mean fitness for several runs of a generator'
         self.mandatory_args = ['inet', 'prg']
-        self.optional_args = ['undir', 'sr', 'bins', 'runs', 'gen_type']
+        self.optional_args = ['undir', 'sr', 'bins', 'maxdist', 'runs', 'gen_type']
 
     def run(self, args):
         self.error_msg = None
@@ -20,6 +20,7 @@ class Fit(Command):
         prog = args['prg']
         sr = arg_with_default(args, 'sr', DEFAULT_SAMPLE_RATE)
         bins = arg_with_default(args, 'bins', DEFAULT_BINS)
+        max_dist = arg_with_default(args, 'maxdist', DEFAULT_MAX_DIST)
         directed = not args['undir']
         runs = arg_with_default(args, 'runs', DEFAULT_RUNS)
         gen_type = arg_with_default(args, 'gentype', DEFAULT_GEN_TYPE)
@@ -35,7 +36,7 @@ class Fit(Command):
 
         # create fitness calculator
         # TODO: norm samples configurable
-        fitness = Fitness(net, get_stat_dist_types(args), bins,
+        fitness = Fitness(net, get_stat_dist_types(args), bins, max_dist,
                           norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES)
 
         fit_maxes = []

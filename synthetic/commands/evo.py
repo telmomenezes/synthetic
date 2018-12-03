@@ -12,7 +12,7 @@ class Evolve(Command):
         self.name = 'evo'
         self.description = 'evolve network generator'
         self.mandatory_args = ['inet', 'odir']
-        self.optional_args = ['undir', 'gens', 'sr', 'bins', 'tolerance']
+        self.optional_args = ['undir', 'gens', 'sr', 'bins', 'maxdist', 'tolerance']
 
     def run(self, args):
         self.error_msg = None
@@ -22,6 +22,7 @@ class Evolve(Command):
         generations = arg_with_default(args, 'gens', DEFAULT_GENERATIONS)
         sr = arg_with_default(args, 'sr', DEFAULT_SAMPLE_RATE)
         bins = arg_with_default(args, 'bins', DEFAULT_BINS)
+        max_dist = arg_with_default(args, 'maxdist', DEFAULT_MAX_DIST)
         directed = not args['undir']
         tolerance = arg_with_default(args, 'tolerance', DEFAULT_TOLERANCE)
         gen_type = arg_with_default(args, 'gentype', DEFAULT_GEN_TYPE)
@@ -37,7 +38,7 @@ class Evolve(Command):
 
         # create fitness calculator
         # TODO: norm samples configurable
-        fitness = Fitness(net, get_stat_dist_types(args), bins,
+        fitness = Fitness(net, get_stat_dist_types(args), bins, max_dist,
                           norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES)
 
         # create evolutionary search
