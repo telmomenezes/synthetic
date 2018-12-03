@@ -86,7 +86,7 @@ class Command(object):
     def check_args(self, args):
         for arg in self.mandatory_args:
             if args[arg] is None:
-                self.error_msg('argument %s is mandatory.' % arg)
+                self.error_msg = 'argument %s is mandatory.' % arg
                 return False
         return True
 
