@@ -61,6 +61,7 @@ class Fitness(object):
         fitness = Fitness(net, self.stat_dist_types, self.bins, self.max_dist, norm=Norm.NONE)
 
         for i in range(norm_samples):
+            # noinspection PyArgumentList
             sample_net = igraph.Graph.Erdos_Renyi(n=vcount, m=ecount, directed=directed)
             _, _, values = fitness.compute(sample_net)
             for j in range(self.nstats):
