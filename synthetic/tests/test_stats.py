@@ -1,6 +1,6 @@
 import unittest
 from igraph import Graph
-from synthetic.stats import create_stat, StatType
+from synthetic.stats import create_stat, StatType, DistanceType
 
 
 def full_graph(directed):
@@ -21,6 +21,11 @@ def out_star_graph():
 
 def ring_graph(directed):
     return Graph.Ring(100, directed=directed)
+
+
+def random_graph(directed):
+    # noinspection PyArgumentList
+    return Graph.Erdos_Renyi(n=100, m=100, directed=directed)
 
 
 class TestStats(unittest.TestCase):
@@ -232,6 +237,126 @@ class TestStats(unittest.TestCase):
         g = star_graph()
         with self.assertRaises(ValueError):
             create_stat(g, 999999999)
+
+    def test_earth_mover_distance_undir(self):
+        g1 = full_graph(directed=False)
+        s1 = create_stat(g1, StatType.DEGREES, bins=10)
+
+        g2 = star_graph()
+        s2 = create_stat(g2, StatType.DEGREES, bins=10)
+
+        g3 = ring_graph(directed=False)
+        s3 = create_stat(g3, StatType.DEGREES, bins=10)
+
+        g4 = random_graph(directed=False)
+        s4 = create_stat(g4, StatType.DEGREES, bins=10)
+
+        g5 = random_graph(directed=False)
+        s5 = create_stat(g5, StatType.DEGREES, bins=10)
+
+        self.assertEqual(s1.distance(s1, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s2.distance(s2, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s3.distance(s3, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s4.distance(s4, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s5.distance(s5, DistanceType.EARTH_MOVER), 0.)
+        self.assertAlmostEqual(s1.distance(s2, DistanceType.EARTH_MOVER), 8820.9, places=2)
+        self.assertAlmostEqual(s1.distance(s3, DistanceType.EARTH_MOVER), 0., places=2)
+        self.assertAlmostEqual(s2.distance(s3, DistanceType.EARTH_MOVER), 8820.9, places=2)
+        self.assertLess(s4.distance(s5, DistanceType.EARTH_MOVER), 1000.)
+        self.assertLessEqual(s1.distance(s3, DistanceType.EARTH_MOVER), s4.distance(s5, DistanceType.EARTH_MOVER))
+
+    def test_earth_mover_distance_undir_rel(self):
+        g1 = full_graph(directed=False)
+        s1 = create_stat(g1, StatType.DEGREES, bins=10)
+
+        g2 = star_graph()
+        s2 = create_stat(g2, StatType.DEGREES, bins=10, ref_stat=s1)
+
+        g3 = ring_graph(directed=False)
+        s3 = create_stat(g3, StatType.DEGREES, bins=10, ref_stat=s1)
+
+        g4 = random_graph(directed=False)
+        s4 = create_stat(g4, StatType.DEGREES, bins=10, ref_stat=s1)
+
+        g5 = random_graph(directed=False)
+        s5 = create_stat(g5, StatType.DEGREES, bins=10, ref_stat=s1)
+
+        self.assertEqual(s1.distance(s1, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s2.distance(s2, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s3.distance(s3, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s4.distance(s4, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s5.distance(s5, DistanceType.EARTH_MOVER), 0.)
+        self.assertAlmostEqual(s1.distance(s2, DistanceType.EARTH_MOVER), 8820.9, places=2)
+        self.assertAlmostEqual(s1.distance(s3, DistanceType.EARTH_MOVER), 8910., places=2)
+        self.assertAlmostEqual(s2.distance(s3, DistanceType.EARTH_MOVER), 89.1, places=2)
+        self.assertLess(s4.distance(s5, DistanceType.EARTH_MOVER), 1000.)
+        self.assertGreater(s1.distance(s3, DistanceType.EARTH_MOVER), s4.distance(s5, DistanceType.EARTH_MOVER))
+
+    def test_earth_mover_distance_dir(self):
+        g1 = full_graph(directed=True)
+        s1 = create_stat(g1, StatType.IN_DEGREES, bins=10)
+
+        g2 = in_star_graph()
+        s2 = create_stat(g2, StatType.IN_DEGREES, bins=10)
+
+        g3 = out_star_graph()
+        s3 = create_stat(g3, StatType.IN_DEGREES, bins=10)
+
+        g4 = ring_graph(directed=True)
+        s4 = create_stat(g4, StatType.IN_DEGREES, bins=10)
+
+        g5 = random_graph(directed=True)
+        s5 = create_stat(g5, StatType.IN_DEGREES, bins=10)
+
+        g6 = random_graph(directed=True)
+        s6 = create_stat(g6, StatType.IN_DEGREES, bins=10)
+
+        self.assertEqual(s1.distance(s1, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s2.distance(s2, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s3.distance(s3, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s4.distance(s4, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s5.distance(s5, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s6.distance(s6, DistanceType.EARTH_MOVER), 0.)
+        self.assertAlmostEqual(s1.distance(s2, DistanceType.EARTH_MOVER), 8820.9, places=2)
+        self.assertAlmostEqual(s1.distance(s3, DistanceType.EARTH_MOVER), 89.1, places=2)
+        self.assertAlmostEqual(s1.distance(s4, DistanceType.EARTH_MOVER), 0., places=2)
+        self.assertAlmostEqual(s2.distance(s3, DistanceType.EARTH_MOVER), 8731.8, places=2)
+        self.assertAlmostEqual(s2.distance(s4, DistanceType.EARTH_MOVER), 8820.9, places=2)
+        self.assertAlmostEqual(s3.distance(s4, DistanceType.EARTH_MOVER), 0.9, places=2)
+        self.assertLess(s5.distance(s6, DistanceType.EARTH_MOVER), 1000.)
+
+    def test_earth_mover_distance_dir_rel(self):
+        g1 = full_graph(directed=True)
+        s1 = create_stat(g1, StatType.IN_DEGREES, bins=10)
+
+        g2 = in_star_graph()
+        s2 = create_stat(g2, StatType.IN_DEGREES, bins=10, ref_stat=s1)
+
+        g3 = out_star_graph()
+        s3 = create_stat(g3, StatType.IN_DEGREES, bins=10, ref_stat=s1)
+
+        g4 = ring_graph(directed=True)
+        s4 = create_stat(g4, StatType.IN_DEGREES, bins=10, ref_stat=s1)
+
+        g5 = random_graph(directed=True)
+        s5 = create_stat(g5, StatType.IN_DEGREES, bins=10, ref_stat=s1)
+
+        g6 = random_graph(directed=True)
+        s6 = create_stat(g6, StatType.IN_DEGREES, bins=10, ref_stat=s1)
+
+        self.assertEqual(s1.distance(s1, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s2.distance(s2, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s3.distance(s3, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s4.distance(s4, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s5.distance(s5, DistanceType.EARTH_MOVER), 0.)
+        self.assertEqual(s6.distance(s6, DistanceType.EARTH_MOVER), 0.)
+        self.assertAlmostEqual(s1.distance(s2, DistanceType.EARTH_MOVER), 8820.9, places=2)
+        self.assertAlmostEqual(s1.distance(s3, DistanceType.EARTH_MOVER), 8910., places=2)
+        self.assertAlmostEqual(s1.distance(s4, DistanceType.EARTH_MOVER), 8910., places=2)
+        self.assertAlmostEqual(s2.distance(s3, DistanceType.EARTH_MOVER), 89.1, places=2)
+        self.assertAlmostEqual(s2.distance(s4, DistanceType.EARTH_MOVER), 89.1, places=2)
+        self.assertAlmostEqual(s3.distance(s4, DistanceType.EARTH_MOVER), 0., places=2)
+        self.assertLess(s5.distance(s6, DistanceType.EARTH_MOVER), 1000.)
 
 
 if __name__ == '__main__':

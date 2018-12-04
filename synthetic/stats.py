@@ -159,7 +159,7 @@ class Histogram(Distrib):
             assert(self.data.shape[0] <= len(distance_matrix))
             assert(stat.data.shape[0] <= len(distance_matrix))
 
-            return emd(self.data, stat.data, distance_matrix)
+            return emd(self.data.astype(np.float64), stat.data.astype(np.float64), distance_matrix.astype(np.float64))
         else:
             return Distrib.distance(self, stat, distance_type)
 
