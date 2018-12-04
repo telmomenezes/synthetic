@@ -24,7 +24,8 @@ class Norm(Enum):
     ER_MEAN_RATIO = 1
 
 
-def create_fitness(net, bins, max_dist, norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
+def create_fitness(net, bins=DEFAULT_BINS, max_dist=DEFAULT_MAX_DIST,
+                   norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
     if net.is_directed():
         stat_dist_types = DEFAULT_DIRECTED
     else:

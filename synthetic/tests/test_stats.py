@@ -1,31 +1,6 @@
 import unittest
-from igraph import Graph
 from synthetic.stats import create_stat, StatType, DistanceType
-
-
-def full_graph(directed):
-    return Graph.Full(100, directed=directed)
-
-
-def star_graph():
-    return Graph.Star(100, 'undirected')
-
-
-def in_star_graph():
-    return Graph.Star(100, 'in')
-
-
-def out_star_graph():
-    return Graph.Star(100, 'out')
-
-
-def ring_graph(directed):
-    return Graph.Ring(100, directed=directed)
-
-
-def random_graph(directed):
-    # noinspection PyArgumentList
-    return Graph.Erdos_Renyi(n=100, m=100, directed=directed)
+from synthetic.tests.graphs import *
 
 
 class TestStats(unittest.TestCase):
