@@ -6,17 +6,17 @@ from synthetic.stats import StatType, DistanceType, StatsSet
 
 DEFAULT_UNDIRECTED = ((StatType.DEGREES, DistanceType.EARTH_MOVER),
                       (StatType.U_PAGERANKS, DistanceType.EARTH_MOVER),
-                      (StatType.TRIAD_CENSUS, DistanceType.SIMPLE),
-                      (StatType.U_DISTS, DistanceType.SIMPLE))
+                      (StatType.TRIAD_CENSUS, DistanceType.NORMALIZED_MANHATTAN),
+                      (StatType.U_DISTS, DistanceType.NORMALIZED_MANHATTAN))
 
 
 DEFAULT_DIRECTED = ((StatType.IN_DEGREES, DistanceType.EARTH_MOVER),
                     (StatType.OUT_DEGREES, DistanceType.EARTH_MOVER),
                     (StatType.U_PAGERANKS, DistanceType.EARTH_MOVER),
                     (StatType.D_PAGERANKS, DistanceType.EARTH_MOVER),
-                    (StatType.TRIAD_CENSUS, DistanceType.SIMPLE),
-                    (StatType.U_DISTS, DistanceType.SIMPLE),
-                    (StatType.D_DISTS, DistanceType.SIMPLE))
+                    (StatType.TRIAD_CENSUS, DistanceType.NORMALIZED_MANHATTAN),
+                    (StatType.U_DISTS, DistanceType.NORMALIZED_MANHATTAN),
+                    (StatType.D_DISTS, DistanceType.NORMALIZED_MANHATTAN))
 
 
 class Norm(Enum):

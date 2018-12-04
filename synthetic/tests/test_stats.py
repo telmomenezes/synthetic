@@ -238,6 +238,67 @@ class TestStats(unittest.TestCase):
         with self.assertRaises(ValueError):
             create_stat(g, 999999999)
 
+    def test_normalized_manhattan_distance_undir(self):
+        g1 = full_graph(directed=False)
+        s1 = create_stat(g1, StatType.TRIAD_CENSUS)
+
+        g2 = star_graph()
+        s2 = create_stat(g2, StatType.TRIAD_CENSUS)
+
+        g3 = ring_graph(directed=False)
+        s3 = create_stat(g3, StatType.TRIAD_CENSUS)
+
+        g4 = random_graph(directed=False)
+        s4 = create_stat(g4, StatType.TRIAD_CENSUS)
+
+        g5 = random_graph(directed=False)
+        s5 = create_stat(g5, StatType.TRIAD_CENSUS)
+
+        self.assertEqual(s1.distance(s1, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertEqual(s2.distance(s2, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertEqual(s3.distance(s3, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertEqual(s4.distance(s4, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertEqual(s5.distance(s5, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertAlmostEqual(s1.distance(s2, DistanceType.NORMALIZED_MANHATTAN), 2., places=2)
+        self.assertAlmostEqual(s1.distance(s3, DistanceType.NORMALIZED_MANHATTAN), 2., places=2)
+        self.assertAlmostEqual(s2.distance(s3, DistanceType.NORMALIZED_MANHATTAN), 0.979, places=2)
+        self.assertLess(s4.distance(s5, DistanceType.NORMALIZED_MANHATTAN), 2.)
+        self.assertGreaterEqual(s1.distance(s3, DistanceType.NORMALIZED_MANHATTAN),
+                             s4.distance(s5, DistanceType.NORMALIZED_MANHATTAN))
+
+    def test_normalized_manhattan_distance_dir(self):
+        g1 = full_graph(directed=True)
+        s1 = create_stat(g1, StatType.TRIAD_CENSUS)
+
+        g2 = in_star_graph()
+        s2 = create_stat(g2, StatType.TRIAD_CENSUS)
+
+        g3 = out_star_graph()
+        s3 = create_stat(g3, StatType.TRIAD_CENSUS)
+
+        g4 = ring_graph(directed=True)
+        s4 = create_stat(g4, StatType.TRIAD_CENSUS)
+
+        g5 = random_graph(directed=True)
+        s5 = create_stat(g5, StatType.TRIAD_CENSUS)
+
+        g6 = random_graph(directed=True)
+        s6 = create_stat(g6, StatType.TRIAD_CENSUS)
+
+        self.assertEqual(s1.distance(s1, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertEqual(s2.distance(s2, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertEqual(s3.distance(s3, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertEqual(s4.distance(s4, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertEqual(s5.distance(s5, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertEqual(s6.distance(s6, DistanceType.NORMALIZED_MANHATTAN), 0.)
+        self.assertAlmostEqual(s1.distance(s2, DistanceType.NORMALIZED_MANHATTAN), 2., places=2)
+        self.assertAlmostEqual(s1.distance(s3, DistanceType.NORMALIZED_MANHATTAN), 2., places=2)
+        self.assertAlmostEqual(s1.distance(s4, DistanceType.NORMALIZED_MANHATTAN), 2., places=2)
+        self.assertAlmostEqual(s2.distance(s3, DistanceType.NORMALIZED_MANHATTAN), 2., places=2)
+        self.assertAlmostEqual(s2.distance(s4, DistanceType.NORMALIZED_MANHATTAN), 2., places=2)
+        self.assertAlmostEqual(s3.distance(s4, DistanceType.NORMALIZED_MANHATTAN), 2., places=2)
+        self.assertLess(s5.distance(s6, DistanceType.NORMALIZED_MANHATTAN), 10.)
+
     def test_earth_mover_distance_undir(self):
         g1 = full_graph(directed=False)
         s1 = create_stat(g1, StatType.DEGREES, bins=10)

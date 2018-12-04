@@ -67,7 +67,7 @@ def create_stat(net, stat_type, bins=None, max_dist=None, ref_stat=None):
 
 
 class DistanceType(Enum):
-    SIMPLE = 0
+    NORMALIZED_MANHATTAN = 0
     EARTH_MOVER = 1
 
 
@@ -79,15 +79,12 @@ class Stat(ABC):
     def compute(self, net):
         pass
 
+    @abstractmethod
+    def distance(self, stat, distance_type):
+        pass
+
     def set_data(self, values):
         self.data = values
-
-    def distance(self, stat, distance_type):
-        if distance_type == DistanceType.SIMPLE:
-            return abs(self.data - stat.data)
-        else:
-            # TODO: exception
-            pass
 
 
 # Simple distributions
@@ -98,10 +95,10 @@ class Distrib(Stat):
 
     def distance(self, stat, distance_type):
         assert(isinstance(stat, Distrib))
-        if distance_type == DistanceType.SIMPLE:
+        if distance_type == DistanceType.NORMALIZED_MANHATTAN:
             dist = 0
             for i in range(len(self.data)):
-                d = stat.data[i]
+                d = max(self.data[i], stat.data[i])
                 if d == 0:
                     d = 1
                 dist += abs(self.data[i] - stat.data[i]) / d
