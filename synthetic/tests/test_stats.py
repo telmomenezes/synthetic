@@ -207,7 +207,6 @@ class TestStats(unittest.TestCase):
         self.assertListEqual(list(s.data), [200, 200, 200, 200, 200, 200, 200, 200, 200, 8100])
         self.assertAlmostEqual(s.bin_edges[-1], 10., places=2)
 
-
     def test_d_dists_dir(self):
         g = full_graph(directed=True)
         s = create_stat(g, StatType.D_DISTS, max_dist=10)
@@ -228,6 +227,11 @@ class TestStats(unittest.TestCase):
         s = create_stat(g, StatType.D_DISTS, max_dist=10)
         self.assertListEqual(list(s.data), [100, 100, 100, 100, 100, 100, 100, 100, 100, 9000])
         self.assertAlmostEqual(s.bin_edges[-1], 10., places=2)
+
+    def test_unknown_stat_throws_exception(self):
+        g = star_graph()
+        with self.assertRaises(ValueError):
+            create_stat(g, 999999999)
 
 
 if __name__ == '__main__':

@@ -61,8 +61,7 @@ def create_stat(net, stat_type, bins=None, max_dist=None, ref_stat=None):
     elif stat_type == StatType.D_DISTS:
         stat = DirectedDistances(max_dist=max_dist)
     else:
-        # TODO: exception
-        return None
+        raise ValueError('unknown statistic type: %s' % stat_type)
     stat.compute(net)
     return stat
 
