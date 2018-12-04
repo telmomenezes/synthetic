@@ -1,7 +1,9 @@
 from enum import Enum
+import warnings
 import random
 import numpy as np
 from igraph import *
+from synthetic.consts import *
 import synthetic.prog as prog
 
 
@@ -123,8 +125,11 @@ class Generator(object):
     def load(self, file_path):
         self.prog = prog.load(self.var_names, file_path)
 
-    def distance(self, orig, targ, mode, max_dist=5):
-        sp = self.net.get_shortest_paths(orig, to=targ, mode=mode)[0]
+    def distance(self, orig, targ, mode, max_dist=DEFAULT_MAX_DIST):
+        # to supress RuntimeWarning: Couldn't reach some vertices at structural_properties.c:740
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            sp = self.net.get_shortest_paths(orig, to=targ, mode=mode)[0]
         if len(sp) == 0:
             return max_dist + 1
         else:
@@ -159,6 +164,9 @@ class Generator(object):
     def generate_sample(self):
         for i in range(self.trials):
             found = False
+
+            orig_index = None
+            targ_index = None
 
             while not found:
                 orig_index = np.random.randint(0, self.nodes)
