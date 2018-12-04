@@ -103,11 +103,8 @@ class Distrib(Stat):
                     d = 1
                 dist += abs(self.data[i] - stat.data[i]) / d
             return dist
-        elif distance_type == DistanceType.EARTH_MOVER:
-            pass
         else:
-            # TODO: exception
-            pass
+            raise NotImplementedError('distance type %s is not supported on this statistic.' % distance_type)
 
 
 class TriadCensus(Distrib):

@@ -238,6 +238,12 @@ class TestStats(unittest.TestCase):
         with self.assertRaises(ValueError):
             create_stat(g, 999999999)
 
+    def test_unsupported_distance_throws_exception(self):
+        g = star_graph()
+        s = create_stat(g, StatType.TRIAD_CENSUS)
+        with self.assertRaises(NotImplementedError):
+            s.distance(s, DistanceType.EARTH_MOVER)
+
     def test_normalized_manhattan_distance_undir(self):
         g1 = full_graph(directed=False)
         s1 = create_stat(g1, StatType.TRIAD_CENSUS)
@@ -264,7 +270,7 @@ class TestStats(unittest.TestCase):
         self.assertAlmostEqual(s2.distance(s3, DistanceType.NORMALIZED_MANHATTAN), 0.979, places=2)
         self.assertLess(s4.distance(s5, DistanceType.NORMALIZED_MANHATTAN), 2.)
         self.assertGreaterEqual(s1.distance(s3, DistanceType.NORMALIZED_MANHATTAN),
-                             s4.distance(s5, DistanceType.NORMALIZED_MANHATTAN))
+                                s4.distance(s5, DistanceType.NORMALIZED_MANHATTAN))
 
     def test_normalized_manhattan_distance_dir(self):
         g1 = full_graph(directed=True)
