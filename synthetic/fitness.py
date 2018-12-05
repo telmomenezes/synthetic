@@ -72,9 +72,9 @@ class Fitness(object):
         return norm_values
 
     def compute(self, net):
-        stats_set = StatsSet(net, self.stat_dist_types, self.bins, self.max_dist, ref_stats=self.targ_stats_set)
+        stats_set = StatsSet(net, self.stat_types, self.bins, self.max_dist, ref_stats=self.targ_stats_set)
 
-        dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i], self.dist_types[self.stat_types[i]])
+        dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i], self.dist_types[i])
                  for i in range(self.nstats)]
         if self.norm == Norm.ER_MEAN_RATIO:
             very_small = .999

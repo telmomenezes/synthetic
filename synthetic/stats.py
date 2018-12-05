@@ -12,8 +12,8 @@ class StatsSet(object):
         if ref_stats is None:
             self.stats = [create_stat(net, stat_type, bins, max_dist) for stat_type in stat_types]
         else:
-            assert(len(stat_types) == len(ref_stats))
-            self.stats = [create_stat(net, stat_types[i], bins, max_dist, ref_stat=ref_stats[i])
+            assert(len(stat_types) == len(ref_stats.stat_types))
+            self.stats = [create_stat(net, stat_types[i], bins, max_dist, ref_stat=ref_stats.stats[i])
                           for i in range(len(stat_types))]
 
 
@@ -61,7 +61,7 @@ def create_stat(net, stat_type, bins=None, max_dist=None, ref_stat=None):
     elif stat_type == StatType.D_DISTS:
         stat = DirectedDistances(max_dist=max_dist)
     else:
-        raise ValueError('unknown statistic type: %s' % stat_type)
+        raise ValueError('unknown statistic type: %s' % str(stat_type))
     stat.compute(net)
     return stat
 
