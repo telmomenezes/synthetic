@@ -24,16 +24,16 @@ class Norm(Enum):
     ER_MEAN_RATIO = 1
 
 
-def create_fitness(net, bins=DEFAULT_BINS, max_dist=DEFAULT_MAX_DIST,
-                   norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
+def create_distances_to_net(net, bins=DEFAULT_BINS, max_dist=DEFAULT_MAX_DIST,
+                            norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
     if net.is_directed():
         stat_dist_types = DEFAULT_DIRECTED
     else:
         stat_dist_types = DEFAULT_UNDIRECTED
-    return Fitness(net, stat_dist_types, bins, max_dist, norm, norm_samples)
+    return DistancesToNet(net, stat_dist_types, bins, max_dist, norm, norm_samples)
 
 
-class Fitness(object):
+class DistancesToNet(object):
     def __init__(self, net, stat_dist_types, bins, max_dist,
                  norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
         assert(norm == Norm.NONE or norm_samples > 0)
@@ -59,14 +59,14 @@ class Fitness(object):
         directed = net.is_directed()
 
         norm_values = [.0] * self.nstats
-        fitness = Fitness(net, self.stat_dist_types, self.bins, self.max_dist, norm=Norm.NONE)
+        dists2net = DistancesToNet(net, self.stat_dist_types, self.bins, self.max_dist, norm=Norm.NONE)
 
         for i in range(norm_samples):
             # noinspection PyArgumentList
             sample_net = igraph.Graph.Erdos_Renyi(n=vcount, m=ecount, directed=directed)
-            _, _, values = fitness.compute(sample_net)
+            dists = dists2net.compute(sample_net)
             for j in range(self.nstats):
-                norm_values[j] += values[j]
+                norm_values[j] += dists[j]
 
         norm_values = [max(x / norm_samples, SMALL_VALUE) for x in norm_values]
         return norm_values
@@ -79,6 +79,4 @@ class Fitness(object):
         if self.norm == Norm.ER_MEAN_RATIO:
             dists = [dists[i] / self.norm_values[i] for i in range(self.nstats)]
 
-        fitness_max = max(dists)
-        fitness_mean = sum(dists) / len(dists)
-        return fitness_max, fitness_mean, dists
+        return dists

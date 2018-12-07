@@ -1,7 +1,7 @@
 from synthetic.consts import *
 from synthetic.net import load_net
 from synthetic.generator import create_generator, load_generator
-from synthetic.fitness import Fitness, Norm
+from synthetic.distances import DistancesToNet, Norm
 from synthetic.commands.command import *
 
 
@@ -36,8 +36,8 @@ class Fit(Command):
 
         # create fitness calculator
         # TODO: norm samples configurable
-        fitness = Fitness(net, get_stat_dist_types(args), bins, max_dist,
-                          norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES)
+        fitness = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist,
+                                 norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES)
 
         fit_maxes = []
         fit_means = []

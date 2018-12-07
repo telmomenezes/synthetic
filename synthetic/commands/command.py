@@ -1,4 +1,4 @@
-from synthetic.fitness import DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
+from synthetic.distances import DEFAULT_UNDIRECTED, DEFAULT_DIRECTED
 
 
 ARG_PLACEHOLDERS = {'inet': 'network',

@@ -9,11 +9,14 @@ def within_tolerance(fitness, best_fitness, tolerance):
 class EvaluatedIndividual(object):
     def __init__(self, evo, generator, net):
         self.generator = generator
-        self.fitness_max, self.fitness_mean, self.fitness_tuple = evo.fitness.compute(net)
+        distances = evo.distances_to_net.compute(net)
+
+        # TODO: other types of fitness
+        self.fitness = max(distances)
 
     def is_better_than(self, eval_indiv, best_fitness, tolerance):
-        fitness_orig = self.fitness_max
-        fitness_targ = eval_indiv.fitness_max
+        fitness_orig = self.fitness
+        fitness_targ = eval_indiv.fitness
 
         if tolerance <= 0:
             return fitness_orig < fitness_targ
@@ -27,8 +30,8 @@ class EvaluatedIndividual(object):
 
 
 class Evo(object):
-    def __init__(self, net, fitness, generations, tolerance, base_generator, out_dir, sample_ratio):
-        self.fitness = fitness
+    def __init__(self, net, distances_to_net, generations, tolerance, base_generator, out_dir, sample_ratio):
+        self.distances_to_net = distances_to_net
         self.generations = generations
         self.tolerance = tolerance
         self.base_generator = base_generator
@@ -92,12 +95,12 @@ class Evo(object):
             individual = EvaluatedIndividual(self, generator, net)
             fit_time += current_time_millis() - time0
 
-            best_fitness_max = self.best_fit_individual.fitness_max
-            if individual.is_better_than(self.best_fit_individual, best_fitness_max, 0):
+            best_fitness = self.best_fit_individual.fitness
+            if individual.is_better_than(self.best_fit_individual, best_fitness, 0):
                 self.best_fit_individual = individual
                 stable_gens = 0
 
-            if individual.is_better_than(self.best_individual, best_fitness_max, self.tolerance):
+            if individual.is_better_than(self.best_individual, best_fitness, self.tolerance):
                 self.best_individual = individual
                 self.on_new_best()
                 stable_gens = 0
@@ -130,8 +133,8 @@ class Evo(object):
     def write_log_header(self):
         # write header of log file
         with open('%s/evo.csv' % self.out_dir, 'w') as log_file:
-            header = 'gen,best_fit_max,best_fit_mean,best_geno_size,gen_comp_time,sim_comp_time,fit_comp_time'
-            stat_names = [stat_type.name for stat_type in self.fitness.targ_stats_set.stat_types]
+            header = 'gen,best_fit,best_geno_size,gen_comp_time,sim_comp_time,fit_comp_time'
+            stat_names = [stat_type.name for stat_type in self.distances_to_net.targ_stats_set.stat_types]
             header = '%s,%s\n' % (header, ','.join(stat_names))
             log_file.write(header)
 
@@ -140,30 +143,29 @@ class Evo(object):
 
         # write log line for generation
         with open('%s/evo.csv' % self.out_dir, 'a') as log_file:
-            row = ','.join((self.curgen, self.best_individual.fitness_max, self.best_individual.fitness_mean,
-                            self.best_individual.prog.size(), self.gen_time, self.sim_time, self.fit_time))
+            row = ','.join((self.curgen, self.best_individual.fitness, self.best_individual.prog.size(),
+                            self.gen_time, self.sim_time, self.fit_time))
             row = '%s,%s\n' % (row, ','.join(dists))
             log_file.write(row)
 
         # print info
         print(self.gen_info_string())
-        stat_names = [stat_type.name for stat_type in self.fitness.targ_stats_set.stat_types]
+        stat_names = [stat_type.name for stat_type in self.distances_to_net.targ_stats_set.stat_types]
         items = ['%s: %s' % (stat_names[i], dists[i]) for i in range(len(stat_names))]
         print('; '.join(items))
 
     def info_string(self):
         lines = ['stable generations: %s' % self.generations,
-                 'directed: %s' % self.fitness.net.is_directed(),
+                 'directed: %s' % self.distances_to_net.net.is_directed(),
                  'target net node count: %s' % self.nodes,
                  'target net edge count: %s' % self.edges,
-                 'distribution bins: %s' % self.fitness.bins,
+                 'distribution bins: %s' % self.distances_to_net.bins,
                  'tolerance: %s' % self.tolerance]
         return '\n'.join(lines)
 
     def gen_info_string(self):
         items = ['gen #%s' % self.curgen,
-                 'best fitness max: %s' % self.best_individual.fitness_max,
-                 'best fitness mean: %s' % self.best_individual.fitness_mean,
+                 'best fitness: %s' % self.best_individual.fitness,
                  'best genotype size: %s' % self.best_individual.prog.size(),
                  'gen comp time: %ss.' % self.gen_time,
                  'sim comp time: %ss.' % self.sim_time,
