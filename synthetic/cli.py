@@ -34,7 +34,7 @@ def create_command(name):
 
 def show_logo():
     print()
-    print(colored(ascii_logo, 'magenta'))
+    print(colored(ASCII_LOGO, 'magenta'))
     print()
 
 
