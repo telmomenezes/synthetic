@@ -17,3 +17,6 @@ DEFAULT_NORM_SAMPLES = 30
 ascii_logo = """┌─┐┬ ┬┌┐┌┌┬┐┬ ┬┌─┐┌┬┐┬┌─┐
 └─┐└┬┘│││ │ ├─┤├┤  │ ││  
 └─┘ ┴ ┘└┘ ┴ ┴ ┴└─┘ ┴ ┴└─┘"""
+
+# Algorithmic constants
+SMALL_VALUE = .000001

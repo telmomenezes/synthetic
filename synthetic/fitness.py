@@ -68,7 +68,7 @@ class Fitness(object):
             for j in range(self.nstats):
                 norm_values[j] += values[j]
 
-        norm_values = [x / norm_samples for x in norm_values]
+        norm_values = [max(x / norm_samples, SMALL_VALUE) for x in norm_values]
         return norm_values
 
     def compute(self, net):
@@ -77,8 +77,6 @@ class Fitness(object):
         dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i], self.dist_types[i])
                  for i in range(self.nstats)]
         if self.norm == Norm.ER_MEAN_RATIO:
-            very_small = .999
-            dists = [max(d, very_small) for d in dists]
             dists = [dists[i] / self.norm_values[i] for i in range(self.nstats)]
 
         fitness_max = max(dists)
