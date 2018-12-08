@@ -3,7 +3,7 @@ from synthetic.distances import *
 from synthetic.tests.graphs import *
 
 
-class TestDistancesToNet(unittest.TestCase):
+class TestDistances(unittest.TestCase):
     def test_undir_self(self):
         g = full_graph(directed=False)
         d2n = create_distances_to_net(g, bins=10, max_dist=10, norm=Norm.NONE)
