@@ -21,6 +21,16 @@ def ring_graph(directed):
     return Graph.Ring(100, directed=directed)
 
 
-def random_graph(directed):
+def random_graph_sparse(directed):
     # noinspection PyArgumentList
     return Graph.Erdos_Renyi(n=100, m=100, directed=directed)
+
+
+def random_graph_medium(directed):
+    # noinspection PyArgumentList
+    return Graph.Erdos_Renyi(n=100, m=1000, directed=directed)
+
+
+def random_graph_dense(directed):
+    # noinspection PyArgumentList
+    return Graph.Erdos_Renyi(n=100, m=3000, directed=directed)

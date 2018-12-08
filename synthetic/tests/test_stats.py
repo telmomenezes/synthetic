@@ -229,10 +229,10 @@ class TestStats(unittest.TestCase):
         g3 = ring_graph(directed=False)
         s3 = create_stat(g3, StatType.TRIAD_CENSUS)
 
-        g4 = random_graph(directed=False)
+        g4 = random_graph_sparse(directed=False)
         s4 = create_stat(g4, StatType.TRIAD_CENSUS)
 
-        g5 = random_graph(directed=False)
+        g5 = random_graph_sparse(directed=False)
         s5 = create_stat(g5, StatType.TRIAD_CENSUS)
 
         self.assertEqual(s1.distance(s1, DistanceType.NORMALIZED_MANHATTAN), 0.)
@@ -260,10 +260,10 @@ class TestStats(unittest.TestCase):
         g4 = ring_graph(directed=True)
         s4 = create_stat(g4, StatType.TRIAD_CENSUS)
 
-        g5 = random_graph(directed=True)
+        g5 = random_graph_sparse(directed=True)
         s5 = create_stat(g5, StatType.TRIAD_CENSUS)
 
-        g6 = random_graph(directed=True)
+        g6 = random_graph_sparse(directed=True)
         s6 = create_stat(g6, StatType.TRIAD_CENSUS)
 
         self.assertEqual(s1.distance(s1, DistanceType.NORMALIZED_MANHATTAN), 0.)
@@ -290,10 +290,10 @@ class TestStats(unittest.TestCase):
         g3 = ring_graph(directed=False)
         s3 = create_stat(g3, StatType.DEGREES, bins=10)
 
-        g4 = random_graph(directed=False)
+        g4 = random_graph_sparse(directed=False)
         s4 = create_stat(g4, StatType.DEGREES, bins=10)
 
-        g5 = random_graph(directed=False)
+        g5 = random_graph_sparse(directed=False)
         s5 = create_stat(g5, StatType.DEGREES, bins=10)
 
         self.assertEqual(s1.distance(s1, DistanceType.EARTH_MOVER), 0.)
@@ -317,10 +317,10 @@ class TestStats(unittest.TestCase):
         g3 = ring_graph(directed=False)
         s3 = create_stat(g3, StatType.DEGREES, bins=10, ref_stat=s1)
 
-        g4 = random_graph(directed=False)
+        g4 = random_graph_sparse(directed=False)
         s4 = create_stat(g4, StatType.DEGREES, bins=10, ref_stat=s1)
 
-        g5 = random_graph(directed=False)
+        g5 = random_graph_sparse(directed=False)
         s5 = create_stat(g5, StatType.DEGREES, bins=10, ref_stat=s1)
 
         self.assertEqual(s1.distance(s1, DistanceType.EARTH_MOVER), 0.)
@@ -347,10 +347,10 @@ class TestStats(unittest.TestCase):
         g4 = ring_graph(directed=True)
         s4 = create_stat(g4, StatType.IN_DEGREES, bins=10)
 
-        g5 = random_graph(directed=True)
+        g5 = random_graph_sparse(directed=True)
         s5 = create_stat(g5, StatType.IN_DEGREES, bins=10)
 
-        g6 = random_graph(directed=True)
+        g6 = random_graph_sparse(directed=True)
         s6 = create_stat(g6, StatType.IN_DEGREES, bins=10)
 
         self.assertEqual(s1.distance(s1, DistanceType.EARTH_MOVER), 0.)
@@ -380,10 +380,10 @@ class TestStats(unittest.TestCase):
         g4 = ring_graph(directed=True)
         s4 = create_stat(g4, StatType.IN_DEGREES, bins=10, ref_stat=s1)
 
-        g5 = random_graph(directed=True)
+        g5 = random_graph_sparse(directed=True)
         s5 = create_stat(g5, StatType.IN_DEGREES, bins=10, ref_stat=s1)
 
-        g6 = random_graph(directed=True)
+        g6 = random_graph_sparse(directed=True)
         s6 = create_stat(g6, StatType.IN_DEGREES, bins=10, ref_stat=s1)
 
         self.assertEqual(s1.distance(s1, DistanceType.EARTH_MOVER), 0.)

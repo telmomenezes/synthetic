@@ -38,11 +38,11 @@ class Evolve(Command):
 
         # create fitness calculator
         # TODO: norm samples configurable
-        fitness = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist,
-                                 norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES)
+        dists2net = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist,
+                                   norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES)
 
         # create evolutionary search
-        evo = Evo(net, fitness, generations, tolerance, base_generator, outdir, sr)
+        evo = Evo(net, dists2net, generations, tolerance, base_generator, outdir, sr)
 
         # some reports to screen
         print('target net: %s' + netfile)
