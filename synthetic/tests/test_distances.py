@@ -31,12 +31,6 @@ class TestDistancesToNet(unittest.TestCase):
         dists_1_5 = d2n_1.compute(g5)
         dists_1_6 = d2n_1.compute(g6)
 
-        print(dists_1_2)
-        print(dists_1_3)
-        print(dists_1_4)
-        print(dists_1_5)
-        print(dists_1_6)
-
         self.assertEqual(dists_1_3[1], 0.)
         self.assertEqual(dists_1_2[2], dists_1_3[2])
         for i in {0, 2, 3}:
