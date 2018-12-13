@@ -7,9 +7,9 @@ def within_tolerance(fitness, best_fitness, tolerance):
 
 
 class EvaluatedIndividual(object):
-    def __init__(self, evo, generator, net):
+    def __init__(self, distances_to_net, generator, net):
         self.generator = generator
-        distances = evo.distances_to_net.compute(net)
+        distances = distances_to_net.compute(net)
 
         # TODO: other types of fitness
         self.fitness = max(distances)
@@ -38,7 +38,7 @@ class Evo(object):
         self.out_dir = out_dir
         self.sample_ratio = sample_ratio
 
-        # number of nodes and edges in target netwoork
+        # number of nodes and edges in target network
         self.nodes = len(net.vs)
         self.edges = len(net.es)
 
@@ -66,7 +66,7 @@ class Evo(object):
         # init population
         generator = self.base_generator.spawn_random()
         net = generator.run(self.nodes, self.edges, self.sample_ratio)
-        self.best_fit_individual = EvaluatedIndividual(self, generator, net)
+        self.best_fit_individual = EvaluatedIndividual(self.distances_to_net, generator, net)
         self.best_individual = self.best_fit_individual
 
         # evolve
@@ -92,7 +92,7 @@ class Evo(object):
             net = generator.run(self.nodes, self.edges, self.sample_ratio)
             sim_time += current_time_millis() - time0
             time0 = current_time_millis()
-            individual = EvaluatedIndividual(self, generator, net)
+            individual = EvaluatedIndividual(self.distances_to_net, generator, net)
             fit_time += current_time_millis() - time0
 
             best_fitness = self.best_fit_individual.fitness
