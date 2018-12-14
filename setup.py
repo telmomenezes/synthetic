@@ -8,7 +8,7 @@ with open('README.md', 'r') as fh:
 setup(
     name='synthetic',
     version='0.1',
-    author='Telmo Menezes',
+    author='Telmo Menezes et al.',
     author_email='telmo@telmomenezes.com',
     description='Symbolic generators for complex networks',
     long_description=long_description,
