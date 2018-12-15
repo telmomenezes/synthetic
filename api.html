@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API reference &mdash; Synthetic 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Authors" href="authors.html" />
+    <link rel="prev" title="Command-line interface" href="cli.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/synthetic.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generator_language.html">Generator Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command-line interface</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-synthetic.prog">prog module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prog-class">Prog class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-synthetic.generator">generator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generator-class">Generator class</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-synthetic.stats">stats module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-synthetic.distances">distances module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-synthetic.evo">evo module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Synthetic</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>API reference</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/ai4socialscience/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="api-reference">
+<h1>API reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-synthetic.prog">
+<span id="prog-module"></span><h2>prog module<a class="headerlink" href="#module-synthetic.prog" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="synthetic.prog.Fun">
+<em class="property">class </em><code class="descclassname">synthetic.prog.</code><code class="descname">Fun</code><a class="reference internal" href="_modules/synthetic/prog.html#Fun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.prog.Fun" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="synthetic.prog.NodeDynStatus">
+<em class="property">class </em><code class="descclassname">synthetic.prog.</code><code class="descname">NodeDynStatus</code><a class="reference internal" href="_modules/synthetic/prog.html#NodeDynStatus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.prog.NodeDynStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="synthetic.prog.NodeType">
+<em class="property">class </em><code class="descclassname">synthetic.prog.</code><code class="descname">NodeType</code><a class="reference internal" href="_modules/synthetic/prog.html#NodeType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.prog.NodeType" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<div class="section" id="prog-class">
+<h3>Prog class<a class="headerlink" href="#prog-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="synthetic.prog.Prog">
+<em class="property">class </em><code class="descclassname">synthetic.prog.</code><code class="descname">Prog</code><span class="sig-paren">(</span><em>var_names</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/prog.html#Prog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.prog.Prog" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-synthetic.generator">
+<span id="generator-module"></span><h2>generator module<a class="headerlink" href="#module-synthetic.generator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="synthetic.generator.GenVar">
+<em class="property">class </em><code class="descclassname">synthetic.generator.</code><code class="descname">GenVar</code><a class="reference internal" href="_modules/synthetic/generator.html#GenVar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.generator.GenVar" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<div class="section" id="generator-class">
+<h3>Generator class<a class="headerlink" href="#generator-class" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="synthetic.generator.Generator">
+<em class="property">class </em><code class="descclassname">synthetic.generator.</code><code class="descname">Generator</code><span class="sig-paren">(</span><em>genvars</em>, <em>directed</em>, <em>init_random=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/generator.html#Generator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.generator.Generator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-synthetic.stats">
+<span id="stats-module"></span><h2>stats module<a class="headerlink" href="#module-synthetic.stats" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="synthetic.stats.Degrees">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">Degrees</code><span class="sig-paren">(</span><em>bins</em>, <em>ref_stat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/stats.html#Degrees"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.Degrees" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.DirectedDistances">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">DirectedDistances</code><span class="sig-paren">(</span><em>max_dist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/stats.html#DirectedDistances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.DirectedDistances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.DirectedPageRanks">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">DirectedPageRanks</code><span class="sig-paren">(</span><em>bins</em>, <em>ref_stat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/stats.html#DirectedPageRanks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.DirectedPageRanks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.DistanceHistogram">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">DistanceHistogram</code><span class="sig-paren">(</span><em>max_dist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/stats.html#DistanceHistogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.DistanceHistogram" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.DistanceType">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">DistanceType</code><a class="reference internal" href="_modules/synthetic/stats.html#DistanceType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.DistanceType" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.Distrib">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">Distrib</code><a class="reference internal" href="_modules/synthetic/stats.html#Distrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.Distrib" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.Histogram">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">Histogram</code><span class="sig-paren">(</span><em>bins</em>, <em>ref_stat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/stats.html#Histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.Histogram" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.InDegrees">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">InDegrees</code><span class="sig-paren">(</span><em>bins</em>, <em>ref_stat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/stats.html#InDegrees"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.InDegrees" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.OutDegrees">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">OutDegrees</code><span class="sig-paren">(</span><em>bins</em>, <em>ref_stat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/stats.html#OutDegrees"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.OutDegrees" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.Stat">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">Stat</code><a class="reference internal" href="_modules/synthetic/stats.html#Stat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.Stat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.StatType">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">StatType</code><a class="reference internal" href="_modules/synthetic/stats.html#StatType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.StatType" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.TriadCensus">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">TriadCensus</code><a class="reference internal" href="_modules/synthetic/stats.html#TriadCensus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.TriadCensus" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.UndirectedDistances">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">UndirectedDistances</code><span class="sig-paren">(</span><em>max_dist</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/stats.html#UndirectedDistances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.UndirectedDistances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="synthetic.stats.UndirectedPageRanks">
+<em class="property">class </em><code class="descclassname">synthetic.stats.</code><code class="descname">UndirectedPageRanks</code><span class="sig-paren">(</span><em>bins</em>, <em>ref_stat</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/synthetic/stats.html#UndirectedPageRanks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.stats.UndirectedPageRanks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-synthetic.distances">
+<span id="distances-module"></span><h2>distances module<a class="headerlink" href="#module-synthetic.distances" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="synthetic.distances.Norm">
+<em class="property">class </em><code class="descclassname">synthetic.distances.</code><code class="descname">Norm</code><a class="reference internal" href="_modules/synthetic/distances.html#Norm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#synthetic.distances.Norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enumeration.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-synthetic.evo">
+<span id="evo-module"></span><h2>evo module<a class="headerlink" href="#module-synthetic.evo" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="authors.html" class="btn btn-neutral float-right" title="Authors" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="cli.html" class="btn btn-neutral" title="Command-line interface" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #000000;
+    }
+  </style>
+
+
+</body>
+</html>

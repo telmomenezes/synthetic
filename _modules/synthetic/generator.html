@@ -1,0 +1,528 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>synthetic.generator &mdash; Synthetic 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/synthetic.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generator_language.html">Generator Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Synthetic</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>synthetic.generator</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for synthetic.generator</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">igraph</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">synthetic.consts</span> <span class="k">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">synthetic.prog</span> <span class="k">as</span> <span class="nn">prog</span>
+
+
+<div class="viewcode-block" id="GenVar"><a class="viewcode-back" href="../../api.html#synthetic.generator.GenVar">[docs]</a><span class="k">class</span> <span class="nc">GenVar</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">ORIGID</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">TARGID</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">ORIGDEG</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">ORIGINDEG</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">ORIGOUTDEG</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">TARGDEG</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">TARGINDEG</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">TARGOUTDEG</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">DIST</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">DIRDIST</span> <span class="o">=</span> <span class="mi">9</span>
+    <span class="n">REVDIST</span> <span class="o">=</span> <span class="mi">10</span></div>
+
+
+<span class="n">genvars_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGID</span><span class="p">:</span> <span class="s1">&#39;orig&#39;</span><span class="p">,</span>
+                 <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGID</span><span class="p">:</span> <span class="s1">&#39;targ&#39;</span><span class="p">,</span>
+                 <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGDEG</span><span class="p">:</span> <span class="s1">&#39;orig_deg&#39;</span><span class="p">,</span>
+                 <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGINDEG</span><span class="p">:</span> <span class="s1">&#39;orig_in_deg&#39;</span><span class="p">,</span>
+                 <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGOUTDEG</span><span class="p">:</span> <span class="s1">&#39;orig_out_deg&#39;</span><span class="p">,</span>
+                 <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGDEG</span><span class="p">:</span> <span class="s1">&#39;targ_deg&#39;</span><span class="p">,</span>
+                 <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGINDEG</span><span class="p">:</span> <span class="s1">&#39;targ_in_deg&#39;</span><span class="p">,</span>
+                 <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGOUTDEG</span><span class="p">:</span> <span class="s1">&#39;targ_out_deg&#39;</span><span class="p">,</span>
+                 <span class="n">GenVar</span><span class="o">.</span><span class="n">DIST</span><span class="p">:</span> <span class="s1">&#39;dist&#39;</span><span class="p">,</span>
+                 <span class="n">GenVar</span><span class="o">.</span><span class="n">DIRDIST</span><span class="p">:</span> <span class="s1">&#39;dir_dist&#39;</span><span class="p">,</span>
+                 <span class="n">GenVar</span><span class="o">.</span><span class="n">REVDIST</span><span class="p">:</span> <span class="s1">&#39;rev_dist&#39;</span><span class="p">}</span>
+
+
+<span class="n">names_genvars</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">genvar</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">genvars_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">names_genvars</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">genvar</span>
+
+
+<span class="k">def</span> <span class="nf">str2genvar</span><span class="p">(</span><span class="n">st</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">names_genvars</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">names_genvars</span><span class="p">[</span><span class="n">st</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">genvar2str</span><span class="p">(</span><span class="n">gvar</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">gvar</span> <span class="ow">in</span> <span class="n">genvars_names</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">genvars_names</span><span class="p">[</span><span class="n">gvar</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">create_exo_generator</span><span class="p">(</span><span class="n">directed</span><span class="p">,</span> <span class="n">init_random</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">directed</span><span class="p">:</span>
+        <span class="n">genvars</span> <span class="o">=</span> <span class="p">(</span><span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGID</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGID</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGINDEG</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGOUTDEG</span><span class="p">,</span>
+                   <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGINDEG</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGOUTDEG</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">DIST</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">DIRDIST</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">REVDIST</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">genvars</span> <span class="o">=</span> <span class="p">(</span><span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGID</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGID</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGDEG</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGDEG</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">DIST</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Generator</span><span class="p">(</span><span class="n">genvars</span><span class="p">,</span> <span class="n">directed</span><span class="p">,</span> <span class="n">init_random</span><span class="o">=</span><span class="n">init_random</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">create_endo_generator</span><span class="p">(</span><span class="n">directed</span><span class="p">,</span> <span class="n">init_random</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">directed</span><span class="p">:</span>
+        <span class="n">genvars</span> <span class="o">=</span> <span class="p">(</span><span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGINDEG</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGOUTDEG</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGINDEG</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGOUTDEG</span><span class="p">,</span>
+                   <span class="n">GenVar</span><span class="o">.</span><span class="n">DIST</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">DIRDIST</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">REVDIST</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">genvars</span> <span class="o">=</span> <span class="p">(</span><span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGDEG</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGDEG</span><span class="p">,</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">DIST</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Generator</span><span class="p">(</span><span class="n">genvars</span><span class="p">,</span> <span class="n">directed</span><span class="p">,</span> <span class="n">init_random</span><span class="o">=</span><span class="n">init_random</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">create_generator</span><span class="p">(</span><span class="n">directed</span><span class="p">,</span> <span class="n">gen_type</span><span class="o">=</span><span class="s1">&#39;exo&#39;</span><span class="p">,</span> <span class="n">init_random</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">gen_type</span> <span class="o">==</span> <span class="s1">&#39;exo&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">create_exo_generator</span><span class="p">(</span><span class="n">directed</span><span class="p">,</span> <span class="n">init_random</span><span class="o">=</span><span class="n">init_random</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">gen_type</span> <span class="o">==</span> <span class="s1">&#39;endo&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">create_endo_generator</span><span class="p">(</span><span class="n">directed</span><span class="p">,</span> <span class="n">init_random</span><span class="o">=</span><span class="n">init_random</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">load_generator</span><span class="p">(</span><span class="n">prog_path</span><span class="p">,</span> <span class="n">directed</span><span class="p">,</span> <span class="n">gen_type</span><span class="o">=</span><span class="s1">&#39;exo&#39;</span><span class="p">):</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="n">create_generator</span><span class="p">(</span><span class="n">directed</span><span class="p">,</span> <span class="n">gen_type</span><span class="o">=</span><span class="n">gen_type</span><span class="p">)</span>
+    <span class="n">gen</span><span class="o">.</span><span class="n">prog</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">gen</span><span class="o">.</span><span class="n">var_names</span><span class="p">,</span> <span class="n">prog_path</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">gen</span>
+
+
+<span class="k">def</span> <span class="nf">generator_from_prog_str</span><span class="p">(</span><span class="n">prog_str</span><span class="p">,</span> <span class="n">directed</span><span class="p">,</span> <span class="n">gen_type</span><span class="o">=</span><span class="s1">&#39;exo&#39;</span><span class="p">):</span>
+    <span class="n">gen</span> <span class="o">=</span> <span class="n">create_generator</span><span class="p">(</span><span class="n">directed</span><span class="p">,</span> <span class="n">gen_type</span><span class="p">)</span>
+    <span class="n">gen</span><span class="o">.</span><span class="n">prog</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">prog_str</span><span class="p">,</span> <span class="n">gen</span><span class="o">.</span><span class="n">var_names</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">gen</span>
+
+
+<div class="viewcode-block" id="Generator"><a class="viewcode-back" href="../../api.html#synthetic.generator.Generator">[docs]</a><span class="k">class</span> <span class="nc">Generator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genvars</span><span class="p">,</span> <span class="n">directed</span><span class="p">,</span> <span class="n">init_random</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directed</span> <span class="o">=</span> <span class="n">directed</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">genvars</span> <span class="o">=</span> <span class="n">genvars</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">genvar2str</span><span class="p">(</span><span class="n">gv</span><span class="p">)</span> <span class="k">for</span> <span class="n">gv</span> <span class="ow">in</span> <span class="n">genvars</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">genvars</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">init_random</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prog</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">create_random</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_names</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prog</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">Prog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_names</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_distance</span> <span class="o">=</span> <span class="mf">0.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trials</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_origs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_targs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_weights</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cgen</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">genvars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">directed</span><span class="p">)</span>
+        <span class="n">cgen</span><span class="o">.</span><span class="n">prog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">cgen</span>
+
+    <span class="k">def</span> <span class="nf">spawn_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Generator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">genvars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">directed</span><span class="p">,</span> <span class="n">init_random</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prog</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_names</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orig</span><span class="p">,</span> <span class="n">targ</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">max_dist</span><span class="o">=</span><span class="n">DEFAULT_MAX_DIST</span><span class="p">):</span>
+        <span class="c1"># to supress RuntimeWarning: Couldn&#39;t reach some vertices at structural_properties.c:740</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="n">sp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">get_shortest_paths</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">to</span><span class="o">=</span><span class="n">targ</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">max_dist</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">max_dist</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_prog_vars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orig</span><span class="p">,</span> <span class="n">targ</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_count</span><span class="p">):</span>
+            <span class="n">gv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">genvars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGID</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">orig</span>
+            <span class="k">elif</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGID</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">targ</span>
+            <span class="k">elif</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGDEG</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">ALL</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGINDEG</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">IN</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">ORIGOUTDEG</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">OUT</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGDEG</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">ALL</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGINDEG</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">IN</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">TARGOUTDEG</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">degree</span><span class="p">(</span><span class="n">targ</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">OUT</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">DIST</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">targ</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">ALL</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">DIRDIST</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">targ</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">OUT</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">gv</span> <span class="o">==</span> <span class="n">GenVar</span><span class="o">.</span><span class="n">REVDIST</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">targ</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">IN</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">generate_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trials</span><span class="p">):</span>
+            <span class="n">found</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="n">orig_index</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">targ_index</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">found</span><span class="p">:</span>
+                <span class="n">orig_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+                <span class="n">targ_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">orig_index</span> <span class="o">!=</span> <span class="n">targ_index</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">[</span><span class="n">orig_index</span><span class="p">,</span> <span class="n">targ_index</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">found</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_origs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">orig_index</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_targs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">targ_index</span>
+
+    <span class="k">def</span> <span class="nf">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">master</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">master</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">generate_sample</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_origs</span> <span class="o">=</span> <span class="n">master</span><span class="o">.</span><span class="n">sample_origs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_targs</span> <span class="o">=</span> <span class="n">master</span><span class="o">.</span><span class="n">sample_targs</span>
+
+        <span class="n">total_weight</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trials</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_prog_vars</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_origs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_targs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+            <span class="n">weight</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="mf">0.</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">weight</span>
+            <span class="n">total_weight</span> <span class="o">+=</span> <span class="n">weight</span>
+
+        <span class="k">if</span> <span class="n">total_weight</span> <span class="o">==</span> <span class="mf">0.</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trials</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sample_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+                <span class="n">total_weight</span> <span class="o">+=</span> <span class="mf">1.</span>
+
+        <span class="n">targ_weight</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="n">total_weight</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">total_weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">while</span> <span class="n">targ_weight</span> <span class="o">&gt;</span> <span class="n">total_weight</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">total_weight</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">best_orig_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_origs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">best_targ_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_targs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">orig_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">best_orig_index</span><span class="p">]</span>
+        <span class="n">targ_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">vs</span><span class="p">[</span><span class="n">best_targ_index</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">orig_node</span><span class="p">,</span> <span class="n">targ_node</span>
+
+    <span class="k">def</span> <span class="nf">weights_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gen</span><span class="p">):</span>
+        <span class="n">total_weight1</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">total_weight2</span> <span class="o">=</span> <span class="mf">0.</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trials</span><span class="p">):</span>
+            <span class="n">total_weight1</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">total_weight2</span> <span class="o">+=</span> <span class="n">gen</span><span class="o">.</span><span class="n">sample_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">dist</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trials</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sample_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/=</span> <span class="n">total_weight1</span>
+            <span class="n">gen</span><span class="o">.</span><span class="n">sample_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/=</span> <span class="n">total_weight2</span>
+            <span class="n">dist</span> <span class="o">+=</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sample_weights</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">gen</span><span class="o">.</span><span class="n">sample_weights</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">dist</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">trials</span>
+        <span class="k">return</span> <span class="n">dist</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nodes</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">sample_ratio</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="n">nodes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trials</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sample_ratio</span> <span class="o">*</span> <span class="n">nodes</span> <span class="o">*</span> <span class="n">edges</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">trials</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">trials</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_origs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trials</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_targs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trials</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sample_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trials</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_distance</span> <span class="o">=</span> <span class="mf">0.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">nodes</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">directed</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">shadow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">shadow</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span>
+
+        <span class="c1"># create edges</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span> <span class="o">&lt;</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="n">orig</span><span class="p">,</span> <span class="n">targ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cycle</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">shadow</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">shadow</span><span class="o">.</span><span class="n">cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">eval_distance</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights_dist</span><span class="p">(</span><span class="n">shadow</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="o">.</span><span class="n">add_edge</span><span class="p">(</span><span class="n">orig</span><span class="p">,</span> <span class="n">targ</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval_distance</span> <span class="o">/=</span> <span class="n">edges</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span>
+
+    <span class="k">def</span> <span class="nf">recombine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent2</span><span class="p">):</span>
+        <span class="n">generator</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">genvars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">directed</span><span class="p">)</span>
+        <span class="n">generator</span><span class="o">.</span><span class="n">prog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">recombine</span><span class="p">(</span><span class="n">parent2</span><span class="o">.</span><span class="n">prog</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">generator</span>
+
+    <span class="k">def</span> <span class="nf">mutate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">random_gen</span> <span class="o">=</span> <span class="n">Generator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">genvars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">directed</span><span class="p">,</span> <span class="n">init_random</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">recombine</span><span class="p">(</span><span class="n">random_gen</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #000000;
+    }
+  </style>
+
+
+</body>
+</html>

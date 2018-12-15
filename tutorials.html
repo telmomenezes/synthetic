@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tutorials &mdash; Synthetic 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Command-line interface" href="cli.html" />
+    <link rel="prev" title="Generator Language" href="generator_language.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/synthetic.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generator_language.html">Generator Language</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#defining-a-generator">Defining a generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-a-network">Generating a network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evolving-a-generator-from-the-network">Evolving a generator from the network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Synthetic</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Tutorials</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/ai4socialscience/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tutorials">
+<h1>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h1>
+<p>To get started with synthetic, we will show you how to create a network using a known generator and then
+re-discovering the generator from that network. Of course, you can apply synthetic directly to a real network you wish
+to analyse, in which case you would skip the initial steps.</p>
+<div class="section" id="defining-a-generator">
+<h2>Defining a generator<a class="headerlink" href="#defining-a-generator" title="Permalink to this headline">¶</a></h2>
+<p>A generator is a simple program in a Lisp-like language. We will define a simple preferential attachment generator,
+where the probability of connection between two nodes is proportional to the in-degree of the target. Variables in the
+synthetic generator language are identified by a <code class="docutils literal notranslate"><span class="pre">$</span></code> sign. The in-degree of the target is given by <cite>$targ_in_deg</cite>.</p>
+<p>Using your favourite editor, simply create a text file called “pa.gen”. To this text file, add the follwoing single
+line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$targ_in_deg
+</pre></div>
+</div>
+</div>
+<div class="section" id="generating-a-network">
+<h2>Generating a network<a class="headerlink" href="#generating-a-network" title="Permalink to this headline">¶</a></h2>
+<p>You can now use the <code class="docutils literal notranslate"><span class="pre">gen</span></code> command to generate a network according to the rules specified in the previous generator.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="n">gen</span> <span class="o">--</span><span class="n">prg</span> <span class="n">pa</span><span class="o">.</span><span class="n">gen</span> <span class="o">--</span><span class="n">onet</span> <span class="n">pa</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">nodes</span> <span class="mi">200</span> <span class="o">--</span><span class="n">edges</span> <span class="mi">2000</span>
+</pre></div>
+</div>
+<p>A directed network with 200 nodes and 2000 edges is created. The <code class="docutils literal notranslate"><span class="pre">--nodes</span></code> and <code class="docutils literal notranslate"><span class="pre">--edges</span></code> parameters are optional.
+Their respective default values are 1000 and 10000. Here we wanted to create a smaller network to make the following
+step faster. An undirected network can also be generated, using the optional <code class="docutils literal notranslate"><span class="pre">--undir</span></code>.</p>
+</div>
+<div class="section" id="evolving-a-generator-from-the-network">
+<h2>Evolving a generator from the network<a class="headerlink" href="#evolving-a-generator-from-the-network" title="Permalink to this headline">¶</a></h2>
+<p>Now we can try to reverse-engineer the generator we previously defined. Create an <code class="docutils literal notranslate"><span class="pre">evo</span></code> directory to store the several
+files produced by the search process and then run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="n">evo</span> <span class="o">--</span><span class="n">inet</span> <span class="n">pa</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="n">odir</span> <span class="n">evo</span>
+</pre></div>
+</div>
+<p>Metrics for each generation of evolutionary search will be output to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>, and the process will stop after 1000
+generations without improvement. You should be able to observe a gradual decrease in fitness, meaning that the generated
+network is becoming more similar to the target. The best generator found so far will be stored at <code class="docutils literal notranslate"><span class="pre">evo/bestprog.txt</span></code>.
+Most of the times, by the time the process ends the best generator will be the original:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$targ_in_deg
+</pre></div>
+</div>
+<p>Of course, this is not guaranteed to happen. We are dealing with stochastic processes, after all. Some times a correct
+solution will be found, but it will contain unnecessary code. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(== 7.0
+  (max $orig_id 5.0) 0.49489811074561507 $targ_in_deg)
+</pre></div>
+</div>
+<p>In this case, notice that the max value between $orig_id and 5 can never be equal to 7, so the expression will always
+evaluate to $targ_in_deg. We refer to this type of unnecessary complexity as bloat. There is evolutionary pressure
+against bloat, so if you monitor the contents of <code class="docutils literal notranslate"><span class="pre">evo/bestprog.txt</span></code> during the evolutionary process, you will
+probably be able to observe bloated solutions forming and then being simplified.</p>
+<p>With real networks leading to more complex networks, it becomes more likely that the process does not succeed in
+completely getting rid of bloat. In this case, some manual simplification may be necessary.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="cli.html" class="btn btn-neutral float-right" title="Command-line interface" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generator_language.html" class="btn btn-neutral" title="Generator Language" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #000000;
+    }
+  </style>
+
+
+</body>
+</html>

@@ -1,0 +1,789 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>synthetic.prog &mdash; Synthetic 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="../../_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/synthetic.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../generator_language.html">Generator Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials.html">Tutorials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cli.html">Command-line interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../authors.html">Authors</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Synthetic</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>synthetic.prog</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for synthetic.prog</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<span class="c1">###############</span>
+<span class="c1">#  FUNCTIONS  #</span>
+<span class="c1">###############</span>
+
+<div class="viewcode-block" id="Fun"><a class="viewcode-back" href="../../api.html#synthetic.prog.Fun">[docs]</a><span class="k">class</span> <span class="nc">Fun</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">SUM</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">SUB</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">MUL</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">DIV</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">EQ</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">GRT</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">LRT</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">ZER</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">EXP</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">LOG</span> <span class="o">=</span> <span class="mi">9</span>
+    <span class="n">ABS</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">MIN</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="n">MAX</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">POW</span> <span class="o">=</span> <span class="mi">13</span>
+    <span class="n">AFF</span> <span class="o">=</span> <span class="mi">14</span></div>
+
+
+<span class="n">funs_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">Fun</span><span class="o">.</span><span class="n">SUM</span><span class="p">:</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">SUB</span><span class="p">:</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">MUL</span><span class="p">:</span> <span class="s1">&#39;*&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">DIV</span><span class="p">:</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">ZER</span><span class="p">:</span> <span class="s1">&#39;ZER&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">EQ</span><span class="p">:</span> <span class="s1">&#39;==&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">GRT</span><span class="p">:</span> <span class="s1">&#39;&gt;&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">LRT</span><span class="p">:</span> <span class="s1">&#39;&lt;&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">EXP</span><span class="p">:</span> <span class="s1">&#39;EXP&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">LOG</span><span class="p">:</span> <span class="s1">&#39;LOG&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">ABS</span><span class="p">:</span> <span class="s1">&#39;ABS&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">MIN</span><span class="p">:</span> <span class="s1">&#39;MIN&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">MAX</span><span class="p">:</span> <span class="s1">&#39;MAX&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">AFF</span><span class="p">:</span> <span class="s1">&#39;AFF&#39;</span><span class="p">,</span>
+              <span class="n">Fun</span><span class="o">.</span><span class="n">POW</span><span class="p">:</span> <span class="s1">&#39;^&#39;</span><span class="p">}</span>
+
+
+<span class="n">names_funs</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">fn</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">funs_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">names_funs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">fn</span>
+
+
+<span class="k">def</span> <span class="nf">str2fun</span><span class="p">(</span><span class="n">st</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">names_funs</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">names_funs</span><span class="p">[</span><span class="n">st</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">fun2str</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">func</span> <span class="ow">in</span> <span class="n">funs_names</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">funs_names</span><span class="p">[</span><span class="n">func</span><span class="p">]</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">fun_cond_pos</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">func</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">ZER</span> <span class="ow">or</span> <span class="n">func</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">AFF</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">func</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">EQ</span> <span class="ow">or</span> <span class="n">func</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">GRT</span> <span class="ow">or</span> <span class="n">func</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">LRT</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+
+<span class="k">def</span> <span class="nf">fun_arity</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">func</span> <span class="ow">in</span> <span class="p">{</span><span class="n">Fun</span><span class="o">.</span><span class="n">EXP</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">LOG</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">ABS</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">func</span> <span class="ow">in</span> <span class="p">{</span><span class="n">Fun</span><span class="o">.</span><span class="n">SUM</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">SUB</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">MUL</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">DIV</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">MIN</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">MAX</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">POW</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">func</span> <span class="ow">in</span> <span class="p">{</span><span class="n">Fun</span><span class="o">.</span><span class="n">ZER</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">AFF</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="mi">3</span>
+    <span class="k">elif</span> <span class="n">func</span> <span class="ow">in</span> <span class="p">{</span><span class="n">Fun</span><span class="o">.</span><span class="n">EQ</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">GRT</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">LRT</span><span class="p">}:</span>
+        <span class="k">return</span> <span class="mi">4</span>
+    <span class="c1"># this should not happen</span>
+    <span class="k">return</span> <span class="mi">0</span>
+
+
+<span class="c1">###################</span>
+<span class="c1">#  PROGRAM NODES  #</span>
+<span class="c1">###################</span>
+
+<div class="viewcode-block" id="NodeType"><a class="viewcode-back" href="../../api.html#synthetic.prog.NodeType">[docs]</a><span class="k">class</span> <span class="nc">NodeType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">FUN</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">VAR</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">VAL</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="NodeDynStatus"><a class="viewcode-back" href="../../api.html#synthetic.prog.NodeDynStatus">[docs]</a><span class="k">class</span> <span class="nc">NodeDynStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">UNUSED</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">CONSTANT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">DYNAMIC</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+
+<span class="k">def</span> <span class="nf">create_val</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">VAL</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">val</span>
+    <span class="k">return</span> <span class="n">node</span>
+
+
+<span class="k">def</span> <span class="nf">create_var</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">VAR</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="n">var</span>
+    <span class="k">return</span> <span class="n">node</span>
+
+
+<span class="k">def</span> <span class="nf">create_fun</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="n">node</span> <span class="o">=</span> <span class="n">Node</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">FUN</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="n">fun</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">condpos</span> <span class="o">=</span> <span class="n">fun_cond_pos</span><span class="p">(</span><span class="n">fun</span><span class="p">)</span>
+    <span class="n">node</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="n">fun_arity</span><span class="p">(</span><span class="n">fun</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">node</span>
+
+
+<span class="k">def</span> <span class="nf">create_random_node_tree</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span> <span class="n">prob_term</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">min_depth</span><span class="p">,</span> <span class="n">grow</span><span class="p">,</span> <span class="n">depth</span><span class="p">):</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="n">grow</span><span class="p">)</span> <span class="ow">or</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="n">prob_term</span><span class="p">)</span> <span class="ow">and</span> <span class="n">depth</span> <span class="o">&lt;</span> <span class="n">min_depth</span><span class="p">:</span>
+        <span class="n">fun</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Fun</span><span class="p">))</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">create_fun</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">arity</span><span class="p">()):</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_random_node_tree</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span> <span class="n">prob_term</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">min_depth</span><span class="p">,</span> <span class="n">grow</span><span class="p">,</span> <span class="n">depth</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prog</span><span class="o">.</span><span class="n">varcount</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">prog</span><span class="o">.</span><span class="n">varcount</span><span class="p">)</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">create_var</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">r</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="k">elif</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">create_val</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">node</span>
+
+
+<span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prog</span> <span class="o">=</span> <span class="n">prog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fun</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">curval</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">curpos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">condpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branching</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dyn_status</span> <span class="o">=</span> <span class="n">NodeDynStatus</span><span class="o">.</span><span class="n">UNUSED</span>
+
+    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">VAL</span><span class="p">:</span>
+            <span class="n">cnode</span> <span class="o">=</span> <span class="n">create_val</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">VAR</span><span class="p">:</span>
+            <span class="n">cnode</span> <span class="o">=</span> <span class="n">create_var</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cnode</span> <span class="o">=</span> <span class="n">create_fun</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fun</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="n">cnode</span><span class="o">.</span><span class="n">curval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">curval</span>
+        <span class="n">cnode</span><span class="o">.</span><span class="n">branching</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">branching</span>
+        <span class="n">cnode</span><span class="o">.</span><span class="n">dyn_status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dyn_status</span>
+
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="n">cnode</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span> <span class="n">cnode</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">cnode</span>
+
+    <span class="k">def</span> <span class="nf">arity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">FUN</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fun_arity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fun</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="n">param</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+    <span class="k">def</span> <span class="nf">node_by_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)):</span>
+            <span class="n">nodefound</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">node_by_pos</span><span class="p">(</span><span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">nodefound</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">nodefound</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">branching_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">branching</span> <span class="o">!=</span> <span class="n">node</span><span class="o">.</span><span class="n">branching</span><span class="p">:</span>
+            <span class="n">distance</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># TODO: check both have same number of params!</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)):</span>
+            <span class="n">distance</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">branching_distance2</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">distance</span>
+
+    <span class="k">def</span> <span class="nf">clear_branching</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branching</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">clear_branching</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">VAL</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">val</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">VAR</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;$</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">prog</span><span class="o">.</span><span class="n">var_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">FUN</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">fun2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fun</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;???&#39;</span>
+
+
+<span class="c1">##############</span>
+<span class="c1">#  PROGRAMS  #</span>
+<span class="c1">##############</span>
+
+<span class="k">def</span> <span class="nf">token_start</span><span class="p">(</span><span class="n">prog_str</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="n">curpos</span> <span class="o">=</span> <span class="n">pos</span>
+    <span class="n">curchar</span> <span class="o">=</span> <span class="n">prog_str</span><span class="p">[</span><span class="n">curpos</span><span class="p">]</span>
+    <span class="k">while</span> <span class="n">curchar</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">}:</span>
+        <span class="n">curpos</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">curchar</span> <span class="o">=</span> <span class="n">prog_str</span><span class="p">[</span><span class="n">curpos</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">curpos</span>
+
+
+<span class="k">def</span> <span class="nf">token_end</span><span class="p">(</span><span class="n">prog_str</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+    <span class="n">curpos</span> <span class="o">=</span> <span class="n">pos</span>
+    <span class="n">curchar</span> <span class="o">=</span> <span class="n">prog_str</span><span class="p">[</span><span class="n">curpos</span><span class="p">]</span>
+    <span class="k">while</span> <span class="n">curchar</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;)&#39;</span><span class="p">,</span> <span class="s1">&#39;(&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">}:</span>
+        <span class="n">curpos</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">curpos</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prog_str</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">curpos</span>
+        <span class="n">curchar</span> <span class="o">=</span> <span class="n">prog_str</span><span class="p">[</span><span class="n">curpos</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">curpos</span>
+
+
+<span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">prog_str</span><span class="p">,</span> <span class="n">var_names</span><span class="p">,</span> <span class="n">prog</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">prog</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">prog</span> <span class="o">=</span> <span class="n">Prog</span><span class="p">(</span><span class="n">var_names</span><span class="p">)</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">token_start</span><span class="p">(</span><span class="n">prog_str</span><span class="p">,</span> <span class="n">prog</span><span class="o">.</span><span class="n">parse_pos</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">token_end</span><span class="p">(</span><span class="n">prog_str</span><span class="p">,</span> <span class="n">start</span><span class="p">)</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="n">prog_str</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="p">]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">create_val</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">token</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;$&#39;</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">variable_indices</span><span class="p">[</span><span class="n">token</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">create_var</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fun</span> <span class="o">=</span> <span class="n">str2fun</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">create_fun</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+            <span class="n">prog</span><span class="o">.</span><span class="n">parse_pos</span> <span class="o">=</span> <span class="n">end</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">arity</span><span class="p">()):</span>
+                <span class="n">parse</span><span class="p">(</span><span class="n">prog_str</span><span class="p">,</span> <span class="nb">vars</span><span class="p">,</span> <span class="n">prog</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+                <span class="n">param</span> <span class="o">=</span> <span class="n">prog</span><span class="o">.</span><span class="n">root</span>
+                <span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+
+            <span class="n">prog</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">node</span>
+            <span class="k">return</span> <span class="n">prog</span>
+
+    <span class="n">prog</span><span class="o">.</span><span class="n">parse_pos</span> <span class="o">=</span> <span class="n">end</span>
+
+    <span class="n">prog</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">node</span>
+    <span class="k">return</span> <span class="n">prog</span>
+
+
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">var_names</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+
+    <span class="n">prog_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;#&#39;</span><span class="p">:</span>
+            <span class="n">prog_str</span> <span class="o">+=</span> <span class="n">line</span>
+
+    <span class="k">return</span> <span class="n">parse</span><span class="p">(</span><span class="n">prog_str</span><span class="p">,</span> <span class="n">var_names</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">create_random</span><span class="p">(</span><span class="n">var_names</span><span class="p">,</span> <span class="n">prob_term</span><span class="o">=.</span><span class="mi">4</span><span class="p">,</span> <span class="n">depth_low_limit</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">depth_high_limit</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">grow</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">grow</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">grow</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">max_depth</span> <span class="o">=</span> <span class="n">depth_low_limit</span> <span class="o">+</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">depth_high_limit</span> <span class="o">-</span> <span class="n">depth_low_limit</span><span class="p">)</span>
+    <span class="n">prog</span> <span class="o">=</span> <span class="n">Prog</span><span class="p">(</span><span class="n">var_names</span><span class="p">)</span>
+    <span class="n">prog</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">create_random_node_tree</span><span class="p">(</span><span class="n">prog</span><span class="p">,</span> <span class="n">prob_term</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">grow</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">prog</span>
+
+
+<div class="viewcode-block" id="Prog"><a class="viewcode-back" href="../../api.html#synthetic.prog.Prog">[docs]</a><span class="k">class</span> <span class="nc">Prog</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var_names</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">varcount</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">var_names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vars</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">varcount</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">var_names</span> <span class="o">=</span> <span class="n">var_names</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variable_indices</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">varcount</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">variable_indices</span><span class="p">[</span><span class="n">var_names</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_pos</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cprog</span> <span class="o">=</span> <span class="n">Prog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var_names</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cprog</span><span class="o">.</span><span class="n">root</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cprog</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">cprog</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cprog</span>
+
+    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">curnode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+        <span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="mf">0.</span>
+
+        <span class="k">while</span> <span class="n">curnode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span> <span class="o">&lt;</span> <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span> <span class="o">==</span> <span class="n">curnode</span><span class="o">.</span><span class="n">condpos</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">EQ</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">==</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span><span class="p">:</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">3</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">4</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">GRT</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">&gt;</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span><span class="p">:</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">3</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">4</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">LRT</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">&lt;</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span><span class="p">:</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">3</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">4</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">ZER</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">2</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">3</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">AFF</span><span class="p">:</span>
+                        <span class="n">g</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span><span class="p">)</span>
+                        <span class="n">id1</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="n">id2</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="n">g</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">((</span><span class="n">id1</span> <span class="o">%</span> <span class="n">g</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">id2</span> <span class="o">%</span> <span class="n">g</span><span class="p">)):</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">2</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">=</span> <span class="mi">3</span>
+                            <span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="c1"># update branching info</span>
+                    <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">branching</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">curnode</span><span class="o">.</span><span class="n">branching</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">branching</span> <span class="o">!=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span><span class="p">:</span>
+                        <span class="n">curnode</span><span class="o">.</span><span class="n">branching</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="n">curnode</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span><span class="p">]</span>
+                <span class="n">curnode</span><span class="o">.</span><span class="n">curpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">FUN</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">SUM</span><span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">+</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">SUB</span><span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">-</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">MUL</span><span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">*</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">DIV</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">val</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">/</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">MIN</span><span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span>
+                        <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">&lt;</span> <span class="n">val</span><span class="p">:</span>
+                            <span class="n">val</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">MAX</span><span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span>
+                        <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">&gt;</span> <span class="n">val</span><span class="p">:</span>
+                            <span class="n">val</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">EXP</span><span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">LOG</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">val</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">val</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">ABS</span><span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="o">==</span> <span class="n">Fun</span><span class="o">.</span><span class="n">POW</span><span class="p">:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span><span class="p">,</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">fun</span> <span class="ow">in</span> <span class="p">{</span><span class="n">Fun</span><span class="o">.</span><span class="n">EQ</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">GRT</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">LRT</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">ZER</span><span class="p">,</span> <span class="n">Fun</span><span class="o">.</span><span class="n">AFF</span><span class="p">}:</span>
+                        <span class="n">val</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">curnode</span><span class="o">.</span><span class="n">stoppos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">curval</span>
+                <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">VAR</span><span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vars</span><span class="p">[</span><span class="n">curnode</span><span class="o">.</span><span class="n">var</span><span class="p">]</span>
+                <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">NodeType</span><span class="o">.</span><span class="n">VAL</span><span class="p">:</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">val</span>
+
+                <span class="c1"># update dynamic status</span>
+                <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">dyn_status</span> <span class="o">==</span> <span class="n">NodeDynStatus</span><span class="o">.</span><span class="n">UNUSED</span><span class="p">:</span>
+                    <span class="n">curnode</span><span class="o">.</span><span class="n">dyn_status</span> <span class="o">=</span> <span class="n">NodeDynStatus</span><span class="o">.</span><span class="n">CONSTANT</span>
+                <span class="k">elif</span> <span class="n">curnode</span><span class="o">.</span><span class="n">dyn_status</span> <span class="o">==</span> <span class="n">NodeDynStatus</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">curnode</span><span class="o">.</span><span class="n">curval</span> <span class="o">!=</span> <span class="n">val</span><span class="p">:</span>
+                        <span class="n">curnode</span><span class="o">.</span><span class="n">dyn_status</span> <span class="o">=</span> <span class="n">NodeDynStatus</span><span class="o">.</span><span class="n">DYNAMIC</span>
+
+                <span class="c1"># update and move to next node</span>
+                <span class="n">curnode</span><span class="o">.</span><span class="n">curval</span> <span class="o">=</span> <span class="n">val</span>
+                <span class="n">curnode</span> <span class="o">=</span> <span class="n">curnode</span><span class="o">.</span><span class="n">parent</span>
+
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">node_by_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">node_by_pos</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">recombine</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent2</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">parent_a</span> <span class="o">=</span> <span class="n">parent2</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+            <span class="n">parent_b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">parent_b</span> <span class="o">=</span> <span class="n">parent2</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+            <span class="n">parent_a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+        <span class="n">child</span> <span class="o">=</span> <span class="n">parent_a</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="n">size1</span> <span class="o">=</span> <span class="n">parent_a</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="n">size2</span> <span class="o">=</span> <span class="n">parent_b</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="n">pos1</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">size1</span><span class="p">)</span>
+        <span class="n">pos2</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="n">size2</span><span class="p">)</span>
+
+        <span class="n">point1</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">node_by_pos</span><span class="p">(</span><span class="n">pos1</span><span class="p">)</span>
+        <span class="n">point2</span> <span class="o">=</span> <span class="n">parent_b</span><span class="o">.</span><span class="n">node_by_pos</span><span class="p">(</span><span class="n">pos2</span><span class="p">)</span>
+        <span class="n">point1parent</span> <span class="o">=</span> <span class="n">point1</span><span class="o">.</span><span class="n">parent</span>
+
+        <span class="n">parampos</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># remove sub-tree from child</span>
+        <span class="c1"># find point1 position in it&#39;s parent&#39;s param array</span>
+        <span class="k">if</span> <span class="n">point1parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">point1parent</span><span class="o">.</span><span class="n">arity</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">point1parent</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">point1</span><span class="p">:</span>
+                    <span class="n">parampos</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="c1"># copy sub-tree from parent 2 to parent 1</span>
+        <span class="n">point2clone</span> <span class="o">=</span> <span class="n">point2</span><span class="o">.</span><span class="n">clone</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">point1parent</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">point1parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">point1parent</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">parampos</span><span class="p">]</span> <span class="o">=</span> <span class="n">point2clone</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">point2clone</span>
+
+        <span class="k">return</span> <span class="n">child</span>
+
+    <span class="k">def</span> <span class="nf">clear_branching</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clear_branching</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">branching_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prg</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="o">.</span><span class="n">branching_distance</span><span class="p">(</span><span class="n">prg</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">compare_branching</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prg</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">branching_distance</span><span class="p">(</span><span class="n">prg</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">dyn_pruning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">param_pos</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># nodes with constant value</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">dyn_status</span> <span class="o">==</span> <span class="n">NodeDynStatus</span><span class="o">.</span><span class="n">CONSTANT</span><span class="p">:</span>
+                <span class="n">parent</span><span class="p">[</span><span class="n">param_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_val</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">curval</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+
+            <span class="c1"># conditions with constant branching</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">condpos</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">branch1</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">condpos</span><span class="p">]</span>
+                <span class="n">branch2</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">condpos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+                <span class="n">branch</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+                <span class="k">if</span> <span class="n">branch1</span><span class="o">.</span><span class="n">dyn_status</span> <span class="o">==</span> <span class="n">NodeDynStatus</span><span class="o">.</span><span class="n">UNUSED</span><span class="p">:</span>
+                    <span class="n">branch</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">condpos</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">elif</span> <span class="n">branch2</span><span class="o">.</span><span class="n">dyn_status</span> <span class="o">==</span> <span class="n">NodeDynStatus</span><span class="o">.</span><span class="n">UNUSED</span><span class="p">:</span>
+                    <span class="n">branch</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">condpos</span>
+
+                <span class="k">if</span> <span class="n">branch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">branch</span><span class="p">]</span><span class="o">.</span><span class="n">branching</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">branching</span>
+                    <span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">branch</span><span class="p">]</span><span class="o">.</span><span class="n">dyn_status</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">dyn_status</span>
+                    <span class="n">parent</span><span class="p">[</span><span class="n">param_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">branch</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dyn_pruning</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">node</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">build_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">indent</span><span class="p">,</span> <span class="n">cur_str</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">cur_str</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">indent</span>
+
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">arity</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">out</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">(&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="n">indent</span><span class="p">)</span>
+            <span class="n">ind</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">params</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">out</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_str</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">ind</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">node</span><span class="o">.</span><span class="n">arity</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="n">out</span>
+
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #000000;
+    }
+  </style>
+
+
+</body>
+</html>

@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Command-line interface &mdash; Synthetic 0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API reference" href="api.html" />
+    <link rel="prev" title="Tutorials" href="tutorials.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/synthetic.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generator_language.html">Generator Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials.html">Tutorials</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Command-line interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#compare">compare</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#const">const</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#eval-distance">eval_distance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evo">evo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fit">fit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gen">gen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prune">prune</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rand-gen">rand_gen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Synthetic</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Command-line interface</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/ai4socialscience/graphbrain" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="command-line-interface">
+<h1>Command-line interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h1>
+<p>Synthetic provides a command-line interface that can be used to execute a variety of tasks.</p>
+<p>Here’s an overview of the interface:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">synth</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">inet</span> <span class="n">INET</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">inet2</span> <span class="n">INET2</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">onet</span> <span class="n">ONET</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="nb">dir</span> <span class="n">DIR</span><span class="p">]</span>
+          <span class="p">[</span><span class="o">--</span><span class="n">odir</span> <span class="n">ODIR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">prg</span> <span class="n">PRG</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">prg2</span> <span class="n">PRG2</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">oprg</span> <span class="n">OPRG</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">out</span> <span class="n">OUT</span><span class="p">]</span>
+          <span class="p">[</span><span class="o">--</span><span class="n">gens</span> <span class="n">GENS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">bins</span> <span class="n">BINS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">runs</span> <span class="n">RUNS</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">undir</span><span class="p">]</span>
+          <span class="p">[</span><span class="o">--</span><span class="n">tolerance</span> <span class="n">TOLERANCE</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">nodes</span> <span class="n">NODES</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">edges</span> <span class="n">EDGES</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">mean</span><span class="p">]</span>
+          <span class="p">[</span><span class="o">--</span><span class="n">gentype</span> <span class="n">GENTYPE</span><span class="p">]</span>
+          <span class="n">command</span>
+
+<span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="n">command</span>               <span class="n">command</span> <span class="n">to</span> <span class="n">execute</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">--</span><span class="n">inet</span> <span class="n">INET</span>           <span class="nb">input</span> <span class="n">net</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">inet2</span> <span class="n">INET2</span>         <span class="n">second</span> <span class="nb">input</span> <span class="n">net</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">onet</span> <span class="n">ONET</span>           <span class="n">output</span> <span class="n">net</span> <span class="n">file</span>
+  <span class="o">--</span><span class="nb">dir</span> <span class="n">DIR</span>             <span class="n">directory</span>
+  <span class="o">--</span><span class="n">odir</span> <span class="n">ODIR</span>           <span class="n">output</span> <span class="n">directory</span>
+  <span class="o">--</span><span class="n">prg</span> <span class="n">PRG</span>             <span class="n">generator</span> <span class="n">program</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">prg2</span> <span class="n">PRG2</span>           <span class="n">second</span> <span class="n">generator</span> <span class="n">program</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">oprg</span> <span class="n">OPRG</span>           <span class="n">generator</span> <span class="n">output</span> <span class="n">program</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">out</span> <span class="n">OUT</span>             <span class="n">output</span> <span class="n">file</span>
+  <span class="o">--</span><span class="n">gens</span> <span class="n">GENS</span>           <span class="n">number</span> <span class="n">of</span> <span class="n">generations</span>
+  <span class="o">--</span><span class="n">bins</span> <span class="n">BINS</span>           <span class="n">number</span> <span class="n">of</span> <span class="n">distribution</span> <span class="n">bins</span>
+  <span class="o">--</span><span class="n">runs</span> <span class="n">RUNS</span>           <span class="n">number</span> <span class="n">of</span> <span class="n">generator</span> <span class="n">runs</span>
+  <span class="o">--</span><span class="n">undir</span>               <span class="n">undirected</span> <span class="n">network</span>
+  <span class="o">--</span><span class="n">tolerance</span> <span class="n">TOLERANCE</span>
+                     <span class="n">antibloat</span> <span class="n">tolerance</span>
+  <span class="o">--</span><span class="n">nodes</span> <span class="n">NODES</span>         <span class="n">number</span> <span class="n">of</span> <span class="n">nodes</span>
+  <span class="o">--</span><span class="n">edges</span> <span class="n">EDGES</span>         <span class="n">number</span> <span class="n">of</span> <span class="n">edges</span>
+  <span class="o">--</span><span class="n">mean</span>                <span class="n">compute</span> <span class="n">mean</span>
+  <span class="o">--</span><span class="n">gentype</span> <span class="n">GENTYPE</span>     <span class="n">generator</span> <span class="nb">type</span>
+</pre></div>
+</div>
+<p>The only obligatory argument, command, is used to specify the task to perform. Each command uses a subset of the
+optional arguments. Presented below are the details for each command.</p>
+<div class="section" id="compare">
+<h2>compare<a class="headerlink" href="#compare" title="Permalink to this headline">¶</a></h2>
+<p>Compares two networks.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="n">compare</span> <span class="o">--</span><span class="n">inet</span> <span class="o">&lt;</span><span class="n">network1</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">inet2</span> <span class="o">&lt;</span><span class="n">network2</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Optional parameters: <code class="docutils literal notranslate"><span class="pre">--undir</span></code>, <code class="docutils literal notranslate"><span class="pre">--bins</span></code></p>
+</div>
+<div class="section" id="const">
+<h2>const<a class="headerlink" href="#const" title="Permalink to this headline">¶</a></h2>
+<p>Check if generator weight is constant (random network generator).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="n">const</span> <span class="o">--</span><span class="n">prg</span> <span class="o">&lt;</span><span class="n">generator</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Optional parameters: <code class="docutils literal notranslate"><span class="pre">--undir</span></code>, <code class="docutils literal notranslate"><span class="pre">--sr</span></code>, <code class="docutils literal notranslate"><span class="pre">--nodes</span></code>, <code class="docutils literal notranslate"><span class="pre">--edges</span></code></p>
+</div>
+<div class="section" id="eval-distance">
+<h2>eval_distance<a class="headerlink" href="#eval-distance" title="Permalink to this headline">¶</a></h2>
+<p>Computes matrix of behavioral distances between a set of generators.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="n">dists</span> <span class="o">--</span><span class="n">inet</span> <span class="o">&lt;</span><span class="n">network</span><span class="o">&gt;</span> <span class="o">--</span><span class="nb">dir</span> <span class="o">&lt;</span><span class="nb">dir</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">out</span> <span class="o">&lt;</span><span class="n">csv_file</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Optional parameters: <code class="docutils literal notranslate"><span class="pre">--undir</span></code>, <code class="docutils literal notranslate"><span class="pre">--sr</span></code></p>
+</div>
+<div class="section" id="evo">
+<h2>evo<a class="headerlink" href="#evo" title="Permalink to this headline">¶</a></h2>
+<p>Evolve network generator.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="n">evo</span> <span class="o">--</span><span class="n">inet</span> <span class="o">&lt;</span><span class="n">network</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">odir</span> <span class="o">&lt;</span><span class="nb">dir</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Optional parameters: <code class="docutils literal notranslate"><span class="pre">--undir</span></code>, <code class="docutils literal notranslate"><span class="pre">--gens</span></code>, <code class="docutils literal notranslate"><span class="pre">--sr</span></code>, <code class="docutils literal notranslate"><span class="pre">--bins</span></code>, <code class="docutils literal notranslate"><span class="pre">--tolerance</span></code></p>
+</div>
+<div class="section" id="fit">
+<h2>fit<a class="headerlink" href="#fit" title="Permalink to this headline">¶</a></h2>
+<p>Computes mean fitness for several runs of a generator.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="n">fit</span> <span class="o">--</span><span class="n">inet</span> <span class="o">&lt;</span><span class="n">network</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">prg</span> <span class="o">&lt;</span><span class="n">generator</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Optional parameters: <code class="docutils literal notranslate"><span class="pre">--undir</span></code>, <code class="docutils literal notranslate"><span class="pre">--sr</span></code>, <code class="docutils literal notranslate"><span class="pre">--bins</span></code>, <code class="docutils literal notranslate"><span class="pre">--runs</span></code></p>
+</div>
+<div class="section" id="gen">
+<h2>gen<a class="headerlink" href="#gen" title="Permalink to this headline">¶</a></h2>
+<p>Generates network.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="n">gen</span> <span class="o">--</span><span class="n">prg</span> <span class="o">&lt;</span><span class="n">generator</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">onet</span> <span class="o">&lt;</span><span class="n">network</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Optional parameters: <code class="docutils literal notranslate"><span class="pre">--undir</span></code>, <code class="docutils literal notranslate"><span class="pre">--nodes</span></code>, <code class="docutils literal notranslate"><span class="pre">--edges</span></code>, <code class="docutils literal notranslate"><span class="pre">--sr</span></code></p>
+</div>
+<div class="section" id="prune">
+<h2>prune<a class="headerlink" href="#prune" title="Permalink to this headline">¶</a></h2>
+<p>Simplify generator program.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="n">prune</span> <span class="o">--</span><span class="n">inet</span> <span class="o">&lt;</span><span class="n">network</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">prg</span> <span class="o">&lt;</span><span class="n">in_generator</span><span class="o">&gt;</span> <span class="o">--</span><span class="n">oprg</span> <span class="o">&lt;</span><span class="n">out_generator</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Optional parameters: <code class="docutils literal notranslate"><span class="pre">--undir</span></code>, <code class="docutils literal notranslate"><span class="pre">--sr</span></code></p>
+</div>
+<div class="section" id="rand-gen">
+<h2>rand_gen<a class="headerlink" href="#rand-gen" title="Permalink to this headline">¶</a></h2>
+<p>Create a random generator program.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">synth</span> <span class="n">randgen</span> <span class="o">--</span><span class="n">oprg</span> <span class="o">&lt;</span><span class="n">out_generator</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Optional parameters: <code class="docutils literal notranslate"><span class="pre">-undir</span></code></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.html" class="btn btn-neutral float-right" title="API reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorials.html" class="btn btn-neutral" title="Tutorials" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 
+
+    </p>
+  </div>
+
+<p>Acknowledgements:</p>
+
+<table>
+    <tr>
+        <td style="width:45%;" align="center">
+            <a href="http://cmb.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cmb-dh-compact.png" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="http://www.cnrs.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-cnrs.jpg" />
+            </a>
+        </td>
+        <td style="width:17%;" align="center">
+            <a href="https://www.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/logo-ehess2.png" />
+            </a>
+        </td>
+        <td style="width:21%;" align="center">
+            <a href="http://cams.ehess.fr" style="box-shadow:0 0 0 0; margin-right:30px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/CAMS_nveau_logo.jpg" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <td style="width:35%;" align="center">
+            <a href="http://algopol.huma-num.fr/" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algopol.png" />
+            </a>
+        </td>
+        <td style="width:29%;" align="center">
+            <a href="http://algodiv.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px;display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/algodiv.png" />
+            </a>
+        </td>
+        <td style="width:35%;" align="center">
+            <a href="http://www.huma-num.fr" style="box-shadow:0 0 0 0; margin-right:30px; margin-top: 15px; margin-bottom:15px; display: inline-block;">
+                <img style="display:block;" width="100%" height="100%" src="_static/huma-num.png" />
+            </a>
+        </td>
+    </tr>
+</table>
+
+
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #000000;
+    }
+  </style>
+
+
+</body>
+</html>
