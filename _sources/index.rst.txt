@@ -18,12 +18,12 @@ Menezes, T. and Roth, C., Symbolic regression of generative network models, Scie
    :maxdepth: 2
    :caption: Contents:
 
-   install.rst
    generator_language.rst
    tutorials.rst
    cli.rst
    api.rst
    authors.rst
+   install_from_sources.rst
 
 
 Indices and tables

@@ -1,4 +1,4 @@
-Generator Language
+Generator language
 ==================
 
 Synthetic generators are expressed in a very simple Lisp-like language. In short, it uses S-Expressions
