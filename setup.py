@@ -36,6 +36,12 @@ setup(
         'termcolor',
         'jupyter'
     ],
+    extras_require={
+        'dev': [
+            'sphinx',
+            'sphinx_rtd_theme'
+        ]
+    },
     entry_points='''
         [console_scripts]
         synth=synthetic.cli:cli
