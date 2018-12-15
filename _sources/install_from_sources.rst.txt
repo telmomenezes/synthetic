@@ -1,6 +1,6 @@
-=======
-Install
-=======
+====================
+Install from sources
+====================
 
 For now, these instructions are just for macOS and Linux. Everything is done on the terminal.
 It should be possible to install Synthetic on a Windows machine. If you are a Windows user and would like to help,
