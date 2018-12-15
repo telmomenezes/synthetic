@@ -1,7 +1,0 @@
----
-layout: default
-title: Download and Install
----
-
-
-Soon...
