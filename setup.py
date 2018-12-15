@@ -13,7 +13,7 @@ setup(
     description='Symbolic generators for complex networks',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/telmomenezes/synthetic',
+    url='http://ai4socialscience.github.io/synthetic/',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Programming Language :: Python :: 3',
