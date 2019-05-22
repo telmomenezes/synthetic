@@ -72,7 +72,8 @@ def fun_cond_pos(func):
 def fun_arity(func):
     if func in {Fun.EXP, Fun.LOG, Fun.ABS}:
         return 1
-    elif func in {Fun.SUM, Fun.SUB, Fun.MUL, Fun.DIV, Fun.MIN, Fun.MAX, Fun.POW}:
+    elif func in {Fun.SUM, Fun.SUB, Fun.MUL, Fun.DIV, Fun.MIN, Fun.MAX,
+                  Fun.POW}:
         return 2
     elif func in {Fun.ZER, Fun.AFF}:
         return 3
@@ -127,7 +128,9 @@ def create_random_node_tree(prog, prob_term, parent, min_depth, grow, depth):
         fun = random.randrange(len(Fun))
         node = create_fun(fun, prog, parent)
         for i in range(node.arity()):
-            node.params.append(create_random_node_tree(prog, prob_term, node, min_depth, grow, depth + 1))
+            node.params.append(create_random_node_tree(prog, prob_term, node,
+                                                       min_depth, grow,
+                                                       depth + 1))
     else:
         if random.randrange(2) == 0 and prog.varcount > 0:
             var = random.randint(prog.varcount)
@@ -294,12 +297,15 @@ def load(var_names, file_path):
     return parse(prog_str, var_names)
 
 
-def create_random(var_names, prob_term=.4, depth_low_limit=2, depth_high_limit=5, grow=None):
+def create_random(var_names, prob_term=.4, depth_low_limit=2,
+                  depth_high_limit=5, grow=None):
     if grow is None:
         grow = random.randrange(2) == 0
-    max_depth = depth_low_limit + random.randrange(depth_high_limit - depth_low_limit)
+    max_depth = (depth_low_limit +
+                 random.randrange(depth_high_limit - depth_low_limit))
     prog = Prog(var_names)
-    prog.root = create_random_node_tree(prog, prob_term, None, max_depth, grow, 0)
+    prog.root = create_random_node_tree(prog, prob_term, None, max_depth, grow,
+                                        0)
     return prog
 
 
@@ -330,7 +336,8 @@ class Prog(object):
             if curnode.curpos < curnode.stoppos:
                 if curnode.curpos == curnode.condpos:
                     if curnode.fun == Fun.EQ:
-                        if curnode.params[0].curval == curnode.params[1].curval:
+                        if (curnode.params[0].curval ==
+                                curnode.params[1].curval):
                             curnode.stoppos = 3
                         else:
                             curnode.stoppos = 4
@@ -374,16 +381,20 @@ class Prog(object):
             else:
                 if curnode.type == NodeType.FUN:
                     if curnode.fun == Fun.SUM:
-                        val = curnode.params[0].curval + curnode.params[1].curval
+                        val = (curnode.params[0].curval +
+                               curnode.params[1].curval)
                     elif curnode.fun == Fun.SUB:
-                        val = curnode.params[0].curval - curnode.params[1].curval
+                        val = (curnode.params[0].curval -
+                               curnode.params[1].curval)
                     elif curnode.fun == Fun.MUL:
-                        val = curnode.params[0].curval * curnode.params[1].curval
+                        val = (curnode.params[0].curval *
+                               curnode.params[1].curval)
                     elif curnode.fun == Fun.DIV:
                         if curnode.params[1].curval == 0:
                             val = 0
                         else:
-                            val = curnode.params[0].curval / curnode.params[1].curval
+                            val = (curnode.params[0].curval /
+                                   curnode.params[1].curval)
                     elif curnode.fun == Fun.MIN:
                         val = curnode.params[0].curval
                         if curnode.params[1].curval < val:
@@ -402,8 +413,10 @@ class Prog(object):
                     elif curnode.fun == Fun.ABS:
                         val = abs(curnode.params[0].curval)
                     elif curnode.fun == Fun.POW:
-                        val = math.pow(curnode.params[0].curval, curnode.params[1].curval)
-                    elif curnode.fun in {Fun.EQ, Fun.GRT, Fun.LRT, Fun.ZER, Fun.AFF}:
+                        val = math.pow(curnode.params[0].curval,
+                                       curnode.params[1].curval)
+                    elif curnode.fun in {Fun.EQ, Fun.GRT, Fun.LRT, Fun.ZER,
+                                         Fun.AFF}:
                         val = curnode.params[curnode.stoppos - 1].curval
                 elif curnode.type == NodeType.VAR:
                     val = self.vars[curnode.var]

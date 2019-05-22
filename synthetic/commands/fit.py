@@ -9,9 +9,10 @@ class Fit(Command):
     def __init__(self, cli_name):
         Command.__init__(self, cli_name)
         self.name = 'fit'
-        self.description = 'compute mean fitness for several runs of a generator'
+        self.description = 'mean fitness of several runs of a generator'
         self.mandatory_args = ['inet', 'prg']
-        self.optional_args = ['undir', 'sr', 'bins', 'maxdist', 'runs', 'gen_type']
+        self.optional_args = ['undir', 'sr', 'bins', 'maxdist', 'runs',
+                              'gen_type']
 
     def run(self, args):
         self.error_msg = None
@@ -36,8 +37,9 @@ class Fit(Command):
 
         # create fitness calculator
         # TODO: norm samples configurable
-        fitness = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist,
-                                 norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES)
+        fitness = DistancesToNet(net, get_stat_dist_types(args), bins,
+                                 max_dist, norm=Norm.ER_MEAN_RATIO,
+                                 norm_samples=DEFAULT_NORM_SAMPLES)
 
         fit_maxes = []
         fit_means = []
@@ -51,7 +53,8 @@ class Fit(Command):
             fit_maxes.append(fit_max)
             fit_means.append(fit_mean)
 
-            print('fitness (max): %s; fitness (mean): %s' % (fit_max, fit_mean))
+            print('fitness (max): {}; fitness (mean): {}'.format(fit_max,
+                                                                 fit_mean))
             print(distances)
 
         mean_fit_max = sum(fit_maxes) / runs
@@ -61,14 +64,18 @@ class Fit(Command):
         mean_fit_mean = sum(fit_means) / runs
         max_fit_mean = max(fit_means)
         min_fit_mean = min(fit_means)
-        
+
         print('\n\n')
 
-        print('mean fitness (max): %s; min fitness (max): %s; max fitness (max): %s'
-              % (mean_fit_max, min_fit_max, max_fit_max))
-        print('mean fitness (mean): %s; min fitness (mean): %s; max fitness (mean): %s'
-              % (mean_fit_mean, min_fit_mean, max_fit_mean))
-        
+        print('mean fitness (max): {}; '
+              'min fitness (max): {}; '
+              'max fitness (max): {}'.format(mean_fit_max, min_fit_max,
+                                             max_fit_max))
+        print('mean fitness (mean): {}; '
+              'min fitness (mean): {}; '
+              'max fitness (mean): {}'.format(mean_fit_mean, min_fit_mean,
+                                              max_fit_mean))
+
         print('done.')
-        
+
         return True

@@ -113,12 +113,14 @@ class TestProg(unittest.TestCase):
         self.assertEqual(prog.eval(), 1.)
 
     def test_prog_complex3(self):
-        prog = parse('(== (> $a $b 0 1) (- 6 (* 2 $c)) (* 5 (/ 1 2) 0)', ['a', 'b', 'c'])
+        prog = parse('(== (> $a $b 0 1) (- 6 (* 2 $c)) (* 5 (/ 1 2) 0)',
+                     ['a', 'b', 'c'])
         prog.vars[0] = 2
         prog.vars[1] = -11
         prog.vars[2] = 3
         self.assertEqual(str(prog),
-                         '(== \n (> $a $b 0.0 1.0) \n (- 6.0 \n  (* 2.0 $c)) \n (* 5.0 \n  (/ 1.0 2.0)) 0.0)')
+                         '(== \n (> $a $b 0.0 1.0) \n (- 6.0 \n  (* 2.0 $c)) '
+                         '\n (* 5.0 \n  (/ 1.0 2.0)) 0.0)')
         self.assertEqual(prog.eval(), 2.5)
 
 

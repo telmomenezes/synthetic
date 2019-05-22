@@ -30,14 +30,16 @@ class Compare(Command):
 
         print('first network: %s' % netfile1)
         print(net1)
-        stats1 = StatsSet(net1, stat_dist_types, bins, max_dist, ref_stats=None)
+        stats1 = StatsSet(net1, stat_dist_types, bins, max_dist,
+                          ref_stats=None)
         print(stats1)
 
         print('\n\n')
 
         print('second network: %s' % netfile2)
         print(net2)
-        stats2 = StatsSet(net1, stat_dist_types, bins, max_dist, ref_stats=None)
+        stats2 = StatsSet(net1, stat_dist_types, bins, max_dist,
+                          ref_stats=None)
         print(stats2)
 
         return True

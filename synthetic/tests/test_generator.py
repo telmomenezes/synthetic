@@ -30,12 +30,15 @@ class TestGenerator(unittest.TestCase):
         self.assertEqual(len(net.vs), 100)
 
     def test_gen_weird_dir(self):
-        gen = generator_from_prog_str('(AFF $dist (/ $orig_in_deg $orig_out_deg) (MIN $orig $targ))', True)
+        gen = generator_from_prog_str(
+            '(AFF $dist (/ $orig_in_deg $orig_out_deg) (MIN $orig $targ))',
+            True)
         net = gen.run(100, 10, DEFAULT_SAMPLE_RATE)
         self.assertEqual(len(net.vs), 100)
 
     def test_gen_weird_undir(self):
-        gen = generator_from_prog_str('(AFF $dist (/ $orig_deg $orig_deg) (MIN $orig $targ))', False)
+        gen = generator_from_prog_str(
+            '(AFF $dist (/ $orig_deg $orig_deg) (MIN $orig $targ))', False)
         net = gen.run(100, 10, DEFAULT_SAMPLE_RATE)
         self.assertEqual(len(net.vs), 100)
 

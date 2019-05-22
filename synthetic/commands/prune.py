@@ -23,8 +23,8 @@ class Prune(Command):
         edges = arg_with_default(args, 'edges', DEFAULT_EDGES)
         gentype = arg_with_default(args, 'gentype', DEFAULT_GEN_TYPE)
 
-        print('nodes: %s' % nodes)
-        print('edges: %s' % edges)
+        print('nodes: {}'.format(nodes))
+        print('edges: {}'.format(edges))
 
         # load and run generator
         gen = load_generator(prog, directed, gentype)

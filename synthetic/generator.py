@@ -53,17 +53,20 @@ def genvar2str(gvar):
 
 def create_exo_generator(directed, init_random=False):
     if directed:
-        genvars = (GenVar.ORIGID, GenVar.TARGID, GenVar.ORIGINDEG, GenVar.ORIGOUTDEG,
-                   GenVar.TARGINDEG, GenVar.TARGOUTDEG, GenVar.DIST, GenVar.DIRDIST, GenVar.REVDIST)
+        genvars = (GenVar.ORIGID, GenVar.TARGID, GenVar.ORIGINDEG,
+                   GenVar.ORIGOUTDEG, GenVar.TARGINDEG, GenVar.TARGOUTDEG,
+                   GenVar.DIST, GenVar.DIRDIST, GenVar.REVDIST)
     else:
-        genvars = (GenVar.ORIGID, GenVar.TARGID, GenVar.ORIGDEG, GenVar.TARGDEG, GenVar.DIST)
+        genvars = (GenVar.ORIGID, GenVar.TARGID, GenVar.ORIGDEG,
+                   GenVar.TARGDEG, GenVar.DIST)
     return Generator(genvars, directed, init_random=init_random)
 
 
 def create_endo_generator(directed, init_random=False):
     if directed:
-        genvars = (GenVar.ORIGINDEG, GenVar.ORIGOUTDEG, GenVar.TARGINDEG, GenVar.TARGOUTDEG,
-                   GenVar.DIST, GenVar.DIRDIST, GenVar.REVDIST)
+        genvars = (GenVar.ORIGINDEG, GenVar.ORIGOUTDEG, GenVar.TARGINDEG,
+                   GenVar.TARGOUTDEG, GenVar.DIST, GenVar.DIRDIST,
+                   GenVar.REVDIST)
     else:
         genvars = (GenVar.ORIGDEG, GenVar.TARGDEG, GenVar.DIST)
     return Generator(genvars, directed, init_random=init_random)
@@ -126,7 +129,8 @@ class Generator(object):
         self.prog = prog.load(self.var_names, file_path)
 
     def distance(self, orig, targ, mode, max_dist=DEFAULT_MAX_DIST):
-        # to supress RuntimeWarning: Couldn't reach some vertices at structural_properties.c:740
+        # to supress RuntimeWarning: Couldn't reach some vertices at
+        # structural_properties.c:740
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
             sp = self.net.get_shortest_paths(orig, to=targ, mode=mode)[0]

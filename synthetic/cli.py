@@ -48,13 +48,17 @@ def cli():
     parser.add_argument('--dir', type=str, help='directory')
     parser.add_argument('--odir', type=str, help='output directory')
     parser.add_argument('--prg', type=str, help='generator program file')
-    parser.add_argument('--prg2', type=str, help='second generator program file')
-    parser.add_argument('--oprg', type=str, help='generator output program file')
+    parser.add_argument('--prg2', type=str,
+                        help='second generator program file')
+    parser.add_argument('--oprg', type=str,
+                        help='generator output program file')
     parser.add_argument('--out', type=str, help='output file')
     parser.add_argument('--gens', type=int, help='number of generations')
-    parser.add_argument('--bins', type=int, help='number of distribution bins', default=100)
+    parser.add_argument('--bins', type=int, help='number of distribution bins',
+                        default=100)
     parser.add_argument('--runs', type=int, help='number of generator runs')
-    parser.add_argument('--undir', help='undirected network', action='store_true')
+    parser.add_argument('--undir', help='undirected network',
+                        action='store_true')
     parser.add_argument('--tolerance', type=float, help='antibloat tolerance')
     parser.add_argument('--nodes', type=int, help='number of nodes')
     parser.add_argument('--edges', type=int, help='number of edges')

@@ -12,7 +12,8 @@ class Evolve(Command):
         self.name = 'evo'
         self.description = 'evolve network generator'
         self.mandatory_args = ['inet', 'odir']
-        self.optional_args = ['undir', 'gens', 'sr', 'bins', 'maxdist', 'tolerance']
+        self.optional_args = ['undir', 'gens', 'sr', 'bins', 'maxdist',
+                              'tolerance']
 
     def run(self, args):
         self.error_msg = None
@@ -38,22 +39,24 @@ class Evolve(Command):
 
         # create fitness calculator
         # TODO: norm samples configurable
-        dists2net = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist,
-                                   norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES)
+        dists2net = DistancesToNet(net, get_stat_dist_types(args), bins,
+                                   max_dist, norm=Norm.ER_MEAN_RATIO,
+                                   norm_samples=DEFAULT_NORM_SAMPLES)
 
         # create evolutionary search
-        evo = Evo(net, dists2net, generations, tolerance, base_generator, outdir, sr)
+        evo = Evo(net, dists2net, generations, tolerance, base_generator,
+                  outdir, sr)
 
         # some reports to screen
         print('target net: %s' + netfile)
         print(evo.info_string())
         print(base_generator)
-        
+
         # write experiment params to file
         with open('%s/params.txt' % outdir, 'w') as text_file:
             text_file.write(evo.info_string())
 
         # run search
         evo.run()
-        
+
         return True

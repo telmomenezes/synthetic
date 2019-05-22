@@ -24,7 +24,9 @@ class TestDistances(unittest.TestCase):
         g5 = random_graph_medium(directed=False)
         g6 = random_graph_dense(directed=False)
 
-        d2n_1 = create_distances_to_net(g1, bins=10, max_dist=10, norm=Norm.ER_MEAN_RATIO, norm_samples=30)
+        d2n_1 = create_distances_to_net(g1, bins=10, max_dist=10,
+                                        norm=Norm.ER_MEAN_RATIO,
+                                        norm_samples=30)
         dists_1_2 = d2n_1.compute(g2)
         dists_1_3 = d2n_1.compute(g3)
         dists_1_4 = d2n_1.compute(g4)
@@ -45,7 +47,9 @@ class TestDistances(unittest.TestCase):
         g5 = random_graph_medium(directed=True)
         g6 = random_graph_dense(directed=True)
 
-        d2n_1 = create_distances_to_net(g1, bins=10, max_dist=10, norm=Norm.ER_MEAN_RATIO, norm_samples=30)
+        d2n_1 = create_distances_to_net(g1, bins=10, max_dist=10,
+                                        norm=Norm.ER_MEAN_RATIO,
+                                        norm_samples=30)
         dists_1_2 = d2n_1.compute(g2)
         dists_1_3 = d2n_1.compute(g3)
         dists_1_4 = d2n_1.compute(g4)
