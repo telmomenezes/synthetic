@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+
 from setuptools import setup, find_packages
 
 
@@ -7,9 +10,9 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='synthetic',
-    version='0.1',
+    version='0.0.1',
     author='Telmo Menezes et al.',
-    author_email='telmo@telmomenezes.com',
+    author_email='telmo@telmomenezes.net',
     description='Symbolic generators for complex networks',
     long_description=long_description,
     long_description_content_type='text/markdown',
