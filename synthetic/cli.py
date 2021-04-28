@@ -64,6 +64,7 @@ def cli():
     parser.add_argument('--edges', type=int, help='number of edges')
     parser.add_argument('--mean', help='compute mean', action='store_true')
     parser.add_argument('--gentype', type=str, help='generator type')
+    parser.add_argument('--sr', type=float, help='stample rate', default=.0006)
 
     args = vars(parser.parse_args())
 

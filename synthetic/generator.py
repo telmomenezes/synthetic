@@ -2,8 +2,8 @@ from enum import Enum
 import warnings
 import random
 import numpy as np
-from igraph import *
-from synthetic.consts import *
+from igraph import Graph, ALL, IN, OUT
+from synthetic.consts import DEFAULT_MAX_DIST
 import synthetic.prog as prog
 
 
