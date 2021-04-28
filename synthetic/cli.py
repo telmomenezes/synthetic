@@ -1,7 +1,7 @@
 import sys
 import argparse
 from termcolor import colored
-from synthetic.consts import *
+from synthetic.consts import CLI_NAME, ASCII_LOGO
 from synthetic.commands.evo import Evolve
 from synthetic.commands.compare import Compare
 from synthetic.commands.const import Const
