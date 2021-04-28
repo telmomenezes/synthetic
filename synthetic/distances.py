@@ -1,6 +1,7 @@
 from enum import Enum
 import igraph
-from synthetic.consts import *
+from synthetic.consts import (DEFAULT_BINS, DEFAULT_MAX_DIST,
+                              DEFAULT_NORM_SAMPLES, SMALL_VALUE)
 from synthetic.stats import StatType, DistanceType, StatsSet
 
 
