@@ -38,7 +38,7 @@ class Evolve(Command):
         # create base generator
         base_generator = create_generator(directed, gen_type)
         if base_generator is None:
-            self.error_msg = 'unknown generator type: %s' % gen_type
+            self.error_msg = 'unknown generator type: {}'.format(gen_type)
             return False
 
         # create fitness calculator
@@ -52,12 +52,11 @@ class Evolve(Command):
                   outdir, sr)
 
         # some reports to screen
-        print('target net: %s' + netfile)
+        print('target net: {}'.format(netfile))
         print(evo.info_string())
-        print(base_generator)
 
         # write experiment params to file
-        with open('%s/params.txt' % outdir, 'w') as text_file:
+        with open('{}/params.txt'.format(outdir), 'w') as text_file:
             text_file.write(evo.info_string())
 
         # run search
