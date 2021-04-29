@@ -9,10 +9,10 @@ def within_tolerance(fitness, best_fitness, tolerance):
 class EvaluatedIndividual(object):
     def __init__(self, distances_to_net, generator, net):
         self.generator = generator
-        distances = distances_to_net.compute(net)
+        self.distances = distances_to_net.compute(net)
 
         # TODO: other types of fitness
-        self.fitness = max(distances)
+        self.fitness = max(self.distances)
 
     def is_better_than(self, eval_indiv, best_fitness, tolerance):
         fitness_orig = self.fitness
@@ -148,13 +148,14 @@ class Evo(object):
             log_file.write(header)
 
     def on_generation(self):
-        dists = [str(dist) for dist in self.best_individual.fitness_tuple]
+        dists = [str(dist) for dist in self.best_individual.distances]
 
         # write log line for generation
         with open('%s/evo.csv' % self.out_dir, 'a') as log_file:
-            row = ','.join((self.curgen, self.best_individual.fitness,
-                            self.best_individual.prog.size(),
-                            self.gen_time, self.sim_time, self.fit_time))
+            row = ','.join([str(metric) for metric in (self.curgen,
+                            self.best_individual.fitness,
+                            self.best_individual.generator.prog.size(),
+                            self.gen_time, self.sim_time, self.fit_time)])
             row = '%s,%s\n' % (row, ','.join(dists))
             log_file.write(row)
 
@@ -179,7 +180,8 @@ class Evo(object):
     def gen_info_string(self):
         items = ['gen #%s' % self.curgen,
                  'best fitness: %s' % self.best_individual.fitness,
-                 'best genotype size: %s' % self.best_individual.prog.size(),
+                 'best genotype size: %s' %
+                 self.best_individual.generator.prog.size(),
                  'gen comp time: %ss.' % self.gen_time,
                  'sim comp time: %ss.' % self.sim_time,
                  'fit comp time: %ss.' % self.fit_time]

@@ -42,6 +42,7 @@ class DistancesToNet(object):
                  norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
         assert(norm == Norm.NONE or norm_samples > 0)
 
+        self.net = net
         self.stat_dist_types = stat_dist_types
         self.bins = bins
         self.max_dist = max_dist

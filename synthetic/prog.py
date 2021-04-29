@@ -8,39 +8,40 @@ import numpy as np
 #  FUNCTIONS  #
 ###############
 
-class Fun(Enum):
-    SUM = 0
-    SUB = 1
-    MUL = 2
-    DIV = 3
-    EQ = 4
-    GRT = 5
-    LRT = 6
-    ZER = 7
-    EXP = 8
-    LOG = 9
-    ABS = 10
-    MIN = 11
-    MAX = 12
-    POW = 13
-    AFF = 14
+N_FUNS = 15
+
+SUM = 0
+SUB = 1
+MUL = 2
+DIV = 3
+EQ = 4
+GRT = 5
+LRT = 6
+ZER = 7
+EXP = 8
+LOG = 9
+ABS = 10
+MIN = 11
+MAX = 12
+POW = 13
+AFF = 14
 
 
-funs_names = {Fun.SUM: '+',
-              Fun.SUB: '-',
-              Fun.MUL: '*',
-              Fun.DIV: '/',
-              Fun.ZER: 'ZER',
-              Fun.EQ: '==',
-              Fun.GRT: '>',
-              Fun.LRT: '<',
-              Fun.EXP: 'EXP',
-              Fun.LOG: 'LOG',
-              Fun.ABS: 'ABS',
-              Fun.MIN: 'MIN',
-              Fun.MAX: 'MAX',
-              Fun.AFF: 'AFF',
-              Fun.POW: '^'}
+funs_names = {SUM: '+',
+              SUB: '-',
+              MUL: '*',
+              DIV: '/',
+              ZER: 'ZER',
+              EQ: '==',
+              GRT: '>',
+              LRT: '<',
+              EXP: 'EXP',
+              LOG: 'LOG',
+              ABS: 'ABS',
+              MIN: 'MIN',
+              MAX: 'MAX',
+              AFF: 'AFF',
+              POW: '^'}
 
 
 names_funs = {}
@@ -61,23 +62,22 @@ def fun2str(func):
 
 
 def fun_cond_pos(func):
-    if func == Fun.ZER or func == Fun.AFF:
+    if func == ZER or func == AFF:
         return 1
-    elif func == Fun.EQ or func == Fun.GRT or func == Fun.LRT:
+    elif func == EQ or func == GRT or func == LRT:
         return 2
     else:
         return -1
 
 
 def fun_arity(func):
-    if func in {Fun.EXP, Fun.LOG, Fun.ABS}:
+    if func in {EXP, LOG, ABS}:
         return 1
-    elif func in {Fun.SUM, Fun.SUB, Fun.MUL, Fun.DIV, Fun.MIN, Fun.MAX,
-                  Fun.POW}:
+    elif func in {SUM, SUB, MUL, DIV, MIN, MAX, POW}:
         return 2
-    elif func in {Fun.ZER, Fun.AFF}:
+    elif func in {ZER, AFF}:
         return 3
-    elif func in {Fun.EQ, Fun.GRT, Fun.LRT}:
+    elif func in {EQ, GRT, LRT}:
         return 4
     # this should not happen
     return 0
@@ -125,7 +125,7 @@ def create_fun(fun, prog, parent):
 def create_random_node_tree(prog, prob_term, parent, min_depth, grow, depth):
     p = random.random()
     if ((not grow) or p > prob_term) and depth < min_depth:
-        fun = random.randrange(len(Fun))
+        fun = random.randrange(N_FUNS)
         node = create_fun(fun, prog, parent)
         for i in range(node.arity()):
             node.params.append(create_random_node_tree(prog, prob_term, node,
@@ -133,14 +133,14 @@ def create_random_node_tree(prog, prob_term, parent, min_depth, grow, depth):
                                                        depth + 1))
     else:
         if random.randrange(2) == 0 and prog.varcount > 0:
-            var = random.randint(prog.varcount)
+            var = random.randrange(prog.varcount)
             node = create_var(var, prog, parent)
         else:
             r = random.randrange(10)
             if r == 0:
                 val = 0.
             elif r > 5:
-                val = random.randint(10)
+                val = random.randrange(10)
             else:
                 val = random.random()
             node = create_val(val, prog, parent)
@@ -188,16 +188,19 @@ class Node(object):
     def size(self):
         s = 1
         for param in self.params:
-            s += param.size(param)
+            s += param.size()
         return s
 
     def node_by_pos(self, pos):
         if pos == 0:
             return self
+        cur_pos = 1
         for i in range(len(self.params)):
-            nodefound = self.params[i].node_by_pos(pos + 1 + i)
-            if nodefound is not None:
-                return nodefound
+            param = self.params[i]
+            s = param.size()
+            if pos < cur_pos + s:
+                return param.node_by_pos(pos - cur_pos)
+            cur_pos += s
         return None
 
     def branching_distance(self, node):
@@ -222,6 +225,7 @@ class Node(object):
         elif self.type == NodeType.FUN:
             return fun2str(self.fun)
         else:
+            print('#4')
             return '???'
 
 
@@ -322,7 +326,7 @@ class Prog(object):
 
     def clone(self):
         cprog = Prog(self.var_names)
-        if cprog.root is not None:
+        if self.root is not None:
             cprog.root = self.root.clone(cprog, None)
         return cprog
 
@@ -335,32 +339,32 @@ class Prog(object):
             curnode.curpos += 1
             if curnode.curpos < curnode.stoppos:
                 if curnode.curpos == curnode.condpos:
-                    if curnode.fun == Fun.EQ:
+                    if curnode.fun == EQ:
                         if (curnode.params[0].curval ==
                                 curnode.params[1].curval):
                             curnode.stoppos = 3
                         else:
                             curnode.stoppos = 4
                             curnode.curpos += 1
-                    elif curnode.fun == Fun.GRT:
+                    elif curnode.fun == GRT:
                         if curnode.params[0].curval > curnode.params[1].curval:
                             curnode.stoppos = 3
                         else:
                             curnode.stoppos = 4
                             curnode.curpos += 1
-                    elif curnode.fun == Fun.LRT:
+                    elif curnode.fun == LRT:
                         if curnode.params[0].curval < curnode.params[1].curval:
                             curnode.stoppos = 3
                         else:
                             curnode.stoppos = 4
                             curnode.curpos += 1
-                    elif curnode.fun == Fun.ZER:
+                    elif curnode.fun == ZER:
                         if curnode.params[0].curval == 0:
                             curnode.stoppos = 2
                         else:
                             curnode.stoppos = 3
                             curnode.curpos += 1
-                    elif curnode.fun == Fun.AFF:
+                    elif curnode.fun == AFF:
                         g = round(curnode.params[0].curval)
                         id1 = round(self.vars[0])
                         id2 = round(self.vars[1])
@@ -380,43 +384,54 @@ class Prog(object):
                 curnode.curpos = -1
             else:
                 if curnode.type == NodeType.FUN:
-                    if curnode.fun == Fun.SUM:
+                    if curnode.fun == SUM:
                         val = (curnode.params[0].curval +
                                curnode.params[1].curval)
-                    elif curnode.fun == Fun.SUB:
+                    elif curnode.fun == SUB:
                         val = (curnode.params[0].curval -
                                curnode.params[1].curval)
-                    elif curnode.fun == Fun.MUL:
+                    elif curnode.fun == MUL:
                         val = (curnode.params[0].curval *
                                curnode.params[1].curval)
-                    elif curnode.fun == Fun.DIV:
+                    elif curnode.fun == DIV:
                         if curnode.params[1].curval == 0:
                             val = 0
                         else:
                             val = (curnode.params[0].curval /
                                    curnode.params[1].curval)
-                    elif curnode.fun == Fun.MIN:
+                    elif curnode.fun == MIN:
                         val = curnode.params[0].curval
                         if curnode.params[1].curval < val:
                             val = curnode.params[1].curval
-                    elif curnode.fun == Fun.MAX:
+                    elif curnode.fun == MAX:
                         val = curnode.params[0].curval
                         if curnode.params[1].curval > val:
                             val = curnode.params[1].curval
-                    elif curnode.fun == Fun.EXP:
-                        val = math.exp(curnode.params[0].curval)
-                    elif curnode.fun == Fun.LOG:
-                        if curnode.params[0].curval == 0:
+                    elif curnode.fun == EXP:
+                        try:
+                            val = math.exp(curnode.params[0].curval)
+                        except OverflowError:
+                            # TODO: not sure if best solution, but using
+                            # a very large float could lead to more overflows
+                            val = 0
+                    elif curnode.fun == LOG:
+                        if curnode.params[0].curval <= 0:
                             val = 0
                         else:
                             val = math.log(curnode.params[0].curval)
-                    elif curnode.fun == Fun.ABS:
+                    elif curnode.fun == ABS:
                         val = abs(curnode.params[0].curval)
-                    elif curnode.fun == Fun.POW:
-                        val = math.pow(curnode.params[0].curval,
-                                       curnode.params[1].curval)
-                    elif curnode.fun in {Fun.EQ, Fun.GRT, Fun.LRT, Fun.ZER,
-                                         Fun.AFF}:
+                    elif curnode.fun == POW:
+                        try:
+                            val = math.pow(curnode.params[0].curval,
+                                           curnode.params[1].curval)
+                        except OverflowError:
+                            # TODO: not sure if best solution, but using
+                            # a very large float could lead to more overflows
+                            val = 0
+                        except ValueError:
+                            val = 0
+                    elif curnode.fun in {EQ, GRT, LRT, ZER, AFF}:
                         val = curnode.params[curnode.stoppos - 1].curval
                 elif curnode.type == NodeType.VAR:
                     val = self.vars[curnode.var]
@@ -469,7 +484,7 @@ class Prog(object):
         # remove sub-tree from child
         # find point1 position in it's parent's param array
         if point1parent is not None:
-            for i in range(point1parent.arity):
+            for i in range(point1parent.arity()):
                 if point1parent.params[i] == point1:
                     parampos = i
 
@@ -529,7 +544,7 @@ class Prog(object):
             out = '%s%s(' % (out, ' ' * indent)
             ind += 1
 
-        out = '%s%s' % (out, node)
+        out = '{}{}'.format(out, node)
 
         for param in node.params:
             out = '%s ' % out
