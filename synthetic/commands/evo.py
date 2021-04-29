@@ -1,9 +1,13 @@
-from synthetic.consts import *
+from synthetic.consts import (DEFAULT_GENERATIONS, DEFAULT_SAMPLE_RATE,
+                              DEFAULT_BINS, DEFAULT_MAX_DIST,
+                              DEFAULT_TOLERANCE, DEFAULT_GEN_TYPE,
+                              DEFAULT_NORM_SAMPLES)
 from synthetic.net import load_net
 from synthetic.generator import create_generator
 from synthetic.distances import DistancesToNet, Norm
 from synthetic.evo import Evo
-from synthetic.commands.command import *
+from synthetic.commands.command import (Command, arg_with_default,
+                                        get_stat_dist_types)
 
 
 class Evolve(Command):
