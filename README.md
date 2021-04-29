@@ -1,7 +1,7 @@
 # Synthetic
 **Symbolic Generators for Complex Networks**
 
-_**NOTE:** Synthetic was originally written in Java, and this is an ongoing effort to port it to Python. This Python version is not yet functional. The original and fully-functional Java version of Synthetic can be found here: https://github.com/telmomenezes/synthetic/ ._
+_**NOTE:** Synthetic was originally written in Java, and this is an ongoing effort to port it to Python. This Python version is still experimental. The original and fully-functional Java version of Synthetic can be found here: https://github.com/telmomenezes/synthetic-old/ ._
 
 Synthetic is a machine learning tool that can be used to discover plausible generators for complex networks. Generators are simple computer programs that control the growth of a network from the bottom-up, in a similar fashion to the processes believed to underlie the emergence of many different types of networks, be them biological, social or technological.
 
