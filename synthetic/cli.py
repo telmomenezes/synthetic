@@ -1,7 +1,8 @@
 import sys
 import argparse
 from termcolor import colored
-from synthetic.consts import CLI_NAME, ASCII_LOGO
+from synthetic.consts import (CLI_NAME, ASCII_LOGO, DEFAULT_BINS,
+                              DEFAULT_SAMPLE_RATE, DEFAULT_MAX_DIST)
 from synthetic.commands.evo import Evolve
 from synthetic.commands.compare import Compare
 from synthetic.commands.const import Const
@@ -55,7 +56,7 @@ def cli():
     parser.add_argument('--out', type=str, help='output file')
     parser.add_argument('--gens', type=int, help='number of generations')
     parser.add_argument('--bins', type=int, help='number of distribution bins',
-                        default=100)
+                        default=DEFAULT_BINS)
     parser.add_argument('--runs', type=int, help='number of generator runs')
     parser.add_argument('--undir', help='undirected network',
                         action='store_true')
@@ -64,9 +65,10 @@ def cli():
     parser.add_argument('--edges', type=int, help='number of edges')
     parser.add_argument('--mean', help='compute mean', action='store_true')
     parser.add_argument('--gentype', type=str, help='generator type')
-    parser.add_argument('--sr', type=float, help='stample rate', default=.0006)
+    parser.add_argument('--sr', type=float, help='stample rate',
+                        default=DEFAULT_SAMPLE_RATE)
     parser.add_argument('--maxdist', type=int, help='maximum distance',
-                        default=10)
+                        default=DEFAULT_MAX_DIST)
 
     args = vars(parser.parse_args())
 
