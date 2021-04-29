@@ -1,8 +1,11 @@
-from synthetic.consts import *
+from synthetic.consts import (DEFAULT_SAMPLE_RATE, DEFAULT_BINS,
+                              DEFAULT_MAX_DIST, DEFAULT_RUNS, DEFAULT_GEN_TYPE,
+                              DEFAULT_NORM_SAMPLES)
 from synthetic.net import load_net
 from synthetic.generator import create_generator, load_generator
 from synthetic.distances import DistancesToNet, Norm
-from synthetic.commands.command import *
+from synthetic.commands.command import (Command, arg_with_default,
+                                        get_stat_dist_types)
 
 
 class Fit(Command):
@@ -32,7 +35,7 @@ class Fit(Command):
         # create base generator
         base_generator = create_generator(directed, gen_type)
         if base_generator is None:
-            self.error_msg = 'unknown generator type: %s' % gen_type
+            self.error_msg = 'unknown generator type: {}'.format(gen_type)
             return False
 
         # create fitness calculator
@@ -44,7 +47,7 @@ class Fit(Command):
         fit_maxes = []
         fit_means = []
         for i in range(runs):
-            print('run #%s' % i)
+            print('run #{}'.format(i))
 
             gen = load_generator(prog, directed, gen_type)
             synth_net = gen.run(len(net.vs), len(net.es), sr)

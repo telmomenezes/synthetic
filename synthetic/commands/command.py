@@ -40,15 +40,15 @@ ARG_HELP = {'undir': 'undirected network(s)',
 def arg_str(arg):
     assert(arg in ARG_PLACEHOLDERS)
     placeholder = ARG_PLACEHOLDERS[arg]
-    st = '-%s' % arg
+    st = '-{}'.format(arg)
     if placeholder is None:
         return st
-    return '%s <%s>' % (arg, placeholder)
+    return '{} <{}>'.format(arg, placeholder)
 
 
 def arg_help(arg):
     assert(arg in ARG_HELP)
-    return '%s %s' % (arg_str(arg), ARG_HELP[arg])
+    return '{} {}'.format(arg_str(arg), ARG_HELP[arg])
 
 
 def arg_with_default(args, arg_name, default):
@@ -76,7 +76,7 @@ class Command(object):
 
     def help(self):
         args_str = ' '.join([arg_str(arg) for arg in self.mandatory_args])
-        command_line = '$ %s %s %s' % (self.cli_name, self.name, args_str)
+        command_line = '$ {} {} {}'.format(self.cli_name, self.name, args_str)
         lines = [self.description, command_line]
 
         if len(self.optional_args) > 0:
@@ -88,7 +88,7 @@ class Command(object):
     def check_args(self, args):
         for arg in self.mandatory_args:
             if args[arg] is None:
-                self.error_msg = 'argument %s is mandatory.' % arg
+                self.error_msg = 'argument {} is mandatory.'.format(arg)
                 return False
         return True
 

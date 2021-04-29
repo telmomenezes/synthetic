@@ -77,14 +77,14 @@ def cli():
     command = create_command(args['command'])
 
     if command is None:
-        print('unkown command: %s' % command)
+        print('unkown command: {}'.format(command))
         sys.exit(2)
     else:
         if not command.check_args(args):
-            print('error: %s' % command.error_msg)
+            print('error: {}'.format(command.error_msg))
             sys.exit(2)
         if not command.run(args):
-            print('error: %s' % command.error_msg)
+            print('error: {}'.format(command.error_msg))
             sys.exit(1)
 
 

@@ -117,46 +117,46 @@ class Evo(object):
             sim_time /= 1000
             fit_time /= 1000
 
-            print('stable generation: %s' % stable_gens)
+            print('stable generation: {}'.format(stable_gens))
             self.on_generation()
 
         print('Done.')
 
     def on_new_best(self):
-        suffix = '%s_gen%s' % (self.best_count, self.curgen)
+        suffix = '{}_gen{}'.format(self.best_count, self.curgen)
         best_gen = self.best_individual.generator
 
         # write net
-        best_gen.net.save('%s/bestnet%s.gml' % (self.out_dir, suffix))
-        best_gen.net.save('%s/bestnet.gml' % self.out_dir)
+        best_gen.net.save('{}/bestnet{}.gml'.format(self.out_dir, suffix))
+        best_gen.net.save('{}/bestnet.gml'.format(self.out_dir))
 
         # write progs
-        best_gen.prog.write('%s/bestprog%s.txt' % (self.out_dir, suffix))
-        best_gen.prog.write('%s/bestprog.txt' % self.out_dir)
+        best_gen.prog.write('{}/bestprog{}.txt'.format(self.out_dir, suffix))
+        best_gen.prog.write('{}/bestprog.txt'.format(self.out_dir))
 
         self.best_count += 1
 
     def write_log_header(self):
         # write header of log file
-        with open('%s/evo.csv' % self.out_dir, 'w') as log_file:
+        with open('{}/evo.csv'.format(self.out_dir), 'w') as log_file:
             header = 'gen,best_fit,best_geno_size,gen_comp_time,sim_comp_time,'
             'fit_comp_time'
             stat_names = [stat_type.name
                           for stat_type
                           in self.distances_to_net.targ_stats_set.stat_types]
-            header = '%s,%s\n' % (header, ','.join(stat_names))
+            header = '{},{}\n'.format(header, ','.join(stat_names))
             log_file.write(header)
 
     def on_generation(self):
         dists = [str(dist) for dist in self.best_individual.distances]
 
         # write log line for generation
-        with open('%s/evo.csv' % self.out_dir, 'a') as log_file:
+        with open('{}/evo.csv'.format(self.out_dir), 'a') as log_file:
             row = ','.join([str(metric) for metric in (self.curgen,
                             self.best_individual.fitness,
                             self.best_individual.generator.prog.size(),
                             self.gen_time, self.sim_time, self.fit_time)])
-            row = '%s,%s\n' % (row, ','.join(dists))
+            row = '{},{}\n'.format(row, ','.join(dists))
             log_file.write(row)
 
         # print info
@@ -164,25 +164,26 @@ class Evo(object):
         stat_names = [stat_type.name
                       for stat_type
                       in self.distances_to_net.targ_stats_set.stat_types]
-        items = ['%s: %s' % (stat_names[i], dists[i])
+        items = ['{}: {}'.format(stat_names[i], dists[i])
                  for i in range(len(stat_names))]
         print('; '.join(items))
 
     def info_string(self):
-        lines = ['stable generations: %s' % self.generations,
-                 'directed: %s' % self.distances_to_net.net.is_directed(),
-                 'target net node count: %s' % self.nodes,
-                 'target net edge count: %s' % self.edges,
-                 'distribution bins: %s' % self.distances_to_net.bins,
-                 'tolerance: %s' % self.tolerance]
+        lines = ['stable generations: {}'.format(self.generations),
+                 'directed: {}'.format(
+                    self.distances_to_net.net.is_directed()),
+                 'target net node count: {}'.format(self.nodes),
+                 'target net edge count: {}'.format(self.edges),
+                 'distribution bins: {}'.format(self.distances_to_net.bins),
+                 'tolerance: {}'.format(self.tolerance)]
         return '\n'.join(lines)
 
     def gen_info_string(self):
-        items = ['gen #%s' % self.curgen,
-                 'best fitness: %s' % self.best_individual.fitness,
-                 'best genotype size: %s' %
-                 self.best_individual.generator.prog.size(),
-                 'gen comp time: %ss.' % self.gen_time,
-                 'sim comp time: %ss.' % self.sim_time,
-                 'fit comp time: %ss.' % self.fit_time]
+        items = ['gen #{}'.format(self.curgen),
+                 'best fitness: {}'.format(self.best_individual.fitness),
+                 'best genotype size: {}'.format(
+                    self.best_individual.generator.prog.size()),
+                 'gen comp time: {}s.'.format(self.gen_time),
+                 'sim comp time: {}s.'.format(self.sim_time),
+                 'fit comp time: {}s.'.format(self.fit_time)]
         return '; '.join(items)

@@ -1,7 +1,8 @@
-from synthetic.consts import *
+from synthetic.consts import DEFAULT_BINS, DEFAULT_MAX_DIST
 from synthetic.net import load_net
 from synthetic.stats import StatsSet
-from synthetic.commands.command import *
+from synthetic.commands.command import (Command, arg_with_default,
+                                        get_stat_dist_types)
 
 
 class Compare(Command):
@@ -28,7 +29,7 @@ class Compare(Command):
 
         stat_dist_types = get_stat_dist_types(args)
 
-        print('first network: %s' % netfile1)
+        print('first network: {}'.format(netfile1))
         print(net1)
         stats1 = StatsSet(net1, stat_dist_types, bins, max_dist,
                           ref_stats=None)
@@ -36,7 +37,7 @@ class Compare(Command):
 
         print('\n\n')
 
-        print('second network: %s' % netfile2)
+        print('second network: {}'.format(netfile2))
         print(net2)
         stats2 = StatsSet(net1, stat_dist_types, bins, max_dist,
                           ref_stats=None)

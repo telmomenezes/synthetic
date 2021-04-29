@@ -219,13 +219,12 @@ class Node(object):
 
     def __str__(self):
         if self.type == NodeType.VAL:
-            return '%s' % self.val
+            return str(self.val)
         elif self.type == NodeType.VAR:
-            return "$%s" % self.prog.var_names[self.var]
+            return '${}'.format(self.prog.var_names[self.var])
         elif self.type == NodeType.FUN:
             return fun2str(self.fun)
         else:
-            print('#4')
             return '???'
 
 
@@ -540,18 +539,18 @@ class Prog(object):
 
         if node.arity() > 0:
             if node.parent is not None:
-                out = '%s\n' % out
-            out = '%s%s(' % (out, ' ' * indent)
+                out = '{}\n'.format(out)
+            out = '{}{}('.format(out, ' ' * indent)
             ind += 1
 
         out = '{}{}'.format(out, node)
 
         for param in node.params:
-            out = '%s ' % out
+            out = '{} '.format(out)
             out = self.build_str(param, ind, out)
 
         if node.arity() > 0:
-            out = '%s)' % out
+            out = '{})'.format(out)
 
         return out
 

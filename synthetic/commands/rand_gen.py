@@ -1,6 +1,6 @@
-from synthetic.consts import *
+from synthetic.consts import DEFAULT_GEN_TYPE
 from synthetic.generator import create_generator
-from synthetic.commands.command import *
+from synthetic.commands.command import Command, arg_with_default
 
 
 class RandGen(Command):

@@ -1,7 +1,8 @@
-from synthetic.consts import *
+from synthetic.consts import (DEFAULT_SAMPLE_RATE, DEFAULT_NODES,
+                              DEFAULT_EDGES, DEFAULT_GEN_TYPE)
 
 from synthetic.generator import load_generator
-from synthetic.commands.command import *
+from synthetic.commands.command import Command, arg_with_default
 
 
 class EvalDistance(Command):
@@ -33,6 +34,6 @@ class EvalDistance(Command):
         dist2 = gen2.eval_distance
         dist = (dist1 + dist2) / 2
 
-        print('eval distance: %s' % dist)
+        print('eval distance: {}'.format(dist))
 
         return True
