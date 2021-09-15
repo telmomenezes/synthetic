@@ -32,7 +32,10 @@ class Gen(Command):
         net = gen.run(nodes, edges, sr)
 
         # write net
-        net.save(onet)
+        if onet[-4:] == '.txt' or onet[-4:] =='.gml':
+            net.save(onet)
+        else: 
+            net.save(onet + '.gml')
 
         print('done.')
 

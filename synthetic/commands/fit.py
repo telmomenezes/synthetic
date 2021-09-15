@@ -6,7 +6,7 @@ from synthetic.generator import create_generator, load_generator
 from synthetic.distances import DistancesToNet, Norm
 from synthetic.commands.command import (Command, arg_with_default,
                                         get_stat_dist_types)
-
+from statistics import mean
 
 class Fit(Command):
     def __init__(self, cli_name):
@@ -50,14 +50,17 @@ class Fit(Command):
             print('run #{}'.format(i))
 
             gen = load_generator(prog, directed, gen_type)
-            synth_net = gen.run(len(net.vs), len(net.es), sr)
-            fit_max, fit_mean, distances = fitness.compute(synth_net)
+            synth_net = gen.run(net.vcount(), net.ecount(), sr)
+            distances = fitness.compute(synth_net)
+            fit_max=max(distances)
+            fit_mean=mean(distances)
 
             fit_maxes.append(fit_max)
             fit_means.append(fit_mean)
 
             print('fitness (max): {}; fitness (mean): {}'.format(fit_max,
                                                                  fit_mean))
+            print([stat_type.name for stat_type in fitness.stat_types])
             print(distances)
 
         mean_fit_max = sum(fit_maxes) / runs
