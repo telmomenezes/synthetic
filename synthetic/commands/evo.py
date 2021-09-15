@@ -17,7 +17,7 @@ class Evolve(Command):
         self.description = 'evolve network generator'
         self.mandatory_args = ['inet', 'odir']
         self.optional_args = ['undir', 'gens', 'sr', 'bins', 'maxdist',
-                              'tolerance']
+                              'tolerance','gentype']
 
     def run(self, args):
         self.error_msg = None
