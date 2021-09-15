@@ -40,6 +40,8 @@ def show_logo():
 
 
 def cli():
+    t0= time.time()
+    
     parser = argparse.ArgumentParser()
 
     parser.add_argument('command', type=str, help='command to execute')
@@ -86,7 +88,7 @@ def cli():
         if not command.run(args):
             print('error: {}'.format(command.error_msg))
             sys.exit(1)
-
+    print("Time taken: {} minutes and {} seconds".format(int((time.time()-t0)//60),round((time.time()-t0)%60)))
 
 if __name__ == '__main__':
     cli()
