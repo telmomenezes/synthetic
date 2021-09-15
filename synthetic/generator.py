@@ -137,7 +137,7 @@ class Generator(object):
         if len(sp) == 0:
             return max_dist + 1
         else:
-            return max(max_dist, len(sp) - 1)
+            return min(max_dist, len(sp) - 1)
 
     def set_prog_vars(self, orig, targ):
         for i in range(self.var_count):
