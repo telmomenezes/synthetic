@@ -11,7 +11,7 @@ from synthetic.commands.fit import Fit
 from synthetic.commands.gen import Gen
 from synthetic.commands.prune import Prune
 from synthetic.commands.rand_gen import RandGen
-
+import time
 
 def create_command(name):
     if name == 'evo':
