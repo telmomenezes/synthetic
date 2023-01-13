@@ -1,5 +1,7 @@
 from enum import Enum
 
+import progressbar
+
 from synthetic.consts import DEFAULT_BINS, DEFAULT_MAX_DIST, DEFAULT_NORM_SAMPLES, SMALL_VALUE
 from synthetic.net import create_random_net
 from synthetic.stats import StatType, DistanceType, StatsSet
@@ -48,22 +50,26 @@ class DistancesToNet(object):
         self.nstats = len(self.stat_dist_types)
         self.stat_types = [item[0] for item in stat_dist_types]
         self.dist_types = [item[1] for item in stat_dist_types]
+
         self.targ_stats_set = StatsSet(net, self.stat_types, bins, max_dist)
 
         if norm != Norm.NONE:
-            self.norm_values = self.__compute_norm_values(net, norm_samples)
+            self.norm_values = self._compute_norm_values(net, norm_samples)
         else:
             self.norm_values = None
 
-    def __compute_norm_values(self, net, norm_samples):
+    def _compute_norm_values(self, net, norm_samples):
         norm_values = [.0] * self.nstats
         dists2net = DistancesToNet(net, self.stat_dist_types, self.bins, self.max_dist, norm=Norm.NONE)
-        for i in range(norm_samples):
-            # noinspection PyArgumentList
-            sample_net = create_random_net(net.graph.vcount(), net.graph.ecount(), net.graph.is_directed())
-            dists = dists2net.compute(sample_net)
-            for j in range(self.nstats):
-                norm_values[j] += dists[j]
+        i = 0
+        print('computing normalization samples...')
+        with progressbar.ProgressBar(max_value=norm_samples) as bar:
+            for i in range(norm_samples):
+                bar.update(i)
+                sample_net = create_random_net(net.graph.vcount(), net.graph.ecount(), net.graph.is_directed())
+                dists = dists2net.compute(sample_net)
+                for j in range(self.nstats):
+                    norm_values[j] += dists[j]
         norm_values = [max(x / norm_samples, SMALL_VALUE) for x in norm_values]
         return norm_values
 

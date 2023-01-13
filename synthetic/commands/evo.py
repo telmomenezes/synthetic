@@ -54,12 +54,13 @@ class Evolve(Command):
             return False
 
         # create fitness calculator
-        print('computing normalization samples...')
         # TODO: norm samples configurable
+        print('computing target network statistics...')
         dists2net = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, norm=Norm.ER_MEAN_RATIO,
                                    norm_samples=DEFAULT_NORM_SAMPLES)
 
         # create evolutionary search
+        print('evolutionary search started...')
         evo = Evo(net, dists2net, generations, tolerance, base_generator, outdir, sr)
 
         # run search
