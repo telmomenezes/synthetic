@@ -78,8 +78,8 @@ class Evo(object):
 
             start_time = current_time_millis()
 
-            sim_time = 0
-            fit_time = 0
+            self.sim_time = 0
+            self.fit_time = 0
 
             if random.choice([True, False]):
                 generator = self.best_fit_individual.generator.clone()
@@ -90,10 +90,10 @@ class Evo(object):
 
             time0 = current_time_millis()
             net = generator.run(self.nodes, self.edges, self.sample_ratio)
-            sim_time += current_time_millis() - time0
+            self.sim_time += current_time_millis() - time0
             time0 = current_time_millis()
             individual = EvaluatedIndividual(self.distances_to_net, generator, net)
-            fit_time += current_time_millis() - time0
+            self.fit_time += current_time_millis() - time0
 
             best_fitness = self.best_fit_individual.fitness
             if individual.is_better_than(self.best_fit_individual, best_fitness, 0):
@@ -106,12 +106,12 @@ class Evo(object):
                 stable_gens = 0
 
             # time it took to compute the generation
-            gen_time = current_time_millis() - start_time
-            gen_time /= 1000
-            sim_time /= 1000
-            fit_time /= 1000
+            self.gen_time = current_time_millis() - start_time
+            self.gen_time /= 1000
+            self.sim_time /= 1000
+            self.fit_time /= 1000
 
-            print('stable generation: {}'.format(stable_gens))
+            print('stable generations: {}'.format(stable_gens))
             self.on_generation()
 
         print('Done.')
