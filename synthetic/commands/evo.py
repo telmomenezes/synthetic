@@ -1,13 +1,10 @@
-from synthetic.consts import (DEFAULT_GENERATIONS, DEFAULT_SAMPLE_RATE,
-                              DEFAULT_BINS, DEFAULT_MAX_DIST,
-                              DEFAULT_TOLERANCE, DEFAULT_GEN_TYPE,
-                              DEFAULT_NORM_SAMPLES)
+from synthetic.consts import (DEFAULT_GENERATIONS, DEFAULT_SAMPLE_RATE, DEFAULT_BINS, DEFAULT_MAX_DIST,
+                              DEFAULT_TOLERANCE, DEFAULT_GEN_TYPE, DEFAULT_NORM_SAMPLES)
 from synthetic.net import load_net
 from synthetic.generator import create_generator
 from synthetic.distances import DistancesToNet, Norm
 from synthetic.evo import Evo
-from synthetic.commands.command import (Command, arg_with_default,
-                                        get_stat_dist_types)
+from synthetic.commands.command import Command, arg_with_default, get_stat_dist_types
 
 
 class Evolve(Command):
@@ -16,8 +13,7 @@ class Evolve(Command):
         self.name = 'evo'
         self.description = 'evolve network generator'
         self.mandatory_args = ['inet', 'odir']
-        self.optional_args = ['undir', 'gens', 'sr', 'bins', 'maxdist',
-                              'tolerance','gentype']
+        self.optional_args = ['undir', 'gens', 'sr', 'bins', 'maxdist', 'tolerance', 'gentype']
 
     def run(self, args):
         self.error_msg = None
@@ -35,6 +31,22 @@ class Evolve(Command):
         # load net
         net = load_net(netfile, directed)
 
+        # some reports to screen
+        info_params = ['target net: {}'.format(netfile),
+                       'stable generations: {}'.format(generations),
+                       'directed: {}'.format(directed),
+                       'target net node count: {}'.format(net.graph.vcount()),
+                       'target net edge count: {}'.format(net.graph.ecount()),
+                       'distribution bins: {}'.format(bins),
+                       'tolerance: {}'.format(tolerance)]
+        info_str = '\n'.join(info_params)
+        print(info_str)
+        print()
+
+        # write experiment params to file
+        with open('{}/params.txt'.format(outdir), 'w') as text_file:
+            text_file.write(info_str)
+
         # create base generator
         base_generator = create_generator(directed, gen_type)
         if base_generator is None:
@@ -42,22 +54,13 @@ class Evolve(Command):
             return False
 
         # create fitness calculator
+        print('computing normalization samples...')
         # TODO: norm samples configurable
-        dists2net = DistancesToNet(net, get_stat_dist_types(args), bins,
-                                   max_dist, norm=Norm.ER_MEAN_RATIO,
+        dists2net = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, norm=Norm.ER_MEAN_RATIO,
                                    norm_samples=DEFAULT_NORM_SAMPLES)
 
         # create evolutionary search
-        evo = Evo(net, dists2net, generations, tolerance, base_generator,
-                  outdir, sr)
-
-        # some reports to screen
-        print('target net: {}'.format(netfile))
-        print(evo.info_string())
-
-        # write experiment params to file
-        with open('{}/params.txt'.format(outdir), 'w') as text_file:
-            text_file.write(evo.info_string())
+        evo = Evo(net, dists2net, generations, tolerance, base_generator, outdir, sr)
 
         # run search
         evo.run()

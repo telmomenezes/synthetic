@@ -1,9 +1,9 @@
 from enum import Enum
-import warnings
 import random
+
 import numpy as np
-from igraph import Graph, ALL, IN, OUT
-from synthetic.consts import DEFAULT_MAX_DIST
+
+from synthetic.net import create_net
 import synthetic.prog as prog
 
 
@@ -53,20 +53,17 @@ def genvar2str(gvar):
 
 def create_exo_generator(directed, init_random=False):
     if directed:
-        genvars = (GenVar.ORIGID, GenVar.TARGID, GenVar.ORIGINDEG,
-                   GenVar.ORIGOUTDEG, GenVar.TARGINDEG, GenVar.TARGOUTDEG,
-                   GenVar.DIST, GenVar.DIRDIST, GenVar.REVDIST)
+        genvars = (GenVar.ORIGID, GenVar.TARGID, GenVar.ORIGINDEG, GenVar.ORIGOUTDEG, GenVar.TARGINDEG,
+                   GenVar.TARGOUTDEG, GenVar.DIST, GenVar.DIRDIST, GenVar.REVDIST)
     else:
-        genvars = (GenVar.ORIGID, GenVar.TARGID, GenVar.ORIGDEG,
-                   GenVar.TARGDEG, GenVar.DIST)
+        genvars = (GenVar.ORIGID, GenVar.TARGID, GenVar.ORIGDEG, GenVar.TARGDEG, GenVar.DIST)
     return Generator(genvars, directed, init_random=init_random)
 
 
 def create_endo_generator(directed, init_random=False):
     if directed:
-        genvars = (GenVar.ORIGINDEG, GenVar.ORIGOUTDEG, GenVar.TARGINDEG,
-                   GenVar.TARGOUTDEG, GenVar.DIST, GenVar.DIRDIST,
-                   GenVar.REVDIST)
+        genvars = (GenVar.ORIGINDEG, GenVar.ORIGOUTDEG, GenVar.TARGINDEG, GenVar.TARGOUTDEG, GenVar.DIST,
+                   GenVar.DIRDIST, GenVar.REVDIST)
     else:
         genvars = (GenVar.ORIGDEG, GenVar.TARGDEG, GenVar.DIST)
     return Generator(genvars, directed, init_random=init_random)
@@ -128,17 +125,6 @@ class Generator(object):
     def load(self, file_path):
         self.prog = prog.load(self.var_names, file_path)
 
-    def distance(self, orig, targ, mode, max_dist=DEFAULT_MAX_DIST):
-        # to supress RuntimeWarning: Couldn't reach some vertices at
-        # structural_properties.c:740
-        with warnings.catch_warnings():
-            warnings.simplefilter('ignore')
-            sp = self.net.get_shortest_paths(orig, to=targ, mode=mode)[0]
-        if len(sp) == 0:
-            return max_dist + 1
-        else:
-            return min(max_dist, len(sp) - 1)
-
     def set_prog_vars(self, orig, targ):
         for i in range(self.var_count):
             gv = self.genvars[i]
@@ -147,23 +133,23 @@ class Generator(object):
             elif gv == GenVar.TARGID:
                 self.prog.vars[i] = targ
             elif gv == GenVar.ORIGDEG:
-                self.prog.vars[i] = self.net.degree(orig, mode=ALL)
+                self.prog.vars[i] = self.net.degree(orig)
             elif gv == GenVar.ORIGINDEG:
-                self.prog.vars[i] = self.net.degree(orig, mode=IN)
+                self.prog.vars[i] = self.net.in_degree(orig)
             elif gv == GenVar.ORIGOUTDEG:
-                self.prog.vars[i] = self.net.degree(orig, mode=OUT)
+                self.prog.vars[i] = self.net.out_degree(orig)
             elif gv == GenVar.TARGDEG:
-                self.prog.vars[i] = self.net.degree(targ, mode=ALL)
+                self.prog.vars[i] = self.net.degree(targ)
             elif gv == GenVar.TARGINDEG:
-                self.prog.vars[i] = self.net.degree(targ, mode=IN)
+                self.prog.vars[i] = self.net.in_degree(targ)
             elif gv == GenVar.TARGOUTDEG:
-                self.prog.vars[i] = self.net.degree(targ, mode=OUT)
+                self.prog.vars[i] = self.net.out_degree(targ)
             elif gv == GenVar.DIST:
-                self.prog.vars[i] = self.distance(orig, targ, mode=ALL)
+                self.prog.vars[i] = self.net.u_random_walkers.distance(orig, targ)
             elif gv == GenVar.DIRDIST:
-                self.prog.vars[i] = self.distance(orig, targ, mode=OUT)
+                self.prog.vars[i] = self.net.d_random_walkers.distance(orig, targ)
             elif gv == GenVar.REVDIST:
-                self.prog.vars[i] = self.distance(orig, targ, mode=IN)
+                self.prog.vars[i] = self.net.d_random_walkers.distance(targ, orig)
 
     def generate_sample(self):
         for i in range(self.trials):
@@ -177,7 +163,7 @@ class Generator(object):
                 targ_index = np.random.randint(0, self.nodes)
 
                 if orig_index != targ_index:
-                    if self.net[orig_index, targ_index] == 0:
+                    if self.net.graph[orig_index, targ_index] == 0:
                         found = True
 
             self.sample_origs[i] = orig_index
@@ -212,10 +198,7 @@ class Generator(object):
         best_orig_index = self.sample_origs[i]
         best_targ_index = self.sample_targs[i]
 
-        orig_node = self.net.vs[best_orig_index]
-        targ_node = self.net.vs[best_targ_index]
-
-        return orig_node, targ_node
+        return best_orig_index, best_targ_index
 
     def weights_dist(self, gen):
         total_weight1 = 0.
@@ -244,7 +227,7 @@ class Generator(object):
 
         self.eval_distance = 0.
 
-        self.net = Graph(n=nodes, directed=self.directed)
+        self.net = create_net(nodes=nodes, directed=self.directed)
 
         if shadow is not None:
             shadow.net = self.net
@@ -258,7 +241,13 @@ class Generator(object):
                 shadow.cycle(self)
                 self.eval_distance += self.weights_dist(shadow)
 
-            self.net.add_edge(orig, targ)
+            self.net.graph.add_edge(orig, targ)
+
+            # update distances
+            if self.directed:
+                self.net.d_random_walkers.step()
+            self.net.u_random_walkers.step()
+
             self.iterations += 1
 
         self.eval_distance /= edges

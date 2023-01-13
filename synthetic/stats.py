@@ -10,12 +10,10 @@ class StatsSet(object):
     def __init__(self, net, stat_types, bins, max_dist, ref_stats=None):
         self.stat_types = stat_types
         if ref_stats is None:
-            self.stats = [create_stat(net, stat_type, bins, max_dist)
-                          for stat_type in stat_types]
+            self.stats = [create_stat(net, stat_type, bins, max_dist) for stat_type in stat_types]
         else:
             assert(len(stat_types) == len(ref_stats.stat_types))
-            self.stats = [create_stat(net, stat_types[i], bins, max_dist,
-                                      ref_stat=ref_stats.stats[i])
+            self.stats = [create_stat(net, stat_types[i], bins, max_dist, ref_stat=ref_stats.stats[i])
                           for i in range(len(stat_types))]
 
 
@@ -106,14 +104,12 @@ class Distrib(Stat):
                 dist += abs(self.data[i] - stat.data[i]) / d
             return dist
         else:
-            raise NotImplementedError(
-                'distance type {} is not supported on this statistic.'.format(
-                    distance_type))
+            raise NotImplementedError('distance type {} is not supported on this statistic.'.format(distance_type))
 
 
 class TriadCensus(Distrib):
     def compute(self, net):
-        motifs = net.motifs_randesu(size=3, cut_prob=None)
+        motifs = net.graph.motifs_randesu(size=3, cut_prob=None)
         counts = []
         for count in motifs:
             if math.isnan(count):
@@ -143,58 +139,52 @@ class Histogram(Distrib):
                 self.max_value = np.max(values)
             else:
                 self.max_value = self.ref_stat.max_value
-        self.data, self.bin_edges = np.histogram(values, bins=self.bins,
-                                                 range=(self.min_value,
-                                                        self.max_value))
+        self.data, self.bin_edges = np.histogram(values, bins=self.bins, range=(self.min_value, self.max_value))
 
     def distance(self, stat, distance_type):
         assert(isinstance(stat, Histogram))
         if distance_type == DistanceType.EARTH_MOVER:
-            bin_locs = np.mean([self.bin_edges[:-1], self.bin_edges[1:]],
-                               axis=0)
+            bin_locs = np.mean([self.bin_edges[:-1], self.bin_edges[1:]], axis=0)
             bins = len(bin_locs)
 
-            distance_matrix = np.abs(np.repeat(bin_locs, bins) -
-                                     np.tile(bin_locs, bins))
+            distance_matrix = np.abs(np.repeat(bin_locs, bins) - np.tile(bin_locs, bins))
             distance_matrix = distance_matrix.reshape(bins, bins)
             assert(len(distance_matrix) == len(distance_matrix[0]))
             assert(self.data.shape[0] <= len(distance_matrix))
             assert(stat.data.shape[0] <= len(distance_matrix))
 
-            return emd(self.data.astype(np.float64),
-                       stat.data.astype(np.float64),
-                       distance_matrix.astype(np.float64))
+            return emd(self.data.astype(np.float64), stat.data.astype(np.float64), distance_matrix.astype(np.float64))
         else:
             return Distrib.distance(self, stat, distance_type)
 
 
 class Degrees(Histogram):
     def compute(self, net):
-        values = net.degree(net.vs, mode=igraph.ALL)
+        values = net.graph.degree(net.vs, mode=igraph.ALL)
         self.set_data(values)
 
 
 class InDegrees(Histogram):
     def compute(self, net):
-        values = net.indegree(net.vs)
+        values = net.graph.indegree(net.graph.vs)
         self.set_data(values)
 
 
 class OutDegrees(Histogram):
     def compute(self, net):
-        values = net.outdegree(net.vs)
+        values = net.graph.outdegree(net.graph.vs)
         self.set_data(values)
 
 
 class UndirectedPageRanks(Histogram):
     def compute(self, net):
-        values = net.pagerank(vertices=net.vs, directed=False)
+        values = net.graph.pagerank(vertices=net.graph.vs, directed=False)
         self.set_data(values)
 
 
 class DirectedPageRanks(Histogram):
     def compute(self, net):
-        values = net.pagerank(vertices=net.vs, directed=True)
+        values = net.graph.pagerank(vertices=net.graph.vs, directed=True)
         self.set_data(values)
 
 
@@ -212,17 +202,11 @@ class DistanceHistogram(Histogram):
 
 class UndirectedDistances(DistanceHistogram):
     def compute(self, net):
-        sp = net.shortest_paths_dijkstra(mode=igraph.ALL)
-        # flatten shortest paths length matrix and truncate distance
-        values = [min(item, self.max_value)
-                  for sublist in sp for item in sublist if item > 0]
-        self.set_data(values)
+        net.u_random_walkers.recompute()
+        self.set_data(net.u_random_walkers.dmatrix)
 
 
 class DirectedDistances(DistanceHistogram):
     def compute(self, net):
-        sp = net.shortest_paths_dijkstra(mode=igraph.OUT)
-        # flatten shortest paths length matrix and truncate distance
-        values = [min(item, self.max_value)
-                  for sublist in sp for item in sublist if item > 0]
-        self.set_data(values)
+        net.d_random_walkers.recompute()
+        self.set_data(net.d_random_walkers.dmatrix)

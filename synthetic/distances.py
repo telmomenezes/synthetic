@@ -1,14 +1,13 @@
 from enum import Enum
-import igraph
-from synthetic.consts import (DEFAULT_BINS, DEFAULT_MAX_DIST,
-                              DEFAULT_NORM_SAMPLES, SMALL_VALUE)
+
+from synthetic.consts import DEFAULT_BINS, DEFAULT_MAX_DIST, DEFAULT_NORM_SAMPLES, SMALL_VALUE
+from synthetic.net import create_random_net
 from synthetic.stats import StatType, DistanceType, StatsSet
 
 
 DEFAULT_UNDIRECTED = ((StatType.DEGREES, DistanceType.EARTH_MOVER),
                       (StatType.U_PAGERANKS, DistanceType.EARTH_MOVER),
-                      (StatType.TRIAD_CENSUS,
-                       DistanceType.NORMALIZED_MANHATTAN),
+                      (StatType.TRIAD_CENSUS, DistanceType.NORMALIZED_MANHATTAN),
                       (StatType.U_DISTS, DistanceType.NORMALIZED_MANHATTAN))
 
 
@@ -26,20 +25,18 @@ class Norm(Enum):
     ER_MEAN_RATIO = 1
 
 
-def create_distances_to_net(net, bins=DEFAULT_BINS, max_dist=DEFAULT_MAX_DIST,
-                            norm=Norm.ER_MEAN_RATIO,
+def create_distances_to_net(net, bins=DEFAULT_BINS, max_dist=DEFAULT_MAX_DIST, norm=Norm.ER_MEAN_RATIO,
                             norm_samples=DEFAULT_NORM_SAMPLES):
     if net.is_directed():
         stat_dist_types = DEFAULT_DIRECTED
     else:
         stat_dist_types = DEFAULT_UNDIRECTED
-    return DistancesToNet(net, stat_dist_types, bins, max_dist,
-                          norm, norm_samples)
+    return DistancesToNet(net, stat_dist_types, bins, max_dist, norm, norm_samples)
 
 
 class DistancesToNet(object):
-    def __init__(self, net, stat_dist_types, bins, max_dist,
-                 norm=Norm.ER_MEAN_RATIO, norm_samples=DEFAULT_NORM_SAMPLES):
+    def __init__(self, net, stat_dist_types, bins, max_dist, norm=Norm.ER_MEAN_RATIO,
+                 norm_samples=DEFAULT_NORM_SAMPLES):
         assert(norm == Norm.NONE or norm_samples > 0)
 
         self.net = net
@@ -59,34 +56,23 @@ class DistancesToNet(object):
             self.norm_values = None
 
     def __compute_norm_values(self, net, norm_samples):
-        vcount = net.vcount()
-        ecount = net.ecount()
-        directed = net.is_directed()
-
         norm_values = [.0] * self.nstats
-        dists2net = DistancesToNet(net, self.stat_dist_types, self.bins,
-                                   self.max_dist, norm=Norm.NONE)
-
+        dists2net = DistancesToNet(net, self.stat_dist_types, self.bins, self.max_dist, norm=Norm.NONE)
         for i in range(norm_samples):
             # noinspection PyArgumentList
-            sample_net = igraph.Graph.Erdos_Renyi(n=vcount, m=ecount,
-                                                  directed=directed)
+            sample_net = create_random_net(net.graph.vcount(), net.graph.ecount(), net.graph.is_directed())
             dists = dists2net.compute(sample_net)
             for j in range(self.nstats):
                 norm_values[j] += dists[j]
-
         norm_values = [max(x / norm_samples, SMALL_VALUE) for x in norm_values]
         return norm_values
 
     def compute(self, net):
-        stats_set = StatsSet(net, self.stat_types, self.bins, self.max_dist,
-                             ref_stats=self.targ_stats_set)
+        stats_set = StatsSet(net, self.stat_types, self.bins, self.max_dist, ref_stats=self.targ_stats_set)
 
-        dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i],
-                                                       self.dist_types[i])
+        dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i], self.dist_types[i])
                  for i in range(self.nstats)]
         if self.norm == Norm.ER_MEAN_RATIO:
-            dists = [dists[i] / self.norm_values[i]
-                     for i in range(self.nstats)]
+            dists = [dists[i] / self.norm_values[i] for i in range(self.nstats)]
 
         return dists
