@@ -5,6 +5,7 @@ import progressbar
 from synthetic.consts import DEFAULT_BINS, DEFAULT_MAX_DIST, DEFAULT_NORM_SAMPLES, SMALL_VALUE
 from synthetic.net import create_random_net
 from synthetic.stats import StatType, DistanceType, StatsSet
+from synthetic.utils import current_time_millis
 
 
 DEFAULT_UNDIRECTED = ((StatType.DEGREES, DistanceType.EARTH_MOVER),
@@ -59,6 +60,8 @@ class DistancesToNet(object):
             self.norm_values = None
 
     def _compute_norm_values(self, net, norm_samples):
+        start_time = current_time_millis()
+
         norm_values = [.0] * self.nstats
         dists2net = DistancesToNet(net, self.stat_dist_types, self.bins, self.max_dist, norm=Norm.NONE)
         i = 0
@@ -71,6 +74,10 @@ class DistancesToNet(object):
                 for j in range(self.nstats):
                     norm_values[j] += dists[j]
         norm_values = [max(x / norm_samples, SMALL_VALUE) for x in norm_values]
+
+        comp_time = (current_time_millis() - start_time) / 1000
+        print('{}s'.format(comp_time))
+
         return norm_values
 
     def compute(self, net):
