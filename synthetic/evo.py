@@ -1,4 +1,5 @@
-import random
+import numpy as np
+
 from synthetic.utils import current_time_millis
 
 
@@ -81,7 +82,7 @@ class Evo(object):
             self.sim_time = 0
             self.fit_time = 0
 
-            if random.choice([True, False]):
+            if np.random.randint(0, 2) == 0:
                 generator = self.best_fit_individual.generator.clone()
             else:
                 generator = self.best_individual.generator.clone()

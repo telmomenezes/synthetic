@@ -203,10 +203,10 @@ class DistanceHistogram(Histogram):
 class UndirectedDistances(DistanceHistogram):
     def compute(self, net):
         net.u_random_walkers.recompute()
-        self.set_data(net.u_random_walkers.dmatrix)
+        self.set_data(net.u_random_walkers.dmatrix.flatten())
 
 
 class DirectedDistances(DistanceHistogram):
     def compute(self, net):
         net.d_random_walkers.recompute()
-        self.set_data(net.d_random_walkers.dmatrix)
+        self.set_data(net.d_random_walkers.dmatrix.flatten())

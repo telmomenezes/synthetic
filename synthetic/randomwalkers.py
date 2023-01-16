@@ -1,4 +1,4 @@
-import random
+import numpy as np
 
 from synthetic.consts import DEFAULT_MAX_DIST
 
@@ -21,7 +21,7 @@ class RandomWalker:
     def restart(self):
         self.targ = self.orig
         self.length = 0
-        self.forward = random.choice([True, False])
+        self.forward = bool(np.random.randint(0, 2))
 
     def step(self):
         if self.directed:
@@ -33,7 +33,7 @@ class RandomWalker:
             neighbors = self.net.neighbors(self.targ)
 
         if len(neighbors) > 0:
-            next_node = random.choice(neighbors)
+            next_node = neighbors[np.random.randint(0, len(neighbors))]
         else:
             next_node = None
 
@@ -71,27 +71,24 @@ class RandomWalkers:
     
     def init(self):
         # clear matrices
-        self.dmatrix = [self.large_value] * (self.nodes * self.nodes)
+        self.dmatrix = np.full((self.nodes, self.nodes), self.large_value)
         for i in range(self.nodes):
-            self.dmatrix[(i * self.nodes) + i] = 0
+            self.dmatrix[i, i] = 0
         
         # init walkers
         self.walkers = [RandomWalker(self.net, node, self.directed, self.max_length) for node in range(self.nodes)]
 
     def distance(self, x, y):
-        if x == y:
-            return 0
-        else:
-            return self.dmatrix[int((y * self.nodes) + x)]
+        return self.dmatrix[x, y]
 
     def set_distance(self, x, y, d):
-        if self.distance(x, y) <= d:
+        if self.dmatrix[x, y] <= d:
             return
 
-        self.dmatrix[(y * self.nodes) + x] = d
+        self.dmatrix[x, y] = d
         
         if not self.directed:
-            self.dmatrix[(x * self.nodes) + y] = d
+            self.dmatrix[y, x] = d
     
     def step(self):
         for walker in self.walkers:

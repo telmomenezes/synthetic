@@ -1,6 +1,5 @@
 from enum import Enum
 import math
-import random
 import numpy as np
 
 
@@ -123,26 +122,26 @@ def create_fun(fun, prog, parent):
 
 
 def create_random_node_tree(prog, prob_term, parent, min_depth, grow, depth):
-    p = random.random()
+    p = np.random.random()
     if ((not grow) or p > prob_term) and depth < min_depth:
-        fun = random.randrange(N_FUNS)
+        fun = np.random.randint(0, N_FUNS)
         node = create_fun(fun, prog, parent)
         for i in range(node.arity()):
             node.params.append(create_random_node_tree(prog, prob_term, node,
                                                        min_depth, grow,
                                                        depth + 1))
     else:
-        if random.randrange(2) == 0 and prog.varcount > 0:
-            var = random.randrange(prog.varcount)
+        if np.random.randint(0, 2) == 0 and prog.varcount > 0:
+            var = np.random.randint(0, prog.varcount)
             node = create_var(var, prog, parent)
         else:
-            r = random.randrange(10)
+            r = np.random.randint(0, 10)
             if r == 0:
                 val = 0.
             elif r > 5:
-                val = random.randrange(10)
+                val = np.random.randint(0, 10)
             else:
-                val = random.random()
+                val = np.random.random()
             node = create_val(val, prog, parent)
     return node
 
@@ -300,15 +299,13 @@ def load(var_names, file_path):
     return parse(prog_str, var_names)
 
 
-def create_random(var_names, prob_term=.4, depth_low_limit=2,
-                  depth_high_limit=5, grow=None):
+def create_random(var_names, prob_term=.4, depth_low_limit=2, depth_high_limit=5, grow=None):
     if grow is None:
-        grow = random.randrange(2) == 0
+        grow = np.random.randint(0, 2) == 0
     max_depth = (depth_low_limit +
-                 random.randrange(depth_high_limit - depth_low_limit))
+                 np.random.randint(0, depth_high_limit - depth_low_limit))
     prog = Prog(var_names)
-    prog.root = create_random_node_tree(prog, prob_term, None, max_depth, grow,
-                                        0)
+    prog.root = create_random_node_tree(prog, prob_term, None, max_depth, grow, 0)
     return prog
 
 
@@ -461,7 +458,7 @@ class Prog(object):
         return self.root.node_by_pos(pos)
 
     def recombine(self, parent2):
-        if random.randrange(2) == 0:
+        if np.random.randint(0, 2) == 0:
             parent_a = parent2.clone()
             parent_b = self.clone()
         else:
@@ -471,8 +468,8 @@ class Prog(object):
         child = parent_a.clone()
         size1 = parent_a.size()
         size2 = parent_b.size()
-        pos1 = random.randrange(size1)
-        pos2 = random.randrange(size2)
+        pos1 = np.random.randint(0, size1)
+        pos2 = np.random.randint(0, size2)
 
         point1 = child.node_by_pos(pos1)
         point2 = parent_b.node_by_pos(pos2)

@@ -1,5 +1,4 @@
 from enum import Enum
-import random
 
 import numpy as np
 
@@ -145,11 +144,11 @@ class Generator(object):
             elif gv == GenVar.TARGOUTDEG:
                 self.prog.vars[i] = self.net.out_degree(targ)
             elif gv == GenVar.DIST:
-                self.prog.vars[i] = self.net.u_random_walkers.distance(orig, targ)
+                self.prog.vars[i] = self.net.u_random_walkers.dmatrix[orig, targ]
             elif gv == GenVar.DIRDIST:
-                self.prog.vars[i] = self.net.d_random_walkers.distance(orig, targ)
+                self.prog.vars[i] = self.net.d_random_walkers.dmatrix[orig, targ]
             elif gv == GenVar.REVDIST:
-                self.prog.vars[i] = self.net.d_random_walkers.distance(targ, orig)
+                self.prog.vars[i] = self.net.d_random_walkers.dmatrix[targ, orig]
 
     def generate_sample(self):
         for i in range(self.trials):
@@ -189,7 +188,7 @@ class Generator(object):
                 self.sample_weights[i] = 1.
                 total_weight += 1.
 
-        targ_weight = random.random() * total_weight
+        targ_weight = np.random.random() * total_weight
         i = 0
         total_weight = self.sample_weights[i]
         while targ_weight > total_weight:
@@ -221,8 +220,8 @@ class Generator(object):
         self.trials = int(sample_ratio * nodes * edges)
         if self.trials < 2:
             self.trials = 2
-        self.sample_origs = np.zeros(self.trials, dtype=np.uint64)
-        self.sample_targs = np.zeros(self.trials, dtype=np.uint64)
+        self.sample_origs = np.zeros(self.trials, dtype=int)
+        self.sample_targs = np.zeros(self.trials, dtype=int)
         self.sample_weights = np.zeros(self.trials)
 
         self.eval_distance = 0.
