@@ -4,7 +4,7 @@ from synthetic.utils import current_time_millis
 
 
 def within_tolerance(fitness, best_fitness, tolerance):
-    return abs(fitness - best_fitness) < tolerance
+    return abs(fitness - best_fitness) < (best_fitness * tolerance)
 
 
 class EvaluatedIndividual(object):
@@ -96,12 +96,11 @@ class Evo(object):
             individual = EvaluatedIndividual(self.distances_to_net, generator, net)
             self.fit_time += current_time_millis() - time0
 
-            best_fitness = self.best_fit_individual.fitness
-            if individual.is_better_than(self.best_fit_individual, best_fitness, 0):
+            if individual.is_better_than(self.best_fit_individual, self.best_fit_individual.fitness, 0):
                 self.best_fit_individual = individual
                 stable_gens = 0
 
-            if individual.is_better_than(self.best_individual, best_fitness, self.tolerance):
+            if individual.is_better_than(self.best_individual, self.best_fit_individual.fitness, self.tolerance):
                 self.best_individual = individual
                 self.on_new_best()
                 stable_gens = 0
