@@ -4,7 +4,7 @@ from synthetic.utils import current_time_millis
 
 
 def within_tolerance(fitness, best_fitness, tolerance):
-    return abs(fitness - best_fitness) < (best_fitness * tolerance)
+    return abs(fitness - best_fitness) < tolerance
 
 
 class EvaluatedIndividual(object):
