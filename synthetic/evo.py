@@ -140,28 +140,27 @@ class Evo(object):
             log_file.write(header)
 
     def on_generation(self):
-        dists = [str(dist) for dist in self.best_individual.distances]
+        best_dists = [str(dist) for dist in self.best_individual.distances]
+        best_fit_dists = [str(dist) for dist in self.best_fit_individual.distances]
 
         # write log line for generation
         with open('{}/evo.csv'.format(self.out_dir), 'a') as log_file:
             row = ','.join([str(metric) for metric in (self.curgen,
                             self.best_individual.fitness,
                             self.best_individual.generator.prog.size(),
+                            self.best_fit_individual.fitness,
+                            self.best_fit_individual.generator.prog.size(),
                             self.gen_time, self.sim_time, self.fit_time)])
-            row = '{},{}\n'.format(row, ','.join(dists))
+            row = '{},{},{}\n'.format(row, ','.join(best_dists), ','.join(best_fit_dists))
             log_file.write(row)
 
         # print info
-        print(self.gen_info_string())
+        print('>>> GENERATION #{}; gen comp time: {}s.; sim comp time: {}s.; fit comp time: {}s.'.format(
+            self.curgen, self.gen_time, self.sim_time, self.fit_time))
         stat_names = [stat_type.name for stat_type in self.distances_to_net.targ_stats_set.stat_types]
-        items = ['{}: {}'.format(stat_names[i], dists[i]) for i in range(len(stat_names))]
-        print('; '.join(items))
-
-    def gen_info_string(self):
-        items = ['gen #{}'.format(self.curgen),
-                 'best fitness: {}'.format(self.best_individual.fitness),
-                 'best genotype size: {}'.format(self.best_individual.generator.prog.size()),
-                 'gen comp time: {}s.'.format(self.gen_time),
-                 'sim comp time: {}s.'.format(self.sim_time),
-                 'fit comp time: {}s.'.format(self.fit_time)]
-        return '; '.join(items)
+        print('[BEST GENERATOR] fitness: {}; genotype size: {}'.format(
+            self.best_individual.fitness, self.best_individual.generator.prog.size()))
+        print('; '.join(['{}: {}'.format(stat_names[i], best_dists[i]) for i in range(len(stat_names))]))
+        print('[LOWEST FITNESS] fitness: {}; genotype size: {}'.format(
+            self.best_fit_individual.fitness, self.best_fit_individual.generator.prog.size()))
+        print('; '.join(['{}: {}'.format(stat_names[i], best_fit_dists[i]) for i in range(len(stat_names))]))
