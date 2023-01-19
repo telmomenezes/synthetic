@@ -13,7 +13,7 @@ class Evolve(Command):
         self.name = 'evo'
         self.description = 'evolve network generator'
         self.mandatory_args = ['inet', 'odir']
-        self.optional_args = ['undir', 'gens', 'sr', 'bins', 'maxdist', 'tolerance', 'gentype']
+        self.optional_args = ['undir', 'gens', 'sr', 'bins', 'maxdist', 'tolerance', 'gentype', 'rw']
 
     def run(self, args):
         self.error_msg = None
@@ -27,6 +27,7 @@ class Evolve(Command):
         directed = not args['undir']
         tolerance = arg_with_default(args, 'tolerance', DEFAULT_TOLERANCE)
         gen_type = arg_with_default(args, 'gentype', DEFAULT_GEN_TYPE)
+        rw = args['rw']
 
         # load net
         net = load_net(netfile, directed)
@@ -38,7 +39,8 @@ class Evolve(Command):
                        'target net node count: {}'.format(net.graph.vcount()),
                        'target net edge count: {}'.format(net.graph.ecount()),
                        'distribution bins: {}'.format(bins),
-                       'tolerance: {}'.format(tolerance)]
+                       'tolerance: {}'.format(tolerance),
+                       'random walk distance (fitness): {}'.format(rw)]
         info_str = '\n'.join(info_params)
         print(info_str)
         print()
@@ -56,7 +58,7 @@ class Evolve(Command):
         # create fitness calculator
         # TODO: norm samples configurable
         print('computing target network statistics...')
-        dists2net = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, norm=Norm.ER_MEAN_RATIO,
+        dists2net = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, rw, norm=Norm.ER_MEAN_RATIO,
                                    norm_samples=DEFAULT_NORM_SAMPLES)
 
         # create evolutionary search

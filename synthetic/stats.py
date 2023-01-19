@@ -7,13 +7,13 @@ from pyemd import emd
 
 
 class StatsSet(object):
-    def __init__(self, net, stat_types, bins, max_dist, ref_stats=None):
+    def __init__(self, net, stat_types, bins, max_dist, rw, ref_stats=None):
         self.stat_types = stat_types
         if ref_stats is None:
-            self.stats = [create_stat(net, stat_type, bins, max_dist) for stat_type in stat_types]
+            self.stats = [create_stat(net, stat_type, bins, max_dist, rw) for stat_type in stat_types]
         else:
             assert(len(stat_types) == len(ref_stats.stat_types))
-            self.stats = [create_stat(net, stat_types[i], bins, max_dist, ref_stat=ref_stats.stats[i])
+            self.stats = [create_stat(net, stat_types[i], bins, max_dist, rw, ref_stat=ref_stats.stats[i])
                           for i in range(len(stat_types))]
 
 
@@ -43,7 +43,7 @@ def str2stat_type(name):
     return None
 
 
-def create_stat(net, stat_type, bins=None, max_dist=None, ref_stat=None):
+def create_stat(net, stat_type, bins=None, max_dist=None, rw=False, ref_stat=None):
     if stat_type == StatType.DEGREES:
         stat = Degrees(bins=bins, ref_stat=ref_stat)
     elif stat_type == StatType.IN_DEGREES:
@@ -57,9 +57,15 @@ def create_stat(net, stat_type, bins=None, max_dist=None, ref_stat=None):
     elif stat_type == StatType.TRIAD_CENSUS:
         stat = TriadCensus()
     elif stat_type == StatType.U_DISTS:
-        stat = UndirectedDistances(max_dist=max_dist)
+        if rw:
+            stat = UndirectedDistancesRW(max_dist=max_dist)
+        else:
+            stat = UndirectedDistances(max_dist=max_dist)
     elif stat_type == StatType.D_DISTS:
-        stat = DirectedDistances(max_dist=max_dist)
+        if rw:
+            stat = DirectedDistancesRW(max_dist=max_dist)
+        else:
+            stat = DirectedDistances(max_dist=max_dist)
     else:
         raise ValueError('unknown statistic type: {}'.format(str(stat_type)))
     stat.compute(net)
@@ -202,11 +208,29 @@ class DistanceHistogram(Histogram):
 
 class UndirectedDistances(DistanceHistogram):
     def compute(self, net):
-        net.u_random_walkers.recompute()
-        self.set_data(net.u_random_walkers.dmatrix.flatten())
+        sp = net.graph.shortest_paths_dijkstra(mode=igraph.ALL)
+        # flatten shortest paths length matrix and truncate distance
+        values = [min(item, self.max_value + 1) for sublist in sp for item in sublist if item > 0]
+        self.set_data(values)
 
 
 class DirectedDistances(DistanceHistogram):
     def compute(self, net):
+        sp = net.graph.shortest_paths_dijkstra(mode=igraph.OUT)
+        # flatten shortest paths length matrix and truncate distance
+        values = [min(item, self.max_value + 1) for sublist in sp for item in sublist if item > 0]
+        self.set_data(values)
+
+
+class UndirectedDistancesRW(DistanceHistogram):
+    def compute(self, net):
+        net.u_random_walkers.recompute()
+        values = net.u_random_walkers.dmatrix.flatten()
+        self.set_data(values)
+
+
+class DirectedDistancesRW(DistanceHistogram):
+    def compute(self, net):
         net.d_random_walkers.recompute()
-        self.set_data(net.d_random_walkers.dmatrix.flatten())
+        values = net.d_random_walkers.dmatrix.flatten()
+        self.set_data(values)

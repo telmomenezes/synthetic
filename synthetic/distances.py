@@ -28,31 +28,35 @@ class Norm(Enum):
     ER_MEAN_RATIO = 1
 
 
-def create_distances_to_net(net, bins=DEFAULT_BINS, max_dist=DEFAULT_MAX_DIST, norm=Norm.ER_MEAN_RATIO,
+def create_distances_to_net(net, bins=DEFAULT_BINS, max_dist=DEFAULT_MAX_DIST, rw=False, norm=Norm.ER_MEAN_RATIO,
                             norm_samples=DEFAULT_NORM_SAMPLES):
     if net.is_directed():
         stat_dist_types = DEFAULT_DIRECTED
     else:
         stat_dist_types = DEFAULT_UNDIRECTED
-    return DistancesToNet(net, stat_dist_types, bins, max_dist, norm, norm_samples)
+    return DistancesToNet(net, stat_dist_types, bins, max_dist, rw, norm, norm_samples)
 
 
 class DistancesToNet(object):
-    def __init__(self, net, stat_dist_types, bins, max_dist, norm=Norm.ER_MEAN_RATIO,
-                 norm_samples=DEFAULT_NORM_SAMPLES):
+    def __init__(self, net, stat_dist_types, bins, max_dist, rw, norm=Norm.ER_MEAN_RATIO,
+                 norm_samples=DEFAULT_NORM_SAMPLES, targ_stats_set=None):
         assert(norm == Norm.NONE or norm_samples > 0)
 
         self.net = net
         self.stat_dist_types = stat_dist_types
         self.bins = bins
         self.max_dist = max_dist
+        self.rw = rw
         self.norm = norm
 
         self.nstats = len(self.stat_dist_types)
         self.stat_types = [item[0] for item in stat_dist_types]
         self.dist_types = [item[1] for item in stat_dist_types]
 
-        self.targ_stats_set = StatsSet(net, self.stat_types, bins, max_dist)
+        if targ_stats_set is None:
+            self.targ_stats_set = StatsSet(net, self.stat_types, bins, max_dist, rw)
+        else:
+            self.targ_stats_set = targ_stats_set
 
         if norm != Norm.NONE:
             self.norm_values = self._compute_norm_values(net, norm_samples)
@@ -63,7 +67,8 @@ class DistancesToNet(object):
         start_time = current_time_millis()
 
         norm_values = [.0] * self.nstats
-        dists2net = DistancesToNet(net, self.stat_dist_types, self.bins, self.max_dist, norm=Norm.NONE)
+        dists2net = DistancesToNet(net, self.stat_dist_types, self.bins, self.max_dist, self.rw, norm=Norm.NONE,
+                                   targ_stats_set=self.targ_stats_set)
         i = 0
         print('computing normalization samples...')
         with progressbar.ProgressBar(max_value=norm_samples) as bar:
@@ -81,7 +86,7 @@ class DistancesToNet(object):
         return norm_values
 
     def compute(self, net):
-        stats_set = StatsSet(net, self.stat_types, self.bins, self.max_dist, ref_stats=self.targ_stats_set)
+        stats_set = StatsSet(net, self.stat_types, self.bins, self.max_dist, self.rw, ref_stats=self.targ_stats_set)
 
         dists = [self.targ_stats_set.stats[i].distance(stats_set.stats[i], self.dist_types[i])
                  for i in range(self.nstats)]
