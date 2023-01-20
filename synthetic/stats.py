@@ -166,7 +166,7 @@ class Histogram(Distrib):
 
 class Degrees(Histogram):
     def compute(self, net):
-        values = net.graph.degree(net.vs, mode=igraph.ALL)
+        values = net.graph.degree(net.graph.vs, mode=igraph.ALL)
         self.set_data(values)
 
 
