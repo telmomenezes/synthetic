@@ -217,7 +217,7 @@ class Generator(object):
 
     def run(self, nodes, edges, sample_ratio, shadow=None):
         self.nodes = nodes
-        self.trials = int(sample_ratio * nodes * edges)
+        self.trials = int(sample_ratio * nodes * nodes)
         if self.trials < 2:
             self.trials = 2
         self.sample_origs = np.zeros(self.trials, dtype=int)

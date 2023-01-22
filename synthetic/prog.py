@@ -302,8 +302,7 @@ def load(var_names, file_path):
 def create_random(var_names, prob_term=.4, depth_low_limit=2, depth_high_limit=5, grow=None):
     if grow is None:
         grow = np.random.randint(0, 2) == 0
-    max_depth = (depth_low_limit +
-                 np.random.randint(0, depth_high_limit - depth_low_limit))
+    max_depth = depth_low_limit + np.random.randint(0, depth_high_limit - depth_low_limit)
     prog = Prog(var_names)
     prog.root = create_random_node_tree(prog, prob_term, None, max_depth, grow, 0)
     return prog
