@@ -1,6 +1,4 @@
-from synthetic.consts import (DEFAULT_SAMPLE_RATE, DEFAULT_NODES,
-                              DEFAULT_EDGES, DEFAULT_GEN_TYPE)
-
+from synthetic.consts import DEFAULT_SAMPLE_RATE, DEFAULT_NODES, DEFAULT_EDGES, DEFAULT_GEN_TYPE
 from synthetic.generator import load_generator
 from synthetic.commands.command import Command, arg_with_default
 

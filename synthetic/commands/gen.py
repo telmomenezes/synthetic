@@ -1,5 +1,4 @@
-from synthetic.consts import (DEFAULT_SAMPLE_RATE, DEFAULT_NODES,
-                              DEFAULT_EDGES, DEFAULT_GEN_TYPE)
+from synthetic.consts import DEFAULT_SAMPLE_RATE, DEFAULT_NODES, DEFAULT_EDGES, DEFAULT_GEN_TYPE
 from synthetic.generator import load_generator
 from synthetic.commands.command import Command, arg_with_default
 
@@ -32,10 +31,10 @@ class Gen(Command):
         net = gen.run(nodes, edges, sr)
 
         # write net
-        if onet[-4:] == '.txt' or onet[-4:] =='.gml':
+        if onet[-4:] == '.txt' or onet[-4:] == '.gml':
             net.save(onet)
         else: 
-            net.save(onet + '.gml')
+            net.save('{}.gml'.format(onet))
 
         print('done.')
 

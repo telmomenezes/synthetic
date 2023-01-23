@@ -12,6 +12,7 @@ def create_random_net(nodes, edges, directed):
     graph = igraph.Graph.Erdos_Renyi(n=nodes, m=edges, directed=directed)
     return Net(graph)
 
+
 def load_net(file_path, directed):
     graph = igraph.Graph.Load(file_path)
 

@@ -127,9 +127,7 @@ def create_random_node_tree(prog, prob_term, parent, min_depth, grow, depth):
         fun = np.random.randint(0, N_FUNS)
         node = create_fun(fun, prog, parent)
         for i in range(node.arity()):
-            node.params.append(create_random_node_tree(prog, prob_term, node,
-                                                       min_depth, grow,
-                                                       depth + 1))
+            node.params.append(create_random_node_tree(prog, prob_term, node, min_depth, grow, depth + 1))
     else:
         if np.random.randint(0, 2) == 0 and prog.varcount > 0:
             var = np.random.randint(0, prog.varcount)
@@ -335,8 +333,7 @@ class Prog(object):
             if curnode.curpos < curnode.stoppos:
                 if curnode.curpos == curnode.condpos:
                     if curnode.fun == EQ:
-                        if (curnode.params[0].curval ==
-                                curnode.params[1].curval):
+                        if curnode.params[0].curval == curnode.params[1].curval:
                             curnode.stoppos = 3
                         else:
                             curnode.stoppos = 4
@@ -380,20 +377,16 @@ class Prog(object):
             else:
                 if curnode.type == NodeType.FUN:
                     if curnode.fun == SUM:
-                        val = (curnode.params[0].curval +
-                               curnode.params[1].curval)
+                        val = curnode.params[0].curval + curnode.params[1].curval
                     elif curnode.fun == SUB:
-                        val = (curnode.params[0].curval -
-                               curnode.params[1].curval)
+                        val = curnode.params[0].curval - curnode.params[1].curval
                     elif curnode.fun == MUL:
-                        val = (curnode.params[0].curval *
-                               curnode.params[1].curval)
+                        val = curnode.params[0].curval * curnode.params[1].curval
                     elif curnode.fun == DIV:
                         if curnode.params[1].curval == 0:
                             val = 0
                         else:
-                            val = (curnode.params[0].curval /
-                                   curnode.params[1].curval)
+                            val = curnode.params[0].curval / curnode.params[1].curval
                     elif curnode.fun == MIN:
                         val = curnode.params[0].curval
                         if curnode.params[1].curval < val:
@@ -418,8 +411,7 @@ class Prog(object):
                         val = abs(curnode.params[0].curval)
                     elif curnode.fun == POW:
                         try:
-                            val = math.pow(curnode.params[0].curval,
-                                           curnode.params[1].curval)
+                            val = math.pow(curnode.params[0].curval, curnode.params[1].curval)
                         except OverflowError:
                             # TODO: not sure if best solution, but using
                             # a very large float could lead to more overflows
