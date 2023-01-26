@@ -26,7 +26,12 @@ class EvaluatedIndividual(object):
             if not within_tolerance(fitness_targ, best_fitness, tolerance):
                 return True
             else:
-                return self.generator.prog.size() < eval_indiv.generator.prog.size()
+                if self.generator.prog.size() < eval_indiv.generator.prog.size():
+                    return True
+                elif self.generator.prog.size() == eval_indiv.generator.prog.size():
+                    return fitness_orig < fitness_targ
+                else:
+                    return False
         return False
 
 
