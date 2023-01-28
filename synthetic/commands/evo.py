@@ -58,7 +58,10 @@ class Evolve(Command):
         # create fitness calculator
         # TODO: norm samples configurable
         print('computing target network statistics...')
-        dists2net = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, rw, norm=Norm.ER_MEAN_RATIO,
+        # dists2net = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, rw, norm=Norm.ER_MEAN_RATIO,
+        #                            norm_samples=DEFAULT_NORM_SAMPLES)
+
+        dists2net = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, rw, norm=Norm.NONE,
                                    norm_samples=DEFAULT_NORM_SAMPLES)
 
         # create evolutionary search

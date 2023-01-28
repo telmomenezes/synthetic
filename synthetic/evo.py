@@ -4,7 +4,8 @@ from synthetic.utils import current_time_millis
 
 
 def within_tolerance(fitness, best_fitness, tolerance):
-    return abs(fitness - best_fitness) < tolerance
+    # return abs(fitness - best_fitness) < tolerance
+    return max(fitness, best_fitness) / min(fitness, best_fitness) - 1.0 <= tolerance
 
 
 class EvaluatedIndividual(object):
@@ -13,7 +14,9 @@ class EvaluatedIndividual(object):
         self.distances = distances_to_net.compute(net)
 
         # TODO: other types of fitness
-        self.fitness = max(self.distances)
+        # self.fitness = max(self.distances)
+        self.fitness = (np.array([max(distance, 0.000001) for distance in self.distances]).prod()
+                        ** (1.0 / len(self.distances)))
 
     def is_better_than(self, eval_indiv, best_fitness, tolerance):
         fitness_orig = self.fitness

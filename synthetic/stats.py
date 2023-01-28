@@ -106,7 +106,12 @@ class Distrib(Stat):
         if distance_type == DistanceType.NORMALIZED_MANHATTAN:
             dist = 0
             for i in range(len(self.data)):
-                dist += max(self.data[i], stat.data[i]) / max(min(self.data[i], stat.data[i]), SMALL_VALUE)
+                # dist += max(self.data[i], stat.data[i]) / max(min(self.data[i], stat.data[i]), SMALL_VALUE)
+                # dist += (max(max(self.data[i], stat.data[i]), 1) / max(min(self.data[i], stat.data[i]), 1))
+                # Canberra distance
+                dist += abs(self.data[i] - stat.data[i]) / max(min(self.data[i], stat.data[i]), 1)
+                # chi-square statistic
+                # dist += ((self.data[i] - stat.data[i]) * (self.data[i] - stat.data[i])) / max((self.data[i] + stat.data[i]), 1)
             return dist
         else:
             raise NotImplementedError('distance type {} is not supported on this statistic.'.format(distance_type))
