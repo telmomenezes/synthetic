@@ -41,7 +41,7 @@ class Fit(Command):
 
         # create fitness calculator
         # TODO: norm samples configurable
-        fitness = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, rw, norm=Norm.ER_MEAN_RATIO,
+        fitness = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, rw, norm=Norm.NONE,
                                  norm_samples=DEFAULT_NORM_SAMPLES)
 
         fit_maxes = []
