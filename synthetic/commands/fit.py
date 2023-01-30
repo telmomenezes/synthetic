@@ -55,7 +55,7 @@ class Fit(Command):
             distances = fitness.compute(synth_net)
             fit_max = max(distances)
             fit_mean = mean(distances)
-            fit_geom = np.array(distances).prod() ** (1.0 / len(distances))
+            fit_geom = (np.array([max(distance, 0.000001) for distance in distances]).prod() ** (1.0 / len(distances)))
 
             fit_maxes.append(fit_max)
             fit_means.append(fit_mean)
