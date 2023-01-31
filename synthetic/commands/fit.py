@@ -50,9 +50,9 @@ class Fit(Command):
             gen = load_generator(prog, directed, gen_type)
             synth_net = gen.run(net.graph.vcount(), net.graph.ecount(), sr)
             distances = fitness.compute(synth_net)
+            fit_max=max(distances)
+            fit_mean=mean(distances)
 
-            fit_max = max(distances)
-            fit_mean = mean(distances)
             fit_maxes.append(fit_max)
             fit_means.append(fit_mean)
 
