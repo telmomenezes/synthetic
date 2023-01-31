@@ -32,9 +32,9 @@ class Gen(Command):
 
         # write net
         if onet[-4:] == '.txt' or onet[-4:] == '.gml':
-            net.graph.save(onet)
+            net.save(onet)
         else: 
-            net.graph.save('{}.gml'.format(onet))
+            net.save('{}.gml'.format(onet))
 
         print('done.')
 

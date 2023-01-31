@@ -5,8 +5,6 @@ import numpy as np
 import igraph
 from pyemd import emd
 
-from synthetic.consts import SMALL_VALUE
-
 
 class StatsSet(object):
     def __init__(self, net, stat_types, bins, max_dist, rw, ref_stats=None):
@@ -106,12 +104,10 @@ class Distrib(Stat):
         if distance_type == DistanceType.NORMALIZED_MANHATTAN:
             dist = 0
             for i in range(len(self.data)):
-                # dist += max(self.data[i], stat.data[i]) / max(min(self.data[i], stat.data[i]), SMALL_VALUE)
-                # dist += (max(max(self.data[i], stat.data[i]), 1) / max(min(self.data[i], stat.data[i]), 1))
-                # Canberra distance
-                # dist += abs(self.data[i] - stat.data[i]) / max(min(self.data[i], stat.data[i]), 1)
-                # chi-square statistic
-                dist += ((self.data[i] - stat.data[i]) ** 2) / max((self.data[i] + stat.data[i]), 1)
+                d = max(self.data[i], stat.data[i])
+                if d == 0:
+                    d = 1
+                dist += abs(self.data[i] - stat.data[i]) / d
             return dist
         else:
             raise NotImplementedError('distance type {} is not supported on this statistic.'.format(distance_type))
@@ -214,7 +210,7 @@ class UndirectedDistances(DistanceHistogram):
     def compute(self, net):
         sp = net.graph.shortest_paths_dijkstra(mode=igraph.ALL)
         # flatten shortest paths length matrix and truncate distance
-        values = [item for sublist in sp for item in sublist]
+        values = [min(item, self.max_value + 1) for sublist in sp for item in sublist if item > 0]
         self.set_data(values)
 
 
@@ -222,7 +218,7 @@ class DirectedDistances(DistanceHistogram):
     def compute(self, net):
         sp = net.graph.shortest_paths_dijkstra(mode=igraph.OUT)
         # flatten shortest paths length matrix and truncate distance
-        values = [item for sublist in sp for item in sublist]
+        values = [min(item, self.max_value + 1) for sublist in sp for item in sublist if item > 0]
         self.set_data(values)
 
 

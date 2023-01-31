@@ -78,8 +78,7 @@ class DistancesToNet(object):
                 dists = dists2net.compute(sample_net)
                 for j in range(self.nstats):
                     norm_values[j] += dists[j]
-        # norm_values = [max(x / norm_samples, SMALL_VALUE) for x in norm_values]
-        norm_values = [x / norm_samples for x in norm_values]
+        norm_values = [max(x / norm_samples, SMALL_VALUE) for x in norm_values]
 
         comp_time = (current_time_millis() - start_time) / 1000
         print('{}s'.format(comp_time))
