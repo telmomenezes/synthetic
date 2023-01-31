@@ -104,14 +104,6 @@ class Evo(object):
             individual = EvaluatedIndividual(self.distances_to_net, generator, net)
             self.fit_time += current_time_millis() - time0
 
-            # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-            # print(self.best_individual.generator.prog)
-            # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-            # print(self.best_individual.generator.prog)
-            # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-            # print(individual.generator.prog)
-            # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
-
             if individual.is_better_than(self.best_fit_individual, self.best_fit_individual.fitness, 0):
                 self.best_fit_individual = individual
                 stable_gens = 0
