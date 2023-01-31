@@ -4,7 +4,8 @@ from synthetic.utils import current_time_millis
 
 
 def within_tolerance(fitness, best_fitness, tolerance):
-    return abs(fitness - best_fitness) < tolerance
+    # return abs(fitness - best_fitness) < tolerance
+    return max(fitness, best_fitness) / min(fitness, best_fitness) - 1.0 <= tolerance
 
 
 class EvaluatedIndividual(object):
@@ -13,7 +14,9 @@ class EvaluatedIndividual(object):
         self.distances = distances_to_net.compute(net)
 
         # TODO: other types of fitness
-        self.fitness = max(self.distances)
+        # self.fitness = max(self.distances)
+        self.fitness = (np.array([max(distance, 0.000001) for distance in self.distances]).prod()
+                        ** (1.0 / len(self.distances)))
 
     def is_better_than(self, eval_indiv, best_fitness, tolerance):
         fitness_orig = self.fitness
@@ -26,7 +29,12 @@ class EvaluatedIndividual(object):
             if not within_tolerance(fitness_targ, best_fitness, tolerance):
                 return True
             else:
-                return self.generator.prog.size() < eval_indiv.generator.prog.size()
+                if self.generator.prog.size() < eval_indiv.generator.prog.size():
+                    return True
+                elif self.generator.prog.size() == eval_indiv.generator.prog.size():
+                    return fitness_orig < fitness_targ
+                else:
+                    return False
         return False
 
 
@@ -95,6 +103,14 @@ class Evo(object):
             time0 = current_time_millis()
             individual = EvaluatedIndividual(self.distances_to_net, generator, net)
             self.fit_time += current_time_millis() - time0
+
+            # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+            # print(self.best_individual.generator.prog)
+            # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+            # print(self.best_individual.generator.prog)
+            # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+            # print(individual.generator.prog)
+            # print('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
 
             if individual.is_better_than(self.best_fit_individual, self.best_fit_individual.fitness, 0):
                 self.best_fit_individual = individual

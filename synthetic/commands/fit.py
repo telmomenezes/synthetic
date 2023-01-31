@@ -1,3 +1,5 @@
+import numpy as np
+
 from synthetic.consts import (DEFAULT_SAMPLE_RATE, DEFAULT_BINS, DEFAULT_MAX_DIST, DEFAULT_RUNS, DEFAULT_GEN_TYPE,
                               DEFAULT_NORM_SAMPLES)
 from synthetic.net import load_net
@@ -39,24 +41,27 @@ class Fit(Command):
 
         # create fitness calculator
         # TODO: norm samples configurable
-        fitness = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, rw, norm=Norm.ER_MEAN_RATIO,
+        fitness = DistancesToNet(net, get_stat_dist_types(args), bins, max_dist, rw, norm=Norm.NONE,
                                  norm_samples=DEFAULT_NORM_SAMPLES)
 
         fit_maxes = []
         fit_means = []
+        fit_geoms = []
         for i in range(runs):
             print('run #{}'.format(i))
 
             gen = load_generator(prog, directed, gen_type)
             synth_net = gen.run(net.graph.vcount(), net.graph.ecount(), sr)
             distances = fitness.compute(synth_net)
-            fit_max=max(distances)
-            fit_mean=mean(distances)
+            fit_max = max(distances)
+            fit_mean = mean(distances)
+            fit_geom = (np.array([max(distance, 0.000001) for distance in distances]).prod() ** (1.0 / len(distances)))
 
             fit_maxes.append(fit_max)
             fit_means.append(fit_mean)
+            fit_geoms.append(fit_geom)
 
-            print('fitness (max): {}; fitness (mean): {}'.format(fit_max, fit_mean))
+            print('fitness (max): {}; fitness (mean): {}; fitness (geom): {}'.format(fit_max, fit_mean, fit_geom))
             print([stat_type.name for stat_type in fitness.stat_types])
             print(distances)
 
@@ -68,12 +73,18 @@ class Fit(Command):
         max_fit_mean = max(fit_means)
         min_fit_mean = min(fit_means)
 
+        mean_fit_geom = sum(fit_geoms) / runs
+        max_fit_geom = max(fit_geoms)
+        min_fit_geom = min(fit_geoms)
+
         print('\n\n')
 
         print('mean fitness (max): {}; min fitness (max): {}; max fitness (max): {}'.format(
             mean_fit_max, min_fit_max, max_fit_max))
         print('mean fitness (mean): {}; min fitness (mean): {}; max fitness (mean): {}'.format(
             mean_fit_mean, min_fit_mean, max_fit_mean))
+        print('mean fitness (geom): {}; min fitness (geom): {}; max fitness (geom): {}'.format(
+            mean_fit_geom, min_fit_geom, max_fit_geom))
 
         print('done.')
 
