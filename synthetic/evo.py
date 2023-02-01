@@ -13,7 +13,9 @@ class EvaluatedIndividual(object):
         self.distances = distances_to_net.compute(net)
 
         # TODO: other types of fitness
-        self.fitness = max(self.distances)
+        # self.fitness = max(self.distances)
+        self.fitness = (np.array([max(distance, 0.000001) for distance in self.distances]).prod()
+                        ** (1.0 / len(self.distances)))
 
     def is_better_than(self, eval_indiv, best_fitness, tolerance):
         fitness_orig = self.fitness
