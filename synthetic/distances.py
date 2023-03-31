@@ -30,7 +30,7 @@ class Norm(Enum):
 
 def create_distances_to_net(net, bins=DEFAULT_BINS, max_dist=DEFAULT_MAX_DIST, rw=False, norm=Norm.ER_MEAN_RATIO,
                             norm_samples=DEFAULT_NORM_SAMPLES):
-    if net.is_directed():
+    if net.graph.is_directed():
         stat_dist_types = DEFAULT_DIRECTED
     else:
         stat_dist_types = DEFAULT_UNDIRECTED
